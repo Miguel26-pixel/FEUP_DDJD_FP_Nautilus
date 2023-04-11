@@ -10,8 +10,10 @@ struct Triangle {
 };
 
 AppendStructuredBuffer<Triangle> triangles;
+AppendStructuredBuffer<int> debug;
 RWStructuredBuffer<float4> points;
 
+bool done = false;
 int numPointsPerAxis;
 float isoLevel;
 
@@ -43,6 +45,19 @@ void March (int3 id : SV_DispatchThreadID)
         points[indexFromCoord(id.x, id.y + 1, id.z + 1)]
     };
 
+    debug.Append(1000);
+    debug.Append(id.x);
+    debug.Append(id.y);
+    debug.Append(id.z);
+    debug.Append(numPointsPerAxis);
+    debug.Append(indexFromCoord(id.x, id.y, id.z));
+    debug.Append(indexFromCoord(id.x + 1, id.y, id.z));
+    debug.Append(indexFromCoord(id.x + 1, id.y, id.z + 1));
+    debug.Append(indexFromCoord(id.x, id.y, id.z + 1));
+    debug.Append(indexFromCoord(id.x, id.y + 1, id.z));
+    debug.Append(indexFromCoord(id.x + 1, id.y + 1, id.z));
+    debug.Append(indexFromCoord(id.x + 1, id.y + 1, id.z + 1));
+    debug.Append(indexFromCoord(id.x, id.y + 1, id.z + 1));
     // Calculate unique index for each cube configuration.
     // There are 256 possible values
     // A value of 0 means cube is entirely inside surface; 255 entirely outside.
