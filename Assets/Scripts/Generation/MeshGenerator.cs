@@ -17,14 +17,19 @@ public class MeshGenerator : MonoBehaviour
     private void Awake()
     {
         GenerateMesh();
+        GenerateCollider();
+    }
+
+    private void GenerateCollider()
+    {
+        MeshCollider meshCollider = gameObject.AddComponent<MeshCollider>();
+        meshCollider.sharedMesh = meshFilter.sharedMesh;
     }
 
     private void GenerateMesh()
     {
         var triangles = GenerateTriangles();
 
-        print(triangles[0].a);
-        
         Mesh mesh = new();
         mesh.Clear();
         mesh.indexFormat = IndexFormat.UInt32;
@@ -52,12 +57,11 @@ public class MeshGenerator : MonoBehaviour
     {
         var pointsBuffer = noiseGenerator.Generate();
 
-        int numPoints = noiseGenerator.numPointsPerAxis ^ 3;
+        int numPoints = noiseGenerator.numPointsPerAxis * noiseGenerator.numPointsPerAxis * noiseGenerator.numPointsPerAxis;
         int numVoxelsPerAxis = noiseGenerator.numPointsPerAxis - 1;
         int numVoxels = numVoxelsPerAxis * numVoxelsPerAxis * numVoxelsPerAxis;
         int maxTriangleCount = numVoxels * 5;
 
-        var debug = new ComputeBuffer (maxTriangleCount, sizeof (int), ComputeBufferType.Append);
         triangleBuffer = new ComputeBuffer (maxTriangleCount, sizeof (int), ComputeBufferType.Append);
         triCountBuffer = new ComputeBuffer (1, sizeof (int), ComputeBufferType.Raw);
 
@@ -65,10 +69,9 @@ public class MeshGenerator : MonoBehaviour
         shader.SetFloat("isoLevel", isoLevel);
         shader.SetBuffer(0, "points", pointsBuffer);
         shader.SetBuffer(0, "triangles", triangleBuffer);
-        shader.SetBuffer(0, "debug", debug);
 
-        var numThreads = Mathf.CeilToInt(numVoxelsPerAxis / 8f);
-        shader.Dispatch(0, numThreads, numThreads, numThreads);
+        int numThreadsPerAxis = Mathf.CeilToInt (numVoxelsPerAxis / 8f);
+        shader.Dispatch(0, numThreadsPerAxis, numThreadsPerAxis, numThreadsPerAxis);
 
         noiseGenerator.ReleaseBuffers();
 
@@ -80,9 +83,6 @@ public class MeshGenerator : MonoBehaviour
 
         Triangle[] triangles = new Triangle[numTriangles];
         triangleBuffer.GetData(triangles);
-
-        int[] values = new int[1001];
-        debug.GetData(values);
 
         ReleaseBuffers();
 

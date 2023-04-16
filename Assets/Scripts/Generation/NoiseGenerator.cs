@@ -31,7 +31,7 @@ public class NoiseGenerator : MonoBehaviour
 
     public ComputeBuffer Generate()
     {
-        noiseShader.SetInt("numOctaves", numOctaves);
+        noiseShader.SetInt("octaves", numOctaves);
         noiseShader.SetFloat("lacunarity", lacunarity);
         noiseShader.SetFloat("persistence", persistence);
         noiseShader.SetFloat("noiseScale", noiseScale);
@@ -58,16 +58,16 @@ public class NoiseGenerator : MonoBehaviour
 
         offsetsBuffer = new ComputeBuffer (offsets.Length, sizeof (float) * 3);
         offsetsBuffer.SetData (offsets);
-        
+
         noiseShader.SetBuffer(0, "offsets", offsetsBuffer);
 
-        pointsBuffer = new ComputeBuffer(numPointsPerAxis ^ 3, sizeof(float) * 4);
+        pointsBuffer = new ComputeBuffer(numPointsPerAxis * numPointsPerAxis * numPointsPerAxis, sizeof(float) * 4);
         noiseShader.SetBuffer(0, "points", pointsBuffer);
 
         var numThreads = Mathf.CeilToInt(numPointsPerAxis / 8f);
         noiseShader.Dispatch(0, numThreads, numThreads, numThreads);
 
-        Vector4[] points = new Vector4[numPointsPerAxis ^ 3];
+        Vector4[] points = new Vector4[numPointsPerAxis * numPointsPerAxis * numPointsPerAxis];
         pointsBuffer.GetData(points, 0, 0, numPointsPerAxis ^ 3);
 
         return pointsBuffer;
