@@ -20,8 +20,6 @@ public class NoiseGenerator : MonoBehaviour
     public float warpEffect;
     public float warpFrequency = 0.004f;
     public int numPointsPerAxis = 24;
-    public float boundsSize = 1;
-    public Vector3 centre = new(0,0,0);
     public Vector3 offset = new(0,0,0);
     public Vector4 shaderParams = new(1, 0, 0, 0);
     
@@ -29,7 +27,7 @@ public class NoiseGenerator : MonoBehaviour
     private ComputeBuffer offsetsBuffer;
     private ComputeBuffer pointsBuffer;
 
-    public ComputeBuffer Generate()
+    public ComputeBuffer Generate(Vector3 centre, float boundsSize)
     {
         noiseShader.SetInt("octaves", numOctaves);
         noiseShader.SetFloat("lacunarity", lacunarity);
@@ -44,12 +42,13 @@ public class NoiseGenerator : MonoBehaviour
         noiseShader.SetFloat("warpFrequency", warpFrequency);
         noiseShader.SetInt("numPointsPerAxis", numPointsPerAxis);
         noiseShader.SetFloat("boundsSize", boundsSize);
-        noiseShader.SetVector("centre", new Vector4(centre.x,centre.y,centre.z, 0));
+        noiseShader.SetVector("centre", centre * boundsSize);
         noiseShader.SetVector("offset", new Vector4(offset.x,offset.y,offset.z, 0));
         noiseShader.SetVector("params", shaderParams);
         noiseShader.SetFloat("spacing", boundsSize / (numPointsPerAxis - 1));
 
         var prng = new System.Random(seed);
+
         var offsets = new Vector3[numOctaves];
         float offsetRange = 1000;
         for (int i = 0; i < numOctaves; i++) {
