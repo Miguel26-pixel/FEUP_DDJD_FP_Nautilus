@@ -7,7 +7,7 @@ using UnityEngine.Serialization;
 
 public class Chunk : MonoBehaviour
 {
-    [FormerlySerializedAs("chunkPosition")] public Vector3 chunkGridPosition;
+    public Vector3Int chunkGridPosition;
     private MeshFilter _meshFilter;
     private MeshCollider _meshCollider;
     private NoiseGenerator _noiseGenerator;
