@@ -14,6 +14,8 @@ float weightMultiplier;
 bool closeEdges;
 float hardFloor;
 float hardFloorWeight;
+float hardCeil;
+float hardCeilWeight;
 float warpEffect;
 float warpFrequency;
 
@@ -24,13 +26,12 @@ void Density (int3 id : SV_DispatchThreadID)
 {
     
     int index = indexFromCoord(id.x,id.y,id.z);
-    float w = points[index].w;
+    
+    float3 pos = centre + id * spacing - boundsSize/2;
 
-    if (w < 15.18) {
+    if (pos.y > hardCeil) {
         return;
     }
-
-    float3 pos = centre + id * spacing - boundsSize/2;
 
     float noise = 0;
 
@@ -56,6 +57,7 @@ void Density (int3 id : SV_DispatchThreadID)
     
     float finalVal = -(pos.y + floorOffset) + noise * noiseWeight + (pos.y%params.x) * params.y;
     finalVal += hardFloorWeight * (pos.y < hardFloor);
+    finalVal += hardCeilWeight * (pos.y > hardCeil);
 
     points[index] = float4(pos, finalVal);
 }

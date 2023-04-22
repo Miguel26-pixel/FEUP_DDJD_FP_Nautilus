@@ -19,7 +19,6 @@ public class NoiseGenerator : MonoBehaviour
         var prng = new System.Random(1);
 
         pointsBuffer = new ComputeBuffer(numPointsPerAxis * numPointsPerAxis * numPointsPerAxis, sizeof(float) * 4);
-
         foreach (var biomeParameter in biomeParameters)
         {
             biomeParameter.UpdateValues(boundsSize, centre, numPointsPerAxis);
@@ -36,13 +35,15 @@ public class NoiseGenerator : MonoBehaviour
             biomeParameter.shader.SetBuffer(0, "points", pointsBuffer);
 
             var numThreads = Mathf.CeilToInt(numPointsPerAxis / 8f);
+			
+			
             biomeParameter.shader.Dispatch(0, numThreads, numThreads, numThreads);
 
             offsetsBuffer.Release();
         }
 
-        Vector4[] points = new Vector4[numPointsPerAxis * numPointsPerAxis * numPointsPerAxis];
-        pointsBuffer.GetData(points, 0, 0, numPointsPerAxis ^ 3);
+        //Vector4[] points = new Vector4[numPointsPerAxis * numPointsPerAxis * numPointsPerAxis];
+        //pointsBuffer.GetData(points, 0, 0, numPointsPerAxis ^ 3);
 
         return pointsBuffer;
     }
@@ -66,6 +67,8 @@ public class BiomeParameters
     public float weightMultiplier = 1;
     public float hardFloor;
     public float hardFloorWeight;
+    public float hardCeil;
+    public float hardCeilWeight;
     public float warpEffect;
     public float warpFrequency = 0.004f;
     public Vector3 offset = new(0,0,0);
@@ -84,6 +87,8 @@ public class BiomeParameters
         shader.SetFloat("weightMultiplier", weightMultiplier);
         shader.SetFloat("hardFloor", hardFloor);
         shader.SetFloat("hardFloorWeight", hardFloorWeight);
+        shader.SetFloat("hardCeil", hardCeil);
+        shader.SetFloat("hardCeilWeight", hardCeilWeight);
         shader.SetFloat("warpEffect", warpEffect);
         shader.SetFloat("warpFrequency", warpFrequency);
         shader.SetInt("numPointsPerAxis", numPointsPerAxis);
