@@ -98,22 +98,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8df3bc0ebee831c779c07c37cd6f9e3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  seed: 6
-  numOctaves: 6
-  lacunarity: 2.4
-  persistence: 0.39
-  noiseScale: 0.6
-  noiseWeight: 19
-  floorOffset: 7
-  weightMultiplier: 4
-  hardFloor: 0
-  hardFloorWeight: 4
-  warpEffect: 0
-  warpFrequency: 0
   numPointsPerAxis: 16
-  offset: {x: 0, y: 0, z: 0}
-  shaderParams: {x: 1, y: 0.2, z: 3, w: 2.76}
-  noiseShader: {fileID: 7200000, guid: c6851149be19f7320adfb6906f638288, type: 3}
+  biomeParameters:
+  - numOctaves: 6
+    lacunarity: 1
+    persistence: 1
+    noiseScale: 1
+    noiseWeight: 1
+    floorOffset: 0
+    weightMultiplier: 1
+    hardFloor: 0
+    hardFloorWeight: 0
+    warpEffect: 0
+    warpFrequency: 0
+    offset: {x: 0, y: 0, z: 0}
+    shaderParams: {x: 1, y: 0, z: 0, w: 0}
+    shader: {fileID: 7200000, guid: c6851149be19f7320adfb6906f638288, type: 3}
 --- !u!114 &5382608540069460152
 MonoBehaviour:
   m_ObjectHideFlags: 0

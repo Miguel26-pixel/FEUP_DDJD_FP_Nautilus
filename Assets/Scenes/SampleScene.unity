@@ -462,13 +462,14 @@ MonoBehaviour:
   isoLevel: 15.18
   boundsSize: 40
   player: {fileID: 698409963}
-  chunkPrefab: {fileID: 5382608540069460159, guid: c50d8f676bf4e53f3bee1fef7779aa00, type: 3}
+  chunkPrefab: {fileID: 5382608540069460159, guid: 0be181ea46f344459b866997f5eed7da, type: 3}
   generationConfigs: {fileID: 1060819886}
   chunksParent: {fileID: 175995}
   numChunksX: 16
   numChunksY: 3
   numChunksZ: 16
   lastPosition: {x: Infinity, y: Infinity, z: Infinity}
+  lastChunkPosition: {x: 2147483647, y: 2147483647, z: 2147483647}
 --- !u!4 &1060819885
 Transform:
   m_ObjectHideFlags: 0
@@ -496,7 +497,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: feb6090dee185e3ee8bd73754a3dbd4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chunkDistance: 8
+  chunkDistanceRadius: 3
   sqrCheckDistanceInterval: 10
 --- !u!1 &1519718714
 GameObject:

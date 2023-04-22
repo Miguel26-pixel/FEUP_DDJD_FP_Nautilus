@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -7,7 +8,55 @@ using UnityEngine.Serialization;
 public class NoiseGenerator : MonoBehaviour
 {
     [Header("Noise")] 
-    public int seed;
+
+    public int numPointsPerAxis = 24;
+    private ComputeBuffer offsetsBuffer;
+    private ComputeBuffer pointsBuffer;
+    public List<BiomeParameters> biomeParameters;
+
+    public ComputeBuffer Generate(Vector3 centre, float boundsSize)
+    {
+        var prng = new System.Random(1);
+
+        pointsBuffer = new ComputeBuffer(numPointsPerAxis * numPointsPerAxis * numPointsPerAxis, sizeof(float) * 4);
+
+        foreach (var biomeParameter in biomeParameters)
+        {
+            biomeParameter.UpdateValues(boundsSize, centre, numPointsPerAxis);
+            var offsets = new Vector3[biomeParameter.numOctaves];
+            float offsetRange = 1000;
+            for (int i = 0; i < biomeParameter.numOctaves; i++) {
+                offsets[i] = new Vector3 ((float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1) * offsetRange;
+            }
+
+            offsetsBuffer = new ComputeBuffer (offsets.Length, sizeof (float) * 3);
+            offsetsBuffer.SetData (offsets);
+
+            biomeParameter.shader.SetBuffer(0, "offsets", offsetsBuffer);
+            biomeParameter.shader.SetBuffer(0, "points", pointsBuffer);
+
+            var numThreads = Mathf.CeilToInt(numPointsPerAxis / 8f);
+            biomeParameter.shader.Dispatch(0, numThreads, numThreads, numThreads);
+
+            offsetsBuffer.Release();
+        }
+
+        Vector4[] points = new Vector4[numPointsPerAxis * numPointsPerAxis * numPointsPerAxis];
+        pointsBuffer.GetData(points, 0, 0, numPointsPerAxis ^ 3);
+
+        return pointsBuffer;
+    }
+
+    public void ReleaseBuffers()
+    {
+        pointsBuffer.Release();
+    }
+}
+
+
+[Serializable]
+public class BiomeParameters
+{
     public int numOctaves = 4;
     public float lacunarity = 2;
     public float persistence = .5f;
@@ -19,62 +68,29 @@ public class NoiseGenerator : MonoBehaviour
     public float hardFloorWeight;
     public float warpEffect;
     public float warpFrequency = 0.004f;
-    public int numPointsPerAxis = 24;
     public Vector3 offset = new(0,0,0);
     public Vector4 shaderParams = new(1, 0, 0, 0);
-    
-    public ComputeShader noiseShader;
-    private ComputeBuffer offsetsBuffer;
-    private ComputeBuffer pointsBuffer;
 
-    public ComputeBuffer Generate(Vector3 centre, float boundsSize)
+    public ComputeShader shader;
+
+    public void UpdateValues(float boundsSize, Vector4 centre, int numPointsPerAxis)
     {
-        noiseShader.SetInt("octaves", numOctaves);
-        noiseShader.SetFloat("lacunarity", lacunarity);
-        noiseShader.SetFloat("persistence", persistence);
-        noiseShader.SetFloat("noiseScale", noiseScale);
-        noiseShader.SetFloat("noiseWeight", noiseWeight);
-        noiseShader.SetFloat("floorOffset", floorOffset);
-        noiseShader.SetFloat("weightMultiplier", weightMultiplier);
-        noiseShader.SetFloat("hardFloor", hardFloor);
-        noiseShader.SetFloat("hardFloorWeight", hardFloorWeight);
-        noiseShader.SetFloat("warpEffect", warpEffect);
-        noiseShader.SetFloat("warpFrequency", warpFrequency);
-        noiseShader.SetInt("numPointsPerAxis", numPointsPerAxis);
-        noiseShader.SetFloat("boundsSize", boundsSize);
-        noiseShader.SetVector("centre", centre * boundsSize);
-        noiseShader.SetVector("offset", new Vector4(offset.x,offset.y,offset.z, 0));
-        noiseShader.SetVector("params", shaderParams);
-        noiseShader.SetFloat("spacing", boundsSize / (numPointsPerAxis - 1));
-
-        var prng = new System.Random(seed);
-
-        var offsets = new Vector3[numOctaves];
-        float offsetRange = 1000;
-        for (int i = 0; i < numOctaves; i++) {
-            offsets[i] = new Vector3 ((float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1) * offsetRange;
-        }
-
-        offsetsBuffer = new ComputeBuffer (offsets.Length, sizeof (float) * 3);
-        offsetsBuffer.SetData (offsets);
-
-        noiseShader.SetBuffer(0, "offsets", offsetsBuffer);
-
-        pointsBuffer = new ComputeBuffer(numPointsPerAxis * numPointsPerAxis * numPointsPerAxis, sizeof(float) * 4);
-        noiseShader.SetBuffer(0, "points", pointsBuffer);
-
-        var numThreads = Mathf.CeilToInt(numPointsPerAxis / 8f);
-        noiseShader.Dispatch(0, numThreads, numThreads, numThreads);
-
-        Vector4[] points = new Vector4[numPointsPerAxis * numPointsPerAxis * numPointsPerAxis];
-        pointsBuffer.GetData(points, 0, 0, numPointsPerAxis ^ 3);
-
-        return pointsBuffer;
-    }
-
-    public void ReleaseBuffers()
-    {
-        offsetsBuffer.Release();
-        pointsBuffer.Release();
+        shader.SetInt("octaves", numOctaves);
+        shader.SetFloat("lacunarity", lacunarity);
+        shader.SetFloat("persistence", persistence);
+        shader.SetFloat("noiseScale", noiseScale);
+        shader.SetFloat("noiseWeight", noiseWeight);
+        shader.SetFloat("floorOffset", floorOffset);
+        shader.SetFloat("weightMultiplier", weightMultiplier);
+        shader.SetFloat("hardFloor", hardFloor);
+        shader.SetFloat("hardFloorWeight", hardFloorWeight);
+        shader.SetFloat("warpEffect", warpEffect);
+        shader.SetFloat("warpFrequency", warpFrequency);
+        shader.SetInt("numPointsPerAxis", numPointsPerAxis);
+        shader.SetFloat("boundsSize", boundsSize);
+        shader.SetVector("centre", centre * boundsSize);
+        shader.SetVector("offset", new Vector4(offset.x,offset.y,offset.z, 0));
+        shader.SetVector("params", shaderParams);
+        shader.SetFloat("spacing", boundsSize / (numPointsPerAxis - 1));
     }
 }

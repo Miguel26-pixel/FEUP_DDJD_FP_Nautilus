@@ -10,12 +10,12 @@ public class Chunk : MonoBehaviour
     public Vector3Int chunkGridPosition;
     private MeshFilter _meshFilter;
     private MeshCollider _meshCollider;
-    private NoiseGenerator _noiseGenerator;
     
     private ComputeBuffer triangleBuffer;
     private ComputeBuffer triCountBuffer;
     public ComputeShader shader;
-    
+    private NoiseGenerator _noiseGenerator;
+
     private void Awake()
     {
         _meshFilter = GetComponent<MeshFilter>();
@@ -36,7 +36,7 @@ public class Chunk : MonoBehaviour
         int numVoxels = numVoxelsPerAxis * numVoxelsPerAxis * numVoxelsPerAxis;
         int maxTriangleCount = numVoxels * 5;
 
-        triangleBuffer = new ComputeBuffer (maxTriangleCount, sizeof (int), ComputeBufferType.Append);
+        triangleBuffer = new ComputeBuffer (maxTriangleCount, sizeof (float) * 9, ComputeBufferType.Append);
         triCountBuffer = new ComputeBuffer (1, sizeof (int), ComputeBufferType.Raw);
 
         shader.SetInt("numPointsPerAxis", _noiseGenerator.numPointsPerAxis);
