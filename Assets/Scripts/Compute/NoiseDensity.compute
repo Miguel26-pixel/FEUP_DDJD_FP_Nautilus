@@ -2,44 +2,87 @@
 #include "/Includes/Density.compute"
 #include "/Includes/Noise.compute"
 
+struct BiomeParameter
+{
+    float lacunarity;
+    float persistence;
+    float noiseScale;
+    float noiseWeight;
+    float floorOffset;
+    float weightMultiplier;
+    float hardFloor;
+    float hardFloorWeight;
+    float hardCeil;
+    float hardCeilWeight;
+    float warpEffect;
+    float warpFrequency;
+    float3 offset;
+    float4 params;
+};
+
+int numBiomes;
+StructuredBuffer<BiomeParameter> biomes;
+StructuredBuffer<float> biomesValues;
+StructuredBuffer<float> blendValues;
+float biomeScale;
+float biomeSeed;
+
 // Noise settings
 StructuredBuffer<float3> offsets;
-int octaves;
-float lacunarity;
-float persistence;
-float noiseScale;
-float noiseWeight;
-float floorOffset;
-float weightMultiplier;
-bool closeEdges;
-float hardFloor;
-float hardFloorWeight;
-float hardCeil;
-float hardCeilWeight;
-float warpEffect;
-float warpFrequency;
-
-float4 params;
 
 [numthreads(numThreads,numThreads,numThreads)]
 void Density (int3 id : SV_DispatchThreadID)
 {
-    // if (id.x >= numPointsPerAxis || id.y >= numPointsPerAxis || id.z >= numPointsPerAxis) {
-    //     return;
-    // }
-
     float3 pos = centre + id * spacing - boundsSize/2;
+
+    float biomeNoise = snoise(float3(pos.xy * biomeScale, biomeSeed));
+
+    int octaves = 8;
+
+    float lacunarity;
+    float persistence;
+    float noiseScale;
+    float noiseWeight;
+    float floorOffset;
+    float weightMultiplier;
+    float hardFloor;
+    float hardFloorWeight;
+    float hardCeil;
+    float hardCeilWeight;
+    float3 offset;
+    float4 params;
+
+    for (int biome = numBiomes - 1; biome > 0; biome --)
+    {
+        float a = biomesValues[biome*2-2];
+        float b = biomesValues[biome*2-1];
+
+        if (biomeNoise < a && biome > 1) continue;
+
+        float multBiomeA = smoothstep(a, b, biomeNoise);
+        float multBiomeB = 1 - multBiomeA;
+
+        lacunarity = biomes[biome].lacunarity * multBiomeB + biomes[biome - 1].lacunarity * multBiomeA;
+        persistence = biomes[biome].persistence * multBiomeB + biomes[biome - 1].persistence * multBiomeA;
+        noiseScale = biomes[biome].noiseScale * multBiomeB + biomes[biome - 1].noiseScale * multBiomeA;
+        noiseWeight = biomes[biome].noiseWeight * multBiomeB + biomes[biome - 1].noiseWeight * multBiomeA;
+        floorOffset = biomes[biome].floorOffset * multBiomeB + biomes[biome - 1].floorOffset * multBiomeA;
+        weightMultiplier = biomes[biome].weightMultiplier * multBiomeB + biomes[biome - 1].weightMultiplier * multBiomeA;
+        hardFloor = biomes[biome].hardFloor * multBiomeB + biomes[biome - 1].hardFloor * multBiomeA;
+        hardFloorWeight = biomes[biome].hardFloorWeight * multBiomeB + biomes[biome - 1].hardFloorWeight * multBiomeA;
+        hardCeil = biomes[biome].hardCeil * multBiomeB + biomes[biome - 1].hardCeil * multBiomeA;
+        hardCeilWeight = biomes[biome].hardCeilWeight * multBiomeB + biomes[biome - 1].hardCeilWeight * multBiomeA;
+        offset = biomes[biome].offset * multBiomeB + biomes[biome - 1].offset * multBiomeA;
+        params = biomes[biome].params * multBiomeB + biomes[biome - 1].params * multBiomeA;
+
+        if (biomeNoise >= a) break;
+    }
 
     float noise = 0;
 
     float frequency = noiseScale/100;
     float amplitude = 1;
     float weight = 1;
-    
-    float warpX = snoise(pos * warpFrequency);
-    float warpY = snoise(pos * warpFrequency + 0.5);
-    float warpZ = snoise(pos * warpFrequency + 1);
-    pos += float3(warpX, warpY, warpZ) * warpEffect;
 
     // pos += float3(warpX, warpY, warpZ) * lerp(0, 14, float(id.x) / float(numPointsPerAxis) );
 
@@ -53,18 +96,13 @@ void Density (int3 id : SV_DispatchThreadID)
         amplitude *= persistence;
         frequency *= lacunarity;
     }
-    
+
     float finalVal = -(pos.y + floorOffset) + noise * noiseWeight + (pos.y%params.x) * params.y;
     finalVal += hardFloorWeight * (pos.y < hardFloor);
     finalVal += hardCeilWeight * (pos.y > hardCeil);
 
-    // if (closeEdges) {
-    //     float3 edgeOffset = abs(pos*2)-worldSize + spacing/2;
-    //     float edgeWeight = saturate(sign(max(max(edgeOffset.x,edgeOffset.y),edgeOffset.z)));
-    //     finalVal = finalVal * (1-edgeWeight) - 100 * edgeWeight;
-    //     
-    // }
 
+    
     int index = indexFromCoord(id.x,id.y,id.z);
     points[index] = float4(pos, finalVal);
 }

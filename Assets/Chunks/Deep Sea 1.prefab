@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5382608540069460158}
   - component: {fileID: 5382608540069460152}
   - component: {fileID: 1117030778486291149}
+  - component: {fileID: 3054924705616874330}
   m_Layer: 0
   m_Name: Deep Sea 1
   m_TagString: Untagged
@@ -99,23 +100,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   numPointsPerAxis: 16
-  biomeParameters:
-  - numOctaves: 6
-    lacunarity: 2.4
-    persistence: 0.34
-    noiseScale: 0.8
-    noiseWeight: 59
-    floorOffset: 75
-    weightMultiplier: 2.3
-    hardFloor: -4
-    hardFloorWeight: 1
-    hardCeil: 0
-    hardCeilWeight: 0
-    warpEffect: 4
-    warpFrequency: 0.009
-    offset: {x: 0, y: 0, z: 0}
-    shaderParams: {x: 1, y: 1, z: 0, w: 0}
-    shader: {fileID: 7200000, guid: c6851149be19f7320adfb6906f638288, type: 3}
+  processingSteps:
+  - {fileID: 0}
 --- !u!114 &5382608540069460152
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144,3 +130,35 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &3054924705616874330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5382608540069460159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c37a361c776392268dbc390594fd88f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  biomeParameters:
+  - numOctaves: 0
+    lacunarity: 0
+    persistence: 0
+    noiseScale: 0
+    noiseWeight: 0
+    floorOffset: 0
+    weightMultiplier: 0
+    hardFloor: 0
+    hardFloorWeight: 0
+    hardCeil: 0
+    hardCeilWeight: 0
+    warpEffect: 0
+    warpFrequency: 0
+    offset: {x: 0, y: 0, z: 0}
+    shaderParams: {x: 0, y: 0, z: 0, w: 0}
+  biomesValues: []
+  numBiomes: 0
+  biomeScale: 0
+  shader: {fileID: 0}

@@ -1,49 +1,21 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class NoiseGenerator : MonoBehaviour
 {
-    [Header("Noise")] 
-
     public int numPointsPerAxis = 24;
-    private ComputeBuffer offsetsBuffer;
     private ComputeBuffer pointsBuffer;
-    public List<BiomeParameters> biomeParameters;
+
+    public List<ProcessingStep> processingSteps;
 
     public ComputeBuffer Generate(Vector3 centre, float boundsSize)
     {
-        var prng = new System.Random(1);
-
         pointsBuffer = new ComputeBuffer(numPointsPerAxis * numPointsPerAxis * numPointsPerAxis, sizeof(float) * 4);
-        foreach (var biomeParameter in biomeParameters)
+        foreach (var step in processingSteps)
         {
-            biomeParameter.UpdateValues(boundsSize, centre, numPointsPerAxis);
-            var offsets = new Vector3[biomeParameter.numOctaves];
-            float offsetRange = 1000;
-            for (int i = 0; i < biomeParameter.numOctaves; i++) {
-                offsets[i] = new Vector3 ((float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1) * offsetRange;
-            }
-
-            offsetsBuffer = new ComputeBuffer (offsets.Length, sizeof (float) * 3);
-            offsetsBuffer.SetData (offsets);
-
-            biomeParameter.shader.SetBuffer(0, "offsets", offsetsBuffer);
-            biomeParameter.shader.SetBuffer(0, "points", pointsBuffer);
-
-            var numThreads = Mathf.CeilToInt(numPointsPerAxis / 8f);
-			
-			
-            biomeParameter.shader.Dispatch(0, numThreads, numThreads, numThreads);
-
-            offsetsBuffer.Release();
+            step.Process(pointsBuffer, numPointsPerAxis, 0, boundsSize, centre);
         }
-
-        //Vector4[] points = new Vector4[numPointsPerAxis * numPointsPerAxis * numPointsPerAxis];
-        //pointsBuffer.GetData(points, 0, 0, numPointsPerAxis ^ 3);
 
         return pointsBuffer;
     }
@@ -56,46 +28,20 @@ public class NoiseGenerator : MonoBehaviour
 
 
 [Serializable]
-public class BiomeParameters
+public struct BiomeParameters
 {
-    public int numOctaves = 4;
-    public float lacunarity = 2;
-    public float persistence = .5f;
-    public float noiseScale = 1;
-    public float noiseWeight = 1;
-    public float floorOffset = 1;
-    public float weightMultiplier = 1;
+    public float lacunarity;
+    public float persistence;
+    public float noiseScale;
+    public float noiseWeight;
+    public float floorOffset;
+    public float weightMultiplier;
     public float hardFloor;
     public float hardFloorWeight;
     public float hardCeil;
     public float hardCeilWeight;
     public float warpEffect;
-    public float warpFrequency = 0.004f;
-    public Vector3 offset = new(0,0,0);
-    public Vector4 shaderParams = new(1, 0, 0, 0);
-
-    public ComputeShader shader;
-
-    public void UpdateValues(float boundsSize, Vector4 centre, int numPointsPerAxis)
-    {
-        shader.SetInt("octaves", numOctaves);
-        shader.SetFloat("lacunarity", lacunarity);
-        shader.SetFloat("persistence", persistence);
-        shader.SetFloat("noiseScale", noiseScale);
-        shader.SetFloat("noiseWeight", noiseWeight);
-        shader.SetFloat("floorOffset", floorOffset);
-        shader.SetFloat("weightMultiplier", weightMultiplier);
-        shader.SetFloat("hardFloor", hardFloor);
-        shader.SetFloat("hardFloorWeight", hardFloorWeight);
-        shader.SetFloat("hardCeil", hardCeil);
-        shader.SetFloat("hardCeilWeight", hardCeilWeight);
-        shader.SetFloat("warpEffect", warpEffect);
-        shader.SetFloat("warpFrequency", warpFrequency);
-        shader.SetInt("numPointsPerAxis", numPointsPerAxis);
-        shader.SetFloat("boundsSize", boundsSize);
-        shader.SetVector("centre", centre * boundsSize);
-        shader.SetVector("offset", new Vector4(offset.x,offset.y,offset.z, 0));
-        shader.SetVector("params", shaderParams);
-        shader.SetFloat("spacing", boundsSize / (numPointsPerAxis - 1));
-    }
+    public float warpFrequency;
+    public Vector3 offset;
+    public Vector4 shaderParams;
 }
