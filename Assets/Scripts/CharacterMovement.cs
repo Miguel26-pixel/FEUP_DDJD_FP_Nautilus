@@ -1,21 +1,34 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class CharacterMovement : MonoBehaviour
 {
     PlayerInput playerInput;
+    CharacterController characterController;
+    Animator animator;
+
+    // Movement
     Vector2 currentMovementInput;
     Vector3 currentMovement;
     bool isMovementPressed;
 
-    CharacterController characterController;
-    Animator animator;
+    // Jumping
+    bool isJumpPressed = false;
+    float initialJumpVelocity;
+    float maxJumpHeight = 1.0f;
+    float maxJumpTime = 0.5f;
+    bool isJumping = false;
 
+    // Camera
     float rotationFactorPerFrame = 15.0f;
-
     Vector3 cameraRelativeMovement;
+
+    // Gravity
+    float gravity = -9.8f;
+    float groundGravity = -.05f;
 
     private void Awake()
     {
@@ -26,6 +39,12 @@ public class CharacterMovement : MonoBehaviour
         playerInput.CharacterControls.Move.started += onMovementInput;
         playerInput.CharacterControls.Move.canceled += onMovementInput;
         playerInput.CharacterControls.Move.performed += onMovementInput;
+        playerInput.CharacterControls.Jump.started += onJump;
+        playerInput.CharacterControls.Jump.canceled += onJump;
+
+        float timeToApex = maxJumpTime / 2;
+        gravity = (-2 * maxJumpHeight) / Mathf.Pow(timeToApex, 2);
+        initialJumpVelocity = (2 * maxJumpHeight) / timeToApex;
     }
 
     private void onMovementInput(InputAction.CallbackContext context)
@@ -34,6 +53,11 @@ public class CharacterMovement : MonoBehaviour
         currentMovement.x = currentMovementInput.x;
         currentMovement.z = currentMovementInput.y;
         isMovementPressed = currentMovementInput.x != 0 || currentMovementInput.y != 0;
+    }
+
+    private void onJump(InputAction.CallbackContext context)
+    {
+        isJumpPressed = context.ReadValueAsButton();
     }
 
     private void HandleAnimation()
@@ -72,13 +96,24 @@ public class CharacterMovement : MonoBehaviour
     {
         if (characterController.isGrounded)
         {
-            float groundedGravity = -.5f;
-            currentMovement.y = groundedGravity;
+            currentMovement.y = groundGravity;
         } 
         else
         {
-            float gravity = -9.8f;
-            currentMovement.y += gravity;
+            currentMovement.y += gravity * Time.deltaTime;
+        }
+    }
+
+    private void HandleJump()
+    {
+        if (!isJumping && characterController.isGrounded && isJumpPressed)
+        {
+            isJumping = true;
+            currentMovement.y = initialJumpVelocity;
+        }
+        else if (!isJumpPressed && isJumping && characterController.isGrounded)
+        {
+            isJumping = false;
         }
     }
 
@@ -115,9 +150,9 @@ public class CharacterMovement : MonoBehaviour
         cameraRelativeMovement = ConvertToCameraSpace(currentMovement);
         HandleRotation();
         HandleAnimation();
-        HandleGravity();
         characterController.Move(cameraRelativeMovement * Time.deltaTime);
-
+        HandleGravity();
+        HandleJump();
     }
 
 }
