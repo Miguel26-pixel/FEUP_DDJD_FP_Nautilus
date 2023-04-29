@@ -26,6 +26,7 @@ public class BiomeProcessingStep : ProcessingStep
         shader.SetFloat("boundsSize", boundsSize);
         shader.SetVector("centre", centre * boundsSize);
         shader.SetFloat("spacing", boundsSize / (numPointsPerAxis - 1));
+        shader.SetInt("numPointsPerAxis", numPointsPerAxis);
         
         
         var prng = new System.Random(seed);

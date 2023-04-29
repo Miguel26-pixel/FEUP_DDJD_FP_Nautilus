@@ -23,7 +23,6 @@ struct BiomeParameter
 int numBiomes;
 StructuredBuffer<BiomeParameter> biomes;
 StructuredBuffer<float> biomesValues;
-StructuredBuffer<float> blendValues;
 float biomeScale;
 float biomeSeed;
 
@@ -35,7 +34,7 @@ void Density (int3 id : SV_DispatchThreadID)
 {
     float3 pos = centre + id * spacing - boundsSize/2;
 
-    float biomeNoise = snoise(float3(pos.xy * biomeScale, biomeSeed));
+    float biomeNoise = (snoise(float3(pos.xz * biomeScale, biomeSeed)) + 0.866025403785f) / (0.866025403785f*2.f);
 
     int octaves = 8;
 
@@ -51,7 +50,7 @@ void Density (int3 id : SV_DispatchThreadID)
     float hardCeilWeight;
     float3 offset;
     float4 params;
-
+    
     for (int biome = numBiomes - 1; biome > 0; biome --)
     {
         float a = biomesValues[biome*2-2];
@@ -59,12 +58,12 @@ void Density (int3 id : SV_DispatchThreadID)
 
         if (biomeNoise < a && biome > 1) continue;
 
-        float multBiomeA = smoothstep(a, b, biomeNoise);
-        float multBiomeB = 1 - multBiomeA;
+        float multBiomeB = smoothstep(a, b, biomeNoise);
+        float multBiomeA = 1 - multBiomeB;
 
         lacunarity = biomes[biome].lacunarity * multBiomeB + biomes[biome - 1].lacunarity * multBiomeA;
         persistence = biomes[biome].persistence * multBiomeB + biomes[biome - 1].persistence * multBiomeA;
-        noiseScale = biomes[biome].noiseScale * multBiomeB + biomes[biome - 1].noiseScale * multBiomeA;
+        noiseScale = biomes[biome - 1].noiseScale * multBiomeB + biomes[biome - 1].noiseScale * multBiomeA;
         noiseWeight = biomes[biome].noiseWeight * multBiomeB + biomes[biome - 1].noiseWeight * multBiomeA;
         floorOffset = biomes[biome].floorOffset * multBiomeB + biomes[biome - 1].floorOffset * multBiomeA;
         weightMultiplier = biomes[biome].weightMultiplier * multBiomeB + biomes[biome - 1].weightMultiplier * multBiomeA;
@@ -75,7 +74,7 @@ void Density (int3 id : SV_DispatchThreadID)
         offset = biomes[biome].offset * multBiomeB + biomes[biome - 1].offset * multBiomeA;
         params = biomes[biome].params * multBiomeB + biomes[biome - 1].params * multBiomeA;
 
-        if (biomeNoise >= a) break;
+        break;
     }
 
     float noise = 0;
@@ -100,8 +99,6 @@ void Density (int3 id : SV_DispatchThreadID)
     float finalVal = -(pos.y + floorOffset) + noise * noiseWeight + (pos.y%params.x) * params.y;
     finalVal += hardFloorWeight * (pos.y < hardFloor);
     finalVal += hardCeilWeight * (pos.y > hardCeil);
-
-
     
     int index = indexFromCoord(id.x,id.y,id.z);
     points[index] = float4(pos, finalVal);

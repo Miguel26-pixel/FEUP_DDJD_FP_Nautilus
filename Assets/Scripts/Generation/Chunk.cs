@@ -32,10 +32,6 @@ public class Chunk : MonoBehaviour
     {
         var pointsBuffer = _noiseGenerator.Generate(chunkGridPosition, boundsSize);
 
-        Vector4[] data = new Vector4[pointsBuffer.count];
-        
-        pointsBuffer.GetData(data);
-        
         int numVoxelsPerAxis = _noiseGenerator.numPointsPerAxis - 1;
         int numVoxels = numVoxelsPerAxis * numVoxelsPerAxis * numVoxelsPerAxis;
         int maxTriangleCount = numVoxels * 5;

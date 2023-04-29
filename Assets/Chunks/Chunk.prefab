@@ -145,7 +145,7 @@ MonoBehaviour:
   biomeParameters:
   - lacunarity: 2.4
     persistence: 0.34
-    noiseScale: 0.4
+    noiseScale: 0.42
     noiseWeight: 59
     floorOffset: 75
     weightMultiplier: 2.3
@@ -158,22 +158,37 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     shaderParams: {x: 1, y: 0, z: 0, w: 0}
   - lacunarity: 2.4
-    persistence: 0.34
-    noiseScale: 0.4
-    noiseWeight: 59
-    floorOffset: 75
-    weightMultiplier: 2.3
-    hardFloor: -4
-    hardFloorWeight: 0
+    persistence: 0.39
+    noiseScale: 0.42
+    noiseWeight: 19
+    floorOffset: 7
+    weightMultiplier: 4
+    hardFloor: 0
+    hardFloorWeight: 4
     hardCeil: 0
     hardCeilWeight: 0
     warpEffect: 0
-    warpFrequency: 0.009
+    warpFrequency: 0.002
     offset: {x: 0, y: 0, z: 0}
     shaderParams: {x: 1, y: 0, z: 0, w: 0}
+  - lacunarity: 2.4
+    persistence: 0.39
+    noiseScale: 0.42
+    noiseWeight: 20
+    floorOffset: -11
+    weightMultiplier: 4
+    hardFloor: 33
+    hardFloorWeight: 15
+    hardCeil: 0
+    hardCeilWeight: 0
+    warpEffect: 0
+    warpFrequency: 0.002
+    offset: {x: 0, y: 0, z: 0}
+    shaderParams: {x: 1, y: 0.2, z: 0, w: 0}
   biomesValues:
-  - 0
-  - 1
-  numBiomes: 1
-  biomeScale: 1
+  - 0.3
+  - 0.5
+  - 0.8
+  - 0.9
+  biomeScale: 0.003
   shader: {fileID: 7200000, guid: c6851149be19f7320adfb6906f638288, type: 3}
