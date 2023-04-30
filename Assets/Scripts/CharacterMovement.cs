@@ -30,6 +30,31 @@ public class CharacterMovement : MonoBehaviour
     float gravity = -9.8f;
     float groundGravity = -.05f;
 
+    //Life Points
+    public int Health = 100;
+
+    public bool isDead
+    {
+        get
+        {
+            return Health == 0;
+        }
+    }
+
+    public void TakeDamage(int amount)
+    {
+        Health -= amount;
+        if (Health < 0)
+        {
+            Health = 0;
+        }
+
+        if (isDead)
+        {
+            animator.SetTrigger("death");
+        }
+    }
+
     private void Awake()
     {
         playerInput = new PlayerInput();
@@ -53,11 +78,18 @@ public class CharacterMovement : MonoBehaviour
         currentMovement.x = currentMovementInput.x;
         currentMovement.z = currentMovementInput.y;
         isMovementPressed = currentMovementInput.x != 0 || currentMovementInput.y != 0;
+        TakeDamage(10);
     }
 
     private void onJump(InputAction.CallbackContext context)
     {
         isJumpPressed = context.ReadValueAsButton();
+    }
+
+    private void HandleAttack()
+    {
+        int attackMode = Random.Range(1,6);
+        animator.SetTrigger("Attack" + attackMode);
     }
 
     private void HandleAnimation()
@@ -147,12 +179,20 @@ public class CharacterMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        cameraRelativeMovement = ConvertToCameraSpace(currentMovement);
-        HandleRotation();
-        HandleAnimation();
-        characterController.Move(cameraRelativeMovement * Time.deltaTime);
-        HandleGravity();
-        HandleJump();
+        if (!isDead)
+        {
+            cameraRelativeMovement = ConvertToCameraSpace(currentMovement);
+            HandleRotation();
+            HandleAnimation();
+            characterController.Move(cameraRelativeMovement * Time.deltaTime);
+            HandleGravity();
+            HandleJump();
+
+            if (Input.GetKeyDown("e"))
+            {
+                HandleAttack();
+            }
+        }
     }
 
 }
