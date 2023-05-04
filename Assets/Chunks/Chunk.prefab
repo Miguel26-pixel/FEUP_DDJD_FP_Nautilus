@@ -193,6 +193,9 @@ MonoBehaviour:
   - 0.8
   - 0.9
   biomeScale: 0.0015
+  initPos: {x: 0, y: 0, z: 0}
+  islandRadius: 0.002
+  islandFalloff: 0.06
   shader: {fileID: 7200000, guid: c6851149be19f7320adfb6906f638288, type: 3}
 --- !u!114 &-7730389142229968132
 MonoBehaviour:

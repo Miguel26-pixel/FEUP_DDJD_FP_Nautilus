@@ -8,24 +8,7 @@ float3 offset;
 float spacing;
 float3 worldSize;
 
-typedef struct BiomeParameter
-{
-    float lacunarity;
-    float persistence;
-    float noiseScale;
-    float noiseWeight;
-    float floorOffset;
-    float weightMultiplier;
-    float hardFloor;
-    float hardFloorWeight;
-    float hardCeil;
-    float hardCeilWeight;
-    float warpEffect;
-    float warpFrequency;
-    float3 offset;
-    float4 params;
-} BiomeParameter;
-
 int indexFromCoord(uint x, uint y, uint z) {
     return z * numPointsPerAxis * numPointsPerAxis + y * numPointsPerAxis + x;
 }
+// wtffff
