@@ -363,7 +363,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isoLevel: 15.18
-  boundsSize: 40
+  boundsSize: 50
   player: {fileID: 1678036745}
   chunkPrefab: {fileID: 5382608540069460159, guid: c50d8f676bf4e53f3bee1fef7779aa00, type: 3}
   generationConfigs: {fileID: 1060819886}
