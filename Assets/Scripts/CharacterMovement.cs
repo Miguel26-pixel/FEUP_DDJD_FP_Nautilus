@@ -78,7 +78,6 @@ public class CharacterMovement : MonoBehaviour
         currentMovement.x = currentMovementInput.x;
         currentMovement.z = currentMovementInput.y;
         isMovementPressed = currentMovementInput.x != 0 || currentMovementInput.y != 0;
-        TakeDamage(10);
     }
 
     private void onJump(InputAction.CallbackContext context)
@@ -88,8 +87,7 @@ public class CharacterMovement : MonoBehaviour
 
     private void HandleAttack()
     {
-        int attackMode = Random.Range(1,6);
-        animator.SetTrigger("Attack" + attackMode);
+        animator.SetTrigger("Attack1");
     }
 
     private void HandleAnimation()
