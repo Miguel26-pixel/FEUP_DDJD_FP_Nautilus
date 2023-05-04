@@ -9,12 +9,12 @@ public class NoiseGenerator : MonoBehaviour
 
     public List<ProcessingStep> processingSteps;
 
-    public ComputeBuffer Generate(Vector3 centre, float boundsSize)
+    public ComputeBuffer Generate(Vector3 centre, float boundsSize, int seed)
     {
         pointsBuffer = new ComputeBuffer(numPointsPerAxis * numPointsPerAxis * numPointsPerAxis, sizeof(float) * 4);
         foreach (var step in processingSteps)
         {
-            step.Process(pointsBuffer, numPointsPerAxis, 0, boundsSize, centre);
+            step.Process(pointsBuffer, numPointsPerAxis, seed, boundsSize, centre);
         }
 
         return pointsBuffer;

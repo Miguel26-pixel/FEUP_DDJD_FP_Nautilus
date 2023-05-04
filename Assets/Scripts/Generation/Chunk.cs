@@ -28,9 +28,9 @@ public class Chunk : MonoBehaviour
         _meshCollider.sharedMesh = _meshFilter.sharedMesh;
     }
 
-    private Triangle[] GenerateTriangles(float isoLevel, float boundsSize)
+    private Triangle[] GenerateTriangles(float isoLevel, float boundsSize, int seed)
     {
-        var pointsBuffer = _noiseGenerator.Generate(chunkGridPosition, boundsSize);
+        var pointsBuffer = _noiseGenerator.Generate(chunkGridPosition, boundsSize, seed);
 
         int numVoxelsPerAxis = _noiseGenerator.numPointsPerAxis - 1;
         int numVoxels = numVoxelsPerAxis * numVoxelsPerAxis * numVoxelsPerAxis;
@@ -92,9 +92,9 @@ public class Chunk : MonoBehaviour
         mesh.RecalculateNormals();
     }
 
-    public void Generate(float isoLevel, float chunkSize)
+    public void Generate(float isoLevel, float chunkSize, int seed)
     {
-        Triangle[] triangles = GenerateTriangles(isoLevel, chunkSize);
+        Triangle[] triangles = GenerateTriangles(isoLevel, chunkSize, seed);
         GenerateMesh(triangles);
         GenerateCollider();
     }

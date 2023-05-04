@@ -8,6 +8,7 @@ public class MeshGenerator : MonoBehaviour
 {
     public float isoLevel;
     public float boundsSize = 1;
+    public int seed = 0;
     public Transform player;
 
     public GameObject chunkPrefab;
@@ -77,7 +78,7 @@ public class MeshGenerator : MonoBehaviour
                         chunkObject.name = $"Chunk {x} {y} {z}";
                         currentChunk = chunkObject.GetComponent<Chunk>();
                         currentChunk.chunkGridPosition = new Vector3Int(x, y, z);
-                        currentChunk.Generate(isoLevel, boundsSize);
+                        currentChunk.Generate(isoLevel, boundsSize, seed);
                         _chunks[chunkPosition] = currentChunk;
                     }
 
@@ -99,7 +100,7 @@ public class MeshGenerator : MonoBehaviour
                     chunkObject.name = $"Chunk {x} {y} {z}";
                     Chunk chunk = chunkObject.GetComponent<Chunk>();
                     chunk.chunkGridPosition = new Vector3Int(x, y, z);
-                    chunk.Generate(isoLevel, boundsSize);
+                    chunk.Generate(isoLevel, boundsSize, seed);
                 }
             }
         }
