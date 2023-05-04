@@ -6,7 +6,7 @@ int numBiomes;
 StructuredBuffer<BiomeParameter> biomes;
 StructuredBuffer<float> biomesValues;
 float biomeScale;
-float biomeSeed;
+float biomeOffset;
 
 // Noise settings
 StructuredBuffer<float3> offsets;
@@ -16,7 +16,8 @@ void Density (int3 id : SV_DispatchThreadID)
 {
     float3 pos = centre + id * spacing - boundsSize/2;
 
-    float biomeNoise = (snoise(float3(pos.xz * biomeScale, biomeSeed)) + 0.866025403785f) / (0.866025403785f*2.f);
+    const float3 biomePos = float3(pos.xz * biomeScale, 0) + biomeOffset;
+    const float biomeNoise = (snoise(biomePos) + 0.866025403785f) / (0.866025403785f*2.f);
 
     int octaves = 8;
 

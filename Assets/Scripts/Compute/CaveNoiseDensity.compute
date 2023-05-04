@@ -24,7 +24,7 @@ float mixA;
 float mixB;
 
 float biomeScale;
-float biomeSeed;
+float3 biomeOffset;
 
 [numthreads(numThreads,numThreads,numThreads)]
 void Density (int3 id : SV_DispatchThreadID)
@@ -35,7 +35,8 @@ void Density (int3 id : SV_DispatchThreadID)
         return;
     }
 
-    const float biomeNoise = (snoise(float3(pos.xz * biomeScale, biomeSeed)) + 0.866025403785f) / (0.866025403785f*2.f);
+    const float3 biomePos = float3(pos.xz * biomeScale, 0) + biomeOffset;
+    const float biomeNoise = (snoise(biomePos) + 0.866025403785f) / (0.866025403785f*2.f);
 
     const float a = mixA;
     const float b = mixB;
@@ -44,8 +45,8 @@ void Density (int3 id : SV_DispatchThreadID)
     float multBiomeA = 1 - multBiomeB;
 
     hardFloor = hardCeil * multBiomeB + hardFloor * multBiomeA;
-    hardFloorWeight = 600 * multBiomeB + hardFloorWeight * multBiomeA;
-    hardCeilWeight = 600 * multBiomeB + hardCeilWeight * multBiomeA;
+    hardFloorWeight = 10 * weightMultiplier * noiseWeight * multBiomeB + hardFloorWeight * multBiomeA;
+    hardCeilWeight = 10 * weightMultiplier * noiseWeight * multBiomeB + hardCeilWeight * multBiomeA;
     
     int index = indexFromCoord(id.x,id.y,id.z);
 

@@ -66,9 +66,9 @@ public class MeshGenerator : MonoBehaviour
                 {
                     Vector3Int chunkPosition = new Vector3Int(x, y, z);
                     Chunk currentChunk;
-                    if (_chunks.ContainsKey(chunkPosition))
+                    if (_chunks.TryGetValue(chunkPosition, out var chunk))
                     {
-                        currentChunk = _chunks[chunkPosition];
+                        currentChunk = chunk;
                         currentChunk.gameObject.SetActive(true);
                     }
                     else

@@ -22,12 +22,10 @@ public class BiomeProcessingStep : ProcessingStep
         shader.SetBuffer(0, "biomesValues", biomeValuesBuffer);
         shader.SetInt("numBiomes", biomeParameters.Count);
         shader.SetFloat("biomeScale", biomeScale);
-        shader.SetInt("biomeSeed", seed);
         shader.SetFloat("boundsSize", boundsSize);
         shader.SetVector("centre", centre * boundsSize);
         shader.SetFloat("spacing", boundsSize / (numPointsPerAxis - 1));
         shader.SetInt("numPointsPerAxis", numPointsPerAxis);
-        
         
         var prng = new System.Random(seed);
 
@@ -36,6 +34,12 @@ public class BiomeProcessingStep : ProcessingStep
         for (int i = 0; i < 8; i++) {
             offsets[i] = new Vector3 ((float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1) * offsetRange;
         }
+        
+        prng = new System.Random(seed);
+
+        Vector3 biomeOffset = new Vector3 ((float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1) * offsetRange;;
+        
+        shader.SetVector("biomeOffset", biomeOffset);
 
         ComputeBuffer offsetsBuffer = new ComputeBuffer (offsets.Length, sizeof (float) * 3);
         offsetsBuffer.SetData (offsets);

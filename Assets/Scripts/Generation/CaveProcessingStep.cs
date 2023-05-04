@@ -27,7 +27,6 @@ public class CaveProcessingStep : ProcessingStep
         shader.SetVector("offset", new Vector4(caveParameters.offset.x,caveParameters.offset.y,caveParameters.offset.z, 0));
         shader.SetVector("params", caveParameters.shaderParams);
         shader.SetFloat("biomeScale", biomeScale);
-        shader.SetInt("biomeSeed", seed);
         shader.SetFloat("boundsSize", boundsSize);
         shader.SetVector("centre", centre * boundsSize);
         shader.SetFloat("spacing", boundsSize / (numPointsPerAxis - 1));
@@ -43,7 +42,11 @@ public class CaveProcessingStep : ProcessingStep
         for (int i = 0; i < 6; i++) {
             offsets[i] = new Vector3 ((float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1) * offsetRange;
         }
-
+        
+        prng = new System.Random(seed);
+        Vector3 biomeOffset = new Vector3 ((float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1) * offsetRange;
+        shader.SetVector("biomeOffset", biomeOffset);
+        
         ComputeBuffer offsetsBuffer = new ComputeBuffer (offsets.Length, sizeof (float) * 3);
         offsetsBuffer.SetData (offsets);
 
