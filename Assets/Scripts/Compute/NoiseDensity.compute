@@ -25,7 +25,7 @@ int numBiomes;
 StructuredBuffer<BiomeParameter> biomes;
 StructuredBuffer<float> biomesValues;
 float biomeScale;
-float biomeOffset;
+float3 biomeOffset;
 
 // beginner island params
 float3 initPos;

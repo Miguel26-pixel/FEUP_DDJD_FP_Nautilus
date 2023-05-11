@@ -43,7 +43,7 @@ public class BiomeProcessingStep : ProcessingStep
         }
         
         prng = new System.Random(seed);
-        Vector3 biomeOffset = new Vector3 ((float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1) * offsetRange;;
+        Vector3 biomeOffset = new Vector3 ((float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1) * offsetRange;
         shader.SetVector("biomeOffset", biomeOffset);
 
         ComputeBuffer offsetsBuffer = new ComputeBuffer (offsets.Length, sizeof (float) * 3);
@@ -55,7 +55,7 @@ public class BiomeProcessingStep : ProcessingStep
         var numThreads = Mathf.CeilToInt(numPointsPerAxis / 8f);
 
         shader.Dispatch(0, numThreads, numThreads, numThreads);
-
+        
         offsetsBuffer.Release();
         biomeParametersBuffer.Release();
         biomeValuesBuffer.Release();
