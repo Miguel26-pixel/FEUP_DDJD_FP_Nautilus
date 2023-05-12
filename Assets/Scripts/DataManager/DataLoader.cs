@@ -15,9 +15,13 @@ namespace DataManager
             string json = jsonAsset.text;
 
             Item[] items = JsonConvert.DeserializeObject<Item[]>(json,
-                new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+                new JsonSerializerSettings
+                    { TypeNameHandling = TypeNameHandling.Auto, ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
 
-            foreach (Item item in items) itemRegistry.Add(item);
+            foreach (Item item in items)
+            {
+                itemRegistry.Add(item);
+            }
 
             itemRegistry.SetInitialized();
         }

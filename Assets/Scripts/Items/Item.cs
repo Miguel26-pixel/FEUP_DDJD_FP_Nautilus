@@ -14,7 +14,9 @@ namespace Items
         Consumable,
         Weapon,
         Equipment,
-        Machine
+        Machine,
+        Metal,
+        Tool
     }
 
     [Serializable]
@@ -33,7 +35,7 @@ namespace Items
         [SerializeField] [JsonProperty] private ItemType type;
 
         // Used for adding different capabilities to items.
-        [SerializeField] [JsonProperty] private List<ItemComponent> components = new();
+        [JsonProperty] private List<ItemComponent> _components = new();
 
 
         /// <summary>
@@ -60,28 +62,33 @@ namespace Items
 
         public void AddComponent(ItemComponent component)
         {
-            components.Add(component);
+            _components.Add(component);
         }
 
         public T GetComponent<T>() where T : ItemComponent
         {
-            return components.OfType<T>().FirstOrDefault();
+            return _components.OfType<T>().FirstOrDefault();
         }
 
         public T[] GetComponents<T>() where T : ItemComponent
         {
-            return components.OfType<T>().ToArray();
+            return _components.OfType<T>().ToArray();
+        }
+        
+        public ItemComponent[] GetComponents()
+        {
+            return _components.ToArray();
         }
 
         public bool HasComponent<T>() where T : ItemComponent
         {
-            return components.OfType<T>().Any();
+            return _components.OfType<T>().Any();
         }
 
         public List<ContextMenuAction> GetContextMenuActions()
         {
             List<ContextMenuAction> actions = new();
-            foreach (ItemComponent component in components) actions.AddRange(component.GetActions());
+            foreach (ItemComponent component in _components) actions.AddRange(component.GetActions());
 
             return actions;
         }

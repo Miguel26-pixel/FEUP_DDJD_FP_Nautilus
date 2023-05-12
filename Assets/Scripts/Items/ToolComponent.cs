@@ -2,16 +2,14 @@ using System;
 
 namespace Items
 {
-    [Serializable]
-    public class WeaponComponent : EquipableComponent
+    public class ToolComponent : EquipableComponent
     {
-        public WeaponComponent(int slot, int durability, string weapon) : base(slot,
-            durability)
+        public ToolComponent(int slot, int durability, string tool) : base(slot, durability)
         {
-            Weapon = weapon;
+            Tool = tool;
         }
 
-        public string Weapon { get; }
+        public string Tool { get; }
 
         public override void OnEquip()
         {
