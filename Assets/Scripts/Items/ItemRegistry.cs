@@ -13,10 +13,10 @@ namespace Items
         /// <summary>
         ///     Creates a new item with the given name, description, and icon path and registers it in the registry.
         /// </summary>
-        public Item CreateItem(string itemName, string description, string iconPath)
+        public Item CreateItem(string itemName, string description, ItemType type, string iconPath)
         {
             int hash = Hash(itemName, description);
-            Item item = new(hash.ToString("X"), itemName, description, iconPath);
+            Item item = new(hash.ToString("X"), itemName, description, type, iconPath);
             _items.Add(hash, item);
 
             return item;

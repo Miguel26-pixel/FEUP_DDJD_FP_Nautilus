@@ -17,20 +17,6 @@ namespace Items
 
         [JsonProperty("durability")] public int Durability { get; }
 
-        public void Equip()
-        {
-            throw new NotImplementedException();
-            // do stuff, then call
-            // OnEquip();
-        }
-
-        public void Unequip()
-        {
-            throw new NotImplementedException();
-            // do stuff, then call
-            // OnUnequip();
-        }
-
         public abstract void OnEquip();
         public abstract void OnUnequip();
     }

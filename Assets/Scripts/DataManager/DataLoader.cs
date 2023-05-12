@@ -23,12 +23,7 @@ namespace DataManager
                 Debug.Log(item.Description);
                 Debug.Log(item.ID);
 
-                Debug.Log(item.HasComponent<WeaponComponent>());
-                Debug.Log(item.GetComponent<WeaponComponent>().Damage);
-                Debug.Log(item.GetComponent<WeaponComponent>().Range);
-                Debug.Log(item.GetComponent<WeaponComponent>().AttackSpeed);
-                Debug.Log(item.GetComponent<WeaponComponent>().Durability);
-                Debug.Log(item.GetComponent<WeaponComponent>().Slot);
+                foreach (ItemComponent component in item.GetComponents<ItemComponent>()) Debug.Log(component.GetType());
 
                 itemRegistry.Add(item);
                 Debug.Log(itemRegistry.Get(item.ID).Name);

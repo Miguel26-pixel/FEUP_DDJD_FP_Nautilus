@@ -6,6 +6,15 @@ using UnityEngine;
 
 namespace Items
 {
+    public enum ItemType
+    {
+        Resource,
+        Fruit,
+        CreatureDrop,
+        Food,
+        Weapon
+    }
+
     [Serializable]
     [JsonObject(MemberSerialization.OptIn)]
     public class Item
@@ -18,6 +27,10 @@ namespace Items
 
         [SerializeField] [JsonProperty] private string iconPath;
 
+        // Only used for categorization of items in the inventory.
+        [SerializeField] [JsonProperty] private ItemType type;
+
+        // Used for adding different capabilities to items.
         [SerializeField] [JsonProperty] private List<ItemComponent> components = new();
 
 
@@ -25,11 +38,12 @@ namespace Items
         ///     Creates a new item with the given id, name, description, and icon.
         /// </summary>
         [JsonConstructor]
-        public Item(string id, string name, string description, string icon)
+        public Item(string id, string name, string description, ItemType type, string icon)
         {
             this.id = id;
             this.name = name;
             this.description = description;
+            this.type = type;
 
             Sprite sprite = Resources.Load<Sprite>(icon);
             Icon = sprite;
@@ -39,6 +53,7 @@ namespace Items
         public string ID => id;
         public string Name => name;
         public string Description => description;
+        public ItemType Type => type;
         public Sprite Icon { get; }
 
         public void AddComponent(ItemComponent component)
