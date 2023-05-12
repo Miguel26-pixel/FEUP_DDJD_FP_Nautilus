@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Crafting;
 using Items;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -15,6 +16,7 @@ namespace DataManager
     public class DataGenerator : MonoBehaviour
     {
         public ItemRegistry itemRegistry;
+        public CraftingRecipeRegistry recipeRegistry;
 
         private void Start()
         {
@@ -361,6 +363,7 @@ namespace DataManager
 
         private void CreateRecipes()
         {
+            // recipeRegistry.CreateCraftingRecipe();
         }
     }
 }
