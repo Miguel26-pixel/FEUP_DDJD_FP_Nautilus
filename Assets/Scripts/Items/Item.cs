@@ -14,7 +14,7 @@ namespace Items
         Consumable,
         Weapon,
         Equipment,
-        Machine,
+        Machine
     }
 
     [Serializable]
@@ -77,14 +77,11 @@ namespace Items
         {
             return components.OfType<T>().Any();
         }
-        
+
         public List<ContextMenuAction> GetContextMenuActions()
         {
             List<ContextMenuAction> actions = new();
-            foreach (ItemComponent component in components)
-            {
-                actions.AddRange(component.GetActions());
-            }
+            foreach (ItemComponent component in components) actions.AddRange(component.GetActions());
 
             return actions;
         }

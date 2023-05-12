@@ -7,9 +7,7 @@ namespace Items
     [Serializable]
     public abstract class ItemComponent
     {
-        [NonSerialized]
-        [JsonIgnore]
-        protected List<ContextMenuAction> actions = new();
+        [NonSerialized] [JsonIgnore] protected List<ContextMenuAction> actions = new();
 
         public List<ContextMenuAction> GetActions()
         {

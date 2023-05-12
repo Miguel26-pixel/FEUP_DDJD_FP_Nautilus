@@ -19,17 +19,9 @@ namespace DataManager
 
             foreach (Item item in items)
             {
-                Debug.Log(item.Name);
-                Debug.Log(item.Description);
-                Debug.Log(item.ID);
-
-                foreach (ItemComponent component in item.GetComponents<ItemComponent>()) Debug.Log(component.GetType());
-
                 itemRegistry.Add(item);
-                Debug.Log(itemRegistry.Get(item.ID).Name);
             }
 
-            Debug.Log(itemRegistry.GetAll().Length);
             itemRegistry.SetInitialized();
         }
     }

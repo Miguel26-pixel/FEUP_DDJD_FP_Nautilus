@@ -22,11 +22,6 @@ namespace DataManager
             itemRegistry.CreateItem("Wood",
                 "Sun-kissed timber harvested from majestic palm trees. Ideal for crafting and roasting marshmallows (if you can find any).",
                 ItemType.Resource, "ItemIcons/test");
-            itemRegistry.CreateItem("Thornmelons",
-                "Prickly fruits for a poke-filled harvest. Watch out for thorny surprises!", ItemType.Fruit,
-                "ItemIcons/test");
-            itemRegistry.CreateItem("Quarkberries", "Sweet and peculiar, just like this place.", ItemType.Fruit,
-                "ItemIcons/test");
             itemRegistry.CreateItem("Seaweed Fiber", "Seashore secret for crafting needs.", ItemType.Resource,
                 "ItemIcons/test");
             itemRegistry.CreateItem("Seashell Calcium", "Calcium-rich treasures from seashells.", ItemType.Resource,
@@ -61,19 +56,68 @@ namespace DataManager
             itemRegistry.CreateItem("Alien Artifact",
                 "From the depths of the cave comes this mysterious artifact. Is it a remnant of an ancient civilization or something else?",
                 ItemType.Resource, "ItemIcons/test");
-            itemRegistry.CreateItem("Sea Meat", "Savory bounty from the ocean's creatures.", ItemType.Consumable,
-                "ItemIcons/test");
             itemRegistry.CreateItem("Tritonite",
                 "A rare and precious gemstone found by vanquishing the formidable Krakolith. This gem holds the power to unlock new realms of knowledge. Keep it safe and wear it proudly as a badge of honor!",
                 ItemType.CreatureDrop, "ItemIcons/test");
-            
+
+            // Consumables
+
+            Item thornmelon = itemRegistry.CreateItem("Thornmelons",
+                "Prickly fruits for a poke-filled harvest. Watch out for thorny surprises!", ItemType.Fruit,
+                "ItemIcons/test");
+            ConsumableComponent consumableComponent = new(5, 10);
+            thornmelon.AddComponent(consumableComponent);
+
+            Item quarkberry = itemRegistry.CreateItem("Quarkberries", "Sweet and peculiar, just like this place.",
+                ItemType.Fruit,
+                "ItemIcons/test");
+            consumableComponent = new ConsumableComponent(10, 5);
+            quarkberry.AddComponent(consumableComponent);
+
+            Item meat = itemRegistry.CreateItem("Sea Meat", "Savory bounty from the ocean's creatures.",
+                ItemType.Consumable,
+                "ItemIcons/test");
+            consumableComponent = new ConsumableComponent(10, 10);
+            meat.AddComponent(consumableComponent);
+
+            Item jam = itemRegistry.CreateItem("Thornmelon Jam",
+                "For when you want a meal that's both prickly and slimy. Yum!", ItemType.Consumable, "ItemIcons/test");
+            consumableComponent = new ConsumableComponent(15, 20);
+            jam.AddComponent(consumableComponent);
+
+            Item stew = itemRegistry.CreateItem("Fish Stew",
+                "For when you want a meal that's both prickly and slimy. Yum!", ItemType.Consumable, "ItemIcons/test");
+            consumableComponent = new ConsumableComponent(20, 30);
+            stew.AddComponent(consumableComponent);
+
+            Item seafood = itemRegistry.CreateItem("Questionable Seafood",
+                "This dish may make you question your life choices, but at least you'll have a full belly. Just make sure you have plenty of water on hand, because it's guaranteed to make you thirsty. And maybe keep a bucket nearby, just in case.",
+                ItemType.Consumable, "ItemIcons/test");
+            consumableComponent = new ConsumableComponent(25, 50);
+            seafood.AddComponent(consumableComponent);
+
+            Item schnitzel = itemRegistry.CreateItem("Leviathan Schnitzel",
+                "It's time for payback! Feast on the crispy Leviathan skin and feel the thrill of victory over the once-mighty sea creature.",
+                ItemType.Consumable, "ItemIcons/test");
+            consumableComponent = new ConsumableComponent(30, 80);
+            schnitzel.AddComponent(consumableComponent);
+
+            Item crunch = itemRegistry.CreateItem("Crunchy Delight",
+                "It's so delicious, it'll bring tears to your eyes. Whether it's tears of joy or tears of pain is up to you.",
+                ItemType.Consumable, "ItemIcons/test");
+            consumableComponent = new ConsumableComponent(-10, 80);
+            crunch.AddComponent(consumableComponent);
+
+            Item ointment = itemRegistry.CreateItem("Ointment",
+                "This ointment is a must-have for any researcher. Its healing properties make it ideal for treating cuts, scrapes, and other injuries. Wait, you're not eating it are you?",
+                ItemType.Consumable, "ItemIcons/test");
+            consumableComponent = new ConsumableComponent(50, 5);
+            ointment.AddComponent(consumableComponent);
+
             // Machines
-            
-            
-            
 
             // Weapons
-            
+
             Item spear = itemRegistry.CreateItem("Spear",
                 "The perfect tool for when you want to stab something, but don't want to get too close.",
                 ItemType.Weapon,
