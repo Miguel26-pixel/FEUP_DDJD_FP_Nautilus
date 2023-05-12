@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using Items;
+using Newtonsoft.Json;
 using UnityEngine;
 
-namespace DataGenerator
+namespace DataManager
 {
     /// <summary>
     /// Used only once to generate the ItemData.json file.
@@ -10,11 +12,14 @@ namespace DataGenerator
     /// </summary>
     public class DataGenerator : MonoBehaviour
     {
+        public ItemRegistry itemRegistry;
+        
         private void Start()
         {
-            Item item = new Item("Test Item", "This is a test item", "test");
+            itemRegistry.CreateItem("Test Item", "This is a test item.", "ItemIcons/test");
 
-            string json = JsonUtility.ToJson(item);
+            Item[] items = itemRegistry.GetAll();
+            string json = JsonConvert.SerializeObject(items);
             System.IO.File.WriteAllText("ItemData.json", json);
         }
     }
