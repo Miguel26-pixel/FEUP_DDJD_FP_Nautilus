@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -55,6 +56,7 @@ namespace Items
         }
 
         public string ID => id;
+        public int IDHash => int.Parse(id, NumberStyles.HexNumber);
         public string Name => name;
         public string Description => description;
         public ItemType Type => type;

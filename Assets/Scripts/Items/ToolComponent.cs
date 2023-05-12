@@ -1,7 +1,9 @@
 using System;
+using Newtonsoft.Json;
 
 namespace Items
 {
+    [Serializable]
     public class ToolComponent : EquipableComponent
     {
         public ToolComponent(int slot, int durability, string tool) : base(slot, durability)
@@ -9,6 +11,7 @@ namespace Items
             Tool = tool;
         }
 
+        [JsonProperty("tool")]
         public string Tool { get; }
 
         public override void OnEquip()

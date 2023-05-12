@@ -1,4 +1,5 @@
 using System;
+using Newtonsoft.Json;
 
 namespace Items
 {
@@ -11,6 +12,7 @@ namespace Items
             Weapon = weapon;
         }
 
+        [JsonProperty("weapon")]
         public string Weapon { get; }
 
         public override void OnEquip()

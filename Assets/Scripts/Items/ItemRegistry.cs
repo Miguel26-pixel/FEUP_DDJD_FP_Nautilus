@@ -27,8 +27,7 @@ namespace Items
         /// </summary>
         public void Add(Item item)
         {
-            int key = int.Parse(item.ID, NumberStyles.HexNumber);
-            _items.Add(key, item);
+            _items.Add(item.IDHash, item);
         }
 
         /// <summary>
