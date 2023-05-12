@@ -76,7 +76,7 @@ namespace Items
         {
             return _components.OfType<T>().ToArray();
         }
-        
+
         public ItemComponent[] GetComponents()
         {
             return _components.ToArray();
@@ -90,7 +90,10 @@ namespace Items
         public List<ContextMenuAction> GetContextMenuActions()
         {
             List<ContextMenuAction> actions = new();
-            foreach (ItemComponent component in _components) actions.AddRange(component.GetActions());
+            foreach (ItemComponent component in _components)
+            {
+                actions.AddRange(component.GetActions());
+            }
 
             return actions;
         }

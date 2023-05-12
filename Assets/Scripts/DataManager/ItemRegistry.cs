@@ -1,14 +1,13 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using UnityEngine;
+using Items;
 
-namespace Items
+namespace DataManager
 {
-    public class ItemRegistry : MonoBehaviour
+    public class ItemRegistry : Registry<Item>
     {
         private readonly Dictionary<int, Item> _items = new();
-        public bool Initialized { get; private set; }
 
         /// <summary>
         ///     Creates a new item with the given name, description, and icon path and registers it in the registry.
@@ -25,7 +24,7 @@ namespace Items
         /// <summary>
         ///     Adds an item loaded from the JSON file to the registry.
         /// </summary>
-        public void Add(Item item)
+        public override void Add(Item item)
         {
             _items.Add(item.IDHash, item);
         }
@@ -41,21 +40,18 @@ namespace Items
             return _items[key];
         }
 
+        public Item Get(int hash)
+        {
+            return _items[hash];
+        }
+
         /// <summary>
         ///     Gets all items in the registry.
         /// </summary>
         /// <returns></returns>
-        public Item[] GetAll()
+        public override Item[] GetAll()
         {
             return _items.Values.ToArray();
-        }
-
-        /// <summary>
-        ///     Sets the registry as initialized.
-        /// </summary>
-        public void SetInitialized()
-        {
-            Initialized = true;
         }
 
         /// <summary>
@@ -66,7 +62,10 @@ namespace Items
             string hashString = itemName + description;
 
             int hash = hashString.GetHashCode();
-            while (_items.ContainsKey(hash)) hash = hash.GetHashCode();
+            while (_items.ContainsKey(hash))
+            {
+                hash = hash.GetHashCode();
+            }
 
             return hash;
         }

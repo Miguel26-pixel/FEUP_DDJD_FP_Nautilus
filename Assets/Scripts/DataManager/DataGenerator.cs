@@ -16,9 +16,16 @@ namespace DataManager
     {
         public ItemRegistry itemRegistry;
 
+        private void Start()
+        {
+            CreateItems();
+            CreateRecipes();
+            Debug.Log("Done!");
+        }
+
         private void CreateItems()
         {
-             // Simple resources from gathering and monsters, without any components.
+            // Simple resources from gathering and monsters, without any components.
             itemRegistry.CreateItem("Fiber", "Tangled treasures from island grass.", ItemType.Resource,
                 "ItemIcons/test");
             itemRegistry.CreateItem("Wood",
@@ -350,13 +357,10 @@ namespace DataManager
                 new JsonSerializerSettings
                     { TypeNameHandling = TypeNameHandling.Auto, ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
             File.WriteAllText("ItemData.json", json);
-            
         }
-        
-        private void Start()
+
+        private void CreateRecipes()
         {
-            CreateItems();
-            Debug.Log("Done!");
         }
     }
 }

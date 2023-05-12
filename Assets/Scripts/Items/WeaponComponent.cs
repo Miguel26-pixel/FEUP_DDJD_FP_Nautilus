@@ -12,8 +12,7 @@ namespace Items
             Weapon = weapon;
         }
 
-        [JsonProperty("weapon")]
-        public string Weapon { get; }
+        [JsonProperty("weapon")] public string Weapon { get; }
 
         public override void OnEquip()
         {

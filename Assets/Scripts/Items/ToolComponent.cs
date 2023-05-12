@@ -11,8 +11,7 @@ namespace Items
             Tool = tool;
         }
 
-        [JsonProperty("tool")]
-        public string Tool { get; }
+        [JsonProperty("tool")] public string Tool { get; }
 
         public override void OnEquip()
         {
