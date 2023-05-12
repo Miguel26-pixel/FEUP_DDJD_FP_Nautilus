@@ -11,8 +11,10 @@ namespace Items
         Resource,
         Fruit,
         CreatureDrop,
-        Food,
-        Weapon
+        Consumable,
+        Weapon,
+        Equipment,
+        Machine,
     }
 
     [Serializable]
@@ -74,6 +76,17 @@ namespace Items
         public bool HasComponent<T>() where T : ItemComponent
         {
             return components.OfType<T>().Any();
+        }
+        
+        public List<ContextMenuAction> GetContextMenuActions()
+        {
+            List<ContextMenuAction> actions = new();
+            foreach (ItemComponent component in components)
+            {
+                actions.AddRange(component.GetActions());
+            }
+
+            return actions;
         }
     }
 }

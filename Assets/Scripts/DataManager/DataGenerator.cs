@@ -61,11 +61,16 @@ namespace DataManager
             itemRegistry.CreateItem("Alien Artifact",
                 "From the depths of the cave comes this mysterious artifact. Is it a remnant of an ancient civilization or something else?",
                 ItemType.Resource, "ItemIcons/test");
-            itemRegistry.CreateItem("Sea Meat", "Savory bounty from the ocean's creatures.", ItemType.Food,
+            itemRegistry.CreateItem("Sea Meat", "Savory bounty from the ocean's creatures.", ItemType.Consumable,
                 "ItemIcons/test");
             itemRegistry.CreateItem("Tritonite",
                 "A rare and precious gemstone found by vanquishing the formidable Krakolith. This gem holds the power to unlock new realms of knowledge. Keep it safe and wear it proudly as a badge of honor!",
                 ItemType.CreatureDrop, "ItemIcons/test");
+            
+            // Machines
+            
+            
+            
 
             // Weapons
             
@@ -74,6 +79,7 @@ namespace DataManager
                 ItemType.Weapon,
                 "ItemIcons/test");
 
+            // TODO: FILL WITH CORRECT STATS
             WeaponComponent weaponComponent = new(0, 30, 10, 5, 1);
             spear.AddComponent(weaponComponent);
 
