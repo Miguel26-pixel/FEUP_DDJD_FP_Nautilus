@@ -1,1 +1,1 @@
-[{"id":"349A2467","name":"Test Item","description":"This is a test item.","iconPath":"ItemIcons/test"}]
+[{"id":"F1A34A96","name":"Spear","description":"The perfect tool for when you want to stab something, but don't want to get too close.","iconPath":"ItemIcons/test","components":[{"$type":"Items.WeaponComponent, Assembly-CSharp","damage":10,"range":5,"attackSpeed":1,"slot":0,"durability":30}]}]

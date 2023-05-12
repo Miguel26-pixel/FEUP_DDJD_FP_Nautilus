@@ -8,31 +8,32 @@ namespace Items
     public class ItemRegistry : MonoBehaviour
     {
         private readonly Dictionary<int, Item> _items = new();
-        
+        public bool Initialized { get; private set; }
+
         /// <summary>
-        /// Creates a new item with the given name, description, and icon path and registers it in the registry.
+        ///     Creates a new item with the given name, description, and icon path and registers it in the registry.
         /// </summary>
-        public Item CreateItem(string name, string description, string iconPath)
+        public Item CreateItem(string itemName, string description, string iconPath)
         {
-            int hash = Hash(name, description);
-            Item item = new Item(hash.ToString("X"), name, description, iconPath);
+            int hash = Hash(itemName, description);
+            Item item = new(hash.ToString("X"), itemName, description, iconPath);
             _items.Add(hash, item);
-            
+
             return item;
         }
 
         /// <summary>
-        /// Adds an item loaded from the JSON file to the registry.
+        ///     Adds an item loaded from the JSON file to the registry.
         /// </summary>
         public void Add(Item item)
         {
             int key = int.Parse(item.ID, NumberStyles.HexNumber);
             _items.Add(key, item);
         }
-        
+
         /// <summary>
-        /// Gets the item with the given string hash.
-        /// The use of a string hash is for better readability in the JSON file.
+        ///     Gets the item with the given string hash.
+        ///     The use of a string hash is for better readability in the JSON file.
         /// </summary>
         /// <param name="hash">The string hash equivalent of the item's ID</param>
         public Item Get(string hash)
@@ -42,7 +43,7 @@ namespace Items
         }
 
         /// <summary>
-        /// Gets all items in the registry.
+        ///     Gets all items in the registry.
         /// </summary>
         /// <returns></returns>
         public Item[] GetAll()
@@ -51,16 +52,22 @@ namespace Items
         }
 
         /// <summary>
-        /// Hashes the item's name and description to generate a unique ID.
+        ///     Sets the registry as initialized.
         /// </summary>
-        private int Hash(string name, string description) {
-            string hashString = name + description;
-            
+        public void SetInitialized()
+        {
+            Initialized = true;
+        }
+
+        /// <summary>
+        ///     Hashes the item's name and description to generate a unique ID.
+        /// </summary>
+        private int Hash(string itemName, string description)
+        {
+            string hashString = itemName + description;
+
             int hash = hashString.GetHashCode();
-            while (_items.ContainsKey(hash))
-            {
-                hash = hash.GetHashCode();
-            }
+            while (_items.ContainsKey(hash)) hash = hash.GetHashCode();
 
             return hash;
         }

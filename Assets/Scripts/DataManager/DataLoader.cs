@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Items;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -15,19 +14,28 @@ namespace DataManager
             TextAsset jsonAsset = Resources.Load<TextAsset>("ItemData");
             string json = jsonAsset.text;
 
-            Item[] items = JsonConvert.DeserializeObject<Item[]>(json);
+            Item[] items = JsonConvert.DeserializeObject<Item[]>(json,
+                new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
 
-            foreach (var item in items)
+            foreach (Item item in items)
             {
                 Debug.Log(item.Name);
                 Debug.Log(item.Description);
                 Debug.Log(item.ID);
-                
+
+                Debug.Log(item.HasComponent<WeaponComponent>());
+                Debug.Log(item.GetComponent<WeaponComponent>().Damage);
+                Debug.Log(item.GetComponent<WeaponComponent>().Range);
+                Debug.Log(item.GetComponent<WeaponComponent>().AttackSpeed);
+                Debug.Log(item.GetComponent<WeaponComponent>().Durability);
+                Debug.Log(item.GetComponent<WeaponComponent>().Slot);
+
                 itemRegistry.Add(item);
                 Debug.Log(itemRegistry.Get(item.ID).Name);
             }
 
             Debug.Log(itemRegistry.GetAll().Length);
+            itemRegistry.SetInitialized();
         }
     }
 }
