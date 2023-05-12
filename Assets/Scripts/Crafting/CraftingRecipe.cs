@@ -13,11 +13,13 @@ namespace Crafting
 
         [JsonProperty("result")] private string _resultHex;
 
-        public CraftingRecipe(string result, MachineType machineType, Dictionary<string, int> ingredients)
+        public CraftingRecipe(string result, MachineType machineType, Dictionary<string, int> ingredients,
+            int quantity = 1)
         {
             _ingredientsHex = ingredients;
             _resultHex = result;
             MachineType = machineType;
+            Quantity = quantity;
 
             // hex string to int
             Result = int.Parse(result, NumberStyles.HexNumber);
@@ -33,9 +35,10 @@ namespace Crafting
         [JsonIgnore] public Dictionary<int, int> Ingredients { get; }
 
         [JsonIgnore] public int Result { get; }
-        
+
         [JsonProperty("machineType")] public MachineType MachineType { get; }
-        
+        [JsonProperty("quantity")] public int Quantity { get; }
+
 
         public bool CanCraft(MachineType machineType, List<Item> items)
         {
@@ -43,7 +46,7 @@ namespace Crafting
             {
                 return false;
             }
-            
+
             // Check if the player has the required items, and if they have enough of them
             Dictionary<int, int> count = new();
 

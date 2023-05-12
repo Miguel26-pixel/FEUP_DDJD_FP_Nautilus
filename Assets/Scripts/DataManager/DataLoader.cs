@@ -1,3 +1,4 @@
+using Crafting;
 using Items;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -7,6 +8,7 @@ namespace DataManager
     public class DataLoader : MonoBehaviour
     {
         public ItemRegistry itemRegistry;
+        public CraftingRecipeRegistry recipeRegistry;
 
         private void Start()
         {
@@ -24,6 +26,20 @@ namespace DataManager
             }
 
             itemRegistry.SetInitialized();
+            
+            TextAsset recipeAsset = Resources.Load<TextAsset>("RecipeData");
+            string recipeJson = recipeAsset.text;
+            
+            CraftingRecipe[] recipes = JsonConvert.DeserializeObject<CraftingRecipe[]>(recipeJson,
+                new JsonSerializerSettings
+                    { TypeNameHandling = TypeNameHandling.Auto, ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+            
+            foreach (CraftingRecipe recipe in recipes)
+            {
+                recipeRegistry.Add(recipe);
+            }
+            
+            recipeRegistry.SetInitialized();
         }
     }
 }
