@@ -29,6 +29,8 @@ namespace Items
             Name = name;
             Position = position;
             Rotation = rotation;
+
+            LoadedObject = Resources.Load<GameObject>(name);
         }
 
         [JsonProperty("name")] public string Name { get; }
@@ -36,5 +38,7 @@ namespace Items
         [JsonProperty("position")] public Vector3 Position { get; }
 
         [JsonProperty("rotation")] public Quaternion Rotation { get; }
+
+        [JsonIgnore] public GameObject LoadedObject { get; }
     }
 }

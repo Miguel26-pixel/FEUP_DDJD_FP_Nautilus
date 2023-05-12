@@ -17,10 +17,7 @@ namespace DataManager
             Item[] items = JsonConvert.DeserializeObject<Item[]>(json,
                 new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
 
-            foreach (Item item in items)
-            {
-                itemRegistry.Add(item);
-            }
+            foreach (Item item in items) itemRegistry.Add(item);
 
             itemRegistry.SetInitialized();
         }
