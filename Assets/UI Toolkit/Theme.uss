@@ -1,0 +1,36 @@
+.background {
+    background-color: rgba(114, 209, 229, 255);
+    border-left-color: rgba(82, 178, 191, 255);
+    border-right-color: rgba(82, 178, 191, 255);
+    border-top-color: rgba(82, 178, 191, 255);
+    border-bottom-color: rgba(82, 178, 191, 255);
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 0;
+    border-bottom-width: 2px;
+    border-top-left-radius: 1px;
+    border-bottom-left-radius: 4px;
+    border-top-right-radius: 1px;
+    border-bottom-right-radius: 4px;
+}
+
+.tab {
+    width: 80px;
+    height: 80px;
+    background-color: rgba(130, 238, 253, 255);
+    border-left-color: rgba(82, 178, 191, 255);
+    border-right-color: rgba(82, 178, 191, 255);
+    border-top-color: rgba(82, 178, 191, 255);
+    border-bottom-color: rgba(82, 178, 191, 255);
+    border-left-width: 1px;
+    border-bottom-width: 2px;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    margin-left: 12px;
+}
+
+.tab:hover {
+    background-color: rgba(122, 222, 235, 255);
+}

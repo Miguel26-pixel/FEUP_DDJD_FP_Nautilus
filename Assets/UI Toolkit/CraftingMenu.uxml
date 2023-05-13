@@ -1,0 +1,10 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/Theme.uss?fileID=7433441132597879392&amp;guid=b674df751d5a19162b7bfb6da9f4cfd4&amp;type=3#Theme" />
+    <ui:VisualElement name="CategoryBar" picking-mode="Ignore" style="height: 100px; margin-left: 20px; margin-right: auto; margin-top: 10px; flex-direction: row; align-items: center; padding-right: 0;">
+        <ui:VisualElement name="TopFlair" picking-mode="Ignore" style="position: absolute; width: 100%; height: 4px; margin-right: 0; padding-right: 0; top: -1px; background-color: rgb(130, 238, 253); border-top-left-radius: 2px; border-bottom-left-radius: 0; border-top-right-radius: 2px; border-bottom-right-radius: 0;" />
+        <ui:VisualElement name="Background" picking-mode="Ignore" class="background" style="position: absolute; width: 100%; height: 100%;" />
+        <ui:VisualElement name="Tab" focusable="true" class="tab" />
+        <ui:VisualElement name="Tab" focusable="true" class="tab" />
+        <ui:VisualElement picking-mode="Ignore" style="width: 12px;" />
+    </ui:VisualElement>
+</ui:UXML>

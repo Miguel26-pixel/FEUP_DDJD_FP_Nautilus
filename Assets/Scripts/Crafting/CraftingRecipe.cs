@@ -42,7 +42,7 @@ namespace Crafting
 
         public bool CanCraft(MachineType machineType, List<Item> items)
         {
-            if ((MachineType & machineType) == 0)
+            if (!CanCraftOnMachine(machineType))
             {
                 return false;
             }
@@ -73,5 +73,7 @@ namespace Crafting
 
             return true;
         }
+        
+        public bool CanCraftOnMachine(MachineType machineType) => (MachineType & machineType) != 0;
     }
 }
