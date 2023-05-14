@@ -78,3 +78,72 @@
     height: 80px;
     margin-left: 15px;
 }
+
+.title-icon {
+}
+
+.title-icon.overlay {
+    opacity: 0;
+    display: none;
+    visibility: hidden;
+}
+
+.text {
+    color: rgb(242, 211, 172);
+    -unity-font-definition: url('project://database/Assets/Fonts/Blazma_Font_1_00/OpenType%20(.otf)/Blazma-Regular%20SDF.asset?fileID=11400000&guid=6e04e157ffbe131eaa25515bf87a13fe&type=2#Blazma-Regular SDF');
+}
+
+.item-square {
+    width: 55px;
+    height: 55px;
+    background-color: rgb(95, 116, 131);
+    border-left-color: rgb(27, 50, 67);
+    border-right-color: rgb(27, 50, 67);
+    border-top-color: rgb(27, 50, 67);
+    border-bottom-color: rgb(27, 50, 67);
+    border-left-width: 1px;
+    border-bottom-width: 1px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+}
+
+.item-square-disabled {
+    width: 55px;
+    height: 55px;
+    background-color: rgb(66, 89, 106);
+    border-left-color: rgb(2, 45, 54);
+    border-right-color: rgb(2, 45, 54);
+    border-top-color: rgb(2, 45, 54);
+    border-bottom-color: rgb(2, 45, 54);
+    border-left-width: 1px;
+    border-bottom-width: 1px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-width: 1px;
+    border-right-width: 1px;
+}
+
+.gradient {
+    justify-content: space-between;
+    margin-left: 0;
+    margin-right: 5px;
+    flex-grow: 1;
+    background-image: url('project://database/Assets/UI%20Toolkit/Images/gradient-white.png?fileID=21300000&guid=72618608899c61ae396b921a493f7743&type=3#gradient-white');
+    margin-top: 0;
+    margin-bottom: 0;
+    align-items: center;
+    flex-direction: row;
+    -unity-background-image-tint-color: rgba(13, 34, 49, 255);
+}
+
+.ingredient-full > .gradient {
+    -unity-background-image-tint-color: rgba(11, 53, 35, 255);
+}
+
+.ingredient-incomplete.gradient {
+}
+
+.ingredient-full {
+}

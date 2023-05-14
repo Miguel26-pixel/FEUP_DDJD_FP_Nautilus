@@ -1,9 +1,10 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <ui:Template name="Button" src="project://database/Assets/UI%20Toolkit/Templates/Button.uxml?fileID=9197481963319205126&amp;guid=9827c0fc39a7046fc88a9b41a310c8d8&amp;type=3#Button" />
+    <Style src="project://database/Assets/UI%20Toolkit/Theme.uss?fileID=7433441132597879392&amp;guid=b674df751d5a19162b7bfb6da9f4cfd4&amp;type=3#Theme" />
     <ui:VisualElement name="Item" picking-mode="Ignore" class="item-holder" style="flex-direction: row;">
         <ui:Instance template="Button" name="Button" class="item" />
-        <ui:VisualElement name="NameContainer" style="justify-content: center; margin-left: 10px; margin-right: 10px; flex-grow: 1; background-image: url(&apos;project://database/Assets/UI%20Toolkit/Images/gradient.png?fileID=21300000&amp;guid=6db30642ec169ae9d95cb929054154a4&amp;type=3#gradient&apos;); margin-top: 5px; margin-bottom: 5px; border-top-left-radius: 4px; border-bottom-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px;">
-            <ui:Label text="Spear" display-tooltip-when-elided="true" name="ItemName" style="-unity-text-align: middle-left; white-space: normal; color: rgb(242, 211, 172); font-size: 25px; margin-left: 10px; -unity-font-definition: url(&apos;project://database/Assets/Fonts/Blazma_Font_1_00/OpenType%20(.otf)/Blazma-Regular%20SDF.asset?fileID=11400000&amp;guid=6e04e157ffbe131eaa25515bf87a13fe&amp;type=2#Blazma-Regular SDF&apos;); -unity-font-style: normal;" />
+        <ui:VisualElement name="NameContainer" style="justify-content: center; margin-left: 10px; margin-right: 10px; flex-grow: 1; background-image: url(&apos;project://database/Assets/UI%20Toolkit/Images/gradient.png?fileID=21300000&amp;guid=6db30642ec169ae9d95cb929054154a4&amp;type=3#gradient&apos;); margin-top: 0; margin-bottom: 0; border-top-left-radius: 4px; border-bottom-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px;">
+            <ui:Label text="Spear" display-tooltip-when-elided="true" name="ItemName" class="text" style="-unity-text-align: middle-left; white-space: normal; font-size: 25px; margin-left: 10px; -unity-font-style: normal;" />
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>
