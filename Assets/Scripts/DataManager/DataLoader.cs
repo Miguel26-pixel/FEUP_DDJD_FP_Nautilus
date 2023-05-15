@@ -16,29 +16,29 @@ namespace DataManager
             TextAsset jsonAsset = Resources.Load<TextAsset>("ItemData");
             string json = jsonAsset.text;
 
-            Item[] items = JsonConvert.DeserializeObject<Item[]>(json,
+            ItemData[] items = JsonConvert.DeserializeObject<ItemData[]>(json,
                 new JsonSerializerSettings
                     { TypeNameHandling = TypeNameHandling.Auto, ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
 
-            foreach (Item item in items)
+            foreach (ItemData item in items)
             {
                 itemRegistry.Add(item);
             }
 
             itemRegistry.SetInitialized();
-            
+
             TextAsset recipeAsset = Resources.Load<TextAsset>("RecipeData");
             string recipeJson = recipeAsset.text;
-            
+
             CraftingRecipe[] recipes = JsonConvert.DeserializeObject<CraftingRecipe[]>(recipeJson,
                 new JsonSerializerSettings
                     { TypeNameHandling = TypeNameHandling.Auto, ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
-            
+
             foreach (CraftingRecipe recipe in recipes)
             {
                 recipeRegistry.Add(recipe);
             }
-            
+
             recipeRegistry.SetInitialized();
         }
     }

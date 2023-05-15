@@ -35,7 +35,7 @@ namespace DataManager
 
             foreach (CraftingRecipe recipe in _recipes)
             {
-                Item result = itemRegistry.Get(recipe.Result);
+                ItemData result = itemRegistry.Get(recipe.Result);
 
                 if (result.Type == type && recipe.MachineType == machineType)
                 {

@@ -5,9 +5,9 @@ using UnityEngine;
 namespace Items
 {
     [Serializable]
-    public class PlaceableComponent : ItemComponent
+    public class PlaceableComponentData : ItemComponentData
     {
-        public PlaceableComponent(SerializableGameObject placedGameObject)
+        public PlaceableComponentData(SerializableGameObject placedGameObject)
         {
             PlacedGameObject = placedGameObject;
             actions.Add(new ContextMenuAction("Place", Place));
@@ -18,6 +18,18 @@ namespace Items
         private void Place()
         {
             throw new NotImplementedException();
+        }
+
+        public override ItemComponent CreateInstance()
+        {
+            return new PlaceableComponent(this);
+        }
+    }
+
+    public class PlaceableComponent : ItemComponent
+    {
+        public PlaceableComponent(PlaceableComponentData placeableComponentData) : base(placeableComponentData)
+        {
         }
     }
 

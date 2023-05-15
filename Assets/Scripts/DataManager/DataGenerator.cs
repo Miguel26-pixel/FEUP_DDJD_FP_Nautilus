@@ -28,52 +28,52 @@ namespace DataManager
         private void CreateItems()
         {
             // Simple resources from gathering and monsters, without any components.
-            Item fiber = itemRegistry.CreateItem("Fiber", "Tangled treasures from island grass.", ItemType.Resource,
+            ItemData fiber = itemRegistry.CreateItem("Fiber", "Tangled treasures from island grass.", ItemType.Resource,
                 "ItemIcons/test");
-            Item wood = itemRegistry.CreateItem("Wood",
+            ItemData wood = itemRegistry.CreateItem("Wood",
                 "Sun-kissed timber harvested from majestic palm trees." +
                 " Ideal for crafting and roasting marshmallows (if you can find any).",
                 ItemType.Resource, "ItemIcons/test");
-            Item seaweed = itemRegistry.CreateItem("Seaweed Fiber", "Seashore secret for crafting needs.",
+            ItemData seaweed = itemRegistry.CreateItem("Seaweed Fiber", "Seashore secret for crafting needs.",
                 ItemType.Resource,
                 "ItemIcons/test");
-            Item calcium = itemRegistry.CreateItem("Seashell Calcium", "Calcium-rich treasures from seashells.",
+            ItemData calcium = itemRegistry.CreateItem("Seashell Calcium", "Calcium-rich treasures from seashells.",
                 ItemType.Resource,
                 "ItemIcons/test");
-            Item scales = itemRegistry.CreateItem("Fish Scales", "Gleaming scales from the planet’s fishes.",
+            ItemData scales = itemRegistry.CreateItem("Fish Scales", "Gleaming scales from the planet’s fishes.",
                 ItemType.CreatureDrop,
                 "ItemIcons/test");
-            Item coralium = itemRegistry.CreateItem("Coralium", "Vibrant oceanic resource harvested from corals.",
+            ItemData coralium = itemRegistry.CreateItem("Coralium", "Vibrant oceanic resource harvested from corals.",
                 ItemType.Resource,
                 "ItemIcons/test");
-            Item abyssallite = itemRegistry.CreateItem("Abyssallite",
+            ItemData abyssallite = itemRegistry.CreateItem("Abyssallite",
                 "Deep-sea gem, hidden in the depths. A rare find for adventurous divers.", ItemType.Resource,
                 "ItemIcons/test");
-            Item kelp = itemRegistry.CreateItem("Kelp Iron", "Iron with a touch of kelp magic.", ItemType.Resource,
+            ItemData kelp = itemRegistry.CreateItem("Kelp Iron", "Iron with a touch of kelp magic.", ItemType.Resource,
                 "ItemIcons/test");
-            Item spines = itemRegistry.CreateItem("Sea Urchin Spines", "Prickly prizes from deep-sea urchins.",
+            ItemData spines = itemRegistry.CreateItem("Sea Urchin Spines", "Prickly prizes from deep-sea urchins.",
                 ItemType.CreatureDrop,
                 "ItemIcons/test");
-            Item skin = itemRegistry.CreateItem("Leviathan Skin", "A testament to conquering the sea's mightiest.",
+            ItemData skin = itemRegistry.CreateItem("Leviathan Skin", "A testament to conquering the sea's mightiest.",
                 ItemType.CreatureDrop, "ItemIcons/test");
-            Item tooth = itemRegistry.CreateItem("Leviathan Tooth",
+            ItemData tooth = itemRegistry.CreateItem("Leviathan Tooth",
                 "Enormous tooth of the legendary Leviathan. Handle carefully, display proudly.", ItemType.CreatureDrop,
                 "ItemIcons/test");
-            Item tear = itemRegistry.CreateItem("Crystalline Tear", "Glistening tear shed by the Blackened Eye.",
+            ItemData tear = itemRegistry.CreateItem("Crystalline Tear", "Glistening tear shed by the Blackened Eye.",
                 ItemType.CreatureDrop, "ItemIcons/test");
-            Item tentacle = itemRegistry.CreateItem("Deep Tentacle",
+            ItemData tentacle = itemRegistry.CreateItem("Deep Tentacle",
                 "Sinister tentacle harvested from the dreaded Devourer.",
                 ItemType.CreatureDrop, "ItemIcons/test");
-            Item lumini = itemRegistry.CreateItem("Luminitite", "Glowing mineral illuminating the caves.",
+            ItemData lumini = itemRegistry.CreateItem("Luminitite", "Glowing mineral illuminating the caves.",
                 ItemType.Resource,
                 "ItemIcons/test");
-            Item doomstone = itemRegistry.CreateItem("Doomstone",
+            ItemData doomstone = itemRegistry.CreateItem("Doomstone",
                 "Foreboding stone found in the depths of the island's caves.",
                 ItemType.Resource, "ItemIcons/test");
-            Item eye = itemRegistry.CreateItem("Dreadworm Eye",
+            ItemData eye = itemRegistry.CreateItem("Dreadworm Eye",
                 "Eerie eye, snatched from the fearsome Dreadworm. Peer into its unsettling gaze.",
                 ItemType.CreatureDrop, "ItemIcons/test");
-            Item artifact = itemRegistry.CreateItem("Alien Artifact",
+            ItemData artifact = itemRegistry.CreateItem("Alien Artifact",
                 "From the depths of the cave comes this mysterious artifact." +
                 " Is it a remnant of an ancient civilization or something else?",
                 ItemType.Resource, "ItemIcons/test");
@@ -85,288 +85,291 @@ namespace DataManager
 
             // Smelter Items
 
-            Item plate = itemRegistry.CreateItem("Seashell Plate",
+            ItemData plate = itemRegistry.CreateItem("Seashell Plate",
                 "Finally, a use for all those seashells you've been collecting on the beach!", ItemType.Metal,
                 "ItemIcons/test");
-            Item glass = itemRegistry.CreateItem("Sea Glass",
+            ItemData glass = itemRegistry.CreateItem("Sea Glass",
                 "The shimmering beauty of this glass is unmatched. It captures the colors of the ocean and adds a touch of elegance to any setting.",
                 ItemType.Resource, "ItemIcons/test");
-            Item silicon = itemRegistry.CreateItem("Silicon",
+            ItemData silicon = itemRegistry.CreateItem("Silicon",
                 "A vital component in many technological advancements, Silicon is an essential material for any inventor or craftsman.",
                 ItemType.Resource, "ItemIcons/test");
-            Item abyssalCrystal = itemRegistry.CreateItem("Abyssal Crystal",
+            ItemData abyssalCrystal = itemRegistry.CreateItem("Abyssal Crystal",
                 "For when you need a crystal that's as dark and mysterious as your soul. It has magical properties that can enhance a variety of items.",
                 ItemType.Resource, "ItemIcons/test");
-            Item mermaidMetal = itemRegistry.CreateItem("Mermaid Metal",
+            ItemData mermaidMetal = itemRegistry.CreateItem("Mermaid Metal",
                 "This sturdy metal is both beautiful and functional. Its unique composition makes it resistant to rust and corrosion, making it ideal for use in marine environments.",
                 ItemType.Metal, "ItemIcons/test");
-            Item coralSteel = itemRegistry.CreateItem("Coral Steel",
+            ItemData coralSteel = itemRegistry.CreateItem("Coral Steel",
                 "A type of steel that has been reinforced with coral fragments, giving it extra strength and durability.",
                 ItemType.Metal, "ItemIcons/test");
-            Item calAbys = itemRegistry.CreateItem("Calcified Abyssallite",
+            ItemData calAbys = itemRegistry.CreateItem("Calcified Abyssallite",
                 "Why settle for regular old metal when you can have something that sounds like a fancy medical condition?",
                 ItemType.Metal, "ItemIcons/test");
-            Item glow = itemRegistry.CreateItem("Twilight Glow",
+            ItemData glow = itemRegistry.CreateItem("Twilight Glow",
                 "This mysterious material emits a soft, ethereal glow. Its uses are not yet fully understood, but its potential is limitless.",
                 ItemType.Resource, "ItemIcons/test");
-            Item soil = itemRegistry.CreateItem("Soil", "A pile of dirt. It's not much, but it's all you've got.",
+            ItemData soil = itemRegistry.CreateItem("Soil", "A pile of dirt. It's not much, but it's all you've got.",
                 ItemType.Resource, "ItemIcons/test");
 
             // Fabricator Items
 
-            Item cloth = itemRegistry.CreateItem("Cloth",
+            ItemData cloth = itemRegistry.CreateItem("Cloth",
                 "Who knew that a bunch of fibers could be turned into something so soft and comfortable?",
                 ItemType.Resource, "ItemIcons/test");
-            Item plank = itemRegistry.CreateItem("Wood Plank",
+            ItemData plank = itemRegistry.CreateItem("Wood Plank",
                 "A staple of shipbuilding. They're strong and lightweight, making them ideal for a variety of construction projects.",
                 ItemType.Resource, "ItemIcons/test");
-            Item plasma = itemRegistry.CreateItem("Laser Gun Plasma",
+            ItemData plasma = itemRegistry.CreateItem("Laser Gun Plasma",
                 "This high-tech material is a key component in laser weaponry. Its properties allow for highly concentrated and precise beams of energy.",
                 ItemType.Weapon, "ItemIcons/test");
-            Item board = itemRegistry.CreateItem("Circuit Board", "The puzzle that makes your computer go beep boop.",
+            ItemData board = itemRegistry.CreateItem("Circuit Board",
+                "The puzzle that makes your computer go beep boop.",
                 ItemType.Resource, "ItemIcons/test");
-            Item hook = itemRegistry.CreateItem("Hook", "Great for pulling yourself back from the edge of insanity.",
+            ItemData hook = itemRegistry.CreateItem("Hook",
+                "Great for pulling yourself back from the edge of insanity.",
                 ItemType.Resource, "ItemIcons/test");
-            Item metalRod =
+            ItemData metalRod =
                 itemRegistry.CreateItem("Metal Rod", "A stick, but fancier.", ItemType.Metal, "ItemIcons/test");
-            Item deepPlate = itemRegistry.CreateItem("Deep Sea Infused Plate",
+            ItemData deepPlate = itemRegistry.CreateItem("Deep Sea Infused Plate",
                 "A thick, sturdy plate made of metal or composite material, used to protect the body from harm in combat or other dangerous situations.",
                 ItemType.Metal, "ItemIcons/test");
-            Item torpedo = itemRegistry.CreateItem("Torpedo", "For use only with the Torpedo Launcher.",
+            ItemData torpedo = itemRegistry.CreateItem("Torpedo", "For use only with the Torpedo Launcher.",
                 ItemType.Weapon,
                 "ItemIcons/test");
 
             // Consumables
 
-            Item thornmelon = itemRegistry.CreateItem("Thornmelons",
+            ItemData thornmelon = itemRegistry.CreateItem("Thornmelons",
                 "Prickly fruits for a poke-filled harvest. Watch out for thorny surprises!", ItemType.Fruit,
                 "ItemIcons/test");
-            ConsumableComponent consumableComponent = new(5, 10);
-            thornmelon.AddComponent(consumableComponent);
+            ConsumableComponentData consumableComponentData = new(5, 10);
+            thornmelon.AddComponent(consumableComponentData);
 
-            Item quarkberry = itemRegistry.CreateItem("Quarkberries", "Sweet and peculiar, just like this place.",
+            ItemData quarkberry = itemRegistry.CreateItem("Quarkberries", "Sweet and peculiar, just like this place.",
                 ItemType.Fruit,
                 "ItemIcons/test");
-            consumableComponent = new ConsumableComponent(10, 5);
-            quarkberry.AddComponent(consumableComponent);
+            consumableComponentData = new ConsumableComponentData(10, 5);
+            quarkberry.AddComponent(consumableComponentData);
 
-            Item meat = itemRegistry.CreateItem("Sea Meat", "Savory bounty from the ocean's creatures.",
+            ItemData meat = itemRegistry.CreateItem("Sea Meat", "Savory bounty from the ocean's creatures.",
                 ItemType.Consumable,
                 "ItemIcons/test");
-            consumableComponent = new ConsumableComponent(10, 10);
-            meat.AddComponent(consumableComponent);
+            consumableComponentData = new ConsumableComponentData(10, 10);
+            meat.AddComponent(consumableComponentData);
 
-            Item jam = itemRegistry.CreateItem("Thornmelon Jam",
+            ItemData jam = itemRegistry.CreateItem("Thornmelon Jam",
                 "For when you want a meal that's both prickly and slimy. Yum!", ItemType.Consumable, "ItemIcons/test");
-            consumableComponent = new ConsumableComponent(15, 20);
-            jam.AddComponent(consumableComponent);
+            consumableComponentData = new ConsumableComponentData(15, 20);
+            jam.AddComponent(consumableComponentData);
 
-            Item stew = itemRegistry.CreateItem("Fish Stew",
+            ItemData stew = itemRegistry.CreateItem("Fish Stew",
                 "For when you want a meal that's both prickly and slimy. Yum!", ItemType.Consumable, "ItemIcons/test");
-            consumableComponent = new ConsumableComponent(20, 30);
-            stew.AddComponent(consumableComponent);
+            consumableComponentData = new ConsumableComponentData(20, 30);
+            stew.AddComponent(consumableComponentData);
 
-            Item seafood = itemRegistry.CreateItem("Questionable Seafood",
+            ItemData seafood = itemRegistry.CreateItem("Questionable Seafood",
                 "This dish may make you question your life choices, but at least you'll have a full belly." +
                 " Just make sure you have plenty of water on hand, because it's guaranteed to make you thirsty." +
                 " And maybe keep a bucket nearby, just in case.",
                 ItemType.Consumable, "ItemIcons/test");
-            consumableComponent = new ConsumableComponent(25, 50);
-            seafood.AddComponent(consumableComponent);
+            consumableComponentData = new ConsumableComponentData(25, 50);
+            seafood.AddComponent(consumableComponentData);
 
-            Item schnitzel = itemRegistry.CreateItem("Leviathan Schnitzel",
+            ItemData schnitzel = itemRegistry.CreateItem("Leviathan Schnitzel",
                 "It's time for payback! Feast on the crispy Leviathan skin and feel" +
                 " the thrill of victory over the once-mighty sea creature.",
                 ItemType.Consumable, "ItemIcons/test");
-            consumableComponent = new ConsumableComponent(30, 80);
-            schnitzel.AddComponent(consumableComponent);
+            consumableComponentData = new ConsumableComponentData(30, 80);
+            schnitzel.AddComponent(consumableComponentData);
 
-            Item crunch = itemRegistry.CreateItem("Crunchy Delight",
+            ItemData crunch = itemRegistry.CreateItem("Crunchy Delight",
                 "It's so delicious, it'll bring tears to your eyes." +
                 " Whether it's tears of joy or tears of pain is up to you.",
                 ItemType.Consumable, "ItemIcons/test");
-            consumableComponent = new ConsumableComponent(-10, 80);
-            crunch.AddComponent(consumableComponent);
+            consumableComponentData = new ConsumableComponentData(-10, 80);
+            crunch.AddComponent(consumableComponentData);
 
-            Item ointment = itemRegistry.CreateItem("Ointment",
+            ItemData ointment = itemRegistry.CreateItem("Ointment",
                 "This ointment is a must-have for any researcher." +
                 " Its healing properties make it ideal for treating cuts, scrapes, and other injuries." +
                 " Wait, you're not eating it are you?",
                 ItemType.Consumable, "ItemIcons/test");
-            consumableComponent = new ConsumableComponent(50, 5);
-            ointment.AddComponent(consumableComponent);
+            consumableComponentData = new ConsumableComponentData(50, 5);
+            ointment.AddComponent(consumableComponentData);
 
             // Machines
 
-            Item pot = itemRegistry.CreateItem("Cooking Pot",
+            ItemData pot = itemRegistry.CreateItem("Cooking Pot",
                 "A device that can cook a variety of ingredients into a hearty stew," +
                 " with the help of a built-in mixer and heating elements.",
                 ItemType.Machine, "ItemIcons/test");
-            PlaceableComponent placeableComponent = new(
+            PlaceableComponentData placeableComponentData = new(
                 new SerializableGameObject(
                     "PlaceableObjects/CookingPot",
                     Vector3.zero,
                     Quaternion.identity
                 )
             );
-            pot.AddComponent(placeableComponent);
+            pot.AddComponent(placeableComponentData);
 
-            Item fabricator = itemRegistry.CreateItem("Fabricator",
+            ItemData fabricator = itemRegistry.CreateItem("Fabricator",
                 "A multi-purpose machine that can be used to craft a wide range of items from various materials." +
                 " It uses a combination of robotic arms, lasers, and 3D printing technology.",
                 ItemType.Machine, "ItemIcons/test");
-            placeableComponent = new PlaceableComponent(
+            placeableComponentData = new PlaceableComponentData(
                 new SerializableGameObject(
                     "PlaceableObjects/Fabricator",
                     Vector3.zero,
                     Quaternion.identity
                 )
             );
-            fabricator.AddComponent(placeableComponent);
+            fabricator.AddComponent(placeableComponentData);
 
-            Item smelter = itemRegistry.CreateItem("Smelter",
+            ItemData smelter = itemRegistry.CreateItem("Smelter",
                 "A high-temperature furnace that can melt down minerals and metals into more useful forms." +
                 " It's capable of producing alloys and other complex materials.",
                 ItemType.Machine, "ItemIcons/test");
-            placeableComponent = new PlaceableComponent(
+            placeableComponentData = new PlaceableComponentData(
                 new SerializableGameObject(
                     "PlaceableObjects/Smelter",
                     Vector3.zero,
                     Quaternion.identity
                 )
             );
-            smelter.AddComponent(placeableComponent);
+            smelter.AddComponent(placeableComponentData);
 
-            Item assembler = itemRegistry.CreateItem("Assembler",
+            ItemData assembler = itemRegistry.CreateItem("Assembler",
                 "A device that can be used to construct complex objects from smaller parts." +
                 " It uses precise robotic arms and advanced algorithms to put everything together.",
                 ItemType.Machine, "ItemIcons/test");
-            placeableComponent = new PlaceableComponent(
+            placeableComponentData = new PlaceableComponentData(
                 new SerializableGameObject(
                     "PlaceableObjects/Assembler",
                     Vector3.zero,
                     Quaternion.identity
                 )
             );
-            assembler.AddComponent(placeableComponent);
+            assembler.AddComponent(placeableComponentData);
 
 
             // Tools
 
-            Item fishNet = itemRegistry.CreateItem("Fish Net",
+            ItemData fishNet = itemRegistry.CreateItem("Fish Net",
                 "Finally, a way to catch fish without all that tedious fishing. Just toss it overboard and let it do the work for you.",
                 ItemType.Tool, "ItemIcons/test");
-            ToolComponent toolComponent = new(0, 30, "Tools/FishNet");
-            fishNet.AddComponent(toolComponent);
+            ToolComponentData toolComponentData = new(0, 30, "Tools/FishNet");
+            fishNet.AddComponent(toolComponentData);
 
-            Item glowPods = itemRegistry.CreateItem("Sticky Glow Pods",
+            ItemData glowPods = itemRegistry.CreateItem("Sticky Glow Pods",
                 "These pods stick to just about anything and emit a soft, comforting glow. They're perfect for lighting up dark corners of caves.",
                 ItemType.Tool, "ItemIcons/test");
-            toolComponent = new ToolComponent(0, 30, "Tools/GlowPods");
-            glowPods.AddComponent(toolComponent);
+            toolComponentData = new ToolComponentData(0, 30, "Tools/GlowPods");
+            glowPods.AddComponent(toolComponentData);
 
-            Item boat = itemRegistry.CreateItem("Boat",
+            ItemData boat = itemRegistry.CreateItem("Boat",
                 "Because sometimes you just need to sail away from all your problems.",
                 ItemType.Tool, "ItemIcons/test");
-            placeableComponent = new PlaceableComponent(
+            placeableComponentData = new PlaceableComponentData(
                 new SerializableGameObject(
                     "PlaceableObjects/Boat", Vector3.zero, Quaternion.identity
                 )
             );
-            boat.AddComponent(placeableComponent);
+            boat.AddComponent(placeableComponentData);
 
-            Item anchorLine = itemRegistry.CreateItem("Anchor Line",
+            ItemData anchorLine = itemRegistry.CreateItem("Anchor Line",
                 "Allows you to quickly ascend to your boat. Needs a direct line of sight.", ItemType.Tool,
                 "ItemIcons/test");
-            toolComponent = new ToolComponent(0, 30, "Tools/AnchorLine");
-            anchorLine.AddComponent(toolComponent);
+            toolComponentData = new ToolComponentData(0, 30, "Tools/AnchorLine");
+            anchorLine.AddComponent(toolComponentData);
 
-            Item sonar = itemRegistry.CreateItem("Sonar",
+            ItemData sonar = itemRegistry.CreateItem("Sonar",
                 "Tired of being ambushed by angry sea creatures? Fear not! This sonar lets you detect enemies before they detect you, and locate valuable resources to boot.",
                 ItemType.Tool, "ItemIcons/test");
-            toolComponent = new ToolComponent(0, 30, "Tools/Sonar");
-            sonar.AddComponent(toolComponent);
+            toolComponentData = new ToolComponentData(0, 30, "Tools/Sonar");
+            sonar.AddComponent(toolComponentData);
 
-            Item reaper = itemRegistry.CreateItem("Reaper’s Call",
+            ItemData reaper = itemRegistry.CreateItem("Reaper’s Call",
                 "The dread summons, a beckoning from beyond. Pray to your gods, for when it answers, all shall be consumed by the abyss.",
                 ItemType.Tool, "ItemIcons/test");
-            toolComponent = new ToolComponent(0, 30, "Tools/ReapersCall");
-            reaper.AddComponent(toolComponent);
+            toolComponentData = new ToolComponentData(0, 30, "Tools/ReapersCall");
+            reaper.AddComponent(toolComponentData);
 
             // Equipment
 
-            Item flippers = itemRegistry.CreateItem("Flippers",
+            ItemData flippers = itemRegistry.CreateItem("Flippers",
                 "When you want to swim like a fish, but still keep your human dignity.",
                 ItemType.Equipment, "ItemIcons/test");
-            EquipmentComponent equipmentComponent = new(0, 30, new List<Tuple<string, int>> { new("speed", 5) });
-            flippers.AddComponent(equipmentComponent);
+            EquipmentComponentData equipmentComponentData =
+                new(0, 30, new List<Tuple<string, int>> { new("speed", 5) });
+            flippers.AddComponent(equipmentComponentData);
 
-            Item oxygenTank = itemRegistry.CreateItem("Oxygen Tank",
+            ItemData oxygenTank = itemRegistry.CreateItem("Oxygen Tank",
                 "This essential piece of diving equipment lets you stay submerged and explore for extended periods without worrying about running out of breath.",
                 ItemType.Equipment, "ItemIcons/test");
-            equipmentComponent =
-                new EquipmentComponent(0, 30, new List<Tuple<string, int>> { new("oxygenCapacity", 10) });
-            oxygenTank.AddComponent(equipmentComponent);
+            equipmentComponentData =
+                new EquipmentComponentData(0, 30, new List<Tuple<string, int>> { new("oxygenCapacity", 10) });
+            oxygenTank.AddComponent(equipmentComponentData);
 
-            Item suit = itemRegistry.CreateItem("Pressure Suit",
+            ItemData suit = itemRegistry.CreateItem("Pressure Suit",
                 "Now you can explore the deep sea without getting crushed by the pressure.", ItemType.Equipment,
                 "ItemIcons/test");
-            equipmentComponent =
-                new EquipmentComponent(0, 30, new List<Tuple<string, int>> { new("pressureCapacity", 10) });
-            suit.AddComponent(equipmentComponent);
+            equipmentComponentData =
+                new EquipmentComponentData(0, 30, new List<Tuple<string, int>> { new("pressureCapacity", 10) });
+            suit.AddComponent(equipmentComponentData);
 
-            Item abyssalTank = itemRegistry.CreateItem("Abyssal Tank",
+            ItemData abyssalTank = itemRegistry.CreateItem("Abyssal Tank",
                 "This tank will keep you alive in the darkest depths of the ocean, but at what cost? Who knows what horrors lurk down there…",
                 ItemType.Equipment, "ItemIcons/test");
-            equipmentComponent =
-                new EquipmentComponent(0, 30, new List<Tuple<string, int>> { new("oxygenCapacity", 30) });
-            abyssalTank.AddComponent(equipmentComponent);
+            equipmentComponentData =
+                new EquipmentComponentData(0, 30, new List<Tuple<string, int>> { new("oxygenCapacity", 30) });
+            abyssalTank.AddComponent(equipmentComponentData);
 
-            Item armoredSuit = itemRegistry.CreateItem("Armored Pressure Suit",
+            ItemData armoredSuit = itemRegistry.CreateItem("Armored Pressure Suit",
                 "Upgraded pressure suit for cave diving with enhanced protection and pressure handling.",
                 ItemType.Equipment, "ItemIcons/test");
-            equipmentComponent =
-                new EquipmentComponent(0, 30,
+            equipmentComponentData =
+                new EquipmentComponentData(0, 30,
                     new List<Tuple<string, int>> { new("pressureCapacity", 30), new("armor", 20) });
-            armoredSuit.AddComponent(equipmentComponent);
+            armoredSuit.AddComponent(equipmentComponentData);
 
-            Item drill = itemRegistry.CreateItem("Suction Drill",
+            ItemData drill = itemRegistry.CreateItem("Suction Drill",
                 "Finally, a drill that sucks in a good way! Perfect for those who want to dig deep and collect precious materials without breaking a sweat.",
                 ItemType.Equipment, "ItemIcons/test");
-            equipmentComponent =
-                new EquipmentComponent(0, 30, new List<Tuple<string, int>> { new("digSpeed", 10) });
-            drill.AddComponent(equipmentComponent);
+            equipmentComponentData =
+                new EquipmentComponentData(0, 30, new List<Tuple<string, int>> { new("digSpeed", 10) });
+            drill.AddComponent(equipmentComponentData);
 
             // Weapons
 
-            Item spear = itemRegistry.CreateItem("Spear",
+            ItemData spear = itemRegistry.CreateItem("Spear",
                 "The perfect tool for when you want to stab something, but don't want to get too close.",
                 ItemType.Weapon,
                 "ItemIcons/test");
-            WeaponComponent weaponComponent = new(0, 30, "Weapons/Spear");
-            spear.AddComponent(weaponComponent);
+            WeaponComponentData weaponComponentData = new(0, 30, "Weapons/Spear");
+            spear.AddComponent(weaponComponentData);
 
-            Item laser = itemRegistry.CreateItem("Laser Gun",
+            ItemData laser = itemRegistry.CreateItem("Laser Gun",
                 "An advanced and versatile weapon that uses laser technology to deliver devastating energy beams. Handle with caution.",
                 ItemType.Weapon, "ItemIcons/test");
-            weaponComponent = new WeaponComponent(0, 30, "Weapons/Laser");
-            laser.AddComponent(weaponComponent);
+            weaponComponentData = new WeaponComponentData(0, 30, "Weapons/Laser");
+            laser.AddComponent(weaponComponentData);
 
-            Item trident = itemRegistry.CreateItem("Trident",
+            ItemData trident = itemRegistry.CreateItem("Trident",
                 "The perfect weapon for your underwater adventures or your 'Little Mermaid' cosplay, whichever comes first.",
                 ItemType.Weapon, "ItemIcons/test");
-            weaponComponent = new WeaponComponent(0, 30, "Weapons/Trident");
-            trident.AddComponent(weaponComponent);
+            weaponComponentData = new WeaponComponentData(0, 30, "Weapons/Trident");
+            trident.AddComponent(weaponComponentData);
 
-            Item torpedoLauncher = itemRegistry.CreateItem("Torpedo Launcher",
+            ItemData torpedoLauncher = itemRegistry.CreateItem("Torpedo Launcher",
                 "Want to send a message to that pesky Leviathan that's been harassing you? Look no further than the Torpedo Launcher!",
                 ItemType.Weapon, "ItemIcons/test");
-            weaponComponent = new WeaponComponent(0, 30, "Weapons/TorpedoLauncher");
-            torpedoLauncher.AddComponent(weaponComponent);
+            weaponComponentData = new WeaponComponentData(0, 30, "Weapons/TorpedoLauncher");
+            torpedoLauncher.AddComponent(weaponComponentData);
 
             // Write to JSON
 
-            Item[] items = itemRegistry.GetAll();
+            ItemData[] items = itemRegistry.GetAll();
             string json = JsonConvert.SerializeObject(items,
                 new JsonSerializerSettings
                     { TypeNameHandling = TypeNameHandling.Auto, ReferenceLoopHandling = ReferenceLoopHandling.Ignore });

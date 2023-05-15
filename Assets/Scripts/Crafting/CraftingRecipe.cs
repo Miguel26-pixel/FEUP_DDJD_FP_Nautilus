@@ -40,7 +40,7 @@ namespace Crafting
         [JsonProperty("quantity")] public int Quantity { get; }
 
 
-        public bool CanCraft(MachineType machineType, List<Item> items)
+        public bool CanCraft(MachineType machineType, List<ItemData> items)
         {
             if (!CanCraftOnMachine(machineType))
             {
@@ -55,7 +55,7 @@ namespace Crafting
                 count.Add(ingredient.Key, 0);
             }
 
-            foreach (Item item in items)
+            foreach (ItemData item in items)
             {
                 if (Ingredients.ContainsKey(item.IDHash))
                 {
@@ -73,7 +73,10 @@ namespace Crafting
 
             return true;
         }
-        
-        public bool CanCraftOnMachine(MachineType machineType) => (MachineType & machineType) != 0;
+
+        public bool CanCraftOnMachine(MachineType machineType)
+        {
+            return (MachineType & machineType) != 0;
+        }
     }
 }

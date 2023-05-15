@@ -12,7 +12,7 @@ namespace Items
         public const int ItemWidth = 4;
         public const int ItemHeight = 4;
     }
-    
+
     [Serializable]
     public enum ItemType
     {
@@ -29,7 +29,7 @@ namespace Items
 
     [Serializable]
     [JsonObject(MemberSerialization.OptIn)]
-    public class Item
+    public class ItemData : IInstantiable<Item>
     {
         [SerializeField] [JsonProperty] private string id;
 
@@ -43,14 +43,13 @@ namespace Items
         [SerializeField] [JsonProperty] private ItemType type;
 
         // Used for adding different capabilities to items.
-        [JsonProperty] private List<ItemComponent> _components = new();
-
+        [JsonProperty] private List<ItemComponentData> _components = new();
 
         /// <summary>
         ///     Creates a new item with the given id, name, description, and icon.
         /// </summary>
         [JsonConstructor]
-        public Item(string id, string name, string description, ItemType type, string icon)
+        public ItemData(string id, string name, string description, ItemType type, string icon)
         {
             this.id = id;
             this.name = name;
@@ -69,6 +68,49 @@ namespace Items
         public ItemType Type => type;
         public Sprite Icon { get; }
 
+        public Item CreateInstance()
+        {
+            return new Item(this);
+        }
+
+        public void AddComponent(ItemComponentData componentData)
+        {
+            _components.Add(componentData);
+        }
+
+        public IEnumerable<ItemComponentData> GetComponents()
+        {
+            return _components.ToArray();
+        }
+    }
+
+    [Serializable]
+    [JsonObject(MemberSerialization.OptIn)]
+    public class Item
+    {
+        [JsonIgnore] private readonly ItemData _itemData;
+        [JsonProperty("item")] private readonly string _itemID;
+
+        [JsonProperty("components")] private List<ItemComponent> _components = new();
+
+        public Item(ItemData itemData)
+        {
+            _itemData = itemData;
+            _itemID = itemData.ID;
+
+            foreach (ItemComponentData component in itemData.GetComponents())
+            {
+                AddComponent(component.CreateInstance());
+            }
+        }
+
+        public Item(ItemData itemData, List<ItemComponent> components)
+        {
+            _itemData = itemData;
+            _itemID = itemData.ID;
+            _components = components;
+        }
+
         public void AddComponent(ItemComponent component)
         {
             _components.Add(component);
@@ -84,7 +126,7 @@ namespace Items
             return _components.OfType<T>().ToArray();
         }
 
-        public ItemComponent[] GetComponents()
+        public IEnumerable<ItemComponent> GetComponents()
         {
             return _components.ToArray();
         }

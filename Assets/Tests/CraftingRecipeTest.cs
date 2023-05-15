@@ -18,18 +18,18 @@ public class CraftingRecipeTest
 
         CraftingRecipe recipe = new CraftingRecipe(resultHash, MachineType.Assembler | MachineType.Smelter, new Dictionary<string, int> { { testHash, 1 }, {stuffHash, 2} });
 
-        Item test = new Item(testHash, "", "", ItemType.Consumable, "");
-        Item stuff = new Item(stuffHash, "", "", ItemType.Consumable, "");
+        ItemData test = new ItemData(testHash, "", "", ItemType.Consumable, "");
+        ItemData stuff = new ItemData(stuffHash, "", "", ItemType.Consumable, "");
        
-        Assert.IsFalse(recipe.CanCraft(MachineType.Assembler, new List<Item> { test }));
-        Assert.IsFalse(recipe.CanCraft(MachineType.Assembler, new List<Item> { stuff }));
-        Assert.IsFalse(recipe.CanCraft(MachineType.Assembler, new List<Item> { test, stuff }));
-        Assert.IsTrue(recipe.CanCraft(MachineType.Assembler, new List<Item> { test, stuff, stuff }));
-        Assert.IsTrue(recipe.CanCraft(MachineType.Assembler, new List<Item> { stuff, test, stuff }));
-        Assert.IsFalse(recipe.CanCraft(MachineType.Fabricator, new List<Item> { stuff, test, stuff }));
-        Assert.IsTrue(recipe.CanCraft(MachineType.Smelter, new List<Item> { stuff, test, stuff }));
-        Assert.IsFalse(recipe.CanCraft(MachineType.Assembler, new List<Item> {stuff, stuff, stuff}));
-        Assert.IsFalse(recipe.CanCraft(MachineType.Assembler, new List<Item> {test, test, test}));
-        Assert.IsFalse(recipe.CanCraft(MachineType.Assembler, new List<Item>()));
+        Assert.IsFalse(recipe.CanCraft(MachineType.Assembler, new List<ItemData> { test }));
+        Assert.IsFalse(recipe.CanCraft(MachineType.Assembler, new List<ItemData> { stuff }));
+        Assert.IsFalse(recipe.CanCraft(MachineType.Assembler, new List<ItemData> { test, stuff }));
+        Assert.IsTrue(recipe.CanCraft(MachineType.Assembler, new List<ItemData> { test, stuff, stuff }));
+        Assert.IsTrue(recipe.CanCraft(MachineType.Assembler, new List<ItemData> { stuff, test, stuff }));
+        Assert.IsFalse(recipe.CanCraft(MachineType.Fabricator, new List<ItemData> { stuff, test, stuff }));
+        Assert.IsTrue(recipe.CanCraft(MachineType.Smelter, new List<ItemData> { stuff, test, stuff }));
+        Assert.IsFalse(recipe.CanCraft(MachineType.Assembler, new List<ItemData> {stuff, stuff, stuff}));
+        Assert.IsFalse(recipe.CanCraft(MachineType.Assembler, new List<ItemData> {test, test, test}));
+        Assert.IsFalse(recipe.CanCraft(MachineType.Assembler, new List<ItemData>()));
     }
 }
