@@ -7,9 +7,11 @@
         <ui:VisualElement name="CategoryBar" picking-mode="Ignore" style="height: 100px; margin-left: 0; margin-right: auto; margin-top: 0; flex-direction: row; align-items: center; padding-right: 0;">
             <ui:VisualElement name="TopFlair" picking-mode="Ignore" style="position: absolute; width: 100%; height: 4px; margin-right: 0; padding-right: 0; top: -2px; background-color: rgb(95, 116, 131); border-top-left-radius: 2px; border-bottom-left-radius: 0; border-top-right-radius: 2px; border-bottom-right-radius: 0;" />
             <ui:VisualElement name="Background" picking-mode="Ignore" class="background" style="position: absolute; width: 100%; height: 100%;" />
-            <ui:Instance template="Button" name="Button" class="tab" />
-            <ui:Instance template="Button" name="Button" class="tab" />
-            <ui:Instance template="Button" name="Button" class="tab" />
+            <ui:VisualElement name="CategoryTabs" style="flex-direction: row;">
+                <ui:Instance template="Button" name="Button" class="tab" />
+                <ui:Instance template="Button" name="Button" class="tab" />
+                <ui:Instance template="Button" name="Button" class="tab" />
+            </ui:VisualElement>
             <ui:VisualElement picking-mode="Ignore" style="width: 15px;" />
         </ui:VisualElement>
         <ui:VisualElement style="flex-direction: row; align-items: flex-start;">
@@ -18,10 +20,10 @@
                 <ui:VisualElement name="Background" picking-mode="Ignore" class="background" style="position: absolute; width: 100%; height: 100%;" />
                 <ui:VisualElement>
                     <ui:VisualElement name="ListTitle" style="border-left-width: 0; border-right-width: 0; border-top-width: 0; border-bottom-width: 0; background-color: rgb(27, 50, 67); flex-direction: row; padding-left: 15px; padding-top: 10px; padding-bottom: 10px; padding-right: 10px;">
-                        <ui:VisualElement class="button" style="width: 50px; height: 55px; margin-left: 0; margin-top: 0; border-left-width: 0; border-right-width: 0; border-top-width: 0; border-bottom-width: 0; margin-bottom: 0; margin-right: 0;">
-                            <ui:VisualElement name="ListIcon" class="icon" />
+                        <ui:VisualElement class="button" style="width: 50px; height: 55px; margin-left: 0; margin-top: 0; border-left-width: 0; border-right-width: 0; border-top-width: 0; border-bottom-width: 0; margin-bottom: 0; margin-right: 0; padding-left: 3px; padding-right: 3px; padding-top: 3px; padding-bottom: 3px;">
+                            <ui:VisualElement name="ListIcon" class="icon" style="background-image: url(&apos;project://database/Assets/Sprites/category-icons.png?fileID=-684457957&amp;guid=5fb67ad0c979d2dfcb84d9732888b58b&amp;type=3#category-icons_weapons&apos;);" />
                         </ui:VisualElement>
-                        <ui:VisualElement style="flex-grow: 1; justify-content: flex-end;">
+                        <ui:VisualElement style="flex-grow: 0; justify-content: flex-end;">
                             <ui:Label text="Weapons" display-tooltip-when-elided="true" name="ListTitleLabel" class="text" style="margin-left: 8px; font-size: 22px;" />
                         </ui:VisualElement>
                     </ui:VisualElement>
@@ -31,10 +33,10 @@
                 <ui:Instance template="ItemRecipeListing" name="ItemRecipeListing" />
                 <ui:ListView focusable="true" show-border="false" name="RecipeList" />
             </ui:VisualElement>
-            <ui:VisualElement name="RecipeView" picking-mode="Ignore" style="margin-top: 15px; width: 240px; height: auto; display: flex; margin-left: 20px; min-height: 400px;">
+            <ui:VisualElement name="RecipeView" picking-mode="Ignore" style="margin-top: 15px; width: auto; height: auto; display: flex; margin-left: 20px; min-height: auto; min-width: 240px; flex-direction: row;">
                 <ui:VisualElement name="TopFlair" picking-mode="Ignore" style="position: absolute; width: 100%; height: 4px; margin-right: 0; padding-right: 0; top: -2px; background-color: rgb(95, 116, 131); border-top-left-radius: 2px; border-bottom-left-radius: 0; border-top-right-radius: 2px; border-bottom-right-radius: 0;" />
                 <ui:VisualElement name="Background" picking-mode="Ignore" class="background" style="position: absolute; width: 100%; height: 100%;" />
-                <ui:VisualElement name="ItemInfo" style="background-color: rgb(27, 50, 67); padding-left: 10px; padding-right: 10px; align-items: stretch; padding-top: 10px; padding-bottom: 10px; display: flex;">
+                <ui:VisualElement name="ItemInfo" style="background-color: rgb(27, 50, 67); padding-left: 10px; padding-right: 10px; align-items: flex-start; padding-top: 10px; padding-bottom: 10px; display: flex; width: 240px; border-bottom-left-radius: 4px; border-top-left-radius: 2px; flex-wrap: nowrap;">
                     <ui:VisualElement name="Row1" style="flex-direction: row;">
                         <ui:VisualElement focusable="false" name="Cell1" class="item-square-disabled">
                             <ui:VisualElement name="ItemIcon" class="icon" />
@@ -49,7 +51,7 @@
                             <ui:VisualElement name="ItemIcon" class="icon" />
                         </ui:VisualElement>
                     </ui:VisualElement>
-                    <ui:VisualElement name="Row2" style="flex-direction: row;">
+                    <ui:VisualElement name="Row2" style="flex-direction: row; display: flex;">
                         <ui:VisualElement focusable="false" name="Cell1" class="item-square">
                             <ui:VisualElement name="ItemIcon" class="icon" />
                         </ui:VisualElement>
@@ -63,7 +65,7 @@
                             <ui:VisualElement name="ItemIcon" class="icon" />
                         </ui:VisualElement>
                     </ui:VisualElement>
-                    <ui:VisualElement name="Row3" style="flex-direction: row;">
+                    <ui:VisualElement name="Row3" style="flex-direction: row; display: flex;">
                         <ui:VisualElement focusable="false" name="Cell1" class="item-square">
                             <ui:VisualElement name="ItemIcon" class="icon" />
                         </ui:VisualElement>
@@ -77,7 +79,7 @@
                             <ui:VisualElement name="ItemIcon" class="icon" />
                         </ui:VisualElement>
                     </ui:VisualElement>
-                    <ui:VisualElement name="Row4" style="flex-direction: row;">
+                    <ui:VisualElement name="Row4" style="flex-direction: row; display: flex; visibility: visible;">
                         <ui:VisualElement focusable="false" name="Cell1" class="item-square">
                             <ui:VisualElement name="ItemIcon" class="icon" />
                         </ui:VisualElement>
@@ -94,20 +96,25 @@
                     <ui:VisualElement style="align-items: flex-start;">
                         <ui:Label text="Spear" display-tooltip-when-elided="true" name="RecipeName" class="text" style="margin-bottom: 0; margin-top: 10px; font-size: 22px; padding-top: 0; padding-bottom: 0; -unity-font-style: normal;" />
                     </ui:VisualElement>
-                    <ui:VisualElement style="align-items: flex-start;">
-                        <ui:Label text="The perfect tool for when you want to stab something, but don&apos;t want to get too close." display-tooltip-when-elided="true" name="ItemDescription" class="text" style="flex-wrap: wrap; white-space: normal; -unity-font-style: normal; font-size: 14px; margin-bottom: 0; padding-bottom: 0; color: rgb(194, 171, 144);" />
+                    <ui:VisualElement style="align-items: flex-start; width: 100%; max-width: 100%; flex-wrap: nowrap;">
+                        <ui:Label text="The perfect tool for when you want to stab something, but don&apos;t want to get too close." display-tooltip-when-elided="true" name="ItemDescription" class="text" style="flex-wrap: nowrap; white-space: normal; -unity-font-style: normal; font-size: 14px; margin-bottom: 0; padding-bottom: 0; color: rgb(194, 171, 144); width: 100%; max-width: 100%;" />
                     </ui:VisualElement>
                 </ui:VisualElement>
-                <ui:VisualElement name="Content" style="padding-left: 10px; padding-right: 10px; padding-bottom: 10px;">
+                <ui:VisualElement name="Content" style="padding-left: 10px; padding-right: 10px; padding-bottom: 10px; width: 240px;">
                     <ui:VisualElement name="IngredientsTitle">
                         <ui:Label text="Ingredients" display-tooltip-when-elided="true" class="text" style="font-size: 20px; margin-left: 0; padding-left: 0; padding-bottom: 1px;" />
                         <ui:VisualElement style="height: 0; border-top-width: 4px; border-bottom-width: 0; border-right-width: 0; border-left-width: 0; border-left-color: rgb(95, 116, 131); border-right-color: rgb(95, 116, 131); border-top-color: rgb(95, 116, 131); border-bottom-color: rgb(95, 116, 131);" />
                     </ui:VisualElement>
                     <ui:VisualElement name="Ingredients" style="margin-top: 0; margin-left: 0; margin-right: 0; margin-bottom: 0;">
                         <ui:Instance template="IngredientRecipe" name="IngredientRecipe" class="ingredient-full" />
-                        <ui:Instance template="IngredientRecipe" name="IngredientRecipe" class="ingredient-full" />
-                        <ui:Instance template="IngredientRecipe" name="IngredientRecipe" class="ingredient-full" />
-                        <ui:Instance template="IngredientRecipe" name="IngredientRecipe" class="ingredient-full" />
+                        <ui:Instance template="IngredientRecipe" name="IngredientRecipe" class="ingredient-incomplete" />
+                        <ui:Instance template="IngredientRecipe" name="IngredientRecipe" />
+                        <ui:Instance template="IngredientRecipe" name="IngredientRecipe" />
+                    </ui:VisualElement>
+                    <ui:VisualElement style="flex-grow: 1;" />
+                    <ui:VisualElement name="CreateButton" class="button" style="height: 40px; background-color: rgb(99, 140, 122); border-left-color: rgb(11, 53, 35); border-right-color: rgb(11, 53, 35); border-top-color: rgb(11, 53, 35); border-bottom-color: rgb(11, 53, 35); justify-content: flex-start; margin-top: 20px;">
+                        <ui:Label text="Create" display-tooltip-when-elided="true" class="text" style="-unity-text-align: middle-center; font-size: 20px; margin-bottom: 4px; color: rgb(45, 81, 65);" />
+                        <ui:VisualElement name="Overlay" class="overlay" />
                     </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>

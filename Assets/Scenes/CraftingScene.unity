@@ -133,6 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 278563536}
   - component: {fileID: 278563535}
+  - component: {fileID: 278563537}
   m_Layer: 5
   m_Name: CraftingMenu
   m_TagString: Untagged
@@ -171,6 +172,34 @@ Transform:
   m_Father: {fileID: 755596997}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &278563537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 278563534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dd4e640826355439a418e7a303ca752, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemTypeIcons:
+  - type: 3
+    sprite: {fileID: -1091374960, guid: 5fb67ad0c979d2dfcb84d9732888b58b, type: 3}
+  - type: 4
+    sprite: {fileID: -684457957, guid: 5fb67ad0c979d2dfcb84d9732888b58b, type: 3}
+  - type: 5
+    sprite: {fileID: 1753111964, guid: 5fb67ad0c979d2dfcb84d9732888b58b, type: 3}
+  - type: 6
+    sprite: {fileID: 1517466774, guid: 5fb67ad0c979d2dfcb84d9732888b58b, type: 3}
+  - type: 7
+    sprite: {fileID: 2095585008, guid: 5fb67ad0c979d2dfcb84d9732888b58b, type: 3}
+  - type: 8
+    sprite: {fileID: -358350054, guid: 5fb67ad0c979d2dfcb84d9732888b58b, type: 3}
+  button: {fileID: 9197481963319205126, guid: 9827c0fc39a7046fc88a9b41a310c8d8, type: 3}
+  recipeListing: {fileID: 9197481963319205126, guid: ef897da330375b16c8e2cff7598e5268, type: 3}
+  ingredientRecipe: {fileID: 9197481963319205126, guid: e3d9e9f9337d42b568930967aba13a0d, type: 3}
 --- !u!1 &317371954
 GameObject:
   m_ObjectHideFlags: 0

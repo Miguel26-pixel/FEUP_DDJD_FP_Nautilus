@@ -1,6 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/UI%20Toolkit/Theme.uss?fileID=7433441132597879392&amp;guid=b674df751d5a19162b7bfb6da9f4cfd4&amp;type=3#Theme" />
-    <ui:VisualElement name="Button" focusable="true" class="button">
+    <ui:VisualElement name="Button" focusable="false" class="button">
         <ui:VisualElement name="Icon" class="icon" />
         <ui:VisualElement name="Overlay" class="overlay" />
     </ui:VisualElement>

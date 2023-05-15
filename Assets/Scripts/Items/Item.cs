@@ -7,6 +7,13 @@ using UnityEngine;
 
 namespace Items
 {
+    public static class ItemConstants
+    {
+        public const int ItemWidth = 4;
+        public const int ItemHeight = 4;
+    }
+    
+    [Serializable]
     public enum ItemType
     {
         Resource,
