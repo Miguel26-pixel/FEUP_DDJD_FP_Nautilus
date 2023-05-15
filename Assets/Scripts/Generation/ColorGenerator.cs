@@ -37,21 +37,6 @@ public class ColorGenerator : MonoBehaviour {
         {
             // Debug.Log(new Vector4(section.color.r, section.color.g, section.color.b, section.minHeight));
             sectionBuffer.Add(new Vector4(section.color.r, section.color.g, section.color.b, section.minHeight));
-
-            // for (int y = 0; y < 16; y += 5)
-            // {
-            //     for (int i = 0; i < sectionBuffer.Count; ++i)
-            //     {
-            //         Vector4 s = sectionBuffer[i];
-            //         if (y > s.w)
-            //         {
-            //             Debug.Log(new Vector3(i == 0 ? 1 : 0, i == 1? 1 : 0, i == 2? 1 : 0));
-            //             break;   
-            //         }
-            //     }    
-            // }
-            
-            
         }
         
         mat = meshRenderer.material;

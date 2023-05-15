@@ -21,7 +21,7 @@ Shader "Custom/Terrain"
 
         // Use shader model 3.0 target, to get nicer looking lighting
         #pragma target 3.0
-
+        #include "Assets/Scripts/Compute/Includes/Noise.compute"
         sampler2D _MainTex;
 
         struct Input
@@ -60,7 +60,7 @@ Shader "Custom/Terrain"
             for (int i = 0; i < height_properties_count; ++i)
             {
                 float4 s = height_properties[i];
-                if (IN.worldPos.y > s.w) // 
+                if (IN.worldPos.y > s.w +  snoise(IN.worldPos*0.05)*5) // 
                 {
                     c = float3(s.x, s.y, s.z);
                     break;   
