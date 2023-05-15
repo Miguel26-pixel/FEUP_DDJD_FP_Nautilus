@@ -241,10 +241,16 @@ MonoBehaviour:
   meshRenderer: {fileID: 5382608540069460156}
   sections:
   - minHeight: 10
-    color: {r: 0.5849056, g: 0.26546192, b: 0, a: 0}
-  - minHeight: 0
-    color: {r: 0.031372547, g: 0.66255736, b: 1, a: 0}
+    colors:
+    - color: {r: 0.4862745, g: 0.28235295, b: 0, a: 1}
+      minNoise: 0.9
+    - color: {r: 0.07903652, g: 0.9528302, b: 0.013483422, a: 0}
+      minNoise: -1
   - minHeight: -10
-    color: {r: 1, g: 0, b: 0.12164402, a: 0}
+    colors:
+    - color: {r: 0.6886792, g: 0.6886792, b: 0.6886792, a: 0}
+      minNoise: -1
   - minHeight: -1000
-    color: {r: 0.004494493, g: 0.9528302, b: 0.15230453, a: 0}
+    colors:
+    - color: {r: 0.14150941, g: 0.111968525, b: 0.11147204, a: 0}
+      minNoise: -1

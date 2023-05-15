@@ -5,10 +5,17 @@ using System.Linq;
 using UnityEngine;
 
 [Serializable]
+public struct SectionColor
+{
+    public Color color;
+    public float minNoise;
+}
+
+[Serializable]
 public struct Section
 {
     public float minHeight;
-    public Color color;
+    public List<SectionColor> colors;
 }
 
 internal class ReverseSectionComparer : IComparer<Section>
@@ -22,9 +29,6 @@ internal class ReverseSectionComparer : IComparer<Section>
 public class ColorGenerator : MonoBehaviour {
     public MeshRenderer meshRenderer;
     
-    Texture2D texture;
-    const int textureResolution = 50;
-
     public List<Section> sections;
     private List<Vector4> sectionBuffer;
     private Material mat;
@@ -33,10 +37,16 @@ public class ColorGenerator : MonoBehaviour {
     {
         // sections.Sort(new ReverseSectionComparer());
         sectionBuffer = new List<Vector4>();
+        
         foreach (var section in sections)
         {
             // Debug.Log(new Vector4(section.color.r, section.color.g, section.color.b, section.minHeight));
-            sectionBuffer.Add(new Vector4(section.color.r, section.color.g, section.color.b, section.minHeight));
+            sectionBuffer.Add(new Vector4(section.minHeight, section.colors.Count));
+
+            foreach (var color in section.colors)
+            {
+                sectionBuffer.Add(new Vector4(color.color.r, color.color.g, color.color.b, color.minNoise));
+            }
         }
         
         mat = meshRenderer.material;

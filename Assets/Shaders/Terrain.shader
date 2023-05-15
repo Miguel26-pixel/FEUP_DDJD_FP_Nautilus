@@ -55,19 +55,37 @@ Shader "Custom/Terrain"
         {
             // Albedo comes from a texture tinted by color
 
-            float3 c = half3(0.9, 0.2,0.2);
+            float3 color = half3(0.9, 0.2,0.2);
 
-            for (int i = 0; i < height_properties_count; ++i)
+            for (int i = 0; i < height_properties_count;)
             {
                 float4 s = height_properties[i];
-                if (IN.worldPos.y > s.w +  snoise(IN.worldPos*0.05)*5) // 
+                const float min_height = s.x;
+                const int num_colors = round(s.y);
+                const int next = i + num_colors + 1;
+                
+
+                if (IN.worldPos.y > min_height + snoise(IN.worldPos*0.05)*5)
                 {
-                    c = float3(s.x, s.y, s.z);
-                    break;   
+                    const float noise = (snoise(IN.worldPos*0.03) + 0.866025403785f) / (0.866025403785f*2.f);
+                    for (int color_index = i + 1; color_index < next; color_index++)
+                    {
+                        float4 c = height_properties[color_index];
+                        if (noise > c.w) // Min Noise
+                        {
+                            color = float3(c.x, c.y, c.z);
+                    
+                            break;
+                        }
+                    }
+
+                    break;
                 }
+
+                i = next;
             }
 
-            o.Albedo = c;
+            o.Albedo = color;
             // Metallic and smoothness come from slider variables
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;
