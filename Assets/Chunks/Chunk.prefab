@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 1117030778486291149}
   - component: {fileID: 2950186666612986353}
   - component: {fileID: -7730389142229968132}
+  - component: {fileID: 4969987593713701929}
   m_Layer: 0
   m_Name: Chunk
   m_TagString: Untagged
@@ -66,7 +67,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: e1574613227a3a509b610b546e6b1ddb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -225,3 +226,25 @@ MonoBehaviour:
   mixB: 0.5
   biomeScale: 0.0015
   shader: {fileID: 7200000, guid: 5cd0550b57254a98b544eb3b9bf5feaf, type: 3}
+--- !u!114 &4969987593713701929
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5382608540069460159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f9686916627dd581877df760acd8160, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  meshRenderer: {fileID: 5382608540069460156}
+  sections:
+  - minHeight: 10
+    color: {r: 0.5849056, g: 0.26546192, b: 0, a: 0}
+  - minHeight: 0
+    color: {r: 0.031372547, g: 0.66255736, b: 1, a: 0}
+  - minHeight: -10
+    color: {r: 1, g: 0, b: 0.12164402, a: 0}
+  - minHeight: -1000
+    color: {r: 0.004494493, g: 0.9528302, b: 0.15230453, a: 0}

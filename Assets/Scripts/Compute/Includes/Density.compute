@@ -8,7 +8,7 @@ float3 offset;
 float spacing;
 float3 worldSize;
 
-typedef struct BiomeParameter
+typedef struct
 {
     float lacunarity;
     float persistence;

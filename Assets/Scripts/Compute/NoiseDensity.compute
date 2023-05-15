@@ -15,7 +15,7 @@ StructuredBuffer<float3> offsets;
 void Density (int3 id : SV_DispatchThreadID)
 {
     float3 pos = centre + id * spacing - boundsSize/2;
-
+// OLa
     const float3 biomePos = float3(pos.xz * biomeScale, 0) + biomeOffset;
     const float biomeNoise = (snoise(biomePos) + 0.866025403785f) / (0.866025403785f*2.f);
 

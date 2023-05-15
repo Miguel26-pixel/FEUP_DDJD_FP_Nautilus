@@ -364,6 +364,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isoLevel: 15.18
   boundsSize: 50
+  seed: 0
   player: {fileID: 1678036745}
   chunkPrefab: {fileID: 5382608540069460159, guid: c50d8f676bf4e53f3bee1fef7779aa00, type: 3}
   generationConfigs: {fileID: 1060819886}
@@ -606,7 +607,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1529761128}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1194, y: -78.712364, z: 97.51312}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -703,7 +704,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1678036741}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1095.6, y: -78.712364, z: 97.51312}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
