@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Tests
 {
-    public class ItemTest
+    public class ItemDataTest
     {
         [Test]
         public void ItemDataSerialize()
