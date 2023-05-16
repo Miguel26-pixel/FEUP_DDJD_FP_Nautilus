@@ -18,10 +18,12 @@ namespace DataManager
         /// <summary>
         ///     Creates a new item with the given name, description, and icon path and registers it in the registry.
         /// </summary>
-        public ItemData CreateItem(string itemName, string description, ItemType type, string iconPath)
+        public ItemData CreateItem(string itemName, string description, ItemType type, string iconPath, bool[,] itemGrid = null)
         {
             int hash = Hash(itemName, description);
-            ItemData itemData = new(hash.ToString("X"), itemName, description, type, iconPath);
+            itemGrid ??= ItemGrid.SingleCellGrid();
+            
+            ItemData itemData = new(hash.ToString("X"), itemName, description, type, iconPath, itemGrid);
             _items.Add(hash, itemData);
 
             return itemData;

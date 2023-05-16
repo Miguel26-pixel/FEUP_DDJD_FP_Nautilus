@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DataManager;
 using Items;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -10,6 +11,14 @@ namespace Tests
 {
     public class ItemDataTest
     {
+        string singleCellGridJson;
+        
+        [SetUp]
+        public void Setup()
+        {
+            singleCellGridJson = JsonConvert.SerializeObject(ItemGrid.SingleCellGrid());
+        }
+        
         [Test]
         public void ItemDataSerialize()
         {
@@ -20,7 +29,7 @@ namespace Tests
 
             Assert.AreEqual(
                 $"[{{\"id\":\"{ID}\",\"name\":\"Test Item\",\"description\":\"This is a test\"," +
-                "\"iconPath\":\"ItemIcons/test\",\"type\":3,\"components\":[]}]",
+                $"\"iconPath\":\"ItemIcons/test\",\"type\":3,\"components\":[],\"grid\":{singleCellGridJson}}}]",
                 json);
         }
 
@@ -39,6 +48,7 @@ namespace Tests
             Assert.AreEqual("This is a test", items[0].Description);
             Assert.AreEqual(ItemType.Consumable, items[0].Type);
             Assert.AreEqual(0, items[0].GetComponents().Count());
+            Assert.AreEqual(ItemGrid.SingleCellGrid(), items[0].Grid);
         }
 
         [Test]
@@ -61,7 +71,7 @@ namespace Tests
                 "\"iconPath\":\"ItemIcons/test\",\"type\":5,\"components\":" +
                 "[{\"$type\":\"Items.EquipmentComponentData, NautilusAssembly\"," +
                 "\"enhancements\":[{\"Item1\":\"test\",\"Item2\":1},{\"Item1\":\"test2\",\"Item2\":3}]," +
-                "\"slot\":0,\"durability\":10}]}]",
+                $"\"slot\":0,\"durability\":10}}],\"grid\":{singleCellGridJson}}}]",
                 json);
         }
 
@@ -107,7 +117,7 @@ namespace Tests
                 $"[{{\"id\":\"{ID}\",\"name\":\"Test Item\",\"description\":\"This is a test\"," +
                 "\"iconPath\":\"ItemIcons/test\",\"type\":3,\"components\":" +
                 "[{\"$type\":\"Items.ConsumableComponentData, NautilusAssembly\"," +
-                "\"health\":10,\"hunger\":5}]}]",
+                $"\"health\":10,\"hunger\":5}}],\"grid\":{singleCellGridJson}}}]",
                 json);
         }
 
@@ -161,7 +171,7 @@ namespace Tests
                     "\"position\":{\"x\":0.0,\"y\":1.0,\"z\":2.0}," +
                     "\"rotation\":{\"x\":10.0,\"y\":20.0,\"z\":30.0,\"w\":5.0}" +
                     "}" +
-                    "}]}]"
+                    $"}}],\"grid\":{singleCellGridJson}}}]"
                 ).NoClip
             );
         }
@@ -217,7 +227,7 @@ namespace Tests
                     "\"iconPath\":\"ItemIcons/test\",\"type\":8,\"components\":" +
                     "[{\"$type\":\"Items.ToolComponentData, NautilusAssembly\"," +
                     "\"tool\":\"Tool/test\",\"slot\":0,\"durability\":10" +
-                    "}]}]"
+                    $"}}],\"grid\":{singleCellGridJson}}}]"
                 ).NoClip
             );
         }
@@ -268,7 +278,7 @@ namespace Tests
                     "\"iconPath\":\"ItemIcons/test\",\"type\":4,\"components\":" +
                     "[{\"$type\":\"Items.WeaponComponentData, NautilusAssembly\"," +
                     "\"weapon\":\"Weapon/test\",\"slot\":1,\"durability\":12" +
-                    "}]}]"
+                    $"}}],\"grid\":{singleCellGridJson}}}]"
                 ).NoClip
             );
         }

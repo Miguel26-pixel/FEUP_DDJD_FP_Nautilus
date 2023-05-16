@@ -46,13 +46,16 @@ namespace Items
         ///     Creates a new item with the given id, name, description, and icon.
         /// </summary>
         [JsonConstructor]
-        public ItemData(string id, string name, string description, ItemType type, string iconPath)
+        public ItemData(string id, string name, string description, ItemType type, string iconPath, 
+            bool[,] grid = null)
         {
             this.id = id;
             this.name = name;
             this.description = description;
             this.type = type;
             this.iconPath = iconPath;
+            
+            Grid = grid == null ? ItemGrid.SingleCellGrid() : ItemGrid.ValidateGrid(grid);
 
             Icons = new Sprite[ItemConstants.ItemHeight, ItemConstants.ItemWidth];
             Sprite[] spriteSheet = Resources.LoadAll<Sprite>(iconPath);
@@ -63,7 +66,11 @@ namespace Items
                 string[] split = spriteName.Split('_');
                 int y = int.Parse(split[1]);
                 int x = int.Parse(split[2]);
-                Icons[y, x] = sprite;
+
+                if (Grid[y, x])
+                {
+                    Icons[y, x] = sprite;
+                }
             }
         }
 
@@ -73,6 +80,7 @@ namespace Items
         public string Description => description;
         public ItemType Type => type;
         public Sprite[,] Icons { get; }
+        [JsonProperty("grid")] public bool[,] Grid { get; }
 
         public Item CreateInstance()
         {
@@ -111,6 +119,7 @@ namespace Items
         public string Description => _itemData.Description;
         public ItemType Type => _itemData.Type;
         public Sprite[,] Icons => _itemData.Icons;
+        public bool[,] Grid => _itemData.Grid;
 
         public List<ContextMenuAction> GetContextMenuActions()
         {
