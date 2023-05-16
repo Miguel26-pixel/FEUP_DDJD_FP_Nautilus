@@ -27,7 +27,6 @@ namespace Tests
         [Test]
         public void ItemDataDeserialize()
         {
-            Sprite sprite = Resources.Load<Sprite>("ItemIcons/test");
             string json = "[{\"id\":\"123\",\"name\":\"Test Item\",\"description\":\"This is a test\"," +
                           "\"iconPath\":\"ItemIcons/test\",\"type\":3,\"components\":[]}]";
 
@@ -38,7 +37,6 @@ namespace Tests
             Assert.AreEqual("123", items[0].ID);
             Assert.AreEqual("Test Item", items[0].Name);
             Assert.AreEqual("This is a test", items[0].Description);
-            Assert.AreEqual(sprite, items[0].Icon);
             Assert.AreEqual(ItemType.Consumable, items[0].Type);
             Assert.AreEqual(0, items[0].GetComponents().Count());
         }

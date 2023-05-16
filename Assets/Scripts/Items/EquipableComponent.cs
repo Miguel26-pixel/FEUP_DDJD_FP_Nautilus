@@ -27,11 +27,10 @@ namespace Items
     [Serializable]
     public abstract class EquipableComponent : ItemComponent
     {
-        [JsonProperty("currentDurability")]
-        private int _currentDurability;
-        [JsonIgnore]
-        protected readonly EquipableComponentData equipableComponentData;
-        
+        [JsonIgnore] protected readonly EquipableComponentData equipableComponentData;
+
+        [JsonProperty("currentDurability")] private int _currentDurability;
+
         protected EquipableComponent(EquipableComponentData itemComponentData) : base(itemComponentData)
         {
             equipableComponentData = itemComponentData;
@@ -47,7 +46,8 @@ namespace Items
                 if (value < 0)
                 {
                     _currentDurability = 0;
-                } else if (value > equipableComponentData.Durability)
+                }
+                else if (value > equipableComponentData.Durability)
                 {
                     _currentDurability = equipableComponentData.Durability;
                 }

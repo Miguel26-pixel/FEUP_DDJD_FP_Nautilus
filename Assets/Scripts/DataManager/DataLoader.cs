@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Crafting;
 using Items;
 using Newtonsoft.Json;
@@ -10,61 +11,75 @@ namespace DataManager
 {
     public class ItemConverter : JsonConverter<Item>
     {
-        private readonly ItemRegistry _itemRegistry;
-
-        public ItemConverter(ItemRegistry itemRegistry)
-        {
-            _itemRegistry = itemRegistry;
-        }
-        
         // This is probably the worst thing I've ever done in my life
-        private readonly Dictionary<Type, Type> _componentInstanceToData = new Dictionary<Type, Type>()
+        private readonly Dictionary<Type, Type> _componentInstanceToData = new()
         {
             { typeof(ConsumableComponent), typeof(ConsumableComponentData) },
             { typeof(EquipableComponent), typeof(EquipableComponentData) },
             { typeof(EquipmentComponent), typeof(EquipmentComponentData) },
             { typeof(WeaponComponent), typeof(WeaponComponentData) },
             { typeof(ToolComponent), typeof(ToolComponentData) },
-            { typeof(PlaceableComponent), typeof(PlaceableComponentData) },
+            { typeof(PlaceableComponent), typeof(PlaceableComponentData) }
         };
+
+        private readonly ItemRegistry _itemRegistry;
+
+        public ItemConverter(ItemRegistry itemRegistry)
+        {
+            _itemRegistry = itemRegistry;
+        }
 
         public override bool CanWrite => false;
         public override bool CanRead => true;
-        
+
         public override Item ReadJson(JsonReader reader, Type objectType, Item existingValue, bool hasExistingValue,
             JsonSerializer serializer)
         {
             JObject jsonObject = JObject.Load(reader);
-            
+
             string id = (jsonObject["id"] ?? throw new InvalidOperationException()).Value<string>();
             ItemData itemData = _itemRegistry.Get(id);
-            if (itemData == null) throw new InvalidOperationException($"Item with id {id} does not exist.");
+            if (itemData == null)
+            {
+                throw new InvalidOperationException($"Item with id {id} does not exist.");
+            }
 
-            JArray componentsArray = (JArray) jsonObject["components"];
-            if (componentsArray == null) throw new InvalidOperationException("Item components is not set.");
+            JArray componentsArray = (JArray)jsonObject["components"];
+            if (componentsArray == null)
+            {
+                throw new InvalidOperationException("Item components is not set.");
+            }
+
             List<ItemComponent> components = new();
 
-            foreach (var jToken in componentsArray)
+            foreach (JToken jToken in componentsArray)
             {
-                var componentObject = (JObject)jToken;
-                string componentTypeString = (componentObject["$type"] ?? throw new InvalidOperationException()).Value<string>();
-                
+                JObject componentObject = (JObject)jToken;
+                string componentTypeString =
+                    (componentObject["$type"] ?? throw new InvalidOperationException()).Value<string>();
+
                 // Reflection sins against humanity
                 Type componentType = Type.GetType(componentTypeString);
-                if (componentType == null) throw new InvalidOperationException($"Component type {componentTypeString} does not exist.");
-                
-                var getComponentMethod = typeof(ItemData).GetMethod("GetComponent");
-                if (getComponentMethod == null) throw new InvalidOperationException("ItemData does not have GetComponent method.");
-                
-                var componentDataType = _componentInstanceToData[componentType];
-                
-                var genericGetComponentMethod = getComponentMethod.MakeGenericMethod(componentDataType);
+                if (componentType == null)
+                {
+                    throw new InvalidOperationException($"Component type {componentTypeString} does not exist.");
+                }
+
+                MethodInfo getComponentMethod = typeof(ItemData).GetMethod("GetComponent");
+                if (getComponentMethod == null)
+                {
+                    throw new InvalidOperationException("ItemData does not have GetComponent method.");
+                }
+
+                Type componentDataType = _componentInstanceToData[componentType];
+
+                MethodInfo genericGetComponentMethod = getComponentMethod.MakeGenericMethod(componentDataType);
                 if (genericGetComponentMethod.Invoke(itemData, null) is not ItemComponentData itemComponentData)
                 {
                     throw new InvalidOperationException($"ItemData does not have component {componentTypeString}.");
                 }
-                
-                var component = itemComponentData.CreateInstance();
+
+                ItemComponent component = itemComponentData.CreateInstance();
                 serializer.Populate(componentObject.CreateReader(), component);
                 components.Add(component);
             }
@@ -74,7 +89,7 @@ namespace DataManager
 
             return item;
         }
-        
+
         public override void WriteJson(JsonWriter writer, Item value, JsonSerializer serializer)
         {
             throw new NotImplementedException();
@@ -83,20 +98,19 @@ namespace DataManager
 
     public static class DataDeserializer
     {
-        
         public static IEnumerable<ItemData> DeserializeItemData(string json)
         {
             return JsonConvert.DeserializeObject<ItemData[]>(json,
                 new JsonSerializerSettings
                     { TypeNameHandling = TypeNameHandling.Auto, ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
         }
-        
+
         public static Item DeserializeItem(string json, ItemConverter converter)
         {
-            var settings = new JsonSerializerSettings
+            JsonSerializerSettings settings = new JsonSerializerSettings
                 { TypeNameHandling = TypeNameHandling.Auto, ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
             settings.Converters.Add(converter);
-            
+
             return JsonConvert.DeserializeObject<Item>(json, settings);
         }
 

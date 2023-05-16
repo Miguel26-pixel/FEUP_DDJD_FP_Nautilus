@@ -42,7 +42,8 @@ public class ItemTest
         Assert.AreEqual(item.Name, "Test Item");
         Assert.AreEqual(item.Description, "This is a test");
         Assert.AreEqual(item.Type, ItemType.Consumable);
-        Assert.AreEqual(item.Icon, itemData.Icon);
+        Assert.AreSame(item.Icons, itemData.Icons);
+
     }
 
     [Test]
@@ -98,7 +99,7 @@ public class ItemTest
         Assert.AreEqual(item.Name, "Test Item");
         Assert.AreEqual(item.Description, "This is a test");
         Assert.AreEqual(item.Type, ItemType.Equipment);
-        Assert.AreEqual(item.Icon, itemData.Icon);
+        Assert.AreSame(item.Icons, itemData.Icons);
         
         EquipmentComponent component = item.GetComponent<EquipmentComponent>();
         Assert.AreEqual(component.CurrentDurability, 4);
@@ -158,7 +159,8 @@ public class ItemTest
         Assert.AreEqual(item.Name, "Test Item");
         Assert.AreEqual(item.Description, "This is a test");
         Assert.AreEqual(item.Type, ItemType.Machine);
-        Assert.AreEqual(item.Icon, itemData.Icon);
+        Assert.AreSame(item.Icons, itemData.Icons);
+
         
         PlaceableComponent component = item.GetComponent<PlaceableComponent>();
         Assert.AreSame(component.itemComponentData, componentData);

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -51,10 +52,19 @@ namespace Items
             this.name = name;
             this.description = description;
             this.type = type;
-
-            Sprite sprite = Resources.Load<Sprite>(iconPath);
-            Icon = sprite;
             this.iconPath = iconPath;
+
+            Icons = new Sprite[ItemConstants.ItemHeight, ItemConstants.ItemWidth];
+            Sprite[] spriteSheet = Resources.LoadAll<Sprite>(iconPath);
+            
+            foreach (Sprite sprite in spriteSheet)
+            {
+                string spriteName = sprite.name;
+                string[] split = spriteName.Split('_');
+                int y = int.Parse(split[1]);
+                int x = int.Parse(split[2]);
+                Icons[y, x] = sprite;
+            }
         }
 
         public string ID => id;
@@ -62,7 +72,7 @@ namespace Items
         public string Name => name;
         public string Description => description;
         public ItemType Type => type;
-        public Sprite Icon { get; }
+        public Sprite[,] Icons { get; }
 
         public Item CreateInstance()
         {
@@ -100,7 +110,7 @@ namespace Items
         public string Name => _itemData.Name;
         public string Description => _itemData.Description;
         public ItemType Type => _itemData.Type;
-        public Sprite Icon => _itemData.Icon;
+        public Sprite[,] Icons => _itemData.Icons;
 
         public List<ContextMenuAction> GetContextMenuActions()
         {

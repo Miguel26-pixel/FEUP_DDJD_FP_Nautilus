@@ -7,7 +7,7 @@ namespace Items
     public abstract class ItemEntity<TEntity>
     {
         [JsonProperty("components")] protected List<TEntity> components = new();
-        
+
         public void AddComponent(TEntity component)
         {
             components.Add(component);
