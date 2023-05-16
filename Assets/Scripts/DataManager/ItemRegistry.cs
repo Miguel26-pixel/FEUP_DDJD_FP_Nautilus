@@ -70,7 +70,7 @@ namespace DataManager
             int hash = hashString.GetHashCode();
             while (_items.ContainsKey(hash))
             {
-                hash = hash.GetHashCode();
+                hash++;
             }
 
             return hash;
