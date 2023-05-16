@@ -29,16 +29,15 @@ Shader "Custom/Terrain"
             float2 uv_MainTex;
             float3 worldPos;
             float3 worldNormal;
+            float3 id;
         };
 
-        struct Section
-        {
-            float minHeight;
-            float3 color;
-        };
-        uniform float4 height_properties[16];
+        uniform float4 height_properties[128];
  
         uniform int height_properties_count;
+
+        uniform int biomes_count;
+        uniform float biomes_values[16];
 
         half _Glossiness;
         half _Metallic;
@@ -51,39 +50,68 @@ Shader "Custom/Terrain"
             // put more per-instance properties here
         UNITY_INSTANCING_BUFFER_END(Props)
 
+        uniform float biome_scale;
+
+        uniform float4 biome_offset;
+
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
             // Albedo comes from a texture tinted by color
 
             float3 color = half3(0.9, 0.2,0.2);
 
-            for (int i = 0; i < height_properties_count;)
+            int general = 0;
+            const float3 biomePos = float3(IN.worldPos.xz * biome_scale , 0) + biome_offset;
+            const float biomeNoise = (snoise(biomePos) + 0.866025403785f) / (0.866025403785f*2.f);
+            
+            for (int biome = biomes_count - 1; biome >= 0; biome --)
             {
-                float4 s = height_properties[i];
-                const float min_height = s.x;
-                const int num_colors = round(s.y);
-                const int next = i + num_colors + 1;
-                
-
-                if (IN.worldPos.y > min_height + snoise(IN.worldPos*0.05)*5)
+                const int section_data_size = round(height_properties[general].x);
+                general += 1;
+                const int target = general + section_data_size;
+                while (general < target)
                 {
-                    const float noise = (snoise(IN.worldPos*0.03) + 0.866025403785f) / (0.866025403785f*2.f);
-                    for (int color_index = i + 1; color_index < next; color_index++)
+                    float4 s = height_properties[general];
+                    const float min_height = s.x;
+                    const int num_colors = round(s.y);
+                    const int next = general + num_colors + 1;
+            
+                    float a = biomes_values[biome*2-2];
+                    float b = biomes_values[biome*2-1];
+            
+                    // if (biomeNoise < a && biome > 1)
+                    if (biomeNoise < a && biome > 0)
                     {
-                        float4 c = height_properties[color_index];
-                        if (noise > c.w) // Min Noise
-                        {
-                            color = float3(c.x, c.y, c.z);
-                    
-                            break;
-                        }
+                        general = next;
+                        continue;
                     }
-
-                    break;
+            
+                    // float multBiomeB = smoothstep(a, b, biomeNoise);
+                    // float multBiomeA = 1 - multBiomeB;
+                    
+                    if (IN.worldPos.y > min_height + snoise(IN.worldPos*0.05)*5)
+                    {
+                        const float noise = (snoise(IN.worldPos*0.03) + 0.866025403785f) / (0.866025403785f*2.f);
+                        for (int color_index = general + 1; color_index < next; color_index++)
+                        {
+                            float4 c = height_properties[color_index];
+                            if (noise > c.w) // Min Noise
+                            {
+                                color = float3(c.x, c.y, c.z);
+                        
+                                break;
+                            }
+                        }
+            
+                        break;
+                    }
+            
+                    general = next;
                 }
-
-                i = next;
             }
+
+            // color = biomeNoise;
+
 
             o.Albedo = color;
             // Metallic and smoothness come from slider variables

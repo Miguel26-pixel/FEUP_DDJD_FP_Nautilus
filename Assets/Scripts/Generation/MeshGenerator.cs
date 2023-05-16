@@ -13,7 +13,7 @@ public class MeshGenerator : MonoBehaviour
 
     public GameObject chunkPrefab;
     public GenerationConfigs generationConfigs;
-    
+
     public GameObject chunksParent;
     
     public int numChunksX = 3;
@@ -42,6 +42,8 @@ public class MeshGenerator : MonoBehaviour
         lastChunkPosition = playerChunkPosition;
 
         UpdateChunks(playerChunkPosition);
+        
+        
     }
 
     private Vector3Int ChunkPosition()
@@ -80,6 +82,7 @@ public class MeshGenerator : MonoBehaviour
                         currentChunk.chunkGridPosition = new Vector3Int(x, y, z);
                         currentChunk.Generate(isoLevel, boundsSize, seed);
                         _chunks[chunkPosition] = currentChunk;
+                        currentChunk.colorGenerator.UpdateColors(seed);
                     }
 
                     _activeChunks.Add(currentChunk);
