@@ -42,12 +42,12 @@ namespace Tests
             string testHash = 0.GetHashCode().ToString("X");
             string stuffHash = 1.GetHashCode().ToString("X");
             string resultHash = 2.GetHashCode().ToString("X");
-            
+
             CraftingRecipe recipe = new(resultHash, MachineType.Assembler | MachineType.Smelter,
                 new Dictionary<string, int> { { testHash, 1 }, { stuffHash, 2 } }, 3);
 
-            string json = DataSerializer.SerializeRecipeData(new List<CraftingRecipe>() {recipe});
-            
+            string json = DataSerializer.SerializeRecipeData(new List<CraftingRecipe> { recipe });
+
             MachineType machineType = MachineType.Assembler | MachineType.Smelter;
             object enumVal = Convert.ChangeType(machineType, machineType.GetTypeCode());
             Assert.AreEqual(
@@ -67,9 +67,9 @@ namespace Tests
 
             string json = $"[{{\"ingredients\":{{\"{testHash}\":1,\"{stuffHash}\":2}},\"result\":\"{resultHash}\"," +
                           $"\"machineType\":{enumVal},\"quantity\":3}}]";
-            
+
             CraftingRecipe[] recipes = DataDeserializer.DeserializeRecipeData(json).ToArray();
-            
+
             Assert.AreEqual(1, recipes.Length);
             Assert.AreEqual(2, recipes[0].Ingredients.Count);
             Assert.AreEqual(1, recipes[0].Ingredients[0]);

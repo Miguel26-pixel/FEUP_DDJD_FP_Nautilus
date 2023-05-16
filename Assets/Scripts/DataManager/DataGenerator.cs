@@ -17,6 +17,13 @@ namespace DataManager
                 new JsonSerializerSettings
                     { TypeNameHandling = TypeNameHandling.Auto, ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
         }
+        
+        public static string SerializeItem(Item item)
+        {
+            return JsonConvert.SerializeObject(item,
+                new JsonSerializerSettings
+                    { TypeNameHandling = TypeNameHandling.Auto, ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+        }
 
         public static string SerializeRecipeData(IEnumerable<CraftingRecipe> recipes)
         {

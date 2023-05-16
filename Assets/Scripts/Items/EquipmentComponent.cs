@@ -8,7 +8,6 @@ namespace Items
     public class EquipmentComponentData : EquipableComponentData
     {
         [JsonProperty("enhancements")] private List<Tuple<string, int>> _enhancements;
-        public List<Tuple<string, int>> Enhancements => new (_enhancements);
 
         // TODO: add enhancements, it is a placeholder for now, string should be replaced with an enum or something representing a player stat
         public EquipmentComponentData(int slot, int durability, List<Tuple<string, int>> enhancements) : base(slot,
@@ -16,6 +15,8 @@ namespace Items
         {
             _enhancements = enhancements;
         }
+
+        [JsonIgnore] public List<Tuple<string, int>> Enhancements => new(_enhancements);
 
         public override void OnEquip()
         {

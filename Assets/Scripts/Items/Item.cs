@@ -89,7 +89,7 @@ namespace Items
     public class Item
     {
         [JsonIgnore] private readonly ItemData _itemData;
-        [JsonProperty("item")] private readonly string _itemID;
+        [JsonProperty("id")] private readonly string _itemID;
 
         [JsonProperty("components")] private List<ItemComponent> _components = new();
 
@@ -110,6 +110,13 @@ namespace Items
             _itemID = itemData.ID;
             _components = components;
         }
+
+        public string ID => _itemID;
+        public int IDHash => _itemData.IDHash;
+        public string Name => _itemData.Name;
+        public string Description => _itemData.Description;
+        public ItemType Type => _itemData.Type;
+        public Sprite Icon => _itemData.Icon;
 
         public void AddComponent(ItemComponent component)
         {
