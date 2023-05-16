@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -29,7 +28,7 @@ namespace Items
 
     [Serializable]
     [JsonObject(MemberSerialization.OptIn)]
-    public class ItemData : IInstantiable<Item>
+    public class ItemData : ItemEntity<ItemComponentData>, IInstantiable<Item>
     {
         [SerializeField] [JsonProperty] private string id;
 
@@ -41,9 +40,6 @@ namespace Items
 
         // Only used for categorization of items in the inventory.
         [SerializeField] [JsonProperty] private ItemType type;
-
-        // Used for adding different capabilities to items.
-        [JsonProperty("components")] private List<ItemComponentData> _components = new();
 
         /// <summary>
         ///     Creates a new item with the given id, name, description, and icon.
@@ -72,26 +68,14 @@ namespace Items
         {
             return new Item(this);
         }
-
-        public void AddComponent(ItemComponentData componentData)
-        {
-            _components.Add(componentData);
-        }
-
-        public IEnumerable<ItemComponentData> GetComponents()
-        {
-            return _components.ToArray();
-        }
     }
 
     [Serializable]
     [JsonObject(MemberSerialization.OptIn)]
-    public class Item
+    public class Item : ItemEntity<ItemComponent>
     {
         [JsonIgnore] private readonly ItemData _itemData;
         [JsonProperty("id")] private readonly string _itemID;
-
-        [JsonProperty("components")] private List<ItemComponent> _components = new();
 
         public Item(ItemData itemData)
         {
@@ -108,7 +92,7 @@ namespace Items
         {
             _itemData = itemData;
             _itemID = itemData.ID;
-            _components = components;
+            this.components = components;
         }
 
         public string ID => _itemID;
@@ -118,35 +102,10 @@ namespace Items
         public ItemType Type => _itemData.Type;
         public Sprite Icon => _itemData.Icon;
 
-        public void AddComponent(ItemComponent component)
-        {
-            _components.Add(component);
-        }
-
-        public T GetComponent<T>() where T : ItemComponent
-        {
-            return _components.OfType<T>().FirstOrDefault();
-        }
-
-        public T[] GetComponents<T>() where T : ItemComponent
-        {
-            return _components.OfType<T>().ToArray();
-        }
-
-        public IEnumerable<ItemComponent> GetComponents()
-        {
-            return _components.ToArray();
-        }
-
-        public bool HasComponent<T>() where T : ItemComponent
-        {
-            return _components.OfType<T>().Any();
-        }
-
         public List<ContextMenuAction> GetContextMenuActions()
         {
             List<ContextMenuAction> actions = new();
-            foreach (ItemComponent component in _components)
+            foreach (ItemComponent component in components)
             {
                 actions.AddRange(component.GetActions());
             }

@@ -32,12 +32,7 @@ namespace Items
 
     public class WeaponComponent : EquipableComponent
     {
-        public WeaponComponent(EquipableComponentData itemComponentData) : base(itemComponentData)
-        {
-        }
-
-        public WeaponComponent(EquipableComponentData itemComponentData, int currentDurability) : base(
-            itemComponentData, currentDurability)
+        public WeaponComponent(WeaponComponentData itemComponentData) : base(itemComponentData)
         {
         }
     }

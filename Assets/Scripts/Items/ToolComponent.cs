@@ -31,12 +31,7 @@ namespace Items
 
     public class ToolComponent : EquipableComponent
     {
-        public ToolComponent(EquipableComponentData itemComponentData) : base(itemComponentData)
-        {
-        }
-
-        public ToolComponent(EquipableComponentData itemComponentData, int currentDurability) : base(itemComponentData,
-            currentDurability)
+        public ToolComponent(ToolComponentData itemComponentData) : base(itemComponentData)
         {
         }
     }

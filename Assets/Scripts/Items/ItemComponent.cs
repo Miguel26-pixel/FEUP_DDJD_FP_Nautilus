@@ -26,16 +26,16 @@ namespace Items
     [Serializable]
     public abstract class ItemComponent
     {
-        [NonSerialized] [JsonIgnore] private readonly ItemComponentData _itemComponentData;
+        [NonSerialized] [JsonIgnore] public readonly ItemComponentData itemComponentData;
 
         protected ItemComponent(ItemComponentData itemComponentData)
         {
-            _itemComponentData = itemComponentData;
+            this.itemComponentData = itemComponentData;
         }
 
         public List<ContextMenuAction> GetActions()
         {
-            return _itemComponentData.GetActions();
+            return itemComponentData.GetActions();
         }
     }
 }
