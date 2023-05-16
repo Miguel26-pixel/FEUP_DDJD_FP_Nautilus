@@ -1,14 +1,25 @@
 using System.Collections.Generic;
 using Crafting;
 using Items;
-using UnityEngine;
 
 namespace DataManager
 {
-    public class CraftingRecipeRegistry : Registry<CraftingRecipe>
+    public class CraftingRecipeRegistry
     {
-        [SerializeField] private ItemRegistry itemRegistry;
+        private readonly ItemRegistry _itemRegistry;
         private readonly List<CraftingRecipe> _recipes = new();
+
+        public CraftingRecipeRegistry(ItemRegistry itemRegistry)
+        {
+            _itemRegistry = itemRegistry;
+        }
+
+        public bool Initialized { get; private set; }
+
+        public void SetInitialized()
+        {
+            Initialized = true;
+        }
 
         public CraftingRecipe CreateCraftingRecipe(string result, MachineType machineType,
             Dictionary<string, int> ingredients, int quantity = 1)
@@ -19,12 +30,12 @@ namespace DataManager
             return recipe;
         }
 
-        public override void Add(CraftingRecipe item)
+        public void Add(CraftingRecipe item)
         {
             _recipes.Add(item);
         }
 
-        public override CraftingRecipe[] GetAll()
+        public IEnumerable<CraftingRecipe> GetAll()
         {
             return _recipes.ToArray();
         }
@@ -35,7 +46,7 @@ namespace DataManager
 
             foreach (CraftingRecipe recipe in _recipes)
             {
-                ItemData result = itemRegistry.Get(recipe.Result);
+                ItemData result = _itemRegistry.Get(recipe.Result);
 
                 if (result.Type == type && recipe.MachineType == machineType)
                 {

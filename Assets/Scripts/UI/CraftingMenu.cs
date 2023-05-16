@@ -13,6 +13,8 @@ namespace UI
         [SerializeField] private VisualTreeAsset recipeListing;
         [SerializeField] private VisualTreeAsset ingredientRecipe;
 
+        private readonly Dictionary<ItemType, Sprite> _itemTypeIcons = new();
+
         private readonly VisualElement[,] _recipeViewGrid =
             new VisualElement[ItemConstants.ItemHeight, ItemConstants.ItemWidth];
 
@@ -21,8 +23,6 @@ namespace UI
         private bool _isCraftingMenuOpen;
         private bool _isRecipeListingOpen;
         private bool _isRecipeViewOpen;
-
-        private readonly Dictionary<ItemType, Sprite> _itemTypeIcons = new();
         private VisualElement _recipeCreateButton;
         private VisualElement _recipeDescription;
         private VisualElement _recipeIngredients;

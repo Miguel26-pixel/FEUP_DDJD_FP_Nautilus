@@ -37,28 +37,28 @@ namespace Items
 
         [SerializeField] [JsonProperty] private string description;
 
-        [SerializeField] [JsonProperty] private string iconPath;
+        [SerializeField] [JsonProperty] protected string iconPath;
 
         // Only used for categorization of items in the inventory.
         [SerializeField] [JsonProperty] private ItemType type;
 
         // Used for adding different capabilities to items.
-        [JsonProperty] private List<ItemComponentData> _components = new();
+        [JsonProperty("components")] private List<ItemComponentData> _components = new();
 
         /// <summary>
         ///     Creates a new item with the given id, name, description, and icon.
         /// </summary>
         [JsonConstructor]
-        public ItemData(string id, string name, string description, ItemType type, string icon)
+        public ItemData(string id, string name, string description, ItemType type, string iconPath)
         {
             this.id = id;
             this.name = name;
             this.description = description;
             this.type = type;
 
-            Sprite sprite = Resources.Load<Sprite>(icon);
+            Sprite sprite = Resources.Load<Sprite>(iconPath);
             Icon = sprite;
-            iconPath = icon;
+            this.iconPath = iconPath;
         }
 
         public string ID => id;

@@ -1,10 +1,12 @@
 {
-    "name": "Tests",
-    "optionalUnityReferences": [
-        "TestAssemblies"
-    ],
-    "includePlatforms": [
-        "Editor"
-    ],
-    "references":[ "GUID:1bd0909c43133eacb9d081828731c689" ]
+  "name": "Tests",
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "references": [
+    "GUID:1bd0909c43133eacb9d081828731c689"
+  ]
 }

@@ -5,9 +5,15 @@ using Items;
 
 namespace DataManager
 {
-    public class ItemRegistry : Registry<ItemData>
+    public class ItemRegistry
     {
         private readonly Dictionary<int, ItemData> _items = new();
+        public bool Initialized { get; private set; }
+
+        public void SetInitialized()
+        {
+            Initialized = true;
+        }
 
         /// <summary>
         ///     Creates a new item with the given name, description, and icon path and registers it in the registry.
@@ -24,7 +30,7 @@ namespace DataManager
         /// <summary>
         ///     Adds an item loaded from the JSON file to the registry.
         /// </summary>
-        public override void Add(ItemData itemData)
+        public void Add(ItemData itemData)
         {
             _items.Add(itemData.IDHash, itemData);
         }
@@ -49,7 +55,7 @@ namespace DataManager
         ///     Gets all items in the registry.
         /// </summary>
         /// <returns></returns>
-        public override ItemData[] GetAll()
+        public ItemData[] GetAll()
         {
             return _items.Values.ToArray();
         }
