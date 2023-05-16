@@ -36,6 +36,64 @@ namespace Items
     [Serializable]
     public class SerializableGameObject
     {
+        private class SerializableVector3
+        {
+            [JsonConstructor]
+            public SerializableVector3(float x, float y, float z)
+            {
+                X = x;
+                Y = y;
+                Z = z;
+            }
+            
+            public SerializableVector3(Vector3 vector3)
+            {
+                X = vector3.x;
+                Y = vector3.y;
+                Z = vector3.z;
+            }
+
+            [JsonProperty("x")] public float X { get; }
+            [JsonProperty("y")] public float Y { get; }
+            [JsonProperty("z")] public float Z { get; }
+        }
+
+
+        private class SerializableQuaternion
+        {
+            [JsonConstructor]
+            public SerializableQuaternion(float x, float y, float z, float w)
+            {
+                X = x;
+                Y = y;
+                Z = z;
+                W = w;
+            }
+            
+            public SerializableQuaternion(Quaternion quaternion)
+            {
+                X = quaternion.x;
+                Y = quaternion.y;
+                Z = quaternion.z;
+                W = quaternion.w;
+            }
+
+            [JsonProperty("x")] public float X { get; }
+            [JsonProperty("y")] public float Y { get; }
+            [JsonProperty("z")] public float Z { get; }
+            [JsonProperty("w")] public float W { get; }
+        }
+
+        [JsonConstructor]
+        private SerializableGameObject(string name, SerializableVector3 position, SerializableQuaternion rotation)
+        {
+            Name = name;
+            Position = new Vector3(position.X, position.Y, position.Z);
+            Rotation = new Quaternion(rotation.X, rotation.Y, rotation.Z, rotation.W);
+            
+            LoadedObject = Resources.Load<GameObject>(name);
+        }
+        
         public SerializableGameObject(string name, Vector3 position, Quaternion rotation)
         {
             Name = name;
@@ -47,9 +105,11 @@ namespace Items
 
         [JsonProperty("name")] public string Name { get; }
 
-        [JsonProperty("position")] public Vector3 Position { get; }
+        [JsonIgnore] public Vector3 Position { get; }
+        [JsonProperty("position")] private SerializableVector3 PositionSerialized => new(Position);
 
-        [JsonProperty("rotation")] public Quaternion Rotation { get; }
+        [JsonIgnore] public Quaternion Rotation { get; }
+        [JsonProperty("rotation")] private SerializableQuaternion RotationSerialized => new(Rotation);
 
         [JsonIgnore] public GameObject LoadedObject { get; }
     }
