@@ -113,7 +113,7 @@
     border-right-width: 1px;
 }
 
-.item-square-disabled {
+.item-square.disabled {
     width: 55px;
     height: 55px;
     background-color: rgb(66, 89, 106);

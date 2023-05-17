@@ -233,7 +233,13 @@ namespace DataManager
             ItemData pot = _itemRegistry.CreateItem("Cooking Pot",
                 "A device that can cook a variety of ingredients into a hearty stew," +
                 " with the help of a built-in mixer and heating elements.",
-                ItemType.Machine, "ItemIcons/test");
+                ItemType.Machine, "ItemIcons/test-missing", new bool[,]
+                {
+                    {false, true, true, true},
+                    {true, true, true, true},
+                    {true, false, true, true},
+                    {true, true, true, false}
+                });
             PlaceableComponentData placeableComponentData = new(
                 new SerializableGameObject(
                     "PlaceableObjects/CookingPot",

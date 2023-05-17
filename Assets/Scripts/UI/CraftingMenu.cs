@@ -29,18 +29,20 @@ namespace UI
         private int _currentCategoryIndex;
         private List<ItemType> _tabCategories = new();
         private VisualElement _root;
+        private int _currentRecipeIndex;
 
         private bool _isCraftingMenuOpen;
         private bool _isRecipeListingOpen;
         private bool _isRecipeViewOpen;
         private VisualElement _recipeCreateButton;
-        private VisualElement _recipeDescription;
         private VisualElement _recipeIngredients;
+        private Label _recipeDescription;
+        private Label _recipeName;
 
         private VisualElement _recipeListContainer;
         private VisualElement _recipeListIcon;
+        private ListView _recipeList;
         private Label _recipeListName;
-        private Label _recipeName;
 
         private VisualElement _recipeView;
 
@@ -67,7 +69,7 @@ namespace UI
             _recipeView.style.display = DisplayStyle.None;
 
             _recipeName = _recipeView.Q<Label>("RecipeName");
-            _recipeDescription = _recipeView.Q<VisualElement>("ItemDescription");
+            _recipeDescription = _recipeView.Q<Label>("ItemDescription");
 
             for (int row = 1; row <= ItemConstants.ItemHeight; row++)
             {
@@ -111,6 +113,8 @@ namespace UI
 
         private void OpenRecipeListing(int categoryIndex, MachineType type)
         {
+            _currentRecipeIndex = -1;
+            _recipeView.style.display = DisplayStyle.None;
             _categoryTabs[_currentCategoryIndex].RemoveFromClassList("selected");
             _currentCategoryIndex = categoryIndex;
             _categoryTabs[_currentCategoryIndex].AddToClassList("selected");
@@ -127,10 +131,23 @@ namespace UI
             {
                 VisualElement icon = recipe.Q<VisualElement>("Icon");
                 Label itemName = recipe.Q<Label>("ItemName");
+                VisualElement button = recipe.Q<VisualElement>("Button");
 
                 // TODO: convert icon grid to a single icon
                 icon.style.backgroundImage = new StyleBackground(_itemTypeIcons[category]);
+                button.pickingMode = PickingMode.Position;
                 itemName.text = _itemRegistry.Get(recipes[idx].Result).Name;
+                
+                if (idx == _currentRecipeIndex)
+                {
+                    button.AddToClassList("selected");
+                }
+                else
+                {
+                    button.RemoveFromClassList("selected");
+                }
+                
+                button.RegisterCallback<MouseUpEvent>(evt => OpenRecipeView(recipes[idx], idx));
             }
 
             ListView recipeList = _recipeListContainer.Q<ListView>("RecipeList");
@@ -150,8 +167,49 @@ namespace UI
             };
             recipeList.AddToClassList("recipe-list");
             recipeList.selectionType = SelectionType.None;
-            
+            recipeList.pickingMode = PickingMode.Ignore;
+
+            _recipeList = recipeList;
             _recipeListContainer.Add(recipeList);
+        }
+
+        private void OpenRecipeView(CraftingRecipe recipe, int index)
+        {
+            int oldRecipeIndex = _currentRecipeIndex;
+            _currentRecipeIndex = index;
+            _recipeList.RefreshItem(oldRecipeIndex);
+            _recipeList.RefreshItem(_currentRecipeIndex);
+
+            ItemData resultItem = _itemRegistry.Get(recipe.Result);
+            
+            _recipeName.text = resultItem.Name;
+            _recipeDescription.text = resultItem.Description;
+            
+            for (int row = 0; row < ItemConstants.ItemHeight; row++)
+            {
+                for (int col = 0; col < ItemConstants.ItemWidth; col++)
+                {
+                    Sprite icon = resultItem.Icons[row, col];
+                    VisualElement cell = _recipeViewGrid[row, col];
+
+                    if (icon == null)
+                    {
+                        cell.AddToClassList("disabled");
+                        
+                        VisualElement iconElement = cell.Q<VisualElement>("ItemIcon");
+                        iconElement.style.backgroundImage = new StyleBackground();
+                    }
+                    else
+                    {
+                        cell.RemoveFromClassList("disabled");
+                        
+                        VisualElement iconElement = cell.Q<VisualElement>("ItemIcon");
+                        iconElement.style.backgroundImage = new StyleBackground(icon);
+                    }
+                }
+            }
+            
+            _recipeView.style.display = DisplayStyle.Flex;
         }
 
         public void Toggle(MachineType type)

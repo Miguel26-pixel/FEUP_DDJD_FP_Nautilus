@@ -29,7 +29,7 @@
                 <ui:VisualElement name="Background" picking-mode="Ignore" class="background" style="position: absolute; width: 100%; height: 100%;" />
                 <ui:VisualElement name="ItemInfo" style="background-color: rgb(27, 50, 67); padding-left: 10px; padding-right: 10px; align-items: flex-start; padding-top: 10px; padding-bottom: 10px; display: flex; width: 240px; border-bottom-left-radius: 4px; border-top-left-radius: 2px; flex-wrap: nowrap;">
                     <ui:VisualElement name="Row1" style="flex-direction: row;">
-                        <ui:VisualElement focusable="false" name="Cell1" class="item-square-disabled">
+                        <ui:VisualElement focusable="false" name="Cell1" class="item-square">
                             <ui:VisualElement name="ItemIcon" class="icon" />
                         </ui:VisualElement>
                         <ui:VisualElement focusable="false" name="Cell2" class="item-square">
@@ -85,7 +85,7 @@
                         </ui:VisualElement>
                     </ui:VisualElement>
                     <ui:VisualElement style="align-items: flex-start;">
-                        <ui:Label text="Spear" display-tooltip-when-elided="true" name="RecipeName" class="text" style="margin-bottom: 0; margin-top: 10px; font-size: 22px; padding-top: 0; padding-bottom: 0; -unity-font-style: normal;" />
+                        <ui:Label text="Spear" display-tooltip-when-elided="true" name="RecipeName" class="text" style="margin-bottom: 0; margin-top: 10px; font-size: 22px; padding-top: 0; padding-bottom: 0; -unity-font-style: normal; flex-wrap: wrap; white-space: normal;" />
                     </ui:VisualElement>
                     <ui:VisualElement style="align-items: flex-start; width: 100%; max-width: 100%; flex-wrap: nowrap;">
                         <ui:Label text="The perfect tool for when you want to stab something, but don&apos;t want to get too close." display-tooltip-when-elided="true" name="ItemDescription" class="text" style="flex-wrap: nowrap; white-space: normal; -unity-font-style: normal; font-size: 14px; margin-bottom: 0; padding-bottom: 0; color: rgb(194, 171, 144); width: 100%; max-width: 100%;" />
@@ -110,5 +110,4 @@
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
-    <ui:ListView focusable="true" />
 </ui:UXML>
