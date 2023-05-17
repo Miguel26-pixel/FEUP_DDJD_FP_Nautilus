@@ -197,6 +197,16 @@ namespace UI
             recipeList.selectionType = SelectionType.None;
             recipeList.pickingMode = PickingMode.Ignore;
 
+            // Fix slow mouse wheel scrolling
+            
+            Scroller scroller = recipeList.Q<Scroller>();
+            recipeList.RegisterCallback<WheelEvent>(evt =>
+            {
+                scroller.value += evt.delta.y * 100;
+                evt.StopPropagation();
+            });
+            
+            
             _recipeList = recipeList;
             _recipeListContainer.Add(recipeList);
         }
