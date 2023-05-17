@@ -16,7 +16,9 @@ namespace UI
         [SerializeField] private VisualTreeAsset recipeListing;
         [SerializeField] private VisualTreeAsset ingredientRecipe;
         [SerializeField] private CraftingRecipeRegistryObject recipeRegistryObject;
+        [SerializeField] private ItemRegistryObject itemRegistryObject;
         private CraftingRecipeRegistry _recipeRegistry;
+        private ItemRegistry _itemRegistry;
 
         private readonly Dictionary<ItemType, Sprite> _itemTypeIcons = new();
 
@@ -34,12 +36,11 @@ namespace UI
         private VisualElement _recipeCreateButton;
         private VisualElement _recipeDescription;
         private VisualElement _recipeIngredients;
-        private ListView _recipeList;
 
         private VisualElement _recipeListContainer;
         private VisualElement _recipeListIcon;
-        private VisualElement _recipeListName;
-        private VisualElement _recipeName;
+        private Label _recipeListName;
+        private Label _recipeName;
 
         private VisualElement _recipeView;
 
@@ -51,6 +52,7 @@ namespace UI
             }
 
             _recipeRegistry = recipeRegistryObject.craftingRecipeRegistry;
+            _itemRegistry = itemRegistryObject.itemRegistry;
 
             _root = GetComponent<UIDocument>().rootVisualElement;
             _root.style.display = DisplayStyle.None;
@@ -59,13 +61,12 @@ namespace UI
             _recipeListContainer = _root.Q<VisualElement>("RecipeListContainer");
 
             _recipeListIcon = _recipeListContainer.Q<VisualElement>("ListIcon");
-            _recipeListName = _recipeListContainer.Q<VisualElement>("ListTitleName");
-            _recipeList = _recipeListContainer.Q<ListView>("RecipeList");
+            _recipeListName = _recipeListContainer.Q<Label>("ListTitleLabel");
 
             _recipeView = _root.Q<VisualElement>("RecipeView");
             _recipeView.style.display = DisplayStyle.None;
 
-            _recipeName = _recipeView.Q<VisualElement>("RecipeName");
+            _recipeName = _recipeView.Q<Label>("RecipeName");
             _recipeDescription = _recipeView.Q<VisualElement>("ItemDescription");
 
             for (int row = 1; row <= ItemConstants.ItemHeight; row++)
@@ -114,10 +115,43 @@ namespace UI
             _currentCategoryIndex = categoryIndex;
             _categoryTabs[_currentCategoryIndex].AddToClassList("selected");
             ItemType category = _tabCategories[_currentCategoryIndex];
-
-            CraftingRecipe[] recipes = _recipeRegistry.GetOfType(category, type);
             
-            Debug.Log(categoryIndex);
+            _recipeListIcon.style.backgroundImage = new StyleBackground(_itemTypeIcons[category]);
+            _recipeListName.text = category.ToString();
+
+            List<CraftingRecipe> recipes = _recipeRegistry.GetOfType(category, type).ToList();
+
+            VisualElement MakeItem() => recipeListing.Instantiate();
+
+            void BindItem(VisualElement recipe, int idx)
+            {
+                VisualElement icon = recipe.Q<VisualElement>("Icon");
+                Label itemName = recipe.Q<Label>("ItemName");
+
+                // TODO: convert icon grid to a single icon
+                icon.style.backgroundImage = new StyleBackground(_itemTypeIcons[category]);
+                itemName.text = _itemRegistry.Get(recipes[idx].Result).Name;
+            }
+
+            ListView recipeList = _recipeListContainer.Q<ListView>("RecipeList");
+
+            if (recipeList != null)
+            {
+                _recipeListContainer.Remove(recipeList);
+            }
+            
+            recipeList = new ListView(recipes, 75, MakeItem, BindItem)
+            {
+                style =
+                {
+                    flexGrow = 1
+                },
+                name = "RecipeList"
+            };
+            recipeList.AddToClassList("recipe-list");
+            recipeList.selectionType = SelectionType.None;
+            
+            _recipeListContainer.Add(recipeList);
         }
 
         public void Toggle(MachineType type)

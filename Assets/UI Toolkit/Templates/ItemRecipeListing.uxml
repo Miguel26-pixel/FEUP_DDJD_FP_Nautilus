@@ -4,7 +4,7 @@
     <ui:VisualElement name="Item" picking-mode="Ignore" class="item-holder" style="flex-direction: row;">
         <ui:Instance template="Button" name="Button" class="item" />
         <ui:VisualElement name="NameContainer" style="justify-content: center; margin-left: 10px; margin-right: 10px; flex-grow: 1; background-image: url(&apos;project://database/Assets/UI%20Toolkit/Images/gradient.png?fileID=21300000&amp;guid=6db30642ec169ae9d95cb929054154a4&amp;type=3#gradient&apos;); margin-top: 0; margin-bottom: 0; border-top-left-radius: 4px; border-bottom-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px;">
-            <ui:Label text="Spear" display-tooltip-when-elided="true" name="ItemName" class="text" style="-unity-text-align: middle-left; white-space: normal; font-size: 25px; margin-left: 10px; -unity-font-style: normal;" />
+            <ui:Label text="Spear" display-tooltip-when-elided="true" name="ItemName" class="text" style="-unity-text-align: middle-left; white-space: normal; font-size: 22px; margin-left: 10px; -unity-font-style: normal;" />
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

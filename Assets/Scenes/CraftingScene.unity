@@ -203,6 +203,7 @@ MonoBehaviour:
   recipeListing: {fileID: 9197481963319205126, guid: ef897da330375b16c8e2cff7598e5268, type: 3}
   ingredientRecipe: {fileID: 9197481963319205126, guid: e3d9e9f9337d42b568930967aba13a0d, type: 3}
   recipeRegistryObject: {fileID: 317371959}
+  itemRegistryObject: {fileID: 317371960}
 --- !u!1 &317371954
 GameObject:
   m_ObjectHideFlags: 0

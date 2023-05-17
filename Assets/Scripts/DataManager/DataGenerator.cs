@@ -407,6 +407,8 @@ namespace DataManager
             File.WriteAllText("ItemHashes.txt", nameToHash);
 
             // Create recipes
+            
+            // Consumables
 
             _recipeRegistry.CreateCraftingRecipe(jam.ID,
                 MachineType.CookingPot,
@@ -451,12 +453,30 @@ namespace DataManager
                     { seaweed.ID, 2 },
                     { fiber.ID, 1 }
                 });
-
-            _recipeRegistry.CreateCraftingRecipe(plate.ID,
-                MachineType.Smelter,
+            
+            _recipeRegistry.CreateCraftingRecipe(ointment.ID,
+                MachineType.Fabricator | MachineType.PocketFabricator,
                 new Dictionary<string, int>
                 {
-                    { calcium.ID, 1 }
+                    { spines.ID, 1 },
+                    { fiber.ID, 1 }
+                });
+
+            // Resources
+
+            _recipeRegistry.CreateCraftingRecipe(cloth.ID,
+                MachineType.Fabricator | MachineType.PocketFabricator,
+                new Dictionary<string, int>
+                {
+                    { fiber.ID, 2 }
+                });
+
+            _recipeRegistry.CreateCraftingRecipe(plank.ID,
+                MachineType.Fabricator | MachineType.PocketFabricator,
+                new Dictionary<string, int>
+                {
+                    { wood.ID, 1 },
+                    { fiber.ID, 1 }
                 });
 
             _recipeRegistry.CreateCraftingRecipe(glass.ID,
@@ -465,12 +485,21 @@ namespace DataManager
                 {
                     { coralium.ID, 1 }
                 });
-
+            
             _recipeRegistry.CreateCraftingRecipe(silicon.ID,
                 MachineType.Smelter,
                 new Dictionary<string, int>
                 {
                     { soil.ID, 1 }
+                });
+            
+            
+            _recipeRegistry.CreateCraftingRecipe(board.ID,
+                MachineType.Fabricator,
+                new Dictionary<string, int>
+                {
+                    { plate.ID, 1 },
+                    { silicon.ID, 1 }
                 });
 
             _recipeRegistry.CreateCraftingRecipe(abyssalCrystal.ID,
@@ -479,7 +508,32 @@ namespace DataManager
                 {
                     { abyssallite.ID, 1 }
                 });
-
+            
+            _recipeRegistry.CreateCraftingRecipe(hook.ID,
+                MachineType.Fabricator,
+                new Dictionary<string, int>
+                {
+                    { mermaidMetal.ID, 2 }
+                });
+            
+            _recipeRegistry.CreateCraftingRecipe(glow.ID,
+                MachineType.Smelter,
+                new Dictionary<string, int>
+                {
+                    { lumini.ID, 1 },
+                    { doomstone.ID, 1 }
+                });
+            
+            
+            // Metal
+            
+            _recipeRegistry.CreateCraftingRecipe(plate.ID,
+                MachineType.Smelter,
+                new Dictionary<string, int>
+                {
+                    { calcium.ID, 1 }
+                });
+            
             _recipeRegistry.CreateCraftingRecipe(mermaidMetal.ID,
                 MachineType.Smelter,
                 new Dictionary<string, int>
@@ -502,14 +556,18 @@ namespace DataManager
                     { calcium.ID, 1 },
                     { abyssallite.ID, 1 }
                 });
-
-            _recipeRegistry.CreateCraftingRecipe(glow.ID,
-                MachineType.Smelter,
+            
+            _recipeRegistry.CreateCraftingRecipe(deepPlate.ID,
+                MachineType.Fabricator,
                 new Dictionary<string, int>
                 {
-                    { lumini.ID, 1 },
-                    { doomstone.ID, 1 }
+                    { plate.ID, 1 },
+                    { coralSteel.ID, 1 },
+                    { abyssalCrystal.ID, 1 }
                 });
+
+
+            // Machines
 
             _recipeRegistry.CreateCraftingRecipe(fabricator.ID,
                 MachineType.Fabricator | MachineType.PocketFabricator,
@@ -518,66 +576,7 @@ namespace DataManager
                     { calcium.ID, 1 },
                     { coralium.ID, 2 }
                 });
-
-            _recipeRegistry.CreateCraftingRecipe(cloth.ID,
-                MachineType.Fabricator | MachineType.PocketFabricator,
-                new Dictionary<string, int>
-                {
-                    { fiber.ID, 2 }
-                });
-
-            _recipeRegistry.CreateCraftingRecipe(plank.ID,
-                MachineType.Fabricator | MachineType.PocketFabricator,
-                new Dictionary<string, int>
-                {
-                    { wood.ID, 1 },
-                    { fiber.ID, 1 }
-                });
-
-            _recipeRegistry.CreateCraftingRecipe(fishNet.ID,
-                MachineType.Fabricator | MachineType.PocketFabricator,
-                new Dictionary<string, int>
-                {
-                    { fiber.ID, 2 },
-                    { seaweed.ID, 1 }
-                });
-
-
-            _recipeRegistry.CreateCraftingRecipe(spear.ID,
-                MachineType.Fabricator | MachineType.PocketFabricator,
-                new Dictionary<string, int>
-                {
-                    { plank.ID, 1 },
-                    { coralium.ID, 1 }
-                });
-
-
-            _recipeRegistry.CreateCraftingRecipe(plasma.ID,
-                MachineType.Fabricator | MachineType.PocketFabricator,
-                new Dictionary<string, int>
-                {
-                    { silicon.ID, 1 }
-                });
-
-
-            _recipeRegistry.CreateCraftingRecipe(ointment.ID,
-                MachineType.Fabricator | MachineType.PocketFabricator,
-                new Dictionary<string, int>
-                {
-                    { spines.ID, 1 },
-                    { fiber.ID, 1 }
-                });
-
-
-            _recipeRegistry.CreateCraftingRecipe(glowPods.ID,
-                MachineType.Fabricator | MachineType.PocketFabricator,
-                new Dictionary<string, int>
-                {
-                    { lumini.ID, 1 },
-                    { tentacle.ID, 1 }
-                },
-                16);
-
+            
             _recipeRegistry.CreateCraftingRecipe(pot.ID,
                 MachineType.Fabricator,
                 new Dictionary<string, int>
@@ -585,7 +584,8 @@ namespace DataManager
                     { coralium.ID, 2 },
                     { scales.ID, 1 }
                 });
-
+            
+                        
             _recipeRegistry.CreateCraftingRecipe(smelter.ID,
                 MachineType.Fabricator,
                 new Dictionary<string, int>
@@ -604,46 +604,101 @@ namespace DataManager
                     { fabricator.ID, 1 }
                 });
 
-            _recipeRegistry.CreateCraftingRecipe(flippers.ID,
+
+            // Tools
+
+            _recipeRegistry.CreateCraftingRecipe(fishNet.ID,
+                MachineType.Fabricator | MachineType.PocketFabricator,
+                new Dictionary<string, int>
+                {
+                    { fiber.ID, 2 },
+                    { seaweed.ID, 1 }
+                });
+            
+            _recipeRegistry.CreateCraftingRecipe(boat.ID,
                 MachineType.Fabricator,
                 new Dictionary<string, int>
                 {
-                    { cloth.ID, 2 },
-                    { scales.ID, 2 }
+                    { plank.ID, 2 },
+                    { cloth.ID, 1 },
+                    { plate.ID, 1 }
+                });
+            
+            _recipeRegistry.CreateCraftingRecipe(anchorLine.ID,
+                MachineType.Assembler,
+                new Dictionary<string, int>
+                {
+                    { tentacle.ID, 3 },
+                    { hook.ID, 1 }
+                });
+            
+            _recipeRegistry.CreateCraftingRecipe(glowPods.ID,
+                MachineType.Fabricator | MachineType.PocketFabricator,
+                new Dictionary<string, int>
+                {
+                    { lumini.ID, 1 },
+                    { tentacle.ID, 1 }
+                },
+                16);
+            
+            _recipeRegistry.CreateCraftingRecipe(sonar.ID,
+                MachineType.Assembler,
+                new Dictionary<string, int>
+                {
+                    { glow.ID, 1 },
+                    { abyssalCrystal.ID, 1 },
+                    { board.ID, 2 }
                 });
 
-            _recipeRegistry.CreateCraftingRecipe(board.ID,
-                MachineType.Fabricator,
+            _recipeRegistry.CreateCraftingRecipe(reaper.ID,
+                MachineType.Assembler,
                 new Dictionary<string, int>
                 {
-                    { plate.ID, 1 },
+                    { artifact.ID, 2 },
+                    { eye.ID, 1 },
+                    { tentacle.ID, 1 },
+                    { tooth.ID, 1 },
+                    { glow.ID, 1 }
+                });
+
+            
+            // Weapons  
+
+            _recipeRegistry.CreateCraftingRecipe(spear.ID,
+                MachineType.Fabricator | MachineType.PocketFabricator,
+                new Dictionary<string, int>
+                {
+                    { plank.ID, 1 },
+                    { coralium.ID, 1 }
+                });
+            
+            _recipeRegistry.CreateCraftingRecipe(trident.ID,
+                MachineType.Assembler,
+                new Dictionary<string, int>
+                {
+                    { metalRod.ID, 1 },
+                    { abyssalCrystal.ID, 1 },
+                    { tear.ID, 1 },
+                    { tooth.ID, 3 }
+                });
+
+            _recipeRegistry.CreateCraftingRecipe(plasma.ID,
+                MachineType.Fabricator | MachineType.PocketFabricator,
+                new Dictionary<string, int>
+                {
                     { silicon.ID, 1 }
                 });
-
-            _recipeRegistry.CreateCraftingRecipe(oxygenTank.ID,
-                MachineType.Fabricator,
+            
+            _recipeRegistry.CreateCraftingRecipe(laser.ID,
+                MachineType.Assembler,
                 new Dictionary<string, int>
                 {
-                    { glass.ID, 2 },
-                    { plate.ID, 1 },
-                    { silicon.ID, 1 }
-                });
-
-            _recipeRegistry.CreateCraftingRecipe(hook.ID,
-                MachineType.Fabricator,
-                new Dictionary<string, int>
-                {
-                    { mermaidMetal.ID, 2 }
-                });
-
-            _recipeRegistry.CreateCraftingRecipe(deepPlate.ID,
-                MachineType.Fabricator,
-                new Dictionary<string, int>
-                {
-                    { plate.ID, 1 },
+                    { calAbys.ID, 2 },
                     { coralSteel.ID, 1 },
-                    { abyssalCrystal.ID, 1 }
+                    { board.ID, 1 },
+                    { tear.ID, 1 }
                 });
+            
 
             _recipeRegistry.CreateCraftingRecipe(torpedo.ID,
                 MachineType.Fabricator,
@@ -653,15 +708,39 @@ namespace DataManager
                     { coralSteel.ID, 1 }
                 },
                 4);
+            
+            _recipeRegistry.CreateCraftingRecipe(torpedoLauncher.ID,
+                MachineType.Assembler,
+                new Dictionary<string, int>
+                {
+                    { glow.ID, 2 },
+                    { deepPlate.ID, 2 },
+                    { board.ID, 1 },
+                    { mermaidMetal.ID, 1 }
+                });
 
-            _recipeRegistry.CreateCraftingRecipe(boat.ID,
+
+            // Equipment
+            
+
+            _recipeRegistry.CreateCraftingRecipe(flippers.ID,
                 MachineType.Fabricator,
                 new Dictionary<string, int>
                 {
-                    { plank.ID, 2 },
-                    { cloth.ID, 1 },
-                    { plate.ID, 1 }
+                    { cloth.ID, 2 },
+                    { scales.ID, 2 }
                 });
+
+
+            _recipeRegistry.CreateCraftingRecipe(oxygenTank.ID,
+                MachineType.Fabricator,
+                new Dictionary<string, int>
+                {
+                    { glass.ID, 2 },
+                    { plate.ID, 1 },
+                    { silicon.ID, 1 }
+                });
+            
 
             _recipeRegistry.CreateCraftingRecipe(suit.ID,
                 MachineType.Assembler,
@@ -671,24 +750,6 @@ namespace DataManager
                     { plate.ID, 1 },
                     { glass.ID, 1 },
                     { silicon.ID, 1 }
-                });
-
-            _recipeRegistry.CreateCraftingRecipe(anchorLine.ID,
-                MachineType.Assembler,
-                new Dictionary<string, int>
-                {
-                    { tentacle.ID, 3 },
-                    { hook.ID, 1 }
-                });
-
-            _recipeRegistry.CreateCraftingRecipe(laser.ID,
-                MachineType.Assembler,
-                new Dictionary<string, int>
-                {
-                    { calAbys.ID, 2 },
-                    { coralSteel.ID, 1 },
-                    { board.ID, 1 },
-                    { tear.ID, 1 }
                 });
 
             _recipeRegistry.CreateCraftingRecipe(abyssalTank.ID,
@@ -709,15 +770,6 @@ namespace DataManager
                     { skin.ID, 1 }
                 });
 
-            _recipeRegistry.CreateCraftingRecipe(trident.ID,
-                MachineType.Assembler,
-                new Dictionary<string, int>
-                {
-                    { metalRod.ID, 1 },
-                    { abyssalCrystal.ID, 1 },
-                    { tear.ID, 1 },
-                    { tooth.ID, 3 }
-                });
 
             _recipeRegistry.CreateCraftingRecipe(drill.ID,
                 MachineType.Assembler,
@@ -727,36 +779,7 @@ namespace DataManager
                     { abyssalCrystal.ID, 1 },
                     { coralSteel.ID, 1 }
                 });
-
-            _recipeRegistry.CreateCraftingRecipe(torpedoLauncher.ID,
-                MachineType.Assembler,
-                new Dictionary<string, int>
-                {
-                    { glow.ID, 2 },
-                    { deepPlate.ID, 2 },
-                    { board.ID, 1 },
-                    { mermaidMetal.ID, 1 }
-                });
-
-            _recipeRegistry.CreateCraftingRecipe(sonar.ID,
-                MachineType.Assembler,
-                new Dictionary<string, int>
-                {
-                    { glow.ID, 1 },
-                    { abyssalCrystal.ID, 1 },
-                    { board.ID, 2 }
-                });
-
-            _recipeRegistry.CreateCraftingRecipe(reaper.ID,
-                MachineType.Assembler,
-                new Dictionary<string, int>
-                {
-                    { artifact.ID, 2 },
-                    { eye.ID, 1 },
-                    { tentacle.ID, 1 },
-                    { tooth.ID, 1 },
-                    { glow.ID, 1 }
-                });
+            
 
             IEnumerable<CraftingRecipe> recipes = _recipeRegistry.GetAll();
             json = DataSerializer.SerializeRecipeData(recipes);

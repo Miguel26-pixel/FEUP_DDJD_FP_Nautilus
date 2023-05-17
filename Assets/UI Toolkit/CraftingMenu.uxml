@@ -1,5 +1,4 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:Template name="ItemRecipeListing" src="project://database/Assets/UI%20Toolkit/Templates/ItemRecipeListing.uxml?fileID=9197481963319205126&amp;guid=ef897da330375b16c8e2cff7598e5268&amp;type=3#ItemRecipeListing" />
     <ui:Template name="IngredientRecipe" src="project://database/Assets/UI%20Toolkit/Templates/IngredientRecipe.uxml?fileID=9197481963319205126&amp;guid=e3d9e9f9337d42b568930967aba13a0d&amp;type=3#IngredientRecipe" />
     <Style src="project://database/Assets/UI%20Toolkit/Theme.uss?fileID=7433441132597879392&amp;guid=b674df751d5a19162b7bfb6da9f4cfd4&amp;type=3#Theme" />
     <ui:VisualElement style="margin-left: 20px; margin-top: 15px;">
@@ -23,10 +22,7 @@
                         </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:VisualElement>
-                <ui:Instance template="ItemRecipeListing" name="ItemRecipeListing" class="selected" />
-                <ui:Instance template="ItemRecipeListing" name="ItemRecipeListing" />
-                <ui:Instance template="ItemRecipeListing" name="ItemRecipeListing" />
-                <ui:ListView focusable="true" show-border="false" name="RecipeList" />
+                <ui:VisualElement style="height: 10px;" />
             </ui:VisualElement>
             <ui:VisualElement name="RecipeView" picking-mode="Ignore" style="margin-top: 15px; width: auto; height: auto; display: flex; margin-left: 20px; min-height: auto; min-width: 240px; flex-direction: row;">
                 <ui:VisualElement name="TopFlair" picking-mode="Ignore" style="position: absolute; width: 100%; height: 4px; margin-right: 0; padding-right: 0; top: -2px; background-color: rgb(95, 116, 131); border-top-left-radius: 2px; border-bottom-left-radius: 0; border-top-right-radius: 2px; border-bottom-right-radius: 0;" />
@@ -101,7 +97,6 @@
                         <ui:VisualElement style="height: 0; border-top-width: 4px; border-bottom-width: 0; border-right-width: 0; border-left-width: 0; border-left-color: rgb(95, 116, 131); border-right-color: rgb(95, 116, 131); border-top-color: rgb(95, 116, 131); border-bottom-color: rgb(95, 116, 131);" />
                     </ui:VisualElement>
                     <ui:VisualElement name="Ingredients" style="margin-top: 0; margin-left: 0; margin-right: 0; margin-bottom: 0;">
-                        <ui:Instance template="IngredientRecipe" name="IngredientRecipe" class="ingredient-full" />
                         <ui:Instance template="IngredientRecipe" name="IngredientRecipe" class="ingredient-incomplete" />
                         <ui:Instance template="IngredientRecipe" name="IngredientRecipe" />
                         <ui:Instance template="IngredientRecipe" name="IngredientRecipe" />
@@ -115,4 +110,5 @@
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
+    <ui:ListView focusable="true" />
 </ui:UXML>
