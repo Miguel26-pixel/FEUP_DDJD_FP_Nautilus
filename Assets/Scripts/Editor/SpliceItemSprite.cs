@@ -79,7 +79,7 @@ public class SpliceItemSprite : MonoBehaviour
 
         dataProvider.Apply();
 
-        importer.isReadable = false;
+        // importer.isReadable = false;
         AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
     }
 }

@@ -252,7 +252,13 @@ namespace DataManager
             ItemData fabricator = _itemRegistry.CreateItem("Fabricator",
                 "A multi-purpose machine that can be used to craft a wide range of items from various materials." +
                 " It uses a combination of robotic arms, lasers, and 3D printing technology.",
-                ItemType.Machine, "ItemIcons/test");
+                ItemType.Machine, "ItemIcons/test", new bool[,]
+                {
+                    {false, false, false, false},
+                    {false, true, true, false},
+                    { false, true, false, false },
+                    { false, false, false, false }
+                });
             placeableComponentData = new PlaceableComponentData(
                 new SerializableGameObject(
                     "PlaceableObjects/Fabricator",

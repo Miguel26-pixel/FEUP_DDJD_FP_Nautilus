@@ -97,13 +97,13 @@
                         <ui:VisualElement style="height: 0; border-top-width: 4px; border-bottom-width: 0; border-right-width: 0; border-left-width: 0; border-left-color: rgb(95, 116, 131); border-right-color: rgb(95, 116, 131); border-top-color: rgb(95, 116, 131); border-bottom-color: rgb(95, 116, 131);" />
                     </ui:VisualElement>
                     <ui:VisualElement name="Ingredients" style="margin-top: 0; margin-left: 0; margin-right: 0; margin-bottom: 0;">
-                        <ui:Instance template="IngredientRecipe" name="IngredientRecipe" class="ingredient-incomplete" />
+                        <ui:Instance template="IngredientRecipe" name="IngredientRecipe" class="ingredient" />
                         <ui:Instance template="IngredientRecipe" name="IngredientRecipe" />
                         <ui:Instance template="IngredientRecipe" name="IngredientRecipe" />
                     </ui:VisualElement>
                     <ui:VisualElement style="flex-grow: 1;" />
                     <ui:VisualElement name="CreateButton" class="button" style="height: 40px; background-color: rgb(99, 140, 122); border-left-color: rgb(11, 53, 35); border-right-color: rgb(11, 53, 35); border-top-color: rgb(11, 53, 35); border-bottom-color: rgb(11, 53, 35); justify-content: flex-start; margin-top: 20px;">
-                        <ui:Label text="Create" display-tooltip-when-elided="true" class="text" style="-unity-text-align: middle-center; font-size: 20px; margin-bottom: 4px; color: rgb(45, 81, 65);" />
+                        <ui:Label text="Create" display-tooltip-when-elided="true" name="CreateText" class="text" style="-unity-text-align: middle-center; font-size: 20px; margin-bottom: 4px; color: rgb(45, 81, 65);" />
                         <ui:VisualElement name="Overlay" class="overlay" />
                     </ui:VisualElement>
                 </ui:VisualElement>

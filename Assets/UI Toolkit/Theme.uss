@@ -148,7 +148,7 @@
     -unity-background-image-tint-color: rgb(11, 53, 35);
 }
 
-.ingredient-incomplete .gradient {
+.ingredient.incomplete .gradient {
     -unity-background-image-tint-color: rgb(123, 53, 53);
 }
 
@@ -247,4 +247,8 @@
     margin-right: 4px;
     margin-top: 4px;
     margin-bottom: 4px;
+}
+
+.incomplete .overlay {
+    background-color: rgb(123, 53, 53);
 }

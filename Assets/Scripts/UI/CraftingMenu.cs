@@ -149,12 +149,12 @@ namespace UI
                 VisualElement icon = recipe.Q<VisualElement>("Icon");
                 Label itemName = recipe.Q<Label>("ItemName");
                 VisualElement button = recipe.Q<VisualElement>("Button");
+                VisualElement item = recipe.Q<VisualElement>("Item");
+                ItemData result = _itemRegistry.Get(recipes[idx].Result);
 
-                // TODO: convert icon grid to a single icon
-                icon.style.backgroundImage = new StyleBackground(_itemTypeIcons[category]);
+                icon.style.backgroundImage = new StyleBackground(result.Icon);
                 button.pickingMode = PickingMode.Position;
-                Debug.Log(idx);
-                itemName.text = _itemRegistry.Get(recipes[idx].Result).Name;
+                itemName.text = result.Name;
                 
                 if (idx == _currentRecipeIndex)
                 {
@@ -166,6 +166,16 @@ namespace UI
                 }
                 
                 recipe.userData = idx;
+                
+                
+                if (recipes[idx].CanCraft(type, _inventory.GetItems()))
+                {
+                    item.RemoveFromClassList("incomplete");
+                }
+                else
+                {
+                    item.AddToClassList("incomplete");
+                }
             }
 
             ListView recipeList = _recipeListContainer.Q<ListView>("RecipeList");
@@ -238,16 +248,22 @@ namespace UI
                 Label itemName = ingredientElement.Q<Label>("ItemName");
                 Label currentCount = ingredientElement.Q<Label>("CurrentCount");
                 Label requiredCount = ingredientElement.Q<Label>("RequiredCount");
-
-                // TODO: convert icon grid to a single icon
-                icon.style.backgroundImage = new StyleBackground(ingredientItem.Icons[0, 0]);
+                
+                icon.style.backgroundImage = new StyleBackground(ingredientItem.Icon);
                 itemName.text = ingredientItem.Name;
                 currentCount.text = ingredientCount[ingredient.Key].ToString();
                 requiredCount.text = ingredient.Value.ToString();
+                
+                ingredientElement.AddToClassList("ingredient");
+                if (ingredientCount[ingredient.Key] < ingredient.Value)
+                {
+                    ingredientElement.AddToClassList("incomplete");
+                }
 
                 _recipeIngredients.Add(ingredientElement);
             }
             
+            _recipeCreateButton.Q<Label>("CreateText").text = recipe.Quantity > 1 ? $"Create (x{recipe.Quantity})" : "Create";
             _recipeView.style.display = DisplayStyle.Flex;
         }
 
