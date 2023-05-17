@@ -1,5 +1,4 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:Template name="Button" src="project://database/Assets/UI%20Toolkit/Templates/Button.uxml?fileID=9197481963319205126&amp;guid=9827c0fc39a7046fc88a9b41a310c8d8&amp;type=3#Button" />
     <ui:Template name="ItemRecipeListing" src="project://database/Assets/UI%20Toolkit/Templates/ItemRecipeListing.uxml?fileID=9197481963319205126&amp;guid=ef897da330375b16c8e2cff7598e5268&amp;type=3#ItemRecipeListing" />
     <ui:Template name="IngredientRecipe" src="project://database/Assets/UI%20Toolkit/Templates/IngredientRecipe.uxml?fileID=9197481963319205126&amp;guid=e3d9e9f9337d42b568930967aba13a0d&amp;type=3#IngredientRecipe" />
     <Style src="project://database/Assets/UI%20Toolkit/Theme.uss?fileID=7433441132597879392&amp;guid=b674df751d5a19162b7bfb6da9f4cfd4&amp;type=3#Theme" />
@@ -7,11 +6,7 @@
         <ui:VisualElement name="CategoryBar" picking-mode="Ignore" style="height: 100px; margin-left: 0; margin-right: auto; margin-top: 0; flex-direction: row; align-items: center; padding-right: 0;">
             <ui:VisualElement name="TopFlair" picking-mode="Ignore" style="position: absolute; width: 100%; height: 4px; margin-right: 0; padding-right: 0; top: -2px; background-color: rgb(95, 116, 131); border-top-left-radius: 2px; border-bottom-left-radius: 0; border-top-right-radius: 2px; border-bottom-right-radius: 0;" />
             <ui:VisualElement name="Background" picking-mode="Ignore" class="background" style="position: absolute; width: 100%; height: 100%;" />
-            <ui:VisualElement name="CategoryTabs" style="flex-direction: row;">
-                <ui:Instance template="Button" name="Button" class="tab" />
-                <ui:Instance template="Button" name="Button" class="tab" />
-                <ui:Instance template="Button" name="Button" class="tab" />
-            </ui:VisualElement>
+            <ui:VisualElement name="CategoryTabs" style="flex-direction: row;" />
             <ui:VisualElement picking-mode="Ignore" style="width: 15px;" />
         </ui:VisualElement>
         <ui:VisualElement style="flex-direction: row; align-items: flex-start;">

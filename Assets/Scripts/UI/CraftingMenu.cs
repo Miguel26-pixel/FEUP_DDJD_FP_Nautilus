@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Crafting;
+using DataManager;
 using Items;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -12,6 +14,8 @@ namespace UI
         [SerializeField] private VisualTreeAsset button;
         [SerializeField] private VisualTreeAsset recipeListing;
         [SerializeField] private VisualTreeAsset ingredientRecipe;
+        [SerializeField] private CraftingRecipeRegistryObject recipeRegistryObject;
+        private CraftingRecipeRegistry _recipeRegistry;
 
         private readonly Dictionary<ItemType, Sprite> _itemTypeIcons = new();
 
@@ -19,6 +23,7 @@ namespace UI
             new VisualElement[ItemConstants.ItemHeight, ItemConstants.ItemWidth];
 
         private VisualElement _categoryTabs;
+        private VisualElement _root;
 
         private bool _isCraftingMenuOpen;
         private bool _isRecipeListingOpen;
@@ -42,18 +47,20 @@ namespace UI
                 _itemTypeIcons.Add(typeSprite.type, typeSprite.sprite);
             }
 
-            VisualElement root = GetComponent<UIDocument>().rootVisualElement;
-            root.style.display = DisplayStyle.None;
-            _categoryTabs = root.Q<VisualElement>("CategoryTabs");
+            _recipeRegistry = recipeRegistryObject.craftingRecipeRegistry;
 
-            _recipeListContainer = root.Q<VisualElement>("RecipeListContainer");
+            _root = GetComponent<UIDocument>().rootVisualElement;
+            _root.style.display = DisplayStyle.None;
+            _categoryTabs = _root.Q<VisualElement>("CategoryTabs");
+
+            _recipeListContainer = _root.Q<VisualElement>("RecipeListContainer");
             _recipeListContainer.style.display = DisplayStyle.None;
 
             _recipeListIcon = _recipeListContainer.Q<VisualElement>("ListIcon");
             _recipeListName = _recipeListContainer.Q<VisualElement>("ListTitleName");
             _recipeList = _recipeListContainer.Q<ListView>("RecipeList");
 
-            _recipeView = root.Q<VisualElement>("RecipeView");
+            _recipeView = _root.Q<VisualElement>("RecipeView");
             _recipeView.style.display = DisplayStyle.None;
 
             _recipeName = _recipeView.Q<VisualElement>("RecipeName");
@@ -72,6 +79,39 @@ namespace UI
 
             _recipeIngredients = _recipeView.Q<VisualElement>("RecipeIngredients");
             _recipeCreateButton = _recipeView.Q<VisualElement>("CreateButton");
+        }
+
+        private void Open(MachineType type)
+        {
+            var categories = _recipeRegistry.AvailableCategories(type);
+            _categoryTabs.Clear();
+            
+            foreach (ItemType category in categories)
+            {
+                VisualElement tab = button.Instantiate();
+                tab.AddToClassList("tab");
+                
+                VisualElement icon = tab.Q<VisualElement>("Icon");
+                icon.style.backgroundImage = new StyleBackground(_itemTypeIcons[category]);
+                
+                // tab.RegisterCallback<MouseUpEvent>(evt => OpenRecipeListing(category, type));
+                _categoryTabs.Add(tab);
+            }
+        }
+
+        public void Toggle(MachineType type)
+        {
+            if (_isCraftingMenuOpen)
+            {
+                _root.style.display = DisplayStyle.None;
+            }
+            else
+            {
+                _root.style.display = DisplayStyle.Flex;
+                Open(type);
+            }
+
+            _isCraftingMenuOpen = !_isCraftingMenuOpen;
         }
 
         [Serializable]

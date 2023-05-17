@@ -197,9 +197,12 @@ MonoBehaviour:
     sprite: {fileID: 2095585008, guid: 5fb67ad0c979d2dfcb84d9732888b58b, type: 3}
   - type: 8
     sprite: {fileID: -358350054, guid: 5fb67ad0c979d2dfcb84d9732888b58b, type: 3}
+  - type: 0
+    sprite: {fileID: 21300000, guid: 3042b019b052942a1baf7aa49d7ca6bb, type: 3}
   button: {fileID: 9197481963319205126, guid: 9827c0fc39a7046fc88a9b41a310c8d8, type: 3}
   recipeListing: {fileID: 9197481963319205126, guid: ef897da330375b16c8e2cff7598e5268, type: 3}
   ingredientRecipe: {fileID: 9197481963319205126, guid: e3d9e9f9337d42b568930967aba13a0d, type: 3}
+  recipeRegistryObject: {fileID: 317371959}
 --- !u!1 &317371954
 GameObject:
   m_ObjectHideFlags: 0
@@ -547,3 +550,63 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &1699484528
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1699484529}
+  - component: {fileID: 1699484530}
+  m_Layer: 0
+  m_Name: Player
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1699484529
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1699484528}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -132.76192, y: -220.42406, z: -186.4002}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1699484530
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1699484528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 274fa017f1a04079972fb19fa8994155, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  machineType: 1
+  OnCraftEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 278563537}
+        m_TargetAssemblyTypeName: UI.CraftingMenu, NautilusAssembly
+        m_MethodName: Toggle
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2

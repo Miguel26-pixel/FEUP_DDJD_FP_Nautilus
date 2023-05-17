@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Crafting;
 using Items;
 
@@ -40,6 +41,22 @@ namespace DataManager
             return _recipes.ToArray();
         }
 
+        public SortedSet<ItemType> AvailableCategories(MachineType machineType)
+        {
+            SortedSet<ItemType> categories = new();
+            
+            foreach (CraftingRecipe recipe in _recipes)
+            {
+                if (recipe.CanCraftOnMachine(machineType))
+                {
+                    ItemData result = _itemRegistry.Get(recipe.Result);
+                    categories.Add(result.Type);
+                }
+            }
+
+            return categories;
+        }
+
         public CraftingRecipe[] GetOfType(ItemType type, MachineType machineType)
         {
             List<CraftingRecipe> recipes = new();
@@ -48,7 +65,7 @@ namespace DataManager
             {
                 ItemData result = _itemRegistry.Get(recipe.Result);
 
-                if (result.Type == type && recipe.MachineType == machineType)
+                if (result.Type == type && recipe.CanCraftOnMachine(machineType))
                 {
                     recipes.Add(recipe);
                 }

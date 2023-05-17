@@ -1,0 +1,40 @@
+{
+    "name": "PlayerActions",
+    "maps": [
+        {
+            "name": "CraftingTest",
+            "id": "027dddd2-08a3-4133-b275-c1862cbaaf7d",
+            "actions": [
+                {
+                    "name": "Craft",
+                    "type": "Button",
+                    "id": "dd04eafd-db24-4f8f-b4a1-e3c06de7a457",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "e43aefbe-b885-4495-920d-02000b02bcfe",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Test",
+                    "action": "Craft",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "Test",
+            "bindingGroup": "Test",
+            "devices": []
+        }
+    ]
+}
