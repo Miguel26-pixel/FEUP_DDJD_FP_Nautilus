@@ -249,6 +249,28 @@
     margin-bottom: 4px;
 }
 
-.incomplete .overlay {
+.incomplete > .overlay {
+    background-color: rgba(154, 101, 101, 255);
+    opacity: 0.25;
+}
+
+.create.incomplete {
     background-color: rgb(123, 53, 53);
+}
+
+.create {
+    background-color: rgb(99, 140, 122);
+}
+
+.create .text {
+    color: rgb(45, 81, 65);
+}
+
+.create.incomplete .text {
+    color: rgb(13, 11, 9);
+}
+
+.incomplete > .overlay:hover {
+    background-color: rgb(154, 101, 101);
+    opacity: 0.25;
 }

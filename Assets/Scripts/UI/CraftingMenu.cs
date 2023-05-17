@@ -262,6 +262,19 @@ namespace UI
 
                 _recipeIngredients.Add(ingredientElement);
             }
+
+            bool canCraft = recipe.CorrectCount(ingredientCount);
+
+            if (canCraft)
+            {
+                _recipeCreateButton.RemoveFromClassList("disabled");
+                _recipeCreateButton.RemoveFromClassList("incomplete");
+            }
+            else
+            {
+                _recipeCreateButton.AddToClassList("disabled");
+                _recipeCreateButton.AddToClassList("incomplete");
+            }
             
             _recipeCreateButton.Q<Label>("CreateText").text = recipe.Quantity > 1 ? $"Create (x{recipe.Quantity})" : "Create";
             _recipeView.style.display = DisplayStyle.Flex;

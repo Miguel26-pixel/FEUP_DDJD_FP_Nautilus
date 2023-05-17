@@ -71,6 +71,11 @@ namespace Crafting
 
             Dictionary<int, int> count = IngredientCount(items);
 
+            return CorrectCount(count);
+        }
+        
+        public bool CorrectCount(Dictionary<int, int> count)
+        {
             foreach (KeyValuePair<int, int> ingredient in Ingredients)
             {
                 if (count[ingredient.Key] < ingredient.Value)
