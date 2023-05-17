@@ -790,6 +790,9 @@ namespace DataManager
             IEnumerable<CraftingRecipe> recipes = _recipeRegistry.GetAll();
             json = DataSerializer.SerializeRecipeData(recipes);
             File.WriteAllText("RecipeData.json", json);
+            
+            _itemRegistry.SetInitialized();
+            _recipeRegistry.SetInitialized();
         }
     }
 }

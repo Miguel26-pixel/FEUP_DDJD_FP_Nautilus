@@ -40,13 +40,8 @@ namespace Crafting
         [JsonProperty("quantity")] public int Quantity { get; }
 
 
-        public bool CanCraft(MachineType machineType, List<ItemData> items)
+        public Dictionary<int, int> IngredientCount(List<Item> items)
         {
-            if (!CanCraftOnMachine(machineType))
-            {
-                return false;
-            }
-
             // Check if the player has the required items, and if they have enough of them
             Dictionary<int, int> count = new();
 
@@ -55,13 +50,26 @@ namespace Crafting
                 count.Add(ingredient.Key, 0);
             }
 
-            foreach (ItemData item in items)
+            foreach (Item item in items)
             {
                 if (Ingredients.ContainsKey(item.IDHash))
                 {
                     count[item.IDHash]++;
                 }
             }
+
+            return count;
+        }
+
+
+        public bool CanCraft(MachineType machineType, List<Item> items)
+        {
+            if (!CanCraftOnMachine(machineType))
+            {
+                return false;
+            }
+
+            Dictionary<int, int> count = IngredientCount(items);
 
             foreach (KeyValuePair<int, int> ingredient in Ingredients)
             {

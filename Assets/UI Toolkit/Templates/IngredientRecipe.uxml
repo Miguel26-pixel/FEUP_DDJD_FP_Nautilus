@@ -1,7 +1,9 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <ui:VisualElement style="flex-direction: row-reverse; justify-content: flex-end; align-items: stretch; margin-top: 10px;">
         <ui:VisualElement name="NameContainer" class="gradient" style="margin-left: -4px;">
-            <ui:Label text="Spear" display-tooltip-when-elided="true" name="ItemName" class="text" style="-unity-text-align: middle-left; white-space: normal; font-size: 18px; margin-left: 9px; -unity-font-style: normal;" />
+            <ui:VisualElement>
+                <ui:Label text="Spear" display-tooltip-when-elided="true" name="ItemName" class="text" style="-unity-text-align: middle-left; white-space: normal; font-size: 18px; margin-left: 9px; -unity-font-style: normal;" />
+            </ui:VisualElement>
             <ui:VisualElement style="align-items: flex-end; justify-content: flex-end; height: 100%;">
                 <ui:VisualElement style="flex-direction: row; align-items: center; margin-bottom: 3px;">
                     <ui:Label text="0" display-tooltip-when-elided="true" name="CurrentCount" class="text" style="color: rgb(194, 171, 144); margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: -2px; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; font-size: 15px;" />

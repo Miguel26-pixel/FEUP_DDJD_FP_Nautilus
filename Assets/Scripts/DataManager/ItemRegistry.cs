@@ -53,6 +53,12 @@ namespace DataManager
             return _items[hash];
         }
 
+        // Allows to use hexadecimal numbers that are too large to fit in an int.
+        public ItemData Get(uint hash)
+        {
+            return _items[unchecked((int) hash)];
+        }
+
         /// <summary>
         ///     Gets all items in the registry.
         /// </summary>

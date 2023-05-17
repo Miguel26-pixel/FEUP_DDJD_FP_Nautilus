@@ -91,7 +91,7 @@
                         <ui:Label text="The perfect tool for when you want to stab something, but don&apos;t want to get too close." display-tooltip-when-elided="true" name="ItemDescription" class="text" style="flex-wrap: nowrap; white-space: normal; -unity-font-style: normal; font-size: 14px; margin-bottom: 0; padding-bottom: 0; color: rgb(194, 171, 144); width: 100%; max-width: 100%;" />
                     </ui:VisualElement>
                 </ui:VisualElement>
-                <ui:VisualElement name="Content" style="padding-left: 10px; padding-right: 10px; padding-bottom: 10px; width: 240px;">
+                <ui:VisualElement name="Content" style="padding-left: 10px; padding-right: 10px; padding-bottom: 10px; width: 300px;">
                     <ui:VisualElement name="IngredientsTitle">
                         <ui:Label text="Ingredients" display-tooltip-when-elided="true" class="text" style="font-size: 20px; margin-left: 0; padding-left: 0; padding-bottom: 1px;" />
                         <ui:VisualElement style="height: 0; border-top-width: 4px; border-bottom-width: 0; border-right-width: 0; border-left-width: 0; border-left-color: rgb(95, 116, 131); border-right-color: rgb(95, 116, 131); border-top-color: rgb(95, 116, 131); border-bottom-color: rgb(95, 116, 131);" />

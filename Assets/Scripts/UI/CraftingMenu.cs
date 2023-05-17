@@ -4,6 +4,7 @@ using System.Linq;
 using Crafting;
 using DataManager;
 using Items;
+using Player;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -17,8 +18,11 @@ namespace UI
         [SerializeField] private VisualTreeAsset ingredientRecipe;
         [SerializeField] private CraftingRecipeRegistryObject recipeRegistryObject;
         [SerializeField] private ItemRegistryObject itemRegistryObject;
+        [SerializeField] private Player.Player player;
+
         private CraftingRecipeRegistry _recipeRegistry;
         private ItemRegistry _itemRegistry;
+        private IInventory _inventory;
 
         private readonly Dictionary<ItemType, Sprite> _itemTypeIcons = new();
 
@@ -52,6 +56,7 @@ namespace UI
             {
                 _itemTypeIcons.Add(typeSprite.type, typeSprite.sprite);
             }
+            _inventory = player.GetInventory();
 
             _recipeRegistry = recipeRegistryObject.craftingRecipeRegistry;
             _itemRegistry = itemRegistryObject.itemRegistry;
@@ -82,7 +87,7 @@ namespace UI
                 }
             }
 
-            _recipeIngredients = _recipeView.Q<VisualElement>("RecipeIngredients");
+            _recipeIngredients = _recipeView.Q<VisualElement>("Ingredients");
             _recipeCreateButton = _recipeView.Q<VisualElement>("CreateButton");
         }
 
@@ -104,7 +109,7 @@ namespace UI
                 icon.style.backgroundImage = new StyleBackground(_itemTypeIcons[category]);
 
                 int categoryIndex = idx;
-                tab.RegisterCallback<MouseUpEvent>(evt => OpenRecipeListing(categoryIndex, type));
+                tab.RegisterCallback<MouseUpEvent>(_ => OpenRecipeListing(categoryIndex, type));
                 _categoryTabs.Add(tab);
                 idx++;
             }
@@ -125,7 +130,19 @@ namespace UI
 
             List<CraftingRecipe> recipes = _recipeRegistry.GetOfType(category, type).ToList();
 
-            VisualElement MakeItem() => recipeListing.Instantiate();
+            VisualElement MakeItem()
+            {
+                VisualElement recipe = recipeListing.Instantiate();
+                VisualElement button = recipe.Q<VisualElement>("Button");
+
+                button.RegisterCallback<MouseUpEvent>(_ =>
+                {
+                    int idx = recipe.userData as int? ?? -1;
+                    OpenRecipeView(recipes[idx], idx);
+                });
+
+                return recipe;
+            }
 
             void BindItem(VisualElement recipe, int idx)
             {
@@ -136,6 +153,7 @@ namespace UI
                 // TODO: convert icon grid to a single icon
                 icon.style.backgroundImage = new StyleBackground(_itemTypeIcons[category]);
                 button.pickingMode = PickingMode.Position;
+                Debug.Log(idx);
                 itemName.text = _itemRegistry.Get(recipes[idx].Result).Name;
                 
                 if (idx == _currentRecipeIndex)
@@ -147,7 +165,7 @@ namespace UI
                     button.RemoveFromClassList("selected");
                 }
                 
-                button.RegisterCallback<MouseUpEvent>(evt => OpenRecipeView(recipes[idx], idx));
+                recipe.userData = idx;
             }
 
             ListView recipeList = _recipeListContainer.Q<ListView>("RecipeList");
@@ -177,7 +195,7 @@ namespace UI
         {
             int oldRecipeIndex = _currentRecipeIndex;
             _currentRecipeIndex = index;
-            _recipeList.RefreshItem(oldRecipeIndex);
+            if(oldRecipeIndex != -1) _recipeList.RefreshItem(oldRecipeIndex);
             _recipeList.RefreshItem(_currentRecipeIndex);
 
             ItemData resultItem = _itemRegistry.Get(recipe.Result);
@@ -207,6 +225,27 @@ namespace UI
                         iconElement.style.backgroundImage = new StyleBackground(icon);
                     }
                 }
+            }
+            
+            _recipeIngredients.Clear();
+            Dictionary<int, int> ingredientCount = recipe.IngredientCount(_inventory.GetItems());
+
+            foreach (var ingredient in recipe.Ingredients)
+            {
+                ItemData ingredientItem = _itemRegistry.Get(ingredient.Key);
+                VisualElement ingredientElement = ingredientRecipe.Instantiate();
+                VisualElement icon = ingredientElement.Q<VisualElement>("ListIcon");
+                Label itemName = ingredientElement.Q<Label>("ItemName");
+                Label currentCount = ingredientElement.Q<Label>("CurrentCount");
+                Label requiredCount = ingredientElement.Q<Label>("RequiredCount");
+
+                // TODO: convert icon grid to a single icon
+                icon.style.backgroundImage = new StyleBackground(ingredientItem.Icons[0, 0]);
+                itemName.text = ingredientItem.Name;
+                currentCount.text = ingredientCount[ingredient.Key].ToString();
+                requiredCount.text = ingredient.Value.ToString();
+
+                _recipeIngredients.Add(ingredientElement);
             }
             
             _recipeView.style.display = DisplayStyle.Flex;
