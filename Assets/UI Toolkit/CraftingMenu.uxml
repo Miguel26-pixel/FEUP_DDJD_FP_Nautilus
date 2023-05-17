@@ -23,7 +23,7 @@
                         </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:VisualElement>
-                <ui:Instance template="ItemRecipeListing" name="ItemRecipeListing" />
+                <ui:Instance template="ItemRecipeListing" name="ItemRecipeListing" class="selected" />
                 <ui:Instance template="ItemRecipeListing" name="ItemRecipeListing" />
                 <ui:Instance template="ItemRecipeListing" name="ItemRecipeListing" />
                 <ui:ListView focusable="true" show-border="false" name="RecipeList" />

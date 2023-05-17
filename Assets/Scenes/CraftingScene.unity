@@ -198,7 +198,7 @@ MonoBehaviour:
   - type: 8
     sprite: {fileID: -358350054, guid: 5fb67ad0c979d2dfcb84d9732888b58b, type: 3}
   - type: 0
-    sprite: {fileID: 21300000, guid: 3042b019b052942a1baf7aa49d7ca6bb, type: 3}
+    sprite: {fileID: 1676031302, guid: 5fb67ad0c979d2dfcb84d9732888b58b, type: 3}
   button: {fileID: 9197481963319205126, guid: 9827c0fc39a7046fc88a9b41a310c8d8, type: 3}
   recipeListing: {fileID: 9197481963319205126, guid: ef897da330375b16c8e2cff7598e5268, type: 3}
   ingredientRecipe: {fileID: 9197481963319205126, guid: e3d9e9f9337d42b568930967aba13a0d, type: 3}

@@ -53,8 +53,8 @@
 
 .icon {
     position: relative;
-    width: 100%;
-    height: 100%;
+    width: auto;
+    height: auto;
     -unity-background-scale-mode: scale-to-fit;
     margin-left: 0;
     margin-right: 0;
@@ -113,10 +113,10 @@
     width: 55px;
     height: 55px;
     background-color: rgb(66, 89, 106);
-    border-left-color: rgb(2, 45, 54);
-    border-right-color: rgb(2, 45, 54);
-    border-top-color: rgb(2, 45, 54);
-    border-bottom-color: rgb(2, 45, 54);
+    border-left-color: rgb(27, 50, 67);
+    border-right-color: rgb(27, 50, 67);
+    border-top-color: rgb(27, 50, 67);
+    border-bottom-color: rgb(27, 50, 67);
     border-left-width: 1px;
     border-bottom-width: 1px;
     border-top-left-radius: 0;
@@ -130,7 +130,7 @@
 .gradient {
     justify-content: space-between;
     margin-left: 0;
-    margin-right: 5px;
+    margin-right: 0;
     flex-grow: 1;
     background-image: url('project://database/Assets/UI%20Toolkit/Images/gradient-white.png?fileID=21300000&guid=72618608899c61ae396b921a493f7743&type=3#gradient-white');
     margin-top: 0;
@@ -160,4 +160,24 @@
 }
 
 .ingredient-incomplete {
+}
+
+.tab .icon {
+    margin-left: 4px;
+    margin-right: 4px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.selected .button {
+    border-top-width: 3px;
+    border-bottom-width: 0;
+}
+
+.selected .overlay {
+    background-color: rgba(0, 0, 0, 255);
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
 }

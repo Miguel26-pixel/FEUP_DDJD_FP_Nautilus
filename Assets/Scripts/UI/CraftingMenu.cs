@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Crafting;
 using DataManager;
 using Items;
@@ -23,6 +24,8 @@ namespace UI
             new VisualElement[ItemConstants.ItemHeight, ItemConstants.ItemWidth];
 
         private VisualElement _categoryTabs;
+        private int _currentCategoryIndex;
+        private List<ItemType> _tabCategories = new();
         private VisualElement _root;
 
         private bool _isCraftingMenuOpen;
@@ -31,7 +34,7 @@ namespace UI
         private VisualElement _recipeCreateButton;
         private VisualElement _recipeDescription;
         private VisualElement _recipeIngredients;
-        private VisualElement _recipeList;
+        private ListView _recipeList;
 
         private VisualElement _recipeListContainer;
         private VisualElement _recipeListIcon;
@@ -54,7 +57,6 @@ namespace UI
             _categoryTabs = _root.Q<VisualElement>("CategoryTabs");
 
             _recipeListContainer = _root.Q<VisualElement>("RecipeListContainer");
-            _recipeListContainer.style.display = DisplayStyle.None;
 
             _recipeListIcon = _recipeListContainer.Q<VisualElement>("ListIcon");
             _recipeListName = _recipeListContainer.Q<VisualElement>("ListTitleName");
@@ -85,18 +87,37 @@ namespace UI
         {
             var categories = _recipeRegistry.AvailableCategories(type);
             _categoryTabs.Clear();
+            _tabCategories.Clear();
+            int idx = 0;
             
             foreach (ItemType category in categories)
             {
+                _tabCategories.Add(category);
+                
                 VisualElement tab = button.Instantiate();
                 tab.AddToClassList("tab");
-                
+
                 VisualElement icon = tab.Q<VisualElement>("Icon");
                 icon.style.backgroundImage = new StyleBackground(_itemTypeIcons[category]);
-                
-                // tab.RegisterCallback<MouseUpEvent>(evt => OpenRecipeListing(category, type));
+
+                int categoryIndex = idx;
+                tab.RegisterCallback<MouseUpEvent>(evt => OpenRecipeListing(categoryIndex, type));
                 _categoryTabs.Add(tab);
+                idx++;
             }
+            OpenRecipeListing(0, type);
+        }
+
+        private void OpenRecipeListing(int categoryIndex, MachineType type)
+        {
+            _categoryTabs[_currentCategoryIndex].RemoveFromClassList("selected");
+            _currentCategoryIndex = categoryIndex;
+            _categoryTabs[_currentCategoryIndex].AddToClassList("selected");
+            ItemType category = _tabCategories[_currentCategoryIndex];
+
+            CraftingRecipe[] recipes = _recipeRegistry.GetOfType(category, type);
+            
+            Debug.Log(categoryIndex);
         }
 
         public void Toggle(MachineType type)

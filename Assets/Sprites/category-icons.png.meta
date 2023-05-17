@@ -263,6 +263,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: category-icons_resources
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 256
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b73057e706e42381e9efd118f20c8bdb
+      internalID: 1676031302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -280,6 +301,7 @@ TextureImporter:
       category-icons_4: 1090043236
       category-icons_metal: 2095585008
       category-icons_consumable: -1091374960
+      category-icons_resources: 1676031302
       category-icons_machines: 1517466774
   spritePackingTag: 
   pSDRemoveMatte: 0
