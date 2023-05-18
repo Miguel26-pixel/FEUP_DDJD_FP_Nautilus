@@ -45,8 +45,8 @@ void Density (int3 id : SV_DispatchThreadID)
     float multBiomeA = 1 - multBiomeB;
 
     hardFloor = hardCeil * multBiomeB + hardFloor * multBiomeA;
-    hardFloorWeight = 10 * weightMultiplier * noiseWeight * multBiomeB + hardFloorWeight * multBiomeA;
-    hardCeilWeight = 10 * weightMultiplier * noiseWeight * multBiomeB + hardCeilWeight * multBiomeA;
+    hardFloorWeight = 50 * weightMultiplier * noiseWeight * multBiomeB + hardFloorWeight * multBiomeA;
+    hardCeilWeight = 50 * weightMultiplier * noiseWeight * multBiomeB + hardCeilWeight * multBiomeA;
     
     int index = indexFromCoord(id.x,id.y,id.z);
 

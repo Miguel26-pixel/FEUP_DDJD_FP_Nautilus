@@ -2,11 +2,35 @@
 #include "/Includes/Density.compute"
 #include "/Includes/Noise.compute"
 
+struct BiomeParameter
+{
+    float lacunarity;
+    float persistence;
+    float noiseScale;
+    float noiseWeight;
+    float floorOffset;
+    float weightMultiplier;
+    float hardFloor;
+    float hardFloorWeight;
+    float hardCeil;
+    float hardCeilWeight;
+    float warpEffect;
+    float warpFrequency;
+    float3 offset;
+    float4 params;
+};
+
+
 int numBiomes;
 StructuredBuffer<BiomeParameter> biomes;
 StructuredBuffer<float> biomesValues;
 float biomeScale;
 float3 biomeOffset;
+
+// beginner island params
+float3 initPos;
+float radius;
+float falloff;
 
 // Noise settings
 StructuredBuffer<float3> offsets;
@@ -17,7 +41,16 @@ void Density (int3 id : SV_DispatchThreadID)
     float3 pos = centre + id * spacing - boundsSize/2;
 
     const float3 biomePos = float3(pos.xz * biomeScale, 0) + biomeOffset;
-    const float biomeNoise = (snoise(biomePos) + 0.866025403785f) / (0.866025403785f*2.f);
+    float biomeNoise = (snoise(biomePos) + 0.866025403785f) / (0.866025403785f*2.f);
+
+    const float3 biomeInitPos = float3(initPos.xz * biomeScale, 0) + biomeOffset;
+    const float circleDist = (biomePos.x - biomeInitPos.x)*(biomePos.x - biomeInitPos.x) +
+        (biomePos.y - biomeInitPos.y)*(biomePos.y - biomeInitPos.y) - (radius * radius);
+
+    float multNormal = smoothstep(0, falloff, circleDist);
+    float multIsland = 1 - multNormal;
+
+    biomeNoise = multNormal * biomeNoise + multIsland * 0.9;
 
     int octaves = 8;
 

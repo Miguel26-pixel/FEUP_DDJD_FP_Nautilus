@@ -363,8 +363,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isoLevel: 15.18
-  boundsSize: 50
-  seed: 0
+  boundsSize: 60
+  seed: 4
   player: {fileID: 1678036745}
   chunkPrefab: {fileID: 5382608540069460159, guid: c50d8f676bf4e53f3bee1fef7779aa00, type: 3}
   generationConfigs: {fileID: 1060819886}
@@ -401,7 +401,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: feb6090dee185e3ee8bd73754a3dbd4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chunkDistanceRadius: 6
+  chunkDistanceRadius: 5
   sqrCheckDistanceInterval: 10
 --- !u!1 &1519718714
 GameObject:
