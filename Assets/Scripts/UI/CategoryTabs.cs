@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Crafting;
 using DataManager;
@@ -12,12 +11,12 @@ namespace UI
     {
         private readonly VisualTreeAsset _button;
         private readonly VisualElement _categoryTabs;
+        private readonly CraftingMenu _craftingMenu;
         private readonly Dictionary<ItemType, Sprite> _itemTypeIcons;
 
         private readonly CraftingRecipeRegistry _recipeRegistry;
         private readonly List<ItemType> _tabCategories = new();
         private readonly MachineType _type;
-        private readonly CraftingMenu _craftingMenu;
         private int _currentCategoryIndex;
 
         private CraftingInterface _recipeListing;

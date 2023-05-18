@@ -18,14 +18,17 @@ namespace UI
         [SerializeField] private CraftingRecipeRegistryObject recipeRegistryObject;
         [SerializeField] private ItemRegistryObject itemRegistryObject;
         [SerializeField] private Player.Player player;
+
+        public bool isCrafting;
         private readonly List<CraftingInterface> _interfaces = new();
-        private VisualElement _root;
         public readonly Dictionary<ItemType, Sprite> _itemTypeIcons = new();
 
-        [NonSerialized] private bool _isCraftingMenuOpen;
         [NonSerialized] public readonly VisualElement[,] recipeViewGrid =
             new VisualElement[ItemConstants.ItemHeight, ItemConstants.ItemWidth];
-        
+
+        [NonSerialized] private bool _isCraftingMenuOpen;
+        private VisualElement _root;
+
         [NonSerialized] public VisualElement categoryTabs;
         [NonSerialized] public IInventory inventory;
         [NonSerialized] public ItemRegistry itemRegistry;
@@ -41,8 +44,6 @@ namespace UI
         [NonSerialized] public CraftingRecipeRegistry recipeRegistry;
 
         [NonSerialized] public VisualElement recipeView;
-
-        public bool isCrafting;
 
         private void Start()
         {
@@ -93,7 +94,7 @@ namespace UI
             {
                 return;
             }
-            
+
             Debug.Log("inventory changed");
             foreach (CraftingInterface @interface in _interfaces)
             {
@@ -119,7 +120,7 @@ namespace UI
 
             _interfaces.Clear();
         }
-        
+
         public void Toggle(MachineType type)
         {
             if (_isCraftingMenuOpen)

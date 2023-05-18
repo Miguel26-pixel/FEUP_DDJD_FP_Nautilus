@@ -113,7 +113,11 @@ namespace Items
                         maxY = Math.Max(maxY, y);
 
                         Sprite sprite = Icons[y, x];
-                        if(sprite == null) continue;
+                        if (sprite == null)
+                        {
+                            continue;
+                        }
+
                         Rect rect = sprite.rect;
 
                         spriteWidth = (int)rect.width;
@@ -121,7 +125,7 @@ namespace Items
                     }
                 }
             }
-            
+
             BoundsInt bounds = new(minX, minY, 0, maxX - minX + 1, maxY - minY + 1, 1);
             Bounds = bounds;
 
@@ -155,7 +159,11 @@ namespace Items
                     if (Grid[y, x])
                     {
                         Sprite sprite = Icons[y, x];
-                        if(sprite == null) continue;
+                        if (sprite == null)
+                        {
+                            continue;
+                        }
+
                         Rect rect = sprite.rect;
 
                         Color[] pixels = sprite.texture.GetPixels((int)rect.x,

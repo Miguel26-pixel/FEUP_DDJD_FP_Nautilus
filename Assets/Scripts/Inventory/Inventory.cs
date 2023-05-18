@@ -10,7 +10,7 @@ namespace Inventory
         public const int PlayerInventoryMaxWidth = 6;
         public const int PlayerInventoryMaxHeight = 9;
     }
-    
+
     public interface IInventorySubscriber
     {
         public void OnInventoryChanged();

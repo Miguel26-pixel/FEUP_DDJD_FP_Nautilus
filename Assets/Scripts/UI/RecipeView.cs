@@ -10,8 +10,7 @@ namespace UI
 {
     public class RecipeView : CraftingInterface
     {
-        private readonly VisualElement[,] _recipeViewGrid;
-        private EventCallback<MouseUpEvent> _createCallback;
+        private readonly CraftingMenu _craftingMenu;
         private readonly VisualTreeAsset _ingredientRecipe;
         private readonly IInventory _inventory;
         private readonly ItemRegistry _itemRegistry;
@@ -21,8 +20,9 @@ namespace UI
         private readonly VisualElement _recipeIngredients;
         private readonly Label _recipeName;
         private readonly VisualElement _recipeView;
+        private readonly VisualElement[,] _recipeViewGrid;
         private readonly ItemData _resultItem;
-        private readonly CraftingMenu _craftingMenu;
+        private EventCallback<MouseUpEvent> _createCallback;
 
         public RecipeView(CraftingMenu craftingMenu, CraftingRecipe recipe)
         {
@@ -42,7 +42,6 @@ namespace UI
 
         public override void Open()
         {
-
             _recipeName.text = _resultItem.Name;
             _recipeDescription.text = _resultItem.Description;
 
@@ -69,7 +68,7 @@ namespace UI
                     }
                 }
             }
-            
+
             Refresh();
             _recipeView.style.display = DisplayStyle.Flex;
         }
@@ -89,6 +88,7 @@ namespace UI
                     _inventory.RemoveItem(ingredient.Key);
                 }
             }
+
             _craftingMenu.isCrafting = false;
             _craftingMenu.OnInventoryChanged();
 

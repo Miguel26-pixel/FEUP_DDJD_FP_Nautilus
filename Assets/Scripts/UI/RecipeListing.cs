@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Crafting;
@@ -12,19 +11,19 @@ namespace UI
 {
     public class RecipeListing : CraftingInterface
     {
-        private readonly Dictionary<ItemType, Sprite> _itemTypeIcons;
-        private readonly VisualElement _recipeListIcon;
-        private readonly Label _recipeListName;
         private readonly CraftingMenu _craftingMenu;
-        private int _currentRecipeIndex;
         private readonly IInventory _inventory;
         private readonly ItemRegistry _itemRegistry;
         private readonly ItemType _itemType;
+        private readonly Dictionary<ItemType, Sprite> _itemTypeIcons;
         private readonly MachineType _machineType;
-        private ListView _recipeList;
         private readonly VisualElement _recipeListContainer;
+        private readonly VisualElement _recipeListIcon;
         private readonly VisualTreeAsset _recipeListing;
+        private readonly Label _recipeListName;
         private readonly CraftingRecipeRegistry _recipeRegistry;
+        private int _currentRecipeIndex;
+        private ListView _recipeList;
         private RecipeView _recipeView;
 
         public RecipeListing(CraftingMenu craftingMenu, ItemType itemType, MachineType machineType)
@@ -140,6 +139,7 @@ namespace UI
             {
                 _recipeList.RefreshItem(oldRecipeIndex);
             }
+
             _recipeList.RefreshItem(_currentRecipeIndex);
 
             _recipeView?.Close();

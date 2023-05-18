@@ -12,56 +12,70 @@ namespace Inventory
         {
         }
     }
-    
+
     public class ItemDoesNotFitException : Exception
     {
         public ItemDoesNotFitException(string message) : base(message)
         {
         }
     }
-    
+
     public class PositionAlreadyOccupiedException : Exception
     {
         public PositionAlreadyOccupiedException(string message) : base(message)
         {
         }
     }
-    
+
     public class ItemNotInInventoryException : Exception
     {
         public ItemNotInInventoryException(string message) : base(message)
         {
         }
     }
-    
+
     public class ItemNotInInventoryPositionException : Exception
     {
         public ItemNotInInventoryPositionException(string message) : base(message)
         {
         }
     }
-    
-    
+
+
+    public record ItemPosition
+    {
+        public readonly Vector2Int position;
+        public readonly int rotation;
+
+        public ItemPosition(Vector2Int position, int rotation)
+        {
+            this.position = position;
+            this.rotation = rotation;
+        }
+    }
+
+
     public class InventoryGrid
     {
-        private readonly bool[,] _gridShape;
         private readonly uint[,] _gridItemIDs;
-        private readonly Dictionary<uint, Vector2Int> _itemPositions = new();
+        private readonly bool[,] _gridShape;
+        private readonly int _height;
+        private readonly Dictionary<uint, ItemPosition> _itemPositions = new();
         private readonly Dictionary<uint, Item> _items = new();
         private readonly int _width;
-        private readonly int _height;
-        private uint _itemIDCounter = 0;
+        private uint _itemIDCounter;
 
         public InventoryGrid(bool[,] gridShape)
         {
             _width = gridShape.GetLength(1);
             _height = gridShape.GetLength(0);
-            
-            if (_width > InventoryConstants.PlayerInventoryMaxWidth || _height > InventoryConstants.PlayerInventoryMaxHeight)
+
+            if (_width > InventoryConstants.PlayerInventoryMaxWidth ||
+                _height > InventoryConstants.PlayerInventoryMaxHeight)
             {
-                throw new ArgumentException("Inventory grid is too large.");   
+                throw new ArgumentException("Inventory grid is too large.");
             }
-            
+
             _gridShape = gridShape;
             _gridItemIDs = new uint[_height, _width];
         }
@@ -72,7 +86,7 @@ namespace Inventory
             {
                 throw new InvalidItemPositionException("Item position is out of bounds.");
             }
-            
+
             if (!_gridShape[position.y, position.x])
             {
                 throw new InvalidItemPositionException("Item position is not valid.");
@@ -83,94 +97,111 @@ namespace Inventory
         {
             // TODO: ROTATION
             ValidatePosition(position);
-            
+
             if (position.x + item.Bounds.size.x > _width || position.y + item.Bounds.size.y > _height)
             {
                 throw new ItemDoesNotFitException("Item does not fit.");
             }
-            
+
             for (int y = position.y; y < position.y + item.Bounds.size.y; y++)
             {
                 for (int x = position.x; x < position.x + item.Bounds.size.x; x++)
                 {
-                    if (!item.Grid[y - position.y + item.Bounds.y, x - position.x + item.Bounds.x]) continue;
-                    
+                    if (!item.Grid[y - position.y + item.Bounds.y, x - position.x + item.Bounds.x])
+                    {
+                        continue;
+                    }
+
                     if (!_gridShape[y, x])
                     {
                         throw new ItemDoesNotFitException("Item does not fit.");
                     }
-                    
+
                     if (_gridItemIDs[y, x] != 0)
                     {
                         throw new PositionAlreadyOccupiedException("Item position is already occupied");
                     }
                 }
             }
-            
+
             uint itemID = ++_itemIDCounter;
 
             _items.Add(itemID, item);
-            _itemPositions.Add(itemID, position);
-            
+            _itemPositions.Add(itemID, new ItemPosition(position, rotation));
+
             for (int y = position.y; y < position.y + item.Bounds.size.y; y++)
             {
                 for (int x = position.x; x < position.x + item.Bounds.size.x; x++)
                 {
-                    if (!item.Grid[y - position.y + item.Bounds.y, x - position.x + item.Bounds.x]) continue;                    
-                    
+                    if (!item.Grid[y - position.y + item.Bounds.y, x - position.x + item.Bounds.x])
+                    {
+                        continue;
+                    }
+
                     _gridItemIDs[y, x] = itemID;
                 }
             }
         }
 
-        public void RemoveItem(int itemHash)
+        public Item RemoveItem(int itemHash)
         {
-            var pair = _items.FirstOrDefault(pair => pair.Value.IDHash == itemHash);
+            KeyValuePair<uint, Item> pair = _items.FirstOrDefault(pair => pair.Value.IDHash == itemHash);
 
             if (pair.Equals(default(KeyValuePair<uint, Item>)))
             {
                 throw new ItemNotInInventoryException("Item not found.");
             }
-            
+
             uint itemID = pair.Key;
-            
-            Vector2Int itemPosition = _itemPositions[itemID];
-            
+
+            ItemPosition itemPositionObject = _itemPositions[itemID];
+            Vector2Int itemPosition = itemPositionObject.position;
+
             for (int y = itemPosition.y; y < itemPosition.y + ItemConstants.ItemHeight && y < _height; y++)
             {
                 for (int x = itemPosition.x; x < itemPosition.x + ItemConstants.ItemWidth && x < _width; x++)
                 {
-                    if (!_gridShape[y, x]) continue;
-                    if (_gridItemIDs[y, x] != itemID) continue;
+                    if (!_gridShape[y, x])
+                    {
+                        continue;
+                    }
+
+                    if (_gridItemIDs[y, x] != itemID)
+                    {
+                        continue;
+                    }
 
                     _gridItemIDs[y, x] = 0;
                 }
             }
-            
+
+            Item item = pair.Value;
             _items.Remove(itemID);
             _itemPositions.Remove(itemID);
+
+            return item;
         }
 
         public Item GetAt(Vector2Int position)
         {
             ValidatePosition(position);
             uint itemID = _gridItemIDs[position.y, position.x];
-            
+
             return itemID == 0 ? null : _items[itemID];
         }
-        
+
         public Item RemoveAt(Vector2Int position)
         {
             ValidatePosition(position);
             uint itemID = _gridItemIDs[position.y, position.x];
-            
+
             if (itemID == 0)
             {
                 throw new ItemNotInInventoryPositionException("No item at position.");
             }
-            
+
             Item item = _items[itemID];
-            
+
             RemoveItem(item.IDHash);
 
             return item;

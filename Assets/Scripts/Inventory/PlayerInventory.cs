@@ -8,8 +8,8 @@ namespace Inventory
     public class PlayerInventory : IInventory, IInventoryNotifier
     {
         private readonly string _inventoryName;
-        private readonly List<IInventorySubscriber> _subscribers = new();
         private readonly List<Item> _items = new();
+        private readonly List<IInventorySubscriber> _subscribers = new();
 
         public PlayerInventory(string inventoryName)
         {
@@ -58,6 +58,7 @@ namespace Inventory
             {
                 throw new NotImplementedException();
             }
+
             NotifySubscribersOnInventoryChanged();
         }
 
