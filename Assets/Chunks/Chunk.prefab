@@ -118,6 +118,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chunkGridPosition: {x: 0, y: 0, z: 0}
+  colorGenerator: {fileID: 0}
   shader: {fileID: 7200000, guid: 728a80c570a390ef2b6cd044370914d8, type: 3}
 --- !u!64 &1117030778486291149
 MeshCollider:
@@ -243,17 +244,17 @@ MonoBehaviour:
   - sections:
     - minHeight: 10
       colors:
-      - color: {r: 0.4862745, g: 0.28235295, b: 0, a: 1}
-        minNoise: 0.9
-      - color: {r: 0.07903652, g: 0.9528302, b: 0.013483422, a: 0}
+      - color: {r: 0.26415092, g: 0.15599053, b: 0.0062299734, a: 1}
+        minNoise: 0.75
+      - color: {r: 0.06401466, g: 0.5377358, b: 0.027901389, a: 0}
         minNoise: -1
     - minHeight: -10
       colors:
-      - color: {r: 0.6886792, g: 0.6886792, b: 0.6886792, a: 0}
+      - color: {r: 0.2627451, g: 0.15686275, b: 0.007843138, a: 1}
         minNoise: -1
     - minHeight: -1000
       colors:
-      - color: {r: 0.14150941, g: 0.111968525, b: 0.11147204, a: 0}
+      - color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 0}
         minNoise: -1
   - sections:
     - minHeight: -10
@@ -262,17 +263,17 @@ MonoBehaviour:
         minNoise: -1
     - minHeight: -1000
       colors:
-      - color: {r: 0.1792453, g: 0.16994482, b: 0.16994482, a: 0}
+      - color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 0}
         minNoise: -1
       - color: {r: 0.5566038, g: 0.5566038, b: 0.5566038, a: 0}
         minNoise: 0.9
   - sections:
+    - minHeight: -100
+      colors:
+      - color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 0}
+        minNoise: -1
     - minHeight: -1000
       colors:
-      - color: {r: 0.11129405, g: 0.15596774, b: 0.38679248, a: 0}
-        minNoise: -1
-    - minHeight: -10
-      colors:
-      - color: {r: 0.7169812, g: 0.7169812, b: 0.7169812, a: 0}
+      - color: {r: 0.019607844, g: 0.019607844, b: 0.019607844, a: 0}
         minNoise: -1
   biomeProcessingStep: {fileID: 2950186666612986353}
