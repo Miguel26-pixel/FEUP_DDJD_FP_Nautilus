@@ -94,17 +94,14 @@ namespace Inventory
             }
         }
 
-        // rotation is in increments of 90 degrees, positive is counter-clockwise, negative is clockwise
-        public void AddItem(Item item, Vector2Int position, int rotation)
+        private Tuple<bool[,], BoundsInt> CheckFitAndGetBounds(Item item, Vector2Int position, int rotation)
         {
-            ValidatePosition(position);
-            
             // Rotate the item
             bool[,] itemGrid = item.Grid;
 
             // rotate 3 is the same as rotate -1, rotate 4 is the same as rotate 0, etc.
             rotation = MathUtils.Modulo(rotation + 2, 4) - 2;
-            
+
             int rotationsLeft = rotation;
             switch (rotationsLeft)
             {
@@ -129,6 +126,7 @@ namespace Inventory
                     break;
                 }
             }
+
             BoundsInt bounds = ItemGrid.GetBounds(itemGrid);
 
             if (position.x + bounds.size.x > _width || position.y + bounds.size.y > _height)
@@ -156,6 +154,33 @@ namespace Inventory
                     }
                 }
             }
+
+            return new Tuple<bool[,], BoundsInt>(itemGrid, bounds);
+        }
+
+        public bool CheckFit(Item item, Vector2Int position, int rotation)
+        {
+            try
+            {
+                CheckFitAndGetBounds(item, position, rotation);
+                return true;
+            }
+            catch (ItemDoesNotFitException)
+            {
+                return false;
+            }
+            catch (PositionAlreadyOccupiedException)
+            {
+                return false;
+            }
+        }
+
+        // rotation is in increments of 90 degrees, positive is counter-clockwise, negative is clockwise
+        public void AddItem(Item item, Vector2Int position, int rotation)
+        {
+            ValidatePosition(position);
+
+            (bool[,] itemGrid, BoundsInt bounds) = CheckFitAndGetBounds(item, position, rotation);
 
             uint itemID = ++_itemIDCounter;
 
@@ -186,10 +211,24 @@ namespace Inventory
             }
 
             uint itemID = pair.Key;
+            Item item = pair.Value;
 
-            ItemPosition itemPositionObject = _itemPositions[itemID];
-            Vector2Int itemPosition = itemPositionObject.position;
+            RemoveAtInternal(_itemPositions[itemID].position, itemID);
 
+            return item;
+        }
+
+        public Item GetAt(Vector2Int position)
+        {
+            ValidatePosition(position);
+            uint itemID = _gridItemIDs[position.y, position.x];
+
+            return itemID == 0 ? null : _items[itemID];
+        }
+
+        // ONLY USE WITH ROOT POSITION
+        private void RemoveAtInternal(Vector2Int itemPosition, uint itemID)
+        {
             for (int y = itemPosition.y; y < itemPosition.y + ItemConstants.ItemHeight && y < _height; y++)
             {
                 for (int x = itemPosition.x; x < itemPosition.x + ItemConstants.ItemWidth && x < _width; x++)
@@ -208,19 +247,8 @@ namespace Inventory
                 }
             }
 
-            Item item = pair.Value;
             _items.Remove(itemID);
             _itemPositions.Remove(itemID);
-
-            return item;
-        }
-
-        public Item GetAt(Vector2Int position)
-        {
-            ValidatePosition(position);
-            uint itemID = _gridItemIDs[position.y, position.x];
-
-            return itemID == 0 ? null : _items[itemID];
         }
 
         public Item RemoveAt(Vector2Int position)
@@ -235,9 +263,26 @@ namespace Inventory
 
             Item item = _items[itemID];
 
-            RemoveItem(item.IDHash);
+            ItemPosition itemPositionObject = _itemPositions[itemID];
+            Vector2Int itemPosition = itemPositionObject.position;
+
+            RemoveAtInternal(itemPosition, itemID);
 
             return item;
+        }
+
+        public void MoveItem(ItemPosition source, ItemPosition destination)
+        {
+            Item sourceItem = GetAt(source.position);
+            if (sourceItem == null)
+            {
+                throw new ItemNotInInventoryPositionException("No item at source position.");
+            }
+
+            // Check fit by adding the item to the destination position, then removing it
+            // Throws an exception if the item does not fit
+            AddItem(sourceItem, destination.position, destination.rotation);
+            RemoveAt(source.position);
         }
     }
 }

@@ -49,10 +49,10 @@ namespace Items
         public static bool[,] RotateClockwise(bool[,] grid)
         {
             // Rotate -90 degrees
-            
+
             // Create a new grid of size ItemConstants.ItemWidth x ItemConstants.ItemHeight
             bool[,] newGrid = new bool[ItemConstants.ItemHeight, ItemConstants.ItemWidth];
-            
+
             for (int row = 0; row < ItemConstants.ItemHeight; row++)
             {
                 for (int col = 0; col < ItemConstants.ItemWidth; col++)
@@ -67,7 +67,7 @@ namespace Items
         public static bool[,] RotateCounterClockwise(bool[,] grid)
         {
             // Rotate +90 degrees
-            
+
             // Create a new grid of size ItemConstants.ItemWidth x ItemConstants.ItemHeight
             bool[,] newGrid = new bool[ItemConstants.ItemHeight, ItemConstants.ItemWidth];
 
@@ -78,10 +78,10 @@ namespace Items
                     newGrid[row, col] = grid[col, ItemConstants.ItemHeight - row - 1];
                 }
             }
-            
+
             return newGrid;
         }
-        
+
         public static BoundsInt GetBounds(bool[,] grid)
         {
             int minX = int.MaxValue;
