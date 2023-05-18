@@ -4,6 +4,12 @@ using Items;
 
 namespace Inventory
 {
+    public static class InventoryConstants
+    {
+        public static int PlayerInventoryMaxWidth = 10;
+        public static int PlayerInventoryMaxHeight = 9;
+    }
+    
     public interface IInventorySubscriber
     {
         public void OnInventoryChanged();

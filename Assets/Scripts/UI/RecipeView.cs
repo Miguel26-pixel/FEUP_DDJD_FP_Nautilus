@@ -55,14 +55,14 @@ namespace UI
 
                     if (icon == null)
                     {
-                        cell.AddToClassList("disabled");
+                        cell.AddToClassList("unused");
 
                         VisualElement iconElement = cell.Q<VisualElement>("ItemIcon");
                         iconElement.style.backgroundImage = new StyleBackground();
                     }
                     else
                     {
-                        cell.RemoveFromClassList("disabled");
+                        cell.RemoveFromClassList("unused");
 
                         VisualElement iconElement = cell.Q<VisualElement>("ItemIcon");
                         iconElement.style.backgroundImage = new StyleBackground(icon);
@@ -90,6 +90,7 @@ namespace UI
                 }
             }
             _craftingMenu.isCrafting = false;
+            _craftingMenu.OnInventoryChanged();
 
             Item resultItem = resultData.CreateInstance();
             CraftingInventory craftingInventory = new(new List<Item> { resultItem });
@@ -100,6 +101,11 @@ namespace UI
 
         public override void Close()
         {
+            if (_createCallback != null)
+            {
+                _recipeCreateButton.UnregisterCallback(_createCallback);
+            }
+
             _recipeView.style.display = DisplayStyle.None;
         }
 
@@ -144,13 +150,13 @@ namespace UI
                 _recipeCreateButton.RemoveFromClassList("incomplete");
                 _createCallback = _ => { CraftItem(_recipe, _resultItem); };
 
-
                 _recipeCreateButton.RegisterCallback(_createCallback);
             }
             else
             {
                 _recipeCreateButton.AddToClassList("disabled");
                 _recipeCreateButton.AddToClassList("incomplete");
+                _createCallback = null;
             }
 
             _recipeCreateButton.Q<Label>("CreateText").text =

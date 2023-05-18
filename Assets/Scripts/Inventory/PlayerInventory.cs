@@ -4,13 +4,13 @@ using Items;
 
 namespace Inventory
 {
-    public class InventoryMock : IInventory, IInventoryNotifier
+    public class PlayerInventory : IInventory, IInventoryNotifier
     {
         private readonly string _inventoryName;
         private readonly List<IInventorySubscriber> _subscribers = new();
         public readonly List<Item> items = new();
 
-        public InventoryMock(string inventoryName)
+        public PlayerInventory(string inventoryName)
         {
             _inventoryName = inventoryName;
         }

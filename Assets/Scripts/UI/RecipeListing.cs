@@ -140,9 +140,9 @@ namespace UI
             {
                 _recipeList.RefreshItem(oldRecipeIndex);
             }
-
             _recipeList.RefreshItem(_currentRecipeIndex);
 
+            _recipeView?.Close();
             _recipeView = new RecipeView(_craftingMenu, recipe);
             _recipeView.Open();
         }

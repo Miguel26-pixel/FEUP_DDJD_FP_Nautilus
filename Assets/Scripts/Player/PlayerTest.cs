@@ -18,7 +18,7 @@ namespace Player
 
         private ItemRegistryObject _itemRegistryObject;
         private PlayerActions _playerActions;
-        public InventoryMock inventoryMock = new("Mock Inventory");
+        public PlayerInventory playerInventory = new("Mock Inventory");
 
         public void Start()
         {
@@ -63,25 +63,25 @@ namespace Player
                 yield return new WaitUntil(() => _itemRegistry.Initialized);
             }
 
-            inventoryMock.items.Add(_itemRegistry.Get(0x55518A64).CreateInstance());
-            inventoryMock.items.Add(_itemRegistry.Get(0x55518A64).CreateInstance());
-            inventoryMock.items.Add(_itemRegistry.Get(0x55518A64).CreateInstance());
-            inventoryMock.items.Add(_itemRegistry.Get(0x238E2A2D).CreateInstance());
-            inventoryMock.items.Add(_itemRegistry.Get(0x2E79821C).CreateInstance());
-            inventoryMock.items.Add(_itemRegistry.Get(0x755CFE42).CreateInstance());
-            inventoryMock.items.Add(_itemRegistry.Get(0xE3847C27).CreateInstance());
+            playerInventory.items.Add(_itemRegistry.Get(0x55518A64).CreateInstance());
+            playerInventory.items.Add(_itemRegistry.Get(0x55518A64).CreateInstance());
+            playerInventory.items.Add(_itemRegistry.Get(0x55518A64).CreateInstance());
+            playerInventory.items.Add(_itemRegistry.Get(0x238E2A2D).CreateInstance());
+            playerInventory.items.Add(_itemRegistry.Get(0x2E79821C).CreateInstance());
+            playerInventory.items.Add(_itemRegistry.Get(0x755CFE42).CreateInstance());
+            playerInventory.items.Add(_itemRegistry.Get(0xE3847C27).CreateInstance());
 
             Debug.Log("Gave items");
         }
 
         public override IInventory GetInventory()
         {
-            return inventoryMock;
+            return playerInventory;
         }
 
         public override IInventoryNotifier GetInventoryNotifier()
         {
-            return inventoryMock;
+            return playerInventory;
         }
     }
 }
