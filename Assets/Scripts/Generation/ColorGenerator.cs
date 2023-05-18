@@ -53,6 +53,9 @@ public class ColorGenerator : MonoBehaviour {
         mat.SetFloatArray("biomes_values", biomeProcessingStep.biomesValues);
         mat.SetInt("height_properties_count", sectionBuffer.Count);
         mat.SetFloat("biome_scale", biomeProcessingStep.biomeScale);
+        mat.SetFloat("falloff", biomeProcessingStep.islandFalloff);
+        mat.SetFloat("radius", biomeProcessingStep.islandRadius);
+        mat.SetVector("init_pos", biomeProcessingStep.initPos);
 
         float offsetRange = 1000;
 
