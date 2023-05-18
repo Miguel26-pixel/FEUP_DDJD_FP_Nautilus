@@ -8,6 +8,7 @@ using UnityEngine.Serialization;
 public class Chunk : MonoBehaviour
 {
     public Vector3Int chunkGridPosition;
+    public ColorGenerator colorGenerator;
     private MeshFilter _meshFilter;
     private MeshCollider _meshCollider;
     
@@ -21,6 +22,7 @@ public class Chunk : MonoBehaviour
         _meshFilter = GetComponent<MeshFilter>();
         _meshCollider = GetComponent<MeshCollider>();
         _noiseGenerator = GetComponent<NoiseGenerator>();
+        colorGenerator = GetComponent<ColorGenerator>();
     }
 
     private void GenerateCollider()
