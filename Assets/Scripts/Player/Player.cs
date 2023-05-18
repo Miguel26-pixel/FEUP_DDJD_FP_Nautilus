@@ -1,12 +1,11 @@
-using System;
-using System.Collections.Generic;
-using Items;
+using Inventory;
 using UnityEngine;
 
 namespace Player
 {
     public abstract class Player : MonoBehaviour
     {
-        public abstract InventoryMock GetInventory();
+        public abstract IInventory GetInventory();
+        public abstract IInventoryNotifier GetInventoryNotifier();
     }
 }

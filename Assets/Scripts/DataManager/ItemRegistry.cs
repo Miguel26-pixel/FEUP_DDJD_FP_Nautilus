@@ -18,11 +18,12 @@ namespace DataManager
         /// <summary>
         ///     Creates a new item with the given name, description, and icon path and registers it in the registry.
         /// </summary>
-        public ItemData CreateItem(string itemName, string description, ItemType type, string iconPath, bool[,] itemGrid = null)
+        public ItemData CreateItem(string itemName, string description, ItemType type, string iconPath,
+            bool[,] itemGrid = null)
         {
             int hash = Hash(itemName, description);
             itemGrid ??= ItemGrid.SingleCellGrid();
-            
+
             ItemData itemData = new(hash.ToString("X"), itemName, description, type, iconPath, itemGrid);
             _items.Add(hash, itemData);
 
@@ -56,7 +57,7 @@ namespace DataManager
         // Allows to use hexadecimal numbers that are too large to fit in an int.
         public ItemData Get(uint hash)
         {
-            return _items[unchecked((int) hash)];
+            return _items[unchecked((int)hash)];
         }
 
         /// <summary>

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Crafting;
 using Items;
 
@@ -44,7 +43,7 @@ namespace DataManager
         public SortedSet<ItemType> AvailableCategories(MachineType machineType)
         {
             SortedSet<ItemType> categories = new();
-            
+
             foreach (CraftingRecipe recipe in _recipes)
             {
                 if (recipe.CanCraftOnMachine(machineType))

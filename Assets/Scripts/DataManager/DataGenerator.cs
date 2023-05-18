@@ -233,12 +233,12 @@ namespace DataManager
             ItemData pot = _itemRegistry.CreateItem("Cooking Pot",
                 "A device that can cook a variety of ingredients into a hearty stew," +
                 " with the help of a built-in mixer and heating elements.",
-                ItemType.Machine, "ItemIcons/test-missing", new bool[,]
+                ItemType.Machine, "ItemIcons/test-missing", new[,]
                 {
-                    {false, true, true, true},
-                    {true, true, true, true},
-                    {true, false, true, true},
-                    {true, true, true, false}
+                    { false, true, true, true },
+                    { true, true, true, true },
+                    { true, false, true, true },
+                    { true, true, true, false }
                 });
             PlaceableComponentData placeableComponentData = new(
                 new SerializableGameObject(
@@ -252,10 +252,10 @@ namespace DataManager
             ItemData fabricator = _itemRegistry.CreateItem("Fabricator",
                 "A multi-purpose machine that can be used to craft a wide range of items from various materials." +
                 " It uses a combination of robotic arms, lasers, and 3D printing technology.",
-                ItemType.Machine, "ItemIcons/test", new bool[,]
+                ItemType.Machine, "ItemIcons/test", new[,]
                 {
-                    {false, false, false, false},
-                    {false, true, true, false},
+                    { false, false, false, false },
+                    { false, true, true, false },
                     { false, true, false, false },
                     { false, false, false, false }
                 });
@@ -419,7 +419,7 @@ namespace DataManager
             File.WriteAllText("ItemHashes.txt", nameToHash);
 
             // Create recipes
-            
+
             // Consumables
 
             _recipeRegistry.CreateCraftingRecipe(jam.ID,
@@ -465,7 +465,7 @@ namespace DataManager
                     { seaweed.ID, 2 },
                     { fiber.ID, 1 }
                 });
-            
+
             _recipeRegistry.CreateCraftingRecipe(ointment.ID,
                 MachineType.Fabricator | MachineType.PocketFabricator,
                 new Dictionary<string, int>
@@ -497,15 +497,15 @@ namespace DataManager
                 {
                     { coralium.ID, 1 }
                 });
-            
+
             _recipeRegistry.CreateCraftingRecipe(silicon.ID,
                 MachineType.Smelter,
                 new Dictionary<string, int>
                 {
                     { soil.ID, 1 }
                 });
-            
-            
+
+
             _recipeRegistry.CreateCraftingRecipe(board.ID,
                 MachineType.Fabricator,
                 new Dictionary<string, int>
@@ -520,14 +520,14 @@ namespace DataManager
                 {
                     { abyssallite.ID, 1 }
                 });
-            
+
             _recipeRegistry.CreateCraftingRecipe(hook.ID,
                 MachineType.Fabricator,
                 new Dictionary<string, int>
                 {
                     { mermaidMetal.ID, 2 }
                 });
-            
+
             _recipeRegistry.CreateCraftingRecipe(glow.ID,
                 MachineType.Smelter,
                 new Dictionary<string, int>
@@ -535,17 +535,17 @@ namespace DataManager
                     { lumini.ID, 1 },
                     { doomstone.ID, 1 }
                 });
-            
-            
+
+
             // Metal
-            
+
             _recipeRegistry.CreateCraftingRecipe(plate.ID,
                 MachineType.Smelter,
                 new Dictionary<string, int>
                 {
                     { calcium.ID, 1 }
                 });
-            
+
             _recipeRegistry.CreateCraftingRecipe(mermaidMetal.ID,
                 MachineType.Smelter,
                 new Dictionary<string, int>
@@ -568,7 +568,7 @@ namespace DataManager
                     { calcium.ID, 1 },
                     { abyssallite.ID, 1 }
                 });
-            
+
             _recipeRegistry.CreateCraftingRecipe(deepPlate.ID,
                 MachineType.Fabricator,
                 new Dictionary<string, int>
@@ -588,7 +588,7 @@ namespace DataManager
                     { calcium.ID, 1 },
                     { coralium.ID, 2 }
                 });
-            
+
             _recipeRegistry.CreateCraftingRecipe(pot.ID,
                 MachineType.Fabricator,
                 new Dictionary<string, int>
@@ -596,8 +596,8 @@ namespace DataManager
                     { coralium.ID, 2 },
                     { scales.ID, 1 }
                 });
-            
-                        
+
+
             _recipeRegistry.CreateCraftingRecipe(smelter.ID,
                 MachineType.Fabricator,
                 new Dictionary<string, int>
@@ -626,7 +626,7 @@ namespace DataManager
                     { fiber.ID, 2 },
                     { seaweed.ID, 1 }
                 });
-            
+
             _recipeRegistry.CreateCraftingRecipe(boat.ID,
                 MachineType.Fabricator,
                 new Dictionary<string, int>
@@ -635,7 +635,7 @@ namespace DataManager
                     { cloth.ID, 1 },
                     { plate.ID, 1 }
                 });
-            
+
             _recipeRegistry.CreateCraftingRecipe(anchorLine.ID,
                 MachineType.Assembler,
                 new Dictionary<string, int>
@@ -643,7 +643,7 @@ namespace DataManager
                     { tentacle.ID, 3 },
                     { hook.ID, 1 }
                 });
-            
+
             _recipeRegistry.CreateCraftingRecipe(glowPods.ID,
                 MachineType.Fabricator | MachineType.PocketFabricator,
                 new Dictionary<string, int>
@@ -652,7 +652,7 @@ namespace DataManager
                     { tentacle.ID, 1 }
                 },
                 16);
-            
+
             _recipeRegistry.CreateCraftingRecipe(sonar.ID,
                 MachineType.Assembler,
                 new Dictionary<string, int>
@@ -673,7 +673,7 @@ namespace DataManager
                     { glow.ID, 1 }
                 });
 
-            
+
             // Weapons  
 
             _recipeRegistry.CreateCraftingRecipe(spear.ID,
@@ -683,7 +683,7 @@ namespace DataManager
                     { plank.ID, 1 },
                     { coralium.ID, 1 }
                 });
-            
+
             _recipeRegistry.CreateCraftingRecipe(trident.ID,
                 MachineType.Assembler,
                 new Dictionary<string, int>
@@ -700,7 +700,7 @@ namespace DataManager
                 {
                     { silicon.ID, 1 }
                 });
-            
+
             _recipeRegistry.CreateCraftingRecipe(laser.ID,
                 MachineType.Assembler,
                 new Dictionary<string, int>
@@ -710,7 +710,7 @@ namespace DataManager
                     { board.ID, 1 },
                     { tear.ID, 1 }
                 });
-            
+
 
             _recipeRegistry.CreateCraftingRecipe(torpedo.ID,
                 MachineType.Fabricator,
@@ -720,7 +720,7 @@ namespace DataManager
                     { coralSteel.ID, 1 }
                 },
                 4);
-            
+
             _recipeRegistry.CreateCraftingRecipe(torpedoLauncher.ID,
                 MachineType.Assembler,
                 new Dictionary<string, int>
@@ -733,7 +733,7 @@ namespace DataManager
 
 
             // Equipment
-            
+
 
             _recipeRegistry.CreateCraftingRecipe(flippers.ID,
                 MachineType.Fabricator,
@@ -752,7 +752,7 @@ namespace DataManager
                     { plate.ID, 1 },
                     { silicon.ID, 1 }
                 });
-            
+
 
             _recipeRegistry.CreateCraftingRecipe(suit.ID,
                 MachineType.Assembler,
@@ -791,12 +791,12 @@ namespace DataManager
                     { abyssalCrystal.ID, 1 },
                     { coralSteel.ID, 1 }
                 });
-            
+
 
             IEnumerable<CraftingRecipe> recipes = _recipeRegistry.GetAll();
             json = DataSerializer.SerializeRecipeData(recipes);
             File.WriteAllText("RecipeData.json", json);
-            
+
             _itemRegistry.SetInitialized();
             _recipeRegistry.SetInitialized();
         }

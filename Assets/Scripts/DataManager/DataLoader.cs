@@ -107,7 +107,7 @@ namespace DataManager
 
         public static Item DeserializeItem(string json, ItemConverter converter)
         {
-            JsonSerializerSettings settings = new JsonSerializerSettings
+            JsonSerializerSettings settings = new()
                 { TypeNameHandling = TypeNameHandling.Auto, ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
             settings.Converters.Add(converter);
 

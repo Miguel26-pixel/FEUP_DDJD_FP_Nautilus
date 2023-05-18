@@ -34,7 +34,7 @@ public class SpliceItemSprite : MonoBehaviour
         {
             for (int x = 0; x < slicesX; x++)
             {
-                SpriteRect spriteRect = new SpriteRect
+                SpriteRect spriteRect = new()
                 {
                     name = $"{outputName}_{y}_{x}",
                     spriteID = GUID.Generate(),
@@ -62,7 +62,7 @@ public class SpliceItemSprite : MonoBehaviour
             }
         }
 
-        SpriteDataProviderFactories factory = new SpriteDataProviderFactories();
+        SpriteDataProviderFactories factory = new();
         factory.Init();
         ISpriteEditorDataProvider dataProvider = factory.GetSpriteEditorDataProviderFromObject(importer);
         dataProvider.InitSpriteEditorDataProvider();

@@ -1,9 +1,8 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using Crafting;
 using DataManager;
-using Items;
+using Inventory;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -13,13 +12,13 @@ namespace Player
     [Serializable]
     public class PlayerTest : Player, PlayerActions.ICraftingTestActions
     {
-        private PlayerActions _playerActions;
         public MachineType machineType;
-        public InventoryMock inventoryMock = new();
         public UnityEvent<MachineType> OnCraftEvent = new();
+        private ItemRegistry _itemRegistry;
 
         private ItemRegistryObject _itemRegistryObject;
-        private ItemRegistry _itemRegistry;
+        private PlayerActions _playerActions;
+        public InventoryMock inventoryMock = new("Mock Inventory");
 
         public void Start()
         {
@@ -29,25 +28,6 @@ namespace Player
             StartCoroutine(GiveItems());
         }
 
-        private IEnumerator GiveItems()
-        {
-            if (!_itemRegistry.Initialized)
-            {
-                yield return new WaitUntil(() => _itemRegistry.Initialized);
-
-            }
-            
-            inventoryMock.items.Add(_itemRegistry.Get(0x55518A64).CreateInstance());
-            inventoryMock.items.Add(_itemRegistry.Get(0x55518A64).CreateInstance());
-            inventoryMock.items.Add(_itemRegistry.Get(0x55518A64).CreateInstance());
-            inventoryMock.items.Add(_itemRegistry.Get(0x238E2A2D).CreateInstance());
-            inventoryMock.items.Add(_itemRegistry.Get(0x2E79821C).CreateInstance());
-            inventoryMock.items.Add(_itemRegistry.Get(0x755CFE42).CreateInstance());
-            inventoryMock.items.Add(_itemRegistry.Get(0xE3847C27).CreateInstance());
-            
-            Debug.Log("Gave items");
-        }
-
         public void OnEnable()
         {
             if (_playerActions == null)
@@ -55,7 +35,7 @@ namespace Player
                 _playerActions = new PlayerActions();
                 _playerActions.CraftingTest.SetCallbacks(this);
             }
-            
+
             _playerActions.CraftingTest.Enable();
         }
 
@@ -76,7 +56,30 @@ namespace Player
             OnCraftEvent.Invoke(machineType);
         }
 
-        public override InventoryMock GetInventory()
+        private IEnumerator GiveItems()
+        {
+            if (!_itemRegistry.Initialized)
+            {
+                yield return new WaitUntil(() => _itemRegistry.Initialized);
+            }
+
+            inventoryMock.items.Add(_itemRegistry.Get(0x55518A64).CreateInstance());
+            inventoryMock.items.Add(_itemRegistry.Get(0x55518A64).CreateInstance());
+            inventoryMock.items.Add(_itemRegistry.Get(0x55518A64).CreateInstance());
+            inventoryMock.items.Add(_itemRegistry.Get(0x238E2A2D).CreateInstance());
+            inventoryMock.items.Add(_itemRegistry.Get(0x2E79821C).CreateInstance());
+            inventoryMock.items.Add(_itemRegistry.Get(0x755CFE42).CreateInstance());
+            inventoryMock.items.Add(_itemRegistry.Get(0xE3847C27).CreateInstance());
+
+            Debug.Log("Gave items");
+        }
+
+        public override IInventory GetInventory()
+        {
+            return inventoryMock;
+        }
+
+        public override IInventoryNotifier GetInventoryNotifier()
         {
             return inventoryMock;
         }

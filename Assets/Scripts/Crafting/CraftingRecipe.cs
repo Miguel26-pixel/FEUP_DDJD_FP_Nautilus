@@ -73,7 +73,7 @@ namespace Crafting
 
             return CorrectCount(count);
         }
-        
+
         public bool CorrectCount(Dictionary<int, int> count)
         {
             foreach (KeyValuePair<int, int> ingredient in Ingredients)
