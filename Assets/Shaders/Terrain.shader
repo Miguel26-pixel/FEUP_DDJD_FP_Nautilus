@@ -53,6 +53,11 @@ Shader "Custom/Terrain"
         uniform float biome_scale;
 
         uniform float4 biome_offset;
+        uniform float4 init_pos;
+        float biomeScale;
+        float radius;
+        float falloff;
+
 
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
@@ -62,7 +67,16 @@ Shader "Custom/Terrain"
 
             int general = 0;
             const float3 biomePos = float3(IN.worldPos.xz * biome_scale , 0) + biome_offset;
-            const float biomeNoise = (snoise(biomePos) + 0.866025403785f) / (0.866025403785f*2.f);
+            float biome_noise = (snoise(biomePos) + 0.866025403785f) / (0.866025403785f*2.f);
+
+            const float3 biome_init_pos = float3(init_pos.xz * biomeScale, 0) + biome_offset;
+            const float circle_dist = (biomePos.x - biome_init_pos.x)*(biomePos.x - biome_init_pos.x) +
+                (biomePos.y - biome_init_pos.y)*(biomePos.y - biome_init_pos.y) - (radius * radius);
+
+            const float mult_normal = smoothstep(0, falloff, circle_dist);
+            const float mult_island = 1 - mult_normal;
+
+            biome_noise = mult_normal * biome_noise + mult_island * 0.9;
             
             for (int biome = biomes_count - 1; biome >= 0; biome --)
             {
@@ -80,7 +94,7 @@ Shader "Custom/Terrain"
                     float b = biomes_values[biome*2-1];
             
                     // if (biomeNoise < a && biome > 1)
-                    if (biomeNoise < a && biome > 0)
+                    if (biome_noise < a && biome > 0)
                     {
                         general = next;
                         continue;
