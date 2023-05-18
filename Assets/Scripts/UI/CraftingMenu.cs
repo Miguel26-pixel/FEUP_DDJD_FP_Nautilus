@@ -18,37 +18,31 @@ namespace UI
         [SerializeField] private CraftingRecipeRegistryObject recipeRegistryObject;
         [SerializeField] private ItemRegistryObject itemRegistryObject;
         [SerializeField] private Player.Player player;
-        public int currentCategoryIndex;
-        public List<ItemType> tabCategories = new();
-        public int currentRecipeIndex;
-
-        public bool isCraftingMenuOpen;
-
+        private readonly List<CraftingInterface> _interfaces = new();
+        private VisualElement _root;
         public readonly Dictionary<ItemType, Sprite> _itemTypeIcons = new();
 
-        public readonly VisualElement[,] recipeViewGrid =
+        [NonSerialized] private bool _isCraftingMenuOpen;
+        [NonSerialized] public readonly VisualElement[,] recipeViewGrid =
             new VisualElement[ItemConstants.ItemHeight, ItemConstants.ItemWidth];
+        
+        [NonSerialized] public VisualElement categoryTabs;
+        [NonSerialized] public IInventory inventory;
+        [NonSerialized] public ItemRegistry itemRegistry;
+        [NonSerialized] public VisualElement recipeCreateButton;
+        [NonSerialized] public Label recipeDescription;
+        [NonSerialized] public VisualElement recipeIngredients;
 
-        private readonly List<CraftingInterface> _interfaces = new();
+        [NonSerialized] public VisualElement recipeListContainer;
+        [NonSerialized] public VisualElement recipeListIcon;
+        [NonSerialized] public Label recipeListName;
+        [NonSerialized] public Label recipeName;
 
-        public VisualElement categoryTabs;
-        public EventCallback<MouseUpEvent> createCallback;
-        public IInventory inventory;
-        public ItemRegistry itemRegistry;
-        public VisualElement recipeCreateButton;
-        public Label recipeDescription;
-        public VisualElement recipeIngredients;
-        public ListView recipeList;
+        [NonSerialized] public CraftingRecipeRegistry recipeRegistry;
 
-        public VisualElement recipeListContainer;
-        public VisualElement recipeListIcon;
-        public Label recipeListName;
-        public Label recipeName;
+        [NonSerialized] public VisualElement recipeView;
 
-        public CraftingRecipeRegistry recipeRegistry;
-
-        public VisualElement recipeView;
-        public VisualElement root;
+        public bool isCrafting;
 
         private void Start()
         {
@@ -63,16 +57,16 @@ namespace UI
             recipeRegistry = recipeRegistryObject.craftingRecipeRegistry;
             itemRegistry = itemRegistryObject.itemRegistry;
 
-            root = GetComponent<UIDocument>().rootVisualElement;
-            root.style.display = DisplayStyle.None;
-            categoryTabs = root.Q<VisualElement>("CategoryTabs");
+            _root = GetComponent<UIDocument>().rootVisualElement;
+            _root.style.display = DisplayStyle.None;
+            categoryTabs = _root.Q<VisualElement>("CategoryTabs");
 
-            recipeListContainer = root.Q<VisualElement>("RecipeListContainer");
+            recipeListContainer = _root.Q<VisualElement>("RecipeListContainer");
 
             recipeListIcon = recipeListContainer.Q<VisualElement>("ListIcon");
             recipeListName = recipeListContainer.Q<Label>("ListTitleLabel");
 
-            recipeView = root.Q<VisualElement>("RecipeView");
+            recipeView = _root.Q<VisualElement>("RecipeView");
             recipeView.style.display = DisplayStyle.None;
 
             recipeName = recipeView.Q<Label>("RecipeName");
@@ -95,7 +89,16 @@ namespace UI
 
         public void OnInventoryChanged()
         {
-            throw new NotImplementedException();
+            if (isCrafting)
+            {
+                return;
+            }
+            
+            Debug.Log("inventory changed");
+            foreach (CraftingInterface @interface in _interfaces)
+            {
+                @interface.Refresh();
+            }
         }
 
         private void Open(MachineType type)
@@ -116,27 +119,21 @@ namespace UI
 
             _interfaces.Clear();
         }
-
-        private void RefreshRecipeList()
-        {
-            recipeList.RefreshItems();
-        }
-
-
+        
         public void Toggle(MachineType type)
         {
-            if (isCraftingMenuOpen)
+            if (_isCraftingMenuOpen)
             {
-                root.style.display = DisplayStyle.None;
+                _root.style.display = DisplayStyle.None;
                 Close();
             }
             else
             {
-                root.style.display = DisplayStyle.Flex;
+                _root.style.display = DisplayStyle.Flex;
                 Open(type);
             }
 
-            isCraftingMenuOpen = !isCraftingMenuOpen;
+            _isCraftingMenuOpen = !_isCraftingMenuOpen;
         }
 
         [Serializable]

@@ -57,6 +57,7 @@ namespace Inventory
             {
                 throw new NotImplementedException();
             }
+            NotifySubscribersOnInventoryChanged();
         }
 
         public string GetInventoryName()

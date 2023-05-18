@@ -80,7 +80,7 @@ namespace UI
 
         public override void Refresh()
         {
-            throw new NotImplementedException();
+            _recipeListing.Refresh();
         }
     }
 }

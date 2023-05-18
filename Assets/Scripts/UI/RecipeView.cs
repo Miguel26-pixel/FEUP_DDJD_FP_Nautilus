@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Crafting;
 using DataManager;
@@ -22,6 +21,8 @@ namespace UI
         private readonly VisualElement _recipeIngredients;
         private readonly Label _recipeName;
         private readonly VisualElement _recipeView;
+        private readonly ItemData _resultItem;
+        private readonly CraftingMenu _craftingMenu;
 
         public RecipeView(CraftingMenu craftingMenu, CraftingRecipe recipe)
         {
@@ -35,20 +36,21 @@ namespace UI
             _ingredientRecipe = craftingMenu.ingredientRecipe;
             _recipeCreateButton = craftingMenu.recipeCreateButton;
             _recipeView = craftingMenu.recipeView;
+            _resultItem = _itemRegistry.Get(_recipe.Result);
+            _craftingMenu = craftingMenu;
         }
 
         public override void Open()
         {
-            ItemData resultItem = _itemRegistry.Get(_recipe.Result);
 
-            _recipeName.text = resultItem.Name;
-            _recipeDescription.text = resultItem.Description;
+            _recipeName.text = _resultItem.Name;
+            _recipeDescription.text = _resultItem.Description;
 
             for (int row = 0; row < ItemConstants.ItemHeight; row++)
             {
                 for (int col = 0; col < ItemConstants.ItemWidth; col++)
                 {
-                    Sprite icon = resultItem.Icons[row, col];
+                    Sprite icon = _resultItem.Icons[row, col];
                     VisualElement cell = _recipeViewGrid[row, col];
 
                     if (icon == null)
@@ -67,7 +69,42 @@ namespace UI
                     }
                 }
             }
+            
+            Refresh();
+            _recipeView.style.display = DisplayStyle.Flex;
+        }
 
+        private void CraftItem(CraftingRecipe recipe, ItemData resultData)
+        {
+            if (!recipe.CorrectCount(recipe.IngredientCount(_inventory.GetItems())))
+            {
+                return;
+            }
+
+            _craftingMenu.isCrafting = true;
+            foreach (KeyValuePair<int, int> ingredient in recipe.Ingredients)
+            {
+                for (int i = 0; i < ingredient.Value; i++)
+                {
+                    _inventory.RemoveItem(ingredient.Key);
+                }
+            }
+            _craftingMenu.isCrafting = false;
+
+            Item resultItem = resultData.CreateInstance();
+            CraftingInventory craftingInventory = new(new List<Item> { resultItem });
+
+            _inventory.TransferItems(craftingInventory, TransferDirection.DestinationToSource);
+        }
+
+
+        public override void Close()
+        {
+            _recipeView.style.display = DisplayStyle.None;
+        }
+
+        public override void Refresh()
+        {
             _recipeIngredients.Clear();
             Dictionary<int, int> ingredientCount = _recipe.IngredientCount(_inventory.GetItems());
 
@@ -105,7 +142,7 @@ namespace UI
             {
                 _recipeCreateButton.RemoveFromClassList("disabled");
                 _recipeCreateButton.RemoveFromClassList("incomplete");
-                _createCallback = _ => { CraftItem(_recipe, resultItem); };
+                _createCallback = _ => { CraftItem(_recipe, _resultItem); };
 
 
                 _recipeCreateButton.RegisterCallback(_createCallback);
@@ -118,39 +155,6 @@ namespace UI
 
             _recipeCreateButton.Q<Label>("CreateText").text =
                 _recipe.Quantity > 1 ? $"Create (x{_recipe.Quantity})" : "Create";
-            _recipeView.style.display = DisplayStyle.Flex;
-        }
-
-        private void CraftItem(CraftingRecipe recipe, ItemData resultData)
-        {
-            if (!recipe.CorrectCount(recipe.IngredientCount(_inventory.GetItems())))
-            {
-                return;
-            }
-
-            foreach (KeyValuePair<int, int> ingredient in recipe.Ingredients)
-            {
-                for (int i = 0; i < ingredient.Value; i++)
-                {
-                    _inventory.RemoveItem(ingredient.Key);
-                }
-            }
-
-            Item resultItem = resultData.CreateInstance();
-            CraftingInventory craftingInventory = new(new List<Item> { resultItem });
-
-            _inventory.TransferItems(craftingInventory, TransferDirection.DestinationToSource);
-        }
-
-
-        public override void Close()
-        {
-            _recipeView.style.display = DisplayStyle.None;
-        }
-
-        public override void Refresh()
-        {
-            throw new NotImplementedException();
         }
     }
 }

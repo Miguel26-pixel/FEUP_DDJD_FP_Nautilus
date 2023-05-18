@@ -155,7 +155,8 @@ namespace UI
 
         public override void Refresh()
         {
-            throw new NotImplementedException();
+            _recipeList.RefreshItems();
+            _recipeView.Refresh();
         }
     }
 }
