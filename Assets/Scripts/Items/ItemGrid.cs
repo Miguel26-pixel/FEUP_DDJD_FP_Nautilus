@@ -7,13 +7,25 @@ namespace Items
         public static bool[,] ValidateGrid(bool[,] grid)
         {
             // Enforce ItemConstants.ItemWidth and ItemConstants.ItemHeight
-            if (grid.GetLength(0) != ItemConstants.ItemHeight ||
-                grid.GetLength(1) != ItemConstants.ItemWidth)
+            if (grid.GetLength(0) > ItemConstants.ItemHeight ||
+                grid.GetLength(1) > ItemConstants.ItemWidth)
             {
                 throw new ArgumentException("Grid must be of size ItemConstants.ItemWidth x ItemConstants.ItemHeight");
             }
+            
+            // Create a new grid of size ItemConstants.ItemWidth x ItemConstants.ItemHeight
+            bool[,] newGrid = new bool[ItemConstants.ItemHeight, ItemConstants.ItemWidth];
+            
+            // Copy the old grid into the new grid
+            for (int row = 0; row < grid.GetLength(0); row++)
+            {
+                for (int col = 0; col < grid.GetLength(1); col++)
+                {
+                    newGrid[row, col] = grid[row, col];
+                }
+            }
 
-            return grid;
+            return newGrid;
         }
 
         public static bool[,] SingleCellGrid()

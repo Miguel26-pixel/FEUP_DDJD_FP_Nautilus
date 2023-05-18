@@ -6,6 +6,42 @@ using UnityEngine;
 
 namespace Inventory
 {
+    public class InvalidItemPositionException : Exception
+    {
+        public InvalidItemPositionException(string message) : base(message)
+        {
+        }
+    }
+    
+    public class ItemDoesNotFitException : Exception
+    {
+        public ItemDoesNotFitException(string message) : base(message)
+        {
+        }
+    }
+    
+    public class PositionAlreadyOccupiedException : Exception
+    {
+        public PositionAlreadyOccupiedException(string message) : base(message)
+        {
+        }
+    }
+    
+    public class ItemNotInInventoryException : Exception
+    {
+        public ItemNotInInventoryException(string message) : base(message)
+        {
+        }
+    }
+    
+    public class ItemNotInInventoryPositionException : Exception
+    {
+        public ItemNotInInventoryPositionException(string message) : base(message)
+        {
+        }
+    }
+    
+    
     public class InventoryGrid
     {
         private readonly bool[,] _gridShape;
@@ -27,20 +63,30 @@ namespace Inventory
             }
             
             _gridShape = gridShape;
+            _gridItemIDs = new uint[_height, _width];
+        }
+
+        private void ValidatePosition(Vector2Int position)
+        {
+            if (position.x < 0 || position.x >= _width || position.y < 0 || position.y >= _height)
+            {
+                throw new InvalidItemPositionException("Item position is out of bounds.");
+            }
+            
+            if (!_gridShape[position.y, position.x])
+            {
+                throw new InvalidItemPositionException("Item position is not valid.");
+            }
         }
 
         public void AddItem(Item item, Vector2Int position, int rotation)
         {
             // TODO: ROTATION
-            
-            if (position.x < 0 || position.x >= _width || position.y < 0 || position.y >= _height)
-            {
-                throw new ArgumentException("Item position is out of bounds.");
-            }
+            ValidatePosition(position);
             
             if (position.x + item.Bounds.size.x > _width || position.y + item.Bounds.size.y > _height)
             {
-                throw new ArgumentException("Item position is out of bounds.");
+                throw new ItemDoesNotFitException("Item does not fit.");
             }
             
             for (int y = position.y; y < position.y + item.Bounds.size.y; y++)
@@ -51,12 +97,12 @@ namespace Inventory
                     
                     if (!_gridShape[y, x])
                     {
-                        throw new ArgumentException("Item position is not valid.");
+                        throw new ItemDoesNotFitException("Item does not fit.");
                     }
                     
                     if (_gridItemIDs[y, x] != 0)
                     {
-                        throw new ArgumentException("Item position is not valid.");
+                        throw new PositionAlreadyOccupiedException("Item position is already occupied");
                     }
                 }
             }
@@ -83,7 +129,7 @@ namespace Inventory
 
             if (pair.Equals(default(KeyValuePair<uint, Item>)))
             {
-                throw new ArgumentException("Item not found.");
+                throw new ItemNotInInventoryException("Item not found.");
             }
             
             uint itemID = pair.Key;
@@ -107,6 +153,7 @@ namespace Inventory
 
         public Item GetAt(Vector2Int position)
         {
+            ValidatePosition(position);
             uint itemID = _gridItemIDs[position.y, position.x];
             
             return itemID == 0 ? null : _items[itemID];
@@ -114,11 +161,12 @@ namespace Inventory
         
         public Item RemoveAt(Vector2Int position)
         {
+            ValidatePosition(position);
             uint itemID = _gridItemIDs[position.y, position.x];
             
             if (itemID == 0)
             {
-                throw new ArgumentException("No item at position.");
+                throw new ItemNotInInventoryPositionException("No item at position.");
             }
             
             Item item = _items[itemID];
