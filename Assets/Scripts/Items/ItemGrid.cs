@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace Items
 {
@@ -79,6 +80,30 @@ namespace Items
             }
             
             return newGrid;
+        }
+        
+        public static BoundsInt GetBounds(bool[,] grid)
+        {
+            int minX = int.MaxValue;
+            int minY = int.MaxValue;
+            int maxX = int.MinValue;
+            int maxY = int.MinValue;
+
+            for (int row = 0; row < ItemConstants.ItemHeight; row++)
+            {
+                for (int col = 0; col < ItemConstants.ItemWidth; col++)
+                {
+                    if (grid[row, col])
+                    {
+                        minX = Mathf.Min(minX, col);
+                        minY = Mathf.Min(minY, row);
+                        maxX = Mathf.Max(maxX, col);
+                        maxY = Mathf.Max(maxY, row);
+                    }
+                }
+            }
+
+            return new BoundsInt(minX, minY, 0, maxX - minX + 1, maxY - minY + 1, 1);
         }
     }
 }

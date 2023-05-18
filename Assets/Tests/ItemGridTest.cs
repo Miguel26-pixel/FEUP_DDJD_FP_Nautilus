@@ -129,8 +129,6 @@ namespace Tests
             
             List<ItemData> itemData = DataDeserializer.DeserializeItemData(json).ToList();
             
-            Debug.Log(itemData[0].Grid);
-            
             Assert.AreEqual(1, itemData.Count);
             Assert.AreEqual("123", itemData[0].ID);
             Assert.AreEqual("Test Item", itemData[0].Name);

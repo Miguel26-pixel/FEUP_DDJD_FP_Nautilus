@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Items;
 using UnityEngine;
+using Utils;
 
 namespace Inventory
 {
@@ -93,21 +94,53 @@ namespace Inventory
             }
         }
 
+        // rotation is in increments of 90 degrees, positive is counter-clockwise, negative is clockwise
         public void AddItem(Item item, Vector2Int position, int rotation)
         {
-            // TODO: ROTATION
             ValidatePosition(position);
+            
+            // Rotate the item
+            bool[,] itemGrid = item.Grid;
 
-            if (position.x + item.Bounds.size.x > _width || position.y + item.Bounds.size.y > _height)
+            // rotate 3 is the same as rotate -1, rotate 4 is the same as rotate 0, etc.
+            rotation = MathUtils.Modulo(rotation + 2, 4) - 2;
+            
+            int rotationsLeft = rotation;
+            switch (rotationsLeft)
+            {
+                case > 0:
+                {
+                    while (rotationsLeft > 0)
+                    {
+                        itemGrid = ItemGrid.RotateCounterClockwise(itemGrid);
+                        rotationsLeft--;
+                    }
+
+                    break;
+                }
+                case < 0:
+                {
+                    while (rotationsLeft < 0)
+                    {
+                        itemGrid = ItemGrid.RotateClockwise(itemGrid);
+                        rotationsLeft++;
+                    }
+
+                    break;
+                }
+            }
+            BoundsInt bounds = ItemGrid.GetBounds(itemGrid);
+
+            if (position.x + bounds.size.x > _width || position.y + bounds.size.y > _height)
             {
                 throw new ItemDoesNotFitException("Item does not fit.");
             }
 
-            for (int y = position.y; y < position.y + item.Bounds.size.y; y++)
+            for (int y = position.y; y < position.y + bounds.size.y; y++)
             {
-                for (int x = position.x; x < position.x + item.Bounds.size.x; x++)
+                for (int x = position.x; x < position.x + bounds.size.x; x++)
                 {
-                    if (!item.Grid[y - position.y + item.Bounds.y, x - position.x + item.Bounds.x])
+                    if (!itemGrid[y - position.y + bounds.y, x - position.x + bounds.x])
                     {
                         continue;
                     }
@@ -129,11 +162,11 @@ namespace Inventory
             _items.Add(itemID, item);
             _itemPositions.Add(itemID, new ItemPosition(position, rotation));
 
-            for (int y = position.y; y < position.y + item.Bounds.size.y; y++)
+            for (int y = position.y; y < position.y + bounds.size.y; y++)
             {
-                for (int x = position.x; x < position.x + item.Bounds.size.x; x++)
+                for (int x = position.x; x < position.x + bounds.size.x; x++)
                 {
-                    if (!item.Grid[y - position.y + item.Bounds.y, x - position.x + item.Bounds.x])
+                    if (!itemGrid[y - position.y + bounds.y, x - position.x + bounds.x])
                     {
                         continue;
                     }

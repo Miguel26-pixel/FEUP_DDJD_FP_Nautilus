@@ -5,6 +5,7 @@ using Items;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
+using Utils;
 
 namespace Tests
 {
@@ -297,6 +298,68 @@ namespace Tests
             var nonPosition = new Vector2Int(1, 0);
             
             Assert.Throws<ItemNotInInventoryPositionException>(() => _inventoryGrid.RemoveAt(nonPosition));
+        }
+
+        [Test]
+        public void ModuloRotation()
+        {
+            var rotation = MathUtils.Modulo(0 + 2, 4) - 2;
+            Assert.AreEqual(0, rotation);
+            rotation = MathUtils.Modulo(1 + 2, 4) - 2;
+            Assert.AreEqual(1, rotation);
+            rotation = MathUtils.Modulo(2 + 2, 4) - 2;
+            Assert.AreEqual(-2, rotation);
+            rotation = MathUtils.Modulo(3 + 2, 4) - 2;
+            Assert.AreEqual(-1, rotation);
+            rotation = MathUtils.Modulo(4 + 2, 4) - 2;
+            Assert.AreEqual(0, rotation);
+            rotation = MathUtils.Modulo(-1 + 2, 4) - 2;
+            Assert.AreEqual(-1, rotation);
+            rotation = MathUtils.Modulo(-2 + 2, 4) - 2;
+            Assert.AreEqual(-2, rotation);
+            rotation = MathUtils.Modulo(-3 + 2, 4) - 2;
+            Assert.AreEqual(1, rotation);
+            rotation = MathUtils.Modulo(-4 + 2, 4) - 2;
+            Assert.AreEqual(0, rotation);
+        }
+        
+        [Test]
+        public void PlaceRotatedItemSuccess()
+        {
+            var item = Get2X1Item();
+            var position = new Vector2Int(0, 1);
+            
+            Assert.Throws<ItemDoesNotFitException>(() => _inventoryGrid.AddItem(item, position, 0));
+            
+            _inventoryGrid.AddItem(item, position, 1);
+            var returnedItem = _inventoryGrid.GetAt(position);
+            Assert.AreSame(item, returnedItem);
+
+            returnedItem = _inventoryGrid.GetAt(position + Vector2Int.right);
+            Assert.AreSame(item, returnedItem);
+        }
+
+        [Test]
+        public void PlaceRotatedItemFail()
+        {
+            var item = Get2X1Item();
+            var position = new Vector2Int(0, 1);
+            
+            Assert.Throws<ItemDoesNotFitException>(() => _inventoryGrid.AddItem(item, position, 0));
+            Assert.Throws<ItemDoesNotFitException>(() => _inventoryGrid.AddItem(item, position, 2));
+        }
+
+        [Test]
+        public void PlaceRotatedL()
+        {
+            var item = GetLItem();
+            var position = new Vector2Int(1, 1);
+            
+            Assert.Throws<ItemDoesNotFitException>(() => _inventoryGrid.AddItem(item, position, 0));
+            
+            _inventoryGrid.AddItem(item, position, -1);
+            var returnedItem = _inventoryGrid.GetAt(position);
+            Assert.AreSame(item, returnedItem);
         }
     }
 }
