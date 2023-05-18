@@ -145,5 +145,75 @@ namespace Tests
             }, itemData[0].Grid);
             
         }
+
+
+        [Test]
+        public void ItemGridRotateClockwise()
+        {
+            bool[,] grid = new bool[,]
+            {
+                { true, true, true, true },
+                { false, true, true, false },
+                { false, true, false, false },
+                { false, true, false, false}
+            };
+            
+            bool[,] rotatedGrid = new bool[,]
+            {
+                { false, false, false, true },
+                { true, true, true, true },
+                { false, false, true, true },
+                { false, false, false, true }
+            };
+            
+            
+            Assert.AreEqual(rotatedGrid, ItemGrid.RotateClockwise(grid));
+        }
+
+        [Test]
+        public void ItemGridRotateCounterClockwise()
+        {
+            bool[,] grid = new bool[,]
+            {
+                { true, true, true, true },
+                { false, true, true, false },
+                { false, true, false, false },
+                { false, true, false, false}
+            };
+
+            
+            bool[,] rotatedGrid = new bool[,]
+            {
+                { true, false, false, false },
+                { true, true, false, false },
+                { true, true, true, true },
+                { true, false, false, false }
+            };
+            
+            Assert.AreEqual(rotatedGrid, ItemGrid.RotateCounterClockwise(grid));
+        }
+
+        [Test]
+        public void ItemGridRotateTwice()
+        {
+            bool[,] grid = new bool[,]
+            {
+                { true, true, true, true },
+                { false, true, true, false },
+                { false, true, false, false },
+                { false, true, false, false}
+            };
+
+            bool[,] rotatedGrid = new bool[,]
+            {
+                { false, false, true, false },
+                { false, false, true, false },
+                { false, true, true, false },
+                { true, true, true, true}
+            };
+            
+            Assert.AreEqual(rotatedGrid, ItemGrid.RotateClockwise(ItemGrid.RotateClockwise(grid)));
+            Assert.AreEqual(rotatedGrid, ItemGrid.RotateCounterClockwise(ItemGrid.RotateCounterClockwise(grid)));
+        }
     }
 }
