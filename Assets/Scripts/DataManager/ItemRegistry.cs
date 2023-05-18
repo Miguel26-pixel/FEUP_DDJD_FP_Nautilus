@@ -77,7 +77,7 @@ namespace DataManager
             string hashString = itemName + description;
 
             int hash = hashString.GetHashCode();
-            while (_items.ContainsKey(hash))
+            while (_items.ContainsKey(hash) || hash == 0)
             {
                 hash++;
             }

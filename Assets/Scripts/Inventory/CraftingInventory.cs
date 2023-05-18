@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Items;
+using UnityEngine;
 
 namespace Inventory
 {
@@ -34,7 +35,7 @@ namespace Inventory
             return null;
         }
 
-        public void AddItem(Item item, int x, int y, int rotation)
+        public void AddItem(Item item, Vector2Int position, int rotation)
         {
             throw new NotImplementedException();
         }

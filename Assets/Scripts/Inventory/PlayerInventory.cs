@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Items;
+using UnityEngine;
 
 namespace Inventory
 {
@@ -8,7 +9,7 @@ namespace Inventory
     {
         private readonly string _inventoryName;
         private readonly List<IInventorySubscriber> _subscribers = new();
-        public readonly List<Item> items = new();
+        private readonly List<Item> _items = new();
 
         public PlayerInventory(string inventoryName)
         {
@@ -17,17 +18,17 @@ namespace Inventory
 
         public List<Item> GetItems()
         {
-            return items;
+            return _items;
         }
 
         public Item RemoveItem(int itemID)
         {
-            for (int i = 0; i < items.Count; i++)
+            for (int i = 0; i < _items.Count; i++)
             {
-                if (items[i].IDHash == itemID)
+                if (_items[i].IDHash == itemID)
                 {
-                    Item item = items[i];
-                    items.RemoveAt(i);
+                    Item item = _items[i];
+                    _items.RemoveAt(i);
                     NotifySubscribersOnInventoryChanged();
 
                     return item;
@@ -37,9 +38,9 @@ namespace Inventory
             return null;
         }
 
-        public void AddItem(Item item, int x, int y, int rotation)
+        public void AddItem(Item item, Vector2Int position, int rotation)
         {
-            items.Add(item);
+            _items.Add(item);
         }
 
         public void TransferItems(IInventory destination, TransferDirection direction)
@@ -51,7 +52,7 @@ namespace Inventory
             // Notify subscribers
             if (direction == TransferDirection.DestinationToSource)
             {
-                items.AddRange(destination.GetItems());
+                _items.AddRange(destination.GetItems());
             }
             else
             {

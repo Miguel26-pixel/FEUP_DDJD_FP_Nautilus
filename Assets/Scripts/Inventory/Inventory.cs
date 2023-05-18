@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using Items;
+using UnityEngine;
 
 namespace Inventory
 {
     public static class InventoryConstants
     {
-        public static int PlayerInventoryMaxWidth = 10;
-        public static int PlayerInventoryMaxHeight = 9;
+        public const int PlayerInventoryMaxWidth = 6;
+        public const int PlayerInventoryMaxHeight = 9;
     }
     
     public interface IInventorySubscriber
@@ -20,7 +21,7 @@ namespace Inventory
         public List<Item> GetItems();
         public Item RemoveItem(int itemID);
 
-        public void AddItem(Item item, int x, int y, int rotation);
+        public void AddItem(Item item, Vector2Int position, int rotation);
 
         // Transfer items from this inventory to another inventory, restricted by a direction
         public void TransferItems(IInventory destination, TransferDirection direction);

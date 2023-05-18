@@ -10,8 +10,6 @@ namespace Items
     {
         public const int ItemWidth = 4;
         public const int ItemHeight = 4;
-        public const int ItemPixelWidth = 128;
-        public const int ItemPixelHeight = 128;
     }
 
     [Serializable]
@@ -84,6 +82,7 @@ namespace Items
         public ItemType Type => type;
         public Sprite[,] Icons { get; }
         public Sprite Icon { get; }
+        public BoundsInt Bounds { get; private set; }
         [JsonProperty("grid")] public bool[,] Grid { get; }
 
         public Item CreateInstance()
@@ -121,6 +120,9 @@ namespace Items
                     }
                 }
             }
+            
+            BoundsInt bounds = new(minX, minY, 0, maxX - minX + 1, maxY - minY + 1, 1);
+            Bounds = bounds;
 
             if (spriteWidth == -1 || spriteHeight == -1)
             {
@@ -210,6 +212,7 @@ namespace Items
         public Sprite[,] Icons => _itemData.Icons;
         public Sprite Icon => _itemData.Icon;
         public bool[,] Grid => _itemData.Grid;
+        public BoundsInt Bounds => _itemData.Bounds;
 
         public List<ContextMenuAction> GetContextMenuActions()
         {
