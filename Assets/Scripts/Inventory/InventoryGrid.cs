@@ -71,16 +71,38 @@ namespace Inventory
             _width = gridShape.GetLength(1);
             _height = gridShape.GetLength(0);
 
-            if (_width > InventoryConstants.PlayerInventoryMaxWidth ||
-                _height > InventoryConstants.PlayerInventoryMaxHeight)
-            {
-                throw new ArgumentException("Inventory grid is too large.");
-            }
-
             _gridShape = gridShape;
             _gridItemIDs = new uint[_height, _width];
         }
 
+        public List<Item> GetItems()
+        {
+            return _items.Values.ToList();
+        }
+        
+        private Vector2Int FindEmptyPosition(Item item, int rotation)
+        {
+            for (int y = 0; y < _height; y++)
+            {
+                for (int x = 0; x < _width; x++)
+                {
+                    if (!_gridShape[y, x])
+                    {
+                        continue;
+                    }
+                    
+                    Vector2Int position = new(x, y);
+                    if (CheckFit(item, position, rotation))
+                    {
+                        return position;
+                    }
+                }
+            }
+            
+            throw new ItemDoesNotFitException("Item does not fit in inventory.");
+        }
+        
+        
         private void ValidatePosition(Vector2Int position)
         {
             if (position.x < 0 || position.x >= _width || position.y < 0 || position.y >= _height)
@@ -156,6 +178,13 @@ namespace Inventory
             }
 
             return new Tuple<bool[,], BoundsInt>(itemGrid, bounds);
+        }
+
+        public void AddItem(Item item)
+        {
+            Vector2Int position = FindEmptyPosition(item, 0);
+            
+            AddItem(item, position, 0);
         }
 
         public bool CheckFit(Item item, Vector2Int position, int rotation)

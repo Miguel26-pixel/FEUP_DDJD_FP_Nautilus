@@ -18,7 +18,13 @@ namespace Player
 
         private ItemRegistryObject _itemRegistryObject;
         private PlayerActions _playerActions;
-        public PlayerInventory playerInventory = new("Mock Inventory");
+        public PlayerInventory playerInventory = new("Inventory", new bool[,]
+        {
+            {false, true, true, false},
+            {true, true, true, true},
+            {true, true, true, true},
+            {false, true, true, false}
+        });
 
         public void Start()
         {
@@ -74,7 +80,7 @@ namespace Player
             Debug.Log("Gave items");
         }
 
-        public override IInventory GetInventory()
+        public override PlayerInventory GetInventory()
         {
             return playerInventory;
         }

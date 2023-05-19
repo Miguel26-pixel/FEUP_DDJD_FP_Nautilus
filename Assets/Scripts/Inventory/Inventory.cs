@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Items;
-using UnityEngine;
 
 namespace Inventory
 {
@@ -19,12 +18,8 @@ namespace Inventory
     public interface IInventory
     {
         public List<Item> GetItems();
+        public void AddItem(Item item);
         public Item RemoveItem(int itemID);
-
-        public void AddItem(Item item, Vector2Int position, int rotation);
-
-        // Transfer items from this inventory to another inventory, restricted by a direction
-        public void TransferItems(IInventory destination, TransferDirection direction);
         public string GetInventoryName();
     }
 

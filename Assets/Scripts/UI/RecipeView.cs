@@ -12,7 +12,7 @@ namespace UI
     {
         private readonly CraftingMenu _craftingMenu;
         private readonly VisualTreeAsset _ingredientRecipe;
-        private readonly IInventory _inventory;
+        private readonly PlayerInventory _inventory;
         private readonly ItemRegistry _itemRegistry;
         private readonly CraftingRecipe _recipe;
         private readonly VisualElement _recipeCreateButton;

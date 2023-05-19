@@ -30,7 +30,7 @@ namespace UI
         private VisualElement _root;
 
         [NonSerialized] public VisualElement categoryTabs;
-        [NonSerialized] public IInventory inventory;
+        [NonSerialized] public PlayerInventory inventory;
         [NonSerialized] public ItemRegistry itemRegistry;
         [NonSerialized] public VisualElement recipeCreateButton;
         [NonSerialized] public Label recipeDescription;

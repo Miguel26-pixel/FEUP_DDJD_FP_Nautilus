@@ -8,39 +8,50 @@ namespace Inventory
     public class PlayerInventory : IInventory, IInventoryNotifier
     {
         private readonly string _inventoryName;
-        private readonly List<Item> _items = new();
+        private readonly InventoryGrid _inventoryGrid;
         private readonly List<IInventorySubscriber> _subscribers = new();
 
-        public PlayerInventory(string inventoryName)
+        public PlayerInventory(string inventoryName, bool[,] gridShape)
         {
             _inventoryName = inventoryName;
+            
+            if (gridShape.GetLength(1) > InventoryConstants.PlayerInventoryMaxWidth ||
+                gridShape.GetLength(0) > InventoryConstants.PlayerInventoryMaxHeight)
+            {
+                throw new ArgumentException("Inventory grid is too large.");
+            }
+            
+            _inventoryGrid = new InventoryGrid(gridShape);
         }
 
         public List<Item> GetItems()
         {
-            return _items;
+            return _inventoryGrid.GetItems();
         }
 
         public Item RemoveItem(int itemID)
         {
-            for (int i = 0; i < _items.Count; i++)
-            {
-                if (_items[i].IDHash == itemID)
-                {
-                    Item item = _items[i];
-                    _items.RemoveAt(i);
-                    NotifySubscribersOnInventoryChanged();
-
-                    return item;
-                }
-            }
-
-            return null;
+            Item item = _inventoryGrid.RemoveItem(itemID);
+            NotifySubscribersOnInventoryChanged();
+            return item;
         }
 
         public void AddItem(Item item, Vector2Int position, int rotation)
         {
-            _items.Add(item);
+            _inventoryGrid.AddItem(item, position, rotation);
+            NotifySubscribersOnInventoryChanged();
+        }
+
+        public void AddItem(Item item)
+        {
+            try
+            {
+                _inventoryGrid.AddItem(item);
+            } catch (ItemDoesNotFitException)
+            {
+                // TODO: drop item, might need to be handled by the caller not sure yet
+            }
+            NotifySubscribersOnInventoryChanged();
         }
 
         public void TransferItems(IInventory destination, TransferDirection direction)
@@ -50,14 +61,14 @@ namespace Inventory
             // Transfer items
             // Close transfer window
             // Notify subscribers
-            if (direction == TransferDirection.DestinationToSource)
-            {
-                _items.AddRange(destination.GetItems());
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
+            // if (direction == TransferDirection.DestinationToSource)
+            // {
+            //     _items.AddRange(destination.GetItems());
+            // }
+            // else
+            // {
+            //     throw new NotImplementedException();
+            // }
 
             NotifySubscribersOnInventoryChanged();
         }

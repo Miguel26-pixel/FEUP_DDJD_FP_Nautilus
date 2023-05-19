@@ -19,6 +19,11 @@ namespace Inventory
             return _items;
         }
 
+        public void AddItem(Item item)
+        {
+            _items.Add(item);
+        }
+
         public Item RemoveItem(int itemID)
         {
             for (int i = 0; i < _items.Count; i++)
@@ -33,16 +38,6 @@ namespace Inventory
             }
 
             return null;
-        }
-
-        public void AddItem(Item item, Vector2Int position, int rotation)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void TransferItems(IInventory destination, TransferDirection direction)
-        {
-            throw new NotImplementedException();
         }
 
         public string GetInventoryName()
