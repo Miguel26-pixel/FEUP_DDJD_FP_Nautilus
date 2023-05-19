@@ -35,6 +35,15 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Inventory"",
+                    ""type"": ""Button"",
+                    ""id"": ""f534e349-7f96-4c64-a7e3-91ee3f7c6ef2"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -46,6 +55,17 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Test"",
                     ""action"": ""Craft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""87a58f67-0f0b-482d-8b05-367239d9425c"",
+                    ""path"": ""<Keyboard>/i"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Inventory"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -63,6 +83,7 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
         // CraftingTest
         m_CraftingTest = asset.FindActionMap("CraftingTest", throwIfNotFound: true);
         m_CraftingTest_Craft = m_CraftingTest.FindAction("Craft", throwIfNotFound: true);
+        m_CraftingTest_Inventory = m_CraftingTest.FindAction("Inventory", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -123,11 +144,13 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
     private readonly InputActionMap m_CraftingTest;
     private ICraftingTestActions m_CraftingTestActionsCallbackInterface;
     private readonly InputAction m_CraftingTest_Craft;
+    private readonly InputAction m_CraftingTest_Inventory;
     public struct CraftingTestActions
     {
         private @PlayerActions m_Wrapper;
         public CraftingTestActions(@PlayerActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Craft => m_Wrapper.m_CraftingTest_Craft;
+        public InputAction @Inventory => m_Wrapper.m_CraftingTest_Inventory;
         public InputActionMap Get() { return m_Wrapper.m_CraftingTest; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -140,6 +163,9 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
                 @Craft.started -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnCraft;
                 @Craft.performed -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnCraft;
                 @Craft.canceled -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnCraft;
+                @Inventory.started -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnInventory;
+                @Inventory.performed -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnInventory;
+                @Inventory.canceled -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnInventory;
             }
             m_Wrapper.m_CraftingTestActionsCallbackInterface = instance;
             if (instance != null)
@@ -147,6 +173,9 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
                 @Craft.started += instance.OnCraft;
                 @Craft.performed += instance.OnCraft;
                 @Craft.canceled += instance.OnCraft;
+                @Inventory.started += instance.OnInventory;
+                @Inventory.performed += instance.OnInventory;
+                @Inventory.canceled += instance.OnInventory;
             }
         }
     }
@@ -163,5 +192,6 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
     public interface ICraftingTestActions
     {
         void OnCraft(InputAction.CallbackContext context);
+        void OnInventory(InputAction.CallbackContext context);
     }
 }

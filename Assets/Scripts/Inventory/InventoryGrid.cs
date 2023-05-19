@@ -103,17 +103,14 @@ namespace Inventory
         }
         
         
-        private void ValidatePosition(Vector2Int position)
+        public bool ValidatePosition(Vector2Int position)
         {
             if (position.x < 0 || position.x >= _width || position.y < 0 || position.y >= _height)
             {
-                throw new InvalidItemPositionException("Item position is out of bounds.");
+                return false;
             }
 
-            if (!_gridShape[position.y, position.x])
-            {
-                throw new InvalidItemPositionException("Item position is not valid.");
-            }
+            return _gridShape[position.y, position.x];
         }
 
         private Tuple<bool[,], BoundsInt> CheckFitAndGetBounds(Item item, Vector2Int position, int rotation)
@@ -207,7 +204,10 @@ namespace Inventory
         // rotation is in increments of 90 degrees, positive is counter-clockwise, negative is clockwise
         public void AddItem(Item item, Vector2Int position, int rotation)
         {
-            ValidatePosition(position);
+            if (!ValidatePosition(position))
+            {
+                throw new InvalidItemPositionException("Item position is out of bounds.");
+            }
 
             (bool[,] itemGrid, BoundsInt bounds) = CheckFitAndGetBounds(item, position, rotation);
 
@@ -249,7 +249,10 @@ namespace Inventory
 
         public Item GetAt(Vector2Int position)
         {
-            ValidatePosition(position);
+            if (!ValidatePosition(position))
+            {
+                throw new InvalidItemPositionException("Item position is out of bounds.");
+            }
             uint itemID = _gridItemIDs[position.y, position.x];
 
             return itemID == 0 ? null : _items[itemID];
@@ -282,7 +285,10 @@ namespace Inventory
 
         public Item RemoveAt(Vector2Int position)
         {
-            ValidatePosition(position);
+            if (!ValidatePosition(position))
+            {
+                throw new InvalidItemPositionException("Item position is out of bounds.");
+            }
             uint itemID = _gridItemIDs[position.y, position.x];
 
             if (itemID == 0)

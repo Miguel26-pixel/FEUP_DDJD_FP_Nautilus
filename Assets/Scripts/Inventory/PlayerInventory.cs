@@ -23,6 +23,11 @@ namespace Inventory
             
             _inventoryGrid = new InventoryGrid(gridShape);
         }
+        
+        public bool ValidatePosition(Vector2Int position)
+        {
+            return _inventoryGrid.ValidatePosition(position);
+        }
 
         public List<Item> GetItems()
         {

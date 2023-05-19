@@ -14,16 +14,22 @@ namespace Player
     {
         public MachineType machineType;
         public UnityEvent<MachineType> OnCraftEvent = new();
+        public UnityEvent onInventoryEvent = new();
         private ItemRegistry _itemRegistry;
 
         private ItemRegistryObject _itemRegistryObject;
         private PlayerActions _playerActions;
         public PlayerInventory playerInventory = new("Inventory", new bool[,]
         {
-            {false, true, true, false},
-            {true, true, true, true},
-            {true, true, true, true},
-            {false, true, true, false}
+            {false, false, false, false, false, false},
+            {false, false, false, false, false, false},
+            {false, false, true, true, false, false},
+            {false, true, true, true, true, false},
+            {false, true, true, true, true, false},
+            {false, true, true, true, true, false},
+            {false, false, true, true, false, false},
+            {false, false, false, false, false, false},
+            {false, false, false, false, false, false},
         });
 
         public void Start()
@@ -58,8 +64,17 @@ namespace Player
                 return;
             }
 
-            Debug.Log("Craft");
             OnCraftEvent.Invoke(machineType);
+        }
+
+        public void OnInventory(InputAction.CallbackContext context)
+        {
+            if (!context.performed)
+            {
+                return;
+            }
+
+            onInventoryEvent.Invoke();
         }
 
         private IEnumerator GiveItems()
@@ -69,13 +84,13 @@ namespace Player
                 yield return new WaitUntil(() => _itemRegistry.Initialized);
             }
 
-            // playerInventory.items.Add(_itemRegistry.Get(0x55518A64).CreateInstance());
-            // playerInventory.items.Add(_itemRegistry.Get(0x55518A64).CreateInstance());
-            // playerInventory.items.Add(_itemRegistry.Get(0x55518A64).CreateInstance());
-            // playerInventory.items.Add(_itemRegistry.Get(0x238E2A2D).CreateInstance());
-            // playerInventory.items.Add(_itemRegistry.Get(0x2E79821C).CreateInstance());
-            // playerInventory.items.Add(_itemRegistry.Get(0x755CFE42).CreateInstance());
-            // playerInventory.items.Add(_itemRegistry.Get(0xE3847C27).CreateInstance());
+            playerInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
+            playerInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
+            playerInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
+            playerInventory.AddItem(_itemRegistry.Get(0x238E2A2D).CreateInstance());
+            playerInventory.AddItem(_itemRegistry.Get(0x2E79821C).CreateInstance());
+            playerInventory.AddItem(_itemRegistry.Get(0x755CFE42).CreateInstance());
+            playerInventory.AddItem(_itemRegistry.Get(0xE3847C27).CreateInstance());
 
             Debug.Log("Gave items");
         }

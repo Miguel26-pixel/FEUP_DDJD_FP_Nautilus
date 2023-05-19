@@ -276,11 +276,11 @@
 }
 
 .inventory .item-square {
-    background-color: rgba(22, 40, 54, 255);
-    border-left-color: rgba(44, 62, 76, 255);
-    border-right-color: rgba(44, 62, 76, 255);
-    border-top-color: rgba(44, 62, 76, 255);
-    border-bottom-color: rgba(44, 62, 76, 255);
+    background-color: rgb(22, 40, 54);
+    border-left-color: rgb(44, 62, 76);
+    border-right-color: rgb(44, 62, 76);
+    border-top-color: rgb(44, 62, 76);
+    border-bottom-color: rgb(44, 62, 76);
 }
 
 .equipment-slot {
@@ -293,4 +293,8 @@
     border-right-width: 2px;
     border-top-width: 2px;
     border-bottom-width: 2px;
+}
+
+.row {
+    flex-direction: row;
 }
