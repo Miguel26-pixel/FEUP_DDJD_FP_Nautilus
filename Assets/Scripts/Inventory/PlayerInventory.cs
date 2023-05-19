@@ -7,26 +7,31 @@ namespace Inventory
 {
     public class PlayerInventory : IInventory, IInventoryNotifier
     {
-        private readonly string _inventoryName;
         private readonly InventoryGrid _inventoryGrid;
+        private readonly string _inventoryName;
         private readonly List<IInventorySubscriber> _subscribers = new();
 
         public PlayerInventory(string inventoryName, bool[,] gridShape)
         {
             _inventoryName = inventoryName;
-            
+
             if (gridShape.GetLength(1) > InventoryConstants.PlayerInventoryMaxWidth ||
                 gridShape.GetLength(0) > InventoryConstants.PlayerInventoryMaxHeight)
             {
                 throw new ArgumentException("Inventory grid is too large.");
             }
-            
+
             _inventoryGrid = new InventoryGrid(gridShape);
         }
         
-        public bool ValidatePosition(Vector2Int position)
+        public ItemPositionAndID GetItemPositionAt(Vector2Int position)
         {
-            return _inventoryGrid.ValidatePosition(position);
+            return _inventoryGrid.GetItemPositionAt(position);
+        }
+        
+        public Item GetAt(Vector2Int position)
+        {
+            return _inventoryGrid.GetAt(position);
         }
 
         public List<Item> GetItems()
@@ -41,39 +46,16 @@ namespace Inventory
             return item;
         }
 
-        public void AddItem(Item item, Vector2Int position, int rotation)
-        {
-            _inventoryGrid.AddItem(item, position, rotation);
-            NotifySubscribersOnInventoryChanged();
-        }
-
         public void AddItem(Item item)
         {
             try
             {
                 _inventoryGrid.AddItem(item);
-            } catch (ItemDoesNotFitException)
+            }
+            catch (ItemDoesNotFitException)
             {
                 // TODO: drop item, might need to be handled by the caller not sure yet
             }
-            NotifySubscribersOnInventoryChanged();
-        }
-
-        public void TransferItems(IInventory destination, TransferDirection direction)
-        {
-            // TODO: Implement this
-            // Open transfer window
-            // Transfer items
-            // Close transfer window
-            // Notify subscribers
-            // if (direction == TransferDirection.DestinationToSource)
-            // {
-            //     _items.AddRange(destination.GetItems());
-            // }
-            // else
-            // {
-            //     throw new NotImplementedException();
-            // }
 
             NotifySubscribersOnInventoryChanged();
         }
@@ -94,6 +76,36 @@ namespace Inventory
             {
                 subscriber.OnInventoryChanged();
             }
+        }
+
+        public bool ValidatePosition(Vector2Int position)
+        {
+            return _inventoryGrid.ValidatePosition(position);
+        }
+
+        public void AddItem(Item item, Vector2Int position, int rotation)
+        {
+            _inventoryGrid.AddItem(item, position, rotation);
+            NotifySubscribersOnInventoryChanged();
+        }
+
+        public void TransferItems(IInventory destination, TransferDirection direction)
+        {
+            // TODO: Implement this
+            // Open transfer window
+            // Transfer items
+            // Close transfer window
+            // Notify subscribers
+            // if (direction == TransferDirection.DestinationToSource)
+            // {
+            //     _items.AddRange(destination.GetItems());
+            // }
+            // else
+            // {
+            //     throw new NotImplementedException();
+            // }
+
+            NotifySubscribersOnInventoryChanged();
         }
     }
 }

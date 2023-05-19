@@ -16,7 +16,7 @@ namespace Tests
         [SetUp]
         public void Setup()
         {
-            singleCellGridJson = JsonConvert.SerializeObject(ItemGrid.SingleCellGrid());
+            singleCellGridJson = JsonConvert.SerializeObject(ItemGrid<bool>.SingleCellGrid(false, true));
         }
         
         [Test]
@@ -48,7 +48,7 @@ namespace Tests
             Assert.AreEqual("This is a test", items[0].Description);
             Assert.AreEqual(ItemType.Consumable, items[0].Type);
             Assert.AreEqual(0, items[0].GetComponents().Count());
-            Assert.AreEqual(ItemGrid.SingleCellGrid(), items[0].Grid);
+            Assert.AreEqual(ItemGrid<bool>.SingleCellGrid(false, true), items[0].Grid);
         }
 
         [Test]

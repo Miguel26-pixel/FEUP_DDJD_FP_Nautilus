@@ -6,10 +6,10 @@ namespace UI.Inventory
     public class InventoryMenu : MonoBehaviour
     {
         [SerializeField] private Player.Player player;
-        private VisualElement _root;
         private VisualElement _inventoryContainer;
         private bool _isInventoryMenuOpen;
-        
+        private VisualElement _root;
+
         private void Start()
         {
             _root = GetComponent<UIDocument>().rootVisualElement;
@@ -24,7 +24,7 @@ namespace UI.Inventory
             _root.style.display = DisplayStyle.Flex;
             _isInventoryMenuOpen = true;
         }
-        
+
         public void ToggleMenu()
         {
             Debug.Log("hey2");

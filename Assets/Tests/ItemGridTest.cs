@@ -165,7 +165,7 @@ namespace Tests
             };
             
             
-            Assert.AreEqual(rotatedGrid, ItemGrid.RotateClockwise(grid));
+            Assert.AreEqual(rotatedGrid, ItemGrid<bool>.RotateClockwise(grid));
         }
 
         [Test]
@@ -188,7 +188,7 @@ namespace Tests
                 { true, false, false, false }
             };
             
-            Assert.AreEqual(rotatedGrid, ItemGrid.RotateCounterClockwise(grid));
+            Assert.AreEqual(rotatedGrid, ItemGrid<bool>.RotateCounterClockwise(grid));
         }
 
         [Test]
@@ -210,8 +210,8 @@ namespace Tests
                 { true, true, true, true}
             };
             
-            Assert.AreEqual(rotatedGrid, ItemGrid.RotateClockwise(ItemGrid.RotateClockwise(grid)));
-            Assert.AreEqual(rotatedGrid, ItemGrid.RotateCounterClockwise(ItemGrid.RotateCounterClockwise(grid)));
+            Assert.AreEqual(rotatedGrid, ItemGrid<bool>.RotateClockwise(ItemGrid<bool>.RotateClockwise(grid)));
+            Assert.AreEqual(rotatedGrid, ItemGrid<bool>.RotateCounterClockwise(ItemGrid<bool>.RotateCounterClockwise(grid)));
         }
     }
 }

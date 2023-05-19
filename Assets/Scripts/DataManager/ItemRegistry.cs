@@ -22,7 +22,7 @@ namespace DataManager
             bool[,] itemGrid = null)
         {
             int hash = Hash(itemName, description);
-            itemGrid ??= ItemGrid.SingleCellGrid();
+            itemGrid ??= ItemGrid<bool>.SingleCellGrid(false, true);
 
             ItemData itemData = new(hash.ToString("X"), itemName, description, type, iconPath, itemGrid);
             _items.Add(hash, itemData);

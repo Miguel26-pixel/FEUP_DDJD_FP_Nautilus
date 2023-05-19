@@ -1,11 +1,12 @@
 using System;
 using UnityEngine;
+using Utils;
 
 namespace Items
 {
-    public static class ItemGrid
+    public static class ItemGrid<T>
     {
-        public static bool[,] ValidateGrid(bool[,] grid)
+        public static T[,] ValidateGrid(T[,] grid)
         {
             // Enforce ItemConstants.ItemWidth and ItemConstants.ItemHeight
             if (grid.GetLength(0) > ItemConstants.ItemHeight ||
@@ -15,7 +16,7 @@ namespace Items
             }
 
             // Create a new grid of size ItemConstants.ItemWidth x ItemConstants.ItemHeight
-            bool[,] newGrid = new bool[ItemConstants.ItemHeight, ItemConstants.ItemWidth];
+            T[,] newGrid = new T[ItemConstants.ItemHeight, ItemConstants.ItemWidth];
 
             // Copy the old grid into the new grid
             for (int row = 0; row < grid.GetLength(0); row++)
@@ -29,29 +30,62 @@ namespace Items
             return newGrid;
         }
 
-        public static bool[,] SingleCellGrid()
+        public static T[,] SingleCellGrid(T defaultValue, T value)
         {
-            bool[,] grid = new bool[ItemConstants.ItemHeight, ItemConstants.ItemWidth];
+            T[,] grid = new T[ItemConstants.ItemHeight, ItemConstants.ItemWidth];
 
             for (int row = 0; row < ItemConstants.ItemHeight; row++)
             {
                 for (int col = 0; col < ItemConstants.ItemWidth; col++)
                 {
-                    grid[row, col] = false;
+                    grid[row, col] = value;
                 }
             }
 
-            grid[0, 0] = true;
+            grid[0, 0] = defaultValue;
 
             return grid;
         }
 
-        public static bool[,] RotateClockwise(bool[,] grid)
+        public static T[,] RotateMultiple(T[,] grid, int rotation)
+        {
+            // rotate 3 is the same as rotate -1, rotate 4 is the same as rotate 0, etc.
+            rotation = MathUtils.Modulo(rotation + 2, 4) - 2;
+
+            int rotationsLeft = rotation;
+            switch (rotationsLeft)
+            {
+                case > 0:
+                {
+                    while (rotationsLeft > 0)
+                    {
+                        grid = RotateCounterClockwise(grid);
+                        rotationsLeft--;
+                    }
+
+                    break;
+                }
+                case < 0:
+                {
+                    while (rotationsLeft < 0)
+                    {
+                        grid = RotateClockwise(grid);
+                        rotationsLeft++;
+                    }
+
+                    break;
+                }
+            }
+
+            return grid;
+        }
+
+        public static T[,] RotateClockwise(T[,] grid)
         {
             // Rotate -90 degrees
 
             // Create a new grid of size ItemConstants.ItemWidth x ItemConstants.ItemHeight
-            bool[,] newGrid = new bool[ItemConstants.ItemHeight, ItemConstants.ItemWidth];
+            T[,] newGrid = new T[ItemConstants.ItemHeight, ItemConstants.ItemWidth];
 
             for (int row = 0; row < ItemConstants.ItemHeight; row++)
             {
@@ -64,12 +98,12 @@ namespace Items
             return newGrid;
         }
 
-        public static bool[,] RotateCounterClockwise(bool[,] grid)
+        public static T[,] RotateCounterClockwise(T[,] grid)
         {
             // Rotate +90 degrees
 
             // Create a new grid of size ItemConstants.ItemWidth x ItemConstants.ItemHeight
-            bool[,] newGrid = new bool[ItemConstants.ItemHeight, ItemConstants.ItemWidth];
+            T[,] newGrid = new T[ItemConstants.ItemHeight, ItemConstants.ItemWidth];
 
             for (int row = 0; row < ItemConstants.ItemHeight; row++)
             {
@@ -82,7 +116,7 @@ namespace Items
             return newGrid;
         }
 
-        public static BoundsInt GetBounds(bool[,] grid)
+        public static BoundsInt GetBounds(T[,] grid, T value)
         {
             int minX = int.MaxValue;
             int minY = int.MaxValue;
@@ -93,7 +127,7 @@ namespace Items
             {
                 for (int col = 0; col < ItemConstants.ItemWidth; col++)
                 {
-                    if (grid[row, col])
+                    if (grid[row, col].Equals(value))
                     {
                         minX = Mathf.Min(minX, col);
                         minY = Mathf.Min(minY, row);

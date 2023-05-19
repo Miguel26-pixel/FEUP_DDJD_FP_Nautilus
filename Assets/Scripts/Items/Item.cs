@@ -54,7 +54,7 @@ namespace Items
             this.type = type;
             this.iconPath = iconPath;
 
-            Grid = grid == null ? ItemGrid.SingleCellGrid() : ItemGrid.ValidateGrid(grid);
+            Grid = grid == null ? ItemGrid<bool>.SingleCellGrid(false, true) : ItemGrid<bool>.ValidateGrid(grid);
 
             Icons = new Sprite[ItemConstants.ItemHeight, ItemConstants.ItemWidth];
             Sprite[] spriteSheet = Resources.LoadAll<Sprite>(iconPath);

@@ -1,10 +1,9 @@
 using Inventory;
-using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace UI.Inventory
 {
-    public abstract class InventoryViewer<T> where T : IInventory 
+    public abstract class InventoryViewer<T> where T : IInventory
     {
         protected readonly VisualElement inventoryContainer;
         protected IInventory inventory;
@@ -14,7 +13,7 @@ namespace UI.Inventory
             this.inventoryContainer = inventoryContainer;
             this.inventory = inventory;
         }
-        
+
         public abstract void Show();
     }
 }
