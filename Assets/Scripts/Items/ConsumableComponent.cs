@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Items
@@ -12,6 +13,9 @@ namespace Items
             Hunger = hunger;
 
             actions.Add(new ContextMenuAction("Consume", Consume));
+            
+            descriptors.Add(new KeyValuePair<string, string>("Health", Health.ToString()));
+            descriptors.Add(new KeyValuePair<string, string>("Hunger", Hunger.ToString()));
         }
 
         [JsonProperty("health")] public int Health { get; }

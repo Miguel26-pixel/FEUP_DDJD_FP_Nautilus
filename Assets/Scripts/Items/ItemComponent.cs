@@ -14,12 +14,18 @@ namespace Items
     public abstract class ItemComponentData : IInstantiable<ItemComponent>
     {
         [NonSerialized] [JsonIgnore] protected List<ContextMenuAction> actions = new();
+        [NonSerialized] [JsonIgnore] protected List<KeyValuePair<string, string>> descriptors = new();
 
         public abstract ItemComponent CreateInstance();
 
         public List<ContextMenuAction> GetActions()
         {
             return actions;
+        }
+        
+        public List<KeyValuePair<string, string>> GetDescriptors()
+        {
+            return descriptors;
         }
     }
 
@@ -36,6 +42,11 @@ namespace Items
         public List<ContextMenuAction> GetActions()
         {
             return itemComponentData.GetActions();
+        }
+
+        public List<KeyValuePair<string, string>> GetDescriptors()
+        {
+            return itemComponentData.GetDescriptors();
         }
     }
 }

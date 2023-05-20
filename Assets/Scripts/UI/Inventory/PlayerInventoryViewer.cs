@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Inventory;
 using Items;
 using UnityEngine;
@@ -29,6 +30,11 @@ namespace UI.Inventory
     public class PlayerInventoryViewer : InventoryViewer<PlayerInventory>
     {
         private readonly VisualElement _draggedItem;
+        private readonly VisualElement _itemInfo;
+        private readonly Label _itemInfoName;
+        private readonly Label _itemInfoDescription;
+        private readonly VisualElement _itemInfoStats;
+        private readonly VisualElement _itemInfoDescriptors;
         private readonly PlayerInventory _inventory;
         private readonly BoundsInt _inventoryBounds;
 
@@ -42,15 +48,24 @@ namespace UI.Inventory
 
         private bool _isDragging;
         private bool _registeredGeometryChange;
+        
+        private bool _isInfoVisible;
 
-        public PlayerInventoryViewer(VisualElement root, VisualElement inventoryContainer, PlayerInventory inventory) :
+        public PlayerInventoryViewer(VisualElement root, VisualElement inventoryContainer, VisualTreeAsset itemDescriptorTemplate, PlayerInventory inventory) :
             base(
-                root, inventoryContainer, inventory)
+                root, inventoryContainer, itemDescriptorTemplate, inventory)
         {
             _inventory = inventory;
             _inventoryBounds = _inventory.GetBounds();
             _draggedItem = root.Q<VisualElement>("ItemDrag");
             _draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
+            _itemInfo = root.Q<VisualElement>("ItemInfo");
+            _itemInfo.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
+            
+            _itemInfoName = _itemInfo.Q<Label>("InfoTitle");
+            _itemInfoDescription = _itemInfo.Q<Label>("InfoDescription");
+            _itemInfoStats = _itemInfo.Q<VisualElement>("ItemInfoStats");
+            _itemInfoDescriptors = _itemInfo.Q<VisualElement>("Descriptors");
         }
 
         public override void Show()
@@ -62,17 +77,19 @@ namespace UI.Inventory
 
         public override void Update()
         {
-            if (!_isDragging)
-            {
-                return;
-            }
-
             Vector2 mousePos = Mouse.current.position.ReadValue();
             mousePos = RuntimePanelUtils.ScreenToPanel(root.panel, mousePos);
+            if (_isDragging)
+            {
+                _draggedItem.style.left = mousePos.x - (_draggingProperties.dragRelativePosition.x + 0.33f) * _cellWidth;
+                _draggedItem.style.top = root.resolvedStyle.height - mousePos.y -
+                                         (_draggingProperties.dragRelativePosition.y + 0.33f) * _cellHeight;
+            } else if (_isInfoVisible)
+            {
+                _itemInfo.style.left = mousePos.x + 3;
+                _itemInfo.style.top = root.resolvedStyle.height - mousePos.y - 3;
+            }
 
-            _draggedItem.style.left = mousePos.x - (_draggingProperties.dragRelativePosition.x + 0.33f) * _cellWidth;
-            _draggedItem.style.top = root.resolvedStyle.height - mousePos.y -
-                                     (_draggingProperties.dragRelativePosition.y + 0.33f) * _cellHeight;
         }
 
         public override void Refresh()
@@ -125,6 +142,7 @@ namespace UI.Inventory
 
                     // Get sprite from item, and rotate it if necessary
                     RelativePositionAndID relativePositionAndID = _inventory.GetItemPositionAt(position);
+                    Item item = _inventory.GetAt(position);
 
                     if (relativePositionAndID != null)
                     {
@@ -132,6 +150,8 @@ namespace UI.Inventory
                             iconElement, _inventory.GetAt(position));
                         MergeBorders(relativePositionAndID, background, position, previousID);
                         cell.RegisterCallback<MouseDownEvent>(_ => ProcessCellClick(position));
+                        cell.RegisterCallback<MouseEnterEvent>(_ => OpenItemInfo(item));
+                        cell.RegisterCallback<MouseLeaveEvent>(_ => CloseItemInfo());
                         previousID = relativePositionAndID.itemID;
                     }
                     else
@@ -157,6 +177,48 @@ namespace UI.Inventory
             }
         }
 
+        private void CloseItemInfo()
+        {
+            _isInfoVisible = false;
+            _itemInfo.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
+        }
+
+        private void OpenItemInfo(Item item)
+        {
+            if (_isDragging)
+            {
+                return;
+            }
+            
+            _isInfoVisible = true;
+            
+            _itemInfoName.text = item.Name;
+            _itemInfoDescription.text = item.Description;
+
+            var descriptors = item.GetDescriptors();
+
+            if (descriptors.Count == 0)
+            {
+                _itemInfoStats.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
+            }
+            else
+            {
+                _itemInfoStats.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
+                _itemInfoDescriptors.Clear();
+                foreach (var descriptor in descriptors)
+                {
+                    VisualElement descriptorElement = itemDescriptorTemplate.Instantiate();
+                    descriptorElement.Q<Label>("DescriptorKey").text = descriptor.Key;
+                    descriptorElement.Q<Label>("DescriptorValue").text = descriptor.Value;
+                    descriptorElement.pickingMode = PickingMode.Ignore;
+                    
+                    _itemInfoDescriptors.Add(descriptorElement);
+                }
+            }
+            
+            _itemInfo.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
+        }
+
         public override void Rotate(int direction)
         {
             if (!_isDragging)
@@ -179,6 +241,7 @@ namespace UI.Inventory
             }
 
             _isDragging = true;
+            CloseItemInfo();
             RelativePositionAndID relativePositionAndID = _inventory.GetItemPositionAt(position);
             _draggingProperties = new DraggingProperties(new ItemPosition(position, relativePositionAndID.rotation),
                 relativePositionAndID.relativePosition, item, relativePositionAndID.itemID);

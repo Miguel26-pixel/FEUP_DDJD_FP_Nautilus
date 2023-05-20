@@ -7,13 +7,15 @@ namespace UI.Inventory
     {
         protected readonly VisualElement inventoryContainer;
         protected readonly VisualElement root;
+        protected readonly VisualTreeAsset itemDescriptorTemplate;
         protected IInventory inventory;
 
-        protected InventoryViewer(VisualElement root, VisualElement inventoryContainer, T inventory)
+        protected InventoryViewer(VisualElement root, VisualElement inventoryContainer, VisualTreeAsset itemDescriptorTemplate, T inventory)
         {
             this.root = root;
             this.inventoryContainer = inventoryContainer;
             this.inventory = inventory;
+            this.itemDescriptorTemplate = itemDescriptorTemplate;
         }
 
         public abstract void Show();

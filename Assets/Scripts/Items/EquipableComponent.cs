@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Items
@@ -13,6 +14,9 @@ namespace Items
 
             actions.Add(new ContextMenuAction("Equip", OnEquip));
             actions.Add(new ContextMenuAction("Unequip", OnUnequip));
+            
+            descriptors.Add(new KeyValuePair<string, string>("Slot", Slot.ToString()));
+            descriptors.Add(new KeyValuePair<string, string>("Durability", Durability.ToString()));
         }
 
         // some examples, not yet sure what we need

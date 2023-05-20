@@ -14,6 +14,11 @@ namespace Items
             durability)
         {
             _enhancements = enhancements;
+
+            foreach (var enhancement in enhancements)
+            {
+                descriptors.Add(new KeyValuePair<string, string>(enhancement.Item1, enhancement.Item2.ToString()));
+            }
         }
 
         [JsonIgnore] public List<Tuple<string, int>> Enhancements => new(_enhancements);
