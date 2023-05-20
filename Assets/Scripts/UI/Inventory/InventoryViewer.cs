@@ -8,7 +8,7 @@ namespace UI.Inventory
         protected readonly VisualElement inventoryContainer;
         protected readonly VisualElement root;
         protected readonly VisualTreeAsset itemDescriptorTemplate;
-        protected IInventory inventory;
+        protected T inventory;
 
         protected InventoryViewer(VisualElement root, VisualElement inventoryContainer, VisualTreeAsset itemDescriptorTemplate, T inventory)
         {

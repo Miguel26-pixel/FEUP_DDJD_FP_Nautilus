@@ -1,3 +1,4 @@
+using Inventory;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -8,7 +9,7 @@ namespace UI.Inventory
         [SerializeField] private Player.Player player;
         [SerializeField] private VisualTreeAsset itemDescriptorTemplate;
         private VisualElement _inventoryContainer;
-        private PlayerInventoryViewer _inventoryViewer;
+        private GridInventoryViewer<PlayerInventory> _inventoryViewer;
         private bool _isInventoryMenuOpen;
         private VisualElement _root;
 
@@ -34,7 +35,7 @@ namespace UI.Inventory
 
         private void Open()
         {
-            PlayerInventoryViewer inventoryViewer = new(_root, _inventoryContainer, itemDescriptorTemplate, player.GetInventory());
+            GridInventoryViewer<PlayerInventory> inventoryViewer = new(_root, _inventoryContainer, itemDescriptorTemplate, player.GetInventory());
             inventoryViewer.Show();
             _root.style.display = DisplayStyle.Flex;
             _isInventoryMenuOpen = true;

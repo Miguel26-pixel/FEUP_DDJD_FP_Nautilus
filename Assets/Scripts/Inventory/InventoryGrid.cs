@@ -68,9 +68,9 @@ namespace Inventory
             this.itemID = itemID;
         }
     }
+    
 
-
-    public class InventoryGrid
+    public class InventoryGrid : IInventory
     {
         [ItemCanBeNull] private readonly RelativePositionAndID[,] _gridItemIDs;
         private readonly bool[,] _gridShape;
@@ -79,14 +79,16 @@ namespace Inventory
         private readonly Dictionary<uint, Item> _items = new();
         private readonly int _width;
         private uint _itemIDCounter;
+        private string _name;
 
-        public InventoryGrid(bool[,] gridShape)
+        public InventoryGrid(bool[,] gridShape, string name)
         {
             _width = gridShape.GetLength(1);
             _height = gridShape.GetLength(0);
 
             _gridShape = gridShape;
             _gridItemIDs = new RelativePositionAndID[_height, _width];
+            _name = name;
         }
 
         public BoundsInt GetBounds()
@@ -182,7 +184,7 @@ namespace Inventory
             return new Tuple<bool[,], BoundsInt>(itemGrid, bounds);
         }
 
-        public void AddItem(Item item)
+        public virtual void AddItem(Item item)
         {
             Vector2Int position = FindEmptyPosition(item, 0);
 
@@ -211,7 +213,7 @@ namespace Inventory
         }
 
         // rotation is in increments of 90 degrees, positive is counter-clockwise, negative is clockwise
-        public void AddItem(Item item, Vector2Int position, int rotation)
+        public virtual void AddItem(Item item, Vector2Int position, int rotation)
         {
             (bool[,] itemGrid, BoundsInt bounds) = CheckFitAndGetBounds(item, position, rotation);
 
@@ -238,7 +240,7 @@ namespace Inventory
             }
         }
 
-        public Item RemoveItem(int itemHash)
+        public virtual Item RemoveItem(int itemHash)
         {
             KeyValuePair<uint, Item> pair = _items.FirstOrDefault(pair => pair.Value.IDHash == itemHash);
 
@@ -253,6 +255,11 @@ namespace Inventory
             RemoveAtInternal(_itemPositions[itemID].position, itemID);
 
             return item;
+        }
+
+        public string GetInventoryName()
+        {
+            return _name;
         }
 
         public Item GetAt(Vector2Int position)

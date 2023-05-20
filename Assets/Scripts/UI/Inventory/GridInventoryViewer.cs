@@ -26,8 +26,8 @@ namespace UI.Inventory
             this.itemID = itemID;
         }
     }
-
-    public class PlayerInventoryViewer : InventoryViewer<PlayerInventory>
+    
+    public class GridInventoryViewer<T> : InventoryViewer<T> where T : InventoryGrid
     {
         private bool _isContextOpen;
         private readonly VisualElement _itemContext;
@@ -37,7 +37,7 @@ namespace UI.Inventory
         private readonly Label _noActionsLabel;
         private readonly VisualTreeAsset _textButtonTemplate;
         
-        private readonly PlayerInventory _inventory;
+        private readonly T _inventory;
         private readonly BoundsInt _inventoryBounds;
         
         private readonly VisualElement[,] _inventoryCells =
@@ -63,7 +63,7 @@ namespace UI.Inventory
 
         private Vector2 _currentMousePosition;
 
-        public PlayerInventoryViewer(VisualElement root, VisualElement inventoryContainer, VisualTreeAsset itemDescriptorTemplate, PlayerInventory inventory) :
+        public GridInventoryViewer(VisualElement root, VisualElement inventoryContainer, VisualTreeAsset itemDescriptorTemplate, T inventory) :
             base(
                 root, inventoryContainer, itemDescriptorTemplate, inventory)
         {
@@ -209,7 +209,7 @@ namespace UI.Inventory
                     }
 
                     // Get sprite from item, and rotate it if necessary
-                    RelativePositionAndID relativePositionAndID = _inventory.GetItemPositionAt(position);
+                    RelativePositionAndID relativePositionAndID = _inventory.GetRelativePositionAt(position);
                     Item item = _inventory.GetAt(position);
 
                     if (relativePositionAndID != null)
@@ -409,10 +409,10 @@ namespace UI.Inventory
 
             _isDragging = true;
             CloseItemInfo();
-            RelativePositionAndID relativePositionAndID = _inventory.GetItemPositionAt(position);
+            RelativePositionAndID relativePositionAndID = _inventory.GetRelativePositionAt(position);
             _draggingProperties = new DraggingProperties(new ItemPosition(position, relativePositionAndID.rotation),
                 relativePositionAndID.relativePosition, item, relativePositionAndID.itemID);
-            uint itemID = _inventory.GetItemPositionAt(position).itemID;
+            uint itemID = relativePositionAndID.itemID;
 
             DarkenItem(itemID);
             RenderItemDrag();
@@ -424,7 +424,7 @@ namespace UI.Inventory
             {
                 _isDragging = false;
                 _draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
-                DarkenItem(_inventory.GetItemPositionAt(_draggingProperties.dragStartPosition.position).itemID, false);
+                DarkenItem(_inventory.GetRelativePositionAt(_draggingProperties.dragStartPosition.position).itemID, false);
             } else if (_isContextOpen)
             {
                 CloseContext();
@@ -491,7 +491,7 @@ namespace UI.Inventory
                     }
 
                     VisualElement cell = _inventoryCells[y, x];
-                    RelativePositionAndID relativePositionAndID = _inventory.GetItemPositionAt(new Vector2Int(x, y));
+                    RelativePositionAndID relativePositionAndID = _inventory.GetRelativePositionAt(new Vector2Int(x, y));
 
                     if (relativePositionAndID == null || relativePositionAndID.itemID != itemID)
                     {
@@ -586,7 +586,7 @@ namespace UI.Inventory
                 return false;
             }
 
-            RelativePositionAndID relativePositionAndID = _inventory.GetItemPositionAt(position);
+            RelativePositionAndID relativePositionAndID = _inventory.GetRelativePositionAt(position);
             return relativePositionAndID != null && relativePositionAndID.itemID == itemID;
         }
     }

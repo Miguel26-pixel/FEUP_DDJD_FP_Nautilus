@@ -5,13 +5,12 @@ using UnityEngine;
 
 namespace Inventory
 {
-    public class PlayerInventory : IInventory, IInventoryNotifier
+    public class PlayerInventory : InventoryGrid, IInventoryNotifier
     {
-        private readonly InventoryGrid _inventoryGrid;
         private readonly string _inventoryName;
         private readonly List<IInventorySubscriber> _subscribers = new();
 
-        public PlayerInventory(string inventoryName, bool[,] gridShape)
+        public PlayerInventory(string inventoryName, bool[,] gridShape) : base(gridShape, inventoryName)
         {
             _inventoryName = inventoryName;
 
@@ -20,27 +19,20 @@ namespace Inventory
             {
                 throw new ArgumentException("Inventory grid is too large.");
             }
-
-            _inventoryGrid = new InventoryGrid(gridShape);
         }
 
-        public List<Item> GetItems()
+        public override Item RemoveItem(int itemID)
         {
-            return _inventoryGrid.GetItems();
-        }
-
-        public Item RemoveItem(int itemID)
-        {
-            Item item = _inventoryGrid.RemoveItem(itemID);
+            Item item = base.RemoveItem(itemID);
             NotifySubscribersOnInventoryChanged();
             return item;
         }
 
-        public void AddItem(Item item)
+        public override void AddItem(Item item)
         {
             try
             {
-                _inventoryGrid.AddItem(item);
+                base.AddItem(item);
             }
             catch (ItemDoesNotFitException)
             {
@@ -49,12 +41,7 @@ namespace Inventory
 
             NotifySubscribersOnInventoryChanged();
         }
-
-        public string GetInventoryName()
-        {
-            return _inventoryName;
-        }
-
+        
         public void AddSubscriber(IInventorySubscriber subscriber)
         {
             _subscribers.Add(subscriber);
@@ -67,46 +54,12 @@ namespace Inventory
                 subscriber.OnInventoryChanged();
             }
         }
+        
 
-        public RelativePositionAndID GetItemPositionAt(Vector2Int position)
+        public override void AddItem(Item item, Vector2Int position, int rotation)
         {
-            return _inventoryGrid.GetRelativePositionAt(position);
-        }
-
-        public Item GetAt(Vector2Int position)
-        {
-            return _inventoryGrid.GetAt(position);
-        }
-
-        public bool ValidatePosition(Vector2Int position)
-        {
-            return _inventoryGrid.ValidatePosition(position);
-        }
-
-        public void AddItem(Item item, Vector2Int position, int rotation)
-        {
-            _inventoryGrid.AddItem(item, position, rotation);
+            base.AddItem(item, position, rotation);
             NotifySubscribersOnInventoryChanged();
-        }
-
-        public BoundsInt GetBounds()
-        {
-            return _inventoryGrid.GetBounds();
-        }
-
-        public Vector2Int GetInitialPosition(uint itemID)
-        {
-            return _inventoryGrid.GetInitialPosition(itemID);
-        }
-
-        public bool CheckFit(Item item, Vector2Int position, int rotation, uint ignoreItemID = 0)
-        {
-            return _inventoryGrid.CheckFit(item, position, rotation, ignoreItemID);
-        }
-
-        public void MoveItem(ItemPosition source, ItemPosition destination)
-        {
-            _inventoryGrid.MoveItem(source, destination);
         }
 
         public void TransferItems(IInventory destination, TransferDirection direction)

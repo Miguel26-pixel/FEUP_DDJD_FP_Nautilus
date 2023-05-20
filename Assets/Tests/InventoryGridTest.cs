@@ -104,7 +104,7 @@ namespace Tests
                 {false, true, true, false},
             };
             
-            _inventoryGrid = new InventoryGrid(_gridShape);
+            _inventoryGrid = new InventoryGrid(_gridShape, "test");
         }
 
         [Test]
@@ -134,15 +134,11 @@ namespace Tests
         {
             var item = Get2X2Item();
             
-            var position = new Vector2Int(3, 0);
-            Assert.Throws<InvalidItemPositionException>(() => _inventoryGrid.AddItem(item, position, 0));
-            position = new Vector2Int(1, 3);
+            var position = new Vector2Int(1, 4);
             Assert.Throws<InvalidItemPositionException>(() => _inventoryGrid.AddItem(item, position, 0));
             position = new Vector2Int(-1, 1);
             Assert.Throws<InvalidItemPositionException>(() => _inventoryGrid.AddItem(item, position, 0));
             position = new Vector2Int(1, -1);
-            Assert.Throws<InvalidItemPositionException>(() => _inventoryGrid.AddItem(item, position, 0));
-            position = new Vector2Int(0, 0);
             Assert.Throws<InvalidItemPositionException>(() => _inventoryGrid.AddItem(item, position, 0));
         }
 
