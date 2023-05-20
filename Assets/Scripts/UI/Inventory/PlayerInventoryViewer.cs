@@ -10,7 +10,7 @@ namespace UI.Inventory
     public record DraggingProperties()
     {
         public readonly Item draggedItem;
-        public readonly Vector2Int dragRelativePosition;
+        public Vector2Int dragRelativePosition;
         public readonly ItemPosition dragStartPosition;
         public readonly uint itemID;
         public int currentRotation;
@@ -155,6 +155,19 @@ namespace UI.Inventory
 
                 inventoryContainer.Add(rowElement);
             }
+        }
+
+        public override void Rotate(int direction)
+        {
+            if (!_isDragging)
+            {
+                return;
+            }
+
+            _draggingProperties.currentRotation = (_draggingProperties.currentRotation + direction) % 4;
+            _draggingProperties.dragRelativePosition = ItemGrid<bool>.RotatePointMultiple(
+                _draggingProperties.dragRelativePosition, direction);
+            RenderItemDrag();
         }
 
         private void ProcessCellClick(Vector2Int position)

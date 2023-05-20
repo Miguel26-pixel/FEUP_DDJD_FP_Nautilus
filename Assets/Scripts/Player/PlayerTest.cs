@@ -15,6 +15,7 @@ namespace Player
         public MachineType machineType;
         public UnityEvent<MachineType> OnCraftEvent = new();
         public UnityEvent onInventoryEvent = new();
+        public UnityEvent<int> onRotate = new();
         private ItemRegistry _itemRegistry;
 
         private ItemRegistryObject _itemRegistryObject;
@@ -76,6 +77,26 @@ namespace Player
             }
 
             onInventoryEvent.Invoke();
+        }
+
+        public void OnRotateClockwise(InputAction.CallbackContext context)
+        {
+            if (!context.performed)
+            {
+                return;
+            }
+
+            onRotate.Invoke(-1);
+        }
+
+        public void OnRotateAntiClockwise(InputAction.CallbackContext context)
+        {
+            if (!context.performed)
+            {
+                return;
+            }
+
+            onRotate.Invoke(1);
         }
 
         private IEnumerator GiveItems()

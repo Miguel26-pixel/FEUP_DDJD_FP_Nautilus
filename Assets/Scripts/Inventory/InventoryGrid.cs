@@ -145,6 +145,11 @@ namespace Inventory
         private Tuple<bool[,], BoundsInt> CheckFitAndGetBounds(Item item, Vector2Int position, int rotation,
             uint ignoreItemID = 0)
         {
+            if (position.x < 0 || position.x >= _width || position.y < 0 || position.y >= _height)
+            {
+                throw new InvalidItemPositionException("Item position is out of bounds.");
+            }
+            
             bool[,] itemGrid = ItemGrid<bool>.RotateMultiple(item.Grid, rotation);
             BoundsInt bounds = ItemGrid<bool>.GetBounds(itemGrid, true);
 
@@ -198,17 +203,16 @@ namespace Inventory
             catch (PositionAlreadyOccupiedException)
             {
                 return false;
+            } 
+            catch (InvalidItemPositionException)
+            {
+                return false;
             }
         }
 
         // rotation is in increments of 90 degrees, positive is counter-clockwise, negative is clockwise
         public void AddItem(Item item, Vector2Int position, int rotation)
         {
-            if (position.x < 0 || position.x >= _width || position.y < 0 || position.y >= _height)
-            {
-                throw new InvalidItemPositionException("Item position is out of bounds.");
-            }
-
             (bool[,] itemGrid, BoundsInt bounds) = CheckFitAndGetBounds(item, position, rotation);
 
             uint itemID = ++_itemIDCounter;

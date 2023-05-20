@@ -21,5 +21,7 @@ namespace UI.Inventory
         public abstract void Update();
 
         public abstract void Refresh();
+        
+        public abstract void Rotate(int direction);
     }
 }

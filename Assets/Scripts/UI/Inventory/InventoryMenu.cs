@@ -25,6 +25,11 @@ namespace UI.Inventory
                 _inventoryViewer.Update();
             }
         }
+        
+        public void Rotate(int direction)
+        {
+            _inventoryViewer?.Rotate(direction);
+        }
 
         private void Open()
         {

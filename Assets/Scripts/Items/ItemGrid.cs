@@ -79,6 +79,39 @@ namespace Items
 
             return grid;
         }
+        
+        public static Vector2Int RotatePointMultiple(Vector2Int point, int rotation)
+        {
+            // rotate 3 is the same as rotate -1, rotate 4 is the same as rotate 0, etc.
+            rotation = MathUtils.Modulo(rotation + 2, 4) - 2;
+
+            int rotationsLeft = rotation;
+            switch (rotationsLeft)
+            {
+                case > 0:
+                {
+                    while (rotationsLeft > 0)
+                    {
+                        point = RotatePointCounterClockwise(point);
+                        rotationsLeft--;
+                    }
+
+                    break;
+                }
+                case < 0:
+                {
+                    while (rotationsLeft < 0)
+                    {
+                        point = RotatePointClockwise(point);
+                        rotationsLeft++;
+                    }
+
+                    break;
+                }
+            }
+
+            return point;
+        }
 
         public static T[,] RotateClockwise(T[,] grid)
         {
@@ -97,6 +130,11 @@ namespace Items
 
             return newGrid;
         }
+        
+        public static Vector2Int RotatePointClockwise(Vector2Int point)
+        {
+            return new Vector2Int(ItemConstants.ItemWidth - point.y - 1, point.x);
+        }
 
         public static T[,] RotateCounterClockwise(T[,] grid)
         {
@@ -114,6 +152,11 @@ namespace Items
             }
 
             return newGrid;
+        }
+        
+        public static Vector2Int RotatePointCounterClockwise(Vector2Int point)
+        {
+            return new Vector2Int(point.y, ItemConstants.ItemHeight - point.x - 1);
         }
 
         public static BoundsInt GetBounds(T[,] grid, T value)

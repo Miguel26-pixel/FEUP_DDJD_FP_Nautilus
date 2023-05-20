@@ -44,6 +44,24 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Rotate Clockwise"",
+                    ""type"": ""Button"",
+                    ""id"": ""b0bf948b-e10b-4953-897e-3877e9773bcf"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Rotate Anti Clockwise"",
+                    ""type"": ""Button"",
+                    ""id"": ""907361e7-127a-4f05-b0cd-20383341fca3"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -68,6 +86,28 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
                     ""action"": ""Inventory"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cc4c9a31-b5d3-4cd9-930e-74f24f2c1588"",
+                    ""path"": ""<Keyboard>/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotate Clockwise"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1f304852-4e81-4619-9ddb-35c21b7332fd"",
+                    ""path"": ""<Keyboard>/z"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotate Anti Clockwise"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -84,6 +124,8 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
         m_CraftingTest = asset.FindActionMap("CraftingTest", throwIfNotFound: true);
         m_CraftingTest_Craft = m_CraftingTest.FindAction("Craft", throwIfNotFound: true);
         m_CraftingTest_Inventory = m_CraftingTest.FindAction("Inventory", throwIfNotFound: true);
+        m_CraftingTest_RotateClockwise = m_CraftingTest.FindAction("Rotate Clockwise", throwIfNotFound: true);
+        m_CraftingTest_RotateAntiClockwise = m_CraftingTest.FindAction("Rotate Anti Clockwise", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -145,12 +187,16 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
     private ICraftingTestActions m_CraftingTestActionsCallbackInterface;
     private readonly InputAction m_CraftingTest_Craft;
     private readonly InputAction m_CraftingTest_Inventory;
+    private readonly InputAction m_CraftingTest_RotateClockwise;
+    private readonly InputAction m_CraftingTest_RotateAntiClockwise;
     public struct CraftingTestActions
     {
         private @PlayerActions m_Wrapper;
         public CraftingTestActions(@PlayerActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Craft => m_Wrapper.m_CraftingTest_Craft;
         public InputAction @Inventory => m_Wrapper.m_CraftingTest_Inventory;
+        public InputAction @RotateClockwise => m_Wrapper.m_CraftingTest_RotateClockwise;
+        public InputAction @RotateAntiClockwise => m_Wrapper.m_CraftingTest_RotateAntiClockwise;
         public InputActionMap Get() { return m_Wrapper.m_CraftingTest; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -166,6 +212,12 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
                 @Inventory.started -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnInventory;
                 @Inventory.performed -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnInventory;
                 @Inventory.canceled -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnInventory;
+                @RotateClockwise.started -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnRotateClockwise;
+                @RotateClockwise.performed -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnRotateClockwise;
+                @RotateClockwise.canceled -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnRotateClockwise;
+                @RotateAntiClockwise.started -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnRotateAntiClockwise;
+                @RotateAntiClockwise.performed -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnRotateAntiClockwise;
+                @RotateAntiClockwise.canceled -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnRotateAntiClockwise;
             }
             m_Wrapper.m_CraftingTestActionsCallbackInterface = instance;
             if (instance != null)
@@ -176,6 +228,12 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
                 @Inventory.started += instance.OnInventory;
                 @Inventory.performed += instance.OnInventory;
                 @Inventory.canceled += instance.OnInventory;
+                @RotateClockwise.started += instance.OnRotateClockwise;
+                @RotateClockwise.performed += instance.OnRotateClockwise;
+                @RotateClockwise.canceled += instance.OnRotateClockwise;
+                @RotateAntiClockwise.started += instance.OnRotateAntiClockwise;
+                @RotateAntiClockwise.performed += instance.OnRotateAntiClockwise;
+                @RotateAntiClockwise.canceled += instance.OnRotateAntiClockwise;
             }
         }
     }
@@ -193,5 +251,7 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
     {
         void OnCraft(InputAction.CallbackContext context);
         void OnInventory(InputAction.CallbackContext context);
+        void OnRotateClockwise(InputAction.CallbackContext context);
+        void OnRotateAntiClockwise(InputAction.CallbackContext context);
     }
 }
