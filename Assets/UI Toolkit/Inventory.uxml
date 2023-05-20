@@ -14,7 +14,7 @@
             <ui:VisualElement style="flex-grow: 1; flex-direction: row;">
                 <ui:VisualElement name="Grid" class="inventory" style="flex-grow: 1; padding-left: 50px; padding-right: 50px; padding-top: 0; padding-bottom: 0; align-items: center; justify-content: center; max-width: none; width: 430px;">
                     <ui:VisualElement name="Row" class="row">
-                        <ui:VisualElement name="Cell" class="item-square disabled">
+                        <ui:VisualElement name="Cell0" class="item-square">
                             <ui:VisualElement class="cell-background" />
                             <ui:VisualElement class="icon" />
                             <ui:VisualElement class="overlay" />
@@ -54,6 +54,16 @@
                     </ui:VisualElement>
                     <ui:VisualElement style="flex-grow: 1; height: 50%; border-left-color: rgb(44, 62, 76); border-right-color: rgb(44, 62, 76); border-top-color: rgb(44, 62, 76); border-bottom-color: rgb(44, 62, 76); border-top-width: 2px;" />
                 </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:VisualElement name="ItemDrag" picking-mode="Ignore" class="item-drag" style="opacity: 0.7;">
+        <ui:VisualElement name="Row" class="row">
+            <ui:VisualElement name="Cell" picking-mode="Ignore" class="item-square">
+                <ui:VisualElement picking-mode="Ignore" class="icon" />
+            </ui:VisualElement>
+            <ui:VisualElement name="Cell" class="item-square disabled">
+                <ui:VisualElement class="icon" />
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

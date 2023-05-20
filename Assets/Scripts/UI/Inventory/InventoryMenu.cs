@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
 namespace UI.Inventory
@@ -9,6 +11,7 @@ namespace UI.Inventory
         private VisualElement _inventoryContainer;
         private bool _isInventoryMenuOpen;
         private VisualElement _root;
+        private PlayerInventoryViewer _inventoryViewer;
 
         private void Start()
         {
@@ -23,6 +26,7 @@ namespace UI.Inventory
             inventoryViewer.Show();
             _root.style.display = DisplayStyle.Flex;
             _isInventoryMenuOpen = true;
+            _inventoryViewer = inventoryViewer;
         }
 
         public void ToggleMenu()
@@ -35,6 +39,15 @@ namespace UI.Inventory
             {
                 _root.style.display = DisplayStyle.None;
                 _isInventoryMenuOpen = false;
+                
+            }
+        }
+
+        public void Update()
+        {
+            if (_isInventoryMenuOpen)
+            {
+                _inventoryViewer.Update();
             }
         }
     }

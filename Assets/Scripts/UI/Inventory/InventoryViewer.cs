@@ -17,5 +17,9 @@ namespace UI.Inventory
         }
 
         public abstract void Show();
+
+        public abstract void Update();
+
+        public abstract void Refresh();
     }
 }
