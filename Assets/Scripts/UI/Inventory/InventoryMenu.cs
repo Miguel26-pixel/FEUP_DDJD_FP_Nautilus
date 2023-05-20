@@ -1,6 +1,4 @@
-using System;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
 namespace UI.Inventory
@@ -9,15 +7,23 @@ namespace UI.Inventory
     {
         [SerializeField] private Player.Player player;
         private VisualElement _inventoryContainer;
+        private PlayerInventoryViewer _inventoryViewer;
         private bool _isInventoryMenuOpen;
         private VisualElement _root;
-        private PlayerInventoryViewer _inventoryViewer;
 
         private void Start()
         {
             _root = GetComponent<UIDocument>().rootVisualElement;
             _root.style.display = DisplayStyle.None;
             _inventoryContainer = _root.Q<VisualElement>("Grid");
+        }
+
+        public void Update()
+        {
+            if (_isInventoryMenuOpen)
+            {
+                _inventoryViewer.Update();
+            }
         }
 
         private void Open()
@@ -39,15 +45,6 @@ namespace UI.Inventory
             {
                 _root.style.display = DisplayStyle.None;
                 _isInventoryMenuOpen = false;
-                
-            }
-        }
-
-        public void Update()
-        {
-            if (_isInventoryMenuOpen)
-            {
-                _inventoryViewer.Update();
             }
         }
     }

@@ -9,35 +9,43 @@ namespace UI.Inventory
 {
     public record DraggingProperties()
     {
-        public Vector2Int dragStartPosition;
-        public Vector2Int dragRelativePosition;
-        public Item draggedItem;
-        public int draggedRotation;
+        public readonly Item draggedItem;
+        public readonly Vector2Int dragRelativePosition;
+        public readonly ItemPosition dragStartPosition;
+        public readonly uint itemID;
+        public int currentRotation;
 
-        public DraggingProperties(Vector2Int dragStartPosition, Vector2Int dragRelativePosition, Item draggedItem, int draggedRotation) : this()
+        public DraggingProperties(ItemPosition dragStartPosition, Vector2Int dragRelativePosition, Item draggedItem,
+            uint itemID) : this()
         {
             this.dragStartPosition = dragStartPosition;
             this.dragRelativePosition = dragRelativePosition;
             this.draggedItem = draggedItem;
-            this.draggedRotation = draggedRotation;
+            currentRotation = this.dragStartPosition.rotation;
+            this.itemID = itemID;
         }
     }
-    
+
     public class PlayerInventoryViewer : InventoryViewer<PlayerInventory>
     {
+        private readonly VisualElement _draggedItem;
         private readonly PlayerInventory _inventory;
         private readonly BoundsInt _inventoryBounds;
-        private readonly VisualElement[,] _inventoryCells = new VisualElement[InventoryConstants.PlayerInventoryMaxHeight,
-            InventoryConstants.PlayerInventoryMaxWidth];
-        
-        private bool _isDragging;
-        private DraggingProperties _draggingProperties;
-        private readonly VisualElement _draggedItem;
-        private float _cellWidth;
-        private float _cellHeight;
 
-            public PlayerInventoryViewer(VisualElement root, VisualElement inventoryContainer, PlayerInventory inventory) : base(
-            root, inventoryContainer, inventory)
+        private readonly VisualElement[,] _inventoryCells =
+            new VisualElement[InventoryConstants.PlayerInventoryMaxHeight,
+                InventoryConstants.PlayerInventoryMaxWidth];
+
+        private float _cellHeight;
+        private float _cellWidth;
+        private DraggingProperties _draggingProperties;
+
+        private bool _isDragging;
+        private bool _registeredGeometryChange;
+
+        public PlayerInventoryViewer(VisualElement root, VisualElement inventoryContainer, PlayerInventory inventory) :
+            base(
+                root, inventoryContainer, inventory)
         {
             _inventory = inventory;
             _inventoryBounds = _inventory.GetBounds();
@@ -47,9 +55,30 @@ namespace UI.Inventory
 
         public override void Show()
         {
+            _registeredGeometryChange = false;
+
+            Refresh();
+        }
+
+        public override void Update()
+        {
+            if (!_isDragging)
+            {
+                return;
+            }
+
+            Vector2 mousePos = Mouse.current.position.ReadValue();
+            mousePos = RuntimePanelUtils.ScreenToPanel(root.panel, mousePos);
+
+            _draggedItem.style.left = mousePos.x - (_draggingProperties.dragRelativePosition.x + 0.33f) * _cellWidth;
+            _draggedItem.style.top = root.resolvedStyle.height - mousePos.y -
+                                     (_draggingProperties.dragRelativePosition.y + 0.33f) * _cellHeight;
+        }
+
+        public override void Refresh()
+        {
             inventoryContainer.Clear();
             Array.Clear(_inventoryCells, 0, _inventoryCells.Length);
-            bool registeredGeometryChange = false;
 
             root.RegisterCallback<MouseUpEvent>(ProcessMouseUpRoot);
 
@@ -81,16 +110,16 @@ namespace UI.Inventory
                     cell.Add(background);
                     cell.Add(iconElement);
                     cell.Add(overlayElement);
-                    
+
                     _inventoryCells[row, col] = cell;
 
-                    Vector2Int position = new Vector2Int(col, row);
+                    Vector2Int position = new(col, row);
                     if (!_inventory.ValidatePosition(position))
                     {
                         cell.visible = false;
                         previousID = 0;
                         rowElement.Add(cell);
-                        
+
                         continue;
                     }
 
@@ -99,26 +128,28 @@ namespace UI.Inventory
 
                     if (relativePositionAndID != null)
                     {
-                        RenderIconSquare(relativePositionAndID.relativePosition, relativePositionAndID.rotation, iconElement, _inventory.GetAt(position));
+                        RenderIconSquare(relativePositionAndID.relativePosition, relativePositionAndID.rotation,
+                            iconElement, _inventory.GetAt(position));
                         MergeBorders(relativePositionAndID, background, position, previousID);
-                        cell.RegisterCallback<MouseDownEvent>(evt => ProcessCellClick(evt, cell, position));
+                        cell.RegisterCallback<MouseDownEvent>(_ => ProcessCellClick(position));
                         previousID = relativePositionAndID.itemID;
                     }
                     else
                     {
                         previousID = 0;
-                        // cell.RegisterCallback<MouseUpEvent>(e => ProcessMouseUp(e, "cell"));
                     }
+                    cell.RegisterCallback<MouseUpEvent>(evt => ProcessMouseUpCell(evt, position));
 
-                    if (!registeredGeometryChange)
+                    if (!_registeredGeometryChange)
                     {
                         cell.RegisterCallback<GeometryChangedEvent>(evt =>
                         {
                             _cellWidth = cell.resolvedStyle.width;
                             _cellHeight = cell.resolvedStyle.height;
                         });
-                        registeredGeometryChange = true;
+                        _registeredGeometryChange = true;
                     }
+
                     rowElement.Add(cell);
                 }
 
@@ -126,26 +157,7 @@ namespace UI.Inventory
             }
         }
 
-        public override void Update()
-        {
-            if (!_isDragging)
-            {
-                return;
-            }
-
-            Vector2 mousePos = Mouse.current.position.ReadValue();
-            mousePos = RuntimePanelUtils.ScreenToPanel(root.panel, mousePos);
-            
-            _draggedItem.style.left = mousePos.x - (_draggingProperties.dragRelativePosition.x + 0.33f) * _cellWidth;
-            _draggedItem.style.top = root.resolvedStyle.height - mousePos.y - (_draggingProperties.dragRelativePosition.y + 0.33f) * _cellHeight;
-        }
-
-        public override void Refresh()
-        {
-            throw new NotImplementedException();
-        }
-
-        private void ProcessCellClick(MouseDownEvent evt, VisualElement cell, Vector2Int position)
+        private void ProcessCellClick(Vector2Int position)
         {
             Item item = _inventory.GetAt(position);
             if (item == null)
@@ -155,60 +167,67 @@ namespace UI.Inventory
 
             _isDragging = true;
             RelativePositionAndID relativePositionAndID = _inventory.GetItemPositionAt(position);
-            _draggingProperties = new DraggingProperties(position, relativePositionAndID.relativePosition, item, relativePositionAndID.rotation);
+            _draggingProperties = new DraggingProperties(new ItemPosition(position, relativePositionAndID.rotation),
+                relativePositionAndID.relativePosition, item, relativePositionAndID.itemID);
             uint itemID = _inventory.GetItemPositionAt(position).itemID;
-            
+
             DarkenItem(itemID);
             RenderItemDrag();
         }
-        
+
         private void ProcessMouseUpRoot(MouseUpEvent evt)
         {
             if (!_isDragging)
             {
                 return;
             }
-            
+
             _isDragging = false;
             _draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
-            DarkenItem(_inventory.GetItemPositionAt(_draggingProperties.dragStartPosition).itemID, false);
+            DarkenItem(_inventory.GetItemPositionAt(_draggingProperties.dragStartPosition.position).itemID, false);
         }
 
         private void RenderItemDrag()
         {
             _draggedItem.Clear();
-            
-            bool[,] itemGrid = ItemGrid<bool>.RotateMultiple(_draggingProperties.draggedItem.Grid, _draggingProperties.draggedRotation);
+            _draggedItem.pickingMode = PickingMode.Ignore;
+
+            bool[,] itemGrid = ItemGrid<bool>.RotateMultiple(_draggingProperties.draggedItem.Grid,
+                _draggingProperties.currentRotation);
             BoundsInt bounds = ItemGrid<bool>.GetBounds(itemGrid, true);
 
             for (int y = bounds.y; y < bounds.y + ItemConstants.ItemHeight; y++)
             {
                 VisualElement row = new();
                 row.AddToClassList("row");
+                row.pickingMode = PickingMode.Ignore;
 
                 for (int x = bounds.x; x < bounds.x + ItemConstants.ItemWidth; x++)
                 {
                     VisualElement cell = new();
                     cell.AddToClassList("item-square");
-                    
+                    cell.pickingMode = PickingMode.Ignore;
+
                     VisualElement iconElement = new();
                     iconElement.name = "ItemIcon";
                     iconElement.AddToClassList("icon");
+                    iconElement.pickingMode = PickingMode.Ignore;
 
                     cell.Add(iconElement);
-                    
+
                     if (itemGrid[y, x])
                     {
-                        RenderIconSquare(new Vector2Int(x, y), _draggingProperties.draggedRotation, iconElement, _draggingProperties.draggedItem);
+                        RenderIconSquare(new Vector2Int(x, y), _draggingProperties.currentRotation, iconElement,
+                            _draggingProperties.draggedItem);
                     }
                     else
                     {
                         cell.visible = false;
                     }
-                    
+
                     row.Add(cell);
                 }
-                
+
                 _draggedItem.Add(row);
             }
 
@@ -248,29 +267,57 @@ namespace UI.Inventory
             }
         }
 
-        private void ProcessMouseUpCell(MouseUpEvent evt)
+        private void ProcessMouseUpCell(EventBase evt, Vector2Int position)
         {
-            
+            if (!_isDragging)
+            {
+                return;
+            }
+
+            bool[,] itemGrid = ItemGrid<bool>.RotateMultiple(_draggingProperties.draggedItem.Grid,
+                _draggingProperties.currentRotation);
+            BoundsInt bounds = ItemGrid<bool>.GetBounds(itemGrid, true);
+
+            Vector2Int initialPosition =
+                position - (_draggingProperties.dragRelativePosition - new Vector2Int(bounds.x, bounds.y));
+
+            if (!_inventory.CheckFit(_draggingProperties.draggedItem, initialPosition,
+                    _draggingProperties.currentRotation, _draggingProperties.itemID))
+            {
+                return;
+            }
+
+            evt.StopPropagation();
+
+            _inventory.MoveItem(_draggingProperties.dragStartPosition,
+                new ItemPosition(initialPosition, _draggingProperties.currentRotation));
+            _isDragging = false;
+            _draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
+            Refresh();
         }
 
 
-        private void MergeBorders(RelativePositionAndID relativePositionAndID, VisualElement cell, Vector2Int position, uint previousID)
+        private void MergeBorders(RelativePositionAndID relativePositionAndID, VisualElement cell, Vector2Int position,
+            uint previousID)
         {
             // Top
             if (CheckBorder(position + Vector2Int.down, relativePositionAndID.itemID))
             {
                 cell.style.borderTopWidth = new StyleFloat { value = 0 };
             }
+
             // Bottom
             if (CheckBorder(position + Vector2Int.up, relativePositionAndID.itemID))
             {
                 cell.style.borderBottomWidth = new StyleFloat { value = 0 };
             }
+
             // Left
             if (previousID == relativePositionAndID.itemID)
             {
                 cell.style.borderLeftWidth = new StyleFloat { value = 0 };
             }
+
             // Right
             if (CheckBorder(position + Vector2Int.right, relativePositionAndID.itemID))
             {
@@ -282,9 +329,9 @@ namespace UI.Inventory
         {
             // TODO: This rotation should not really be done on every square, but don't know how to do it otherwise
             Sprite[,] rotatedIcons = ItemGrid<Sprite>.RotateMultiple(item.Icons, rotation);
-                        
+
             Sprite icon = rotatedIcons[relativePosition.y, relativePosition.x];
-                        
+
             iconElement.style.rotate = new StyleRotate(new Rotate(new Angle(-90 * rotation)));
             iconElement.style.backgroundImage = new StyleBackground(icon);
         }
@@ -295,7 +342,7 @@ namespace UI.Inventory
             {
                 return false;
             }
-            
+
             RelativePositionAndID relativePositionAndID = _inventory.GetItemPositionAt(position);
             return relativePositionAndID != null && relativePositionAndID.itemID == itemID;
         }

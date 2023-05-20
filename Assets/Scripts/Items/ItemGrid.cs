@@ -122,7 +122,7 @@ namespace Items
             int minY = int.MaxValue;
             int maxX = int.MinValue;
             int maxY = int.MinValue;
-            
+
             int width = grid.GetLength(1);
             int height = grid.GetLength(0);
 

@@ -23,16 +23,6 @@ namespace Inventory
 
             _inventoryGrid = new InventoryGrid(gridShape);
         }
-        
-        public RelativePositionAndID GetItemPositionAt(Vector2Int position)
-        {
-            return _inventoryGrid.GetRelativePositionAt(position);
-        }
-        
-        public Item GetAt(Vector2Int position)
-        {
-            return _inventoryGrid.GetAt(position);
-        }
 
         public List<Item> GetItems()
         {
@@ -78,6 +68,16 @@ namespace Inventory
             }
         }
 
+        public RelativePositionAndID GetItemPositionAt(Vector2Int position)
+        {
+            return _inventoryGrid.GetRelativePositionAt(position);
+        }
+
+        public Item GetAt(Vector2Int position)
+        {
+            return _inventoryGrid.GetAt(position);
+        }
+
         public bool ValidatePosition(Vector2Int position)
         {
             return _inventoryGrid.ValidatePosition(position);
@@ -97,6 +97,16 @@ namespace Inventory
         public Vector2Int GetInitialPosition(uint itemID)
         {
             return _inventoryGrid.GetInitialPosition(itemID);
+        }
+
+        public bool CheckFit(Item item, Vector2Int position, int rotation, uint ignoreItemID = 0)
+        {
+            return _inventoryGrid.CheckFit(item, position, rotation, ignoreItemID);
+        }
+
+        public void MoveItem(ItemPosition source, ItemPosition destination)
+        {
+            _inventoryGrid.MoveItem(source, destination);
         }
 
         public void TransferItems(IInventory destination, TransferDirection direction)

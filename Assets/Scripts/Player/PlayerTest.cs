@@ -24,12 +24,12 @@ namespace Player
         {
             { false, false, false, false, false, false },
             { false, false, false, false, false, false },
-            { false, false, true, true, false, false },
             { false, true, true, true, true, false },
+            { true, true, true, true, true, true },
+            { true, true, true, true, true, true },
+            { true, true, true, true, true, true },
+            { true, true, true, true, true, true },
             { false, true, true, true, true, false },
-            { false, true, true, true, true, false },
-            { false, true, true, true, true, false },
-            { false, false, true, true, false, false },
             { false, false, false, false, false, false }
         });
 
@@ -92,10 +92,10 @@ namespace Player
             // playerInventory.AddItem(_itemRegistry.Get(0x2E79821C).CreateInstance());
             playerInventory.AddItem(_itemRegistry.Get(0x755CFE42).CreateInstance());
             playerInventory.AddItem(_itemRegistry.Get(0xE3847C27).CreateInstance());
-            
+
             playerInventory.AddItem(_itemRegistry.Get(0x5C5C52AF).CreateInstance(), new Vector2Int(1, 3), 4);
-            
-            
+
+
             Debug.Log("Gave items");
         }
 

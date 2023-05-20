@@ -4,7 +4,6 @@ using System.Linq;
 using Items;
 using JetBrains.Annotations;
 using UnityEngine;
-using Utils;
 
 namespace Inventory
 {
@@ -55,12 +54,12 @@ namespace Inventory
             this.rotation = rotation;
         }
     }
-    
+
     public record RelativePositionAndID
     {
+        public readonly uint itemID;
         public readonly Vector2Int relativePosition;
         public readonly int rotation;
-        public readonly uint itemID;
 
         public RelativePositionAndID(Vector2Int relativePosition, int rotation, uint itemID)
         {
@@ -89,7 +88,7 @@ namespace Inventory
             _gridShape = gridShape;
             _gridItemIDs = new RelativePositionAndID[_height, _width];
         }
-        
+
         public BoundsInt GetBounds()
         {
             return ItemGrid<bool>.GetBounds(_gridShape, true);
@@ -99,7 +98,7 @@ namespace Inventory
         {
             return _itemPositions[itemID].position;
         }
-        
+
         public RelativePositionAndID GetRelativePositionAt(Vector2Int position)
         {
             return _gridItemIDs[position.y, position.x];
@@ -143,7 +142,8 @@ namespace Inventory
             return _gridShape[position.y, position.x];
         }
 
-        private Tuple<bool[,], BoundsInt> CheckFitAndGetBounds(Item item, Vector2Int position, int rotation)
+        private Tuple<bool[,], BoundsInt> CheckFitAndGetBounds(Item item, Vector2Int position, int rotation,
+            uint ignoreItemID = 0)
         {
             bool[,] itemGrid = ItemGrid<bool>.RotateMultiple(item.Grid, rotation);
             BoundsInt bounds = ItemGrid<bool>.GetBounds(itemGrid, true);
@@ -167,7 +167,7 @@ namespace Inventory
                         throw new ItemDoesNotFitException("Item does not fit.");
                     }
 
-                    if (_gridItemIDs[y, x] != null)
+                    if (_gridItemIDs[y, x] != null && _gridItemIDs[y, x].itemID != ignoreItemID)
                     {
                         throw new PositionAlreadyOccupiedException("Item position is already occupied");
                     }
@@ -184,11 +184,11 @@ namespace Inventory
             AddItem(item, position, 0);
         }
 
-        public bool CheckFit(Item item, Vector2Int position, int rotation)
+        public bool CheckFit(Item item, Vector2Int position, int rotation, uint ignoreItemID = 0)
         {
             try
             {
-                CheckFitAndGetBounds(item, position, rotation);
+                CheckFitAndGetBounds(item, position, rotation, ignoreItemID);
                 return true;
             }
             catch (ItemDoesNotFitException)
@@ -204,7 +204,7 @@ namespace Inventory
         // rotation is in increments of 90 degrees, positive is counter-clockwise, negative is clockwise
         public void AddItem(Item item, Vector2Int position, int rotation)
         {
-            if (!ValidatePosition(position))
+            if (position.x < 0 || position.x >= _width || position.y < 0 || position.y >= _height)
             {
                 throw new InvalidItemPositionException("Item position is out of bounds.");
             }
@@ -222,13 +222,14 @@ namespace Inventory
                 {
                     int yPosition = y - position.y + bounds.y;
                     int xPosition = x - position.x + bounds.x;
-                    
+
                     if (!itemGrid[yPosition, xPosition])
                     {
                         continue;
                     }
 
-                    _gridItemIDs[y, x] = new RelativePositionAndID(new Vector2Int(xPosition, yPosition), rotation, itemID);
+                    _gridItemIDs[y, x] =
+                        new RelativePositionAndID(new Vector2Int(xPosition, yPosition), rotation, itemID);
                 }
             }
         }
@@ -319,10 +320,8 @@ namespace Inventory
                 throw new ItemNotInInventoryPositionException("No item at source position.");
             }
 
-            // Check fit by adding the item to the destination position, then removing it
-            // Throws an exception if the item does not fit
-            AddItem(sourceItem, destination.position, destination.rotation);
             RemoveAt(source.position);
+            AddItem(sourceItem, destination.position, destination.rotation);
         }
     }
 }
