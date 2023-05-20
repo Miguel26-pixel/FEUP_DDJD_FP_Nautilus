@@ -270,15 +270,14 @@ namespace UI.Inventory
 
             bool[,] itemGrid = ItemGrid<bool>.RotateMultiple(_draggingProperties.draggedItem.Grid,
                 _draggingProperties.currentRotation);
-            BoundsInt bounds = ItemGrid<bool>.GetBounds(itemGrid, true);
 
-            for (int y = bounds.y; y < bounds.y + ItemConstants.ItemHeight; y++)
+            for (int y = 0; y < ItemConstants.ItemHeight; y++)
             {
                 VisualElement row = new();
                 row.AddToClassList("row");
                 row.pickingMode = PickingMode.Ignore;
 
-                for (int x = bounds.x; x < bounds.x + ItemConstants.ItemWidth; x++)
+                for (int x = 0; x < ItemConstants.ItemWidth; x++)
                 {
                     VisualElement cell = new();
                     cell.AddToClassList("item-square");
