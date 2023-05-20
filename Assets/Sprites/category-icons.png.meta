@@ -267,7 +267,7 @@ TextureImporter:
       name: category-icons_resources
       rect:
         serializedVersion: 2
-        x: 257
+        x: 256
         y: 256
         width: 128
         height: 128
@@ -280,6 +280,48 @@ TextureImporter:
       bones: []
       spriteID: b73057e706e42381e9efd118f20c8bdb
       internalID: 1676031302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: category-icons_0
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 256
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2b251631cf12981b1a37d369424d7540
+      internalID: 1009693943
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: category-icons_1
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 128
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ed2eabd1456a4c5e6b1691895e075522
+      internalID: 259777609
       vertices: []
       indices: 
       edges: []
@@ -302,7 +344,9 @@ TextureImporter:
       category-icons_metal: 2095585008
       category-icons_consumable: -1091374960
       category-icons_resources: 1676031302
+      category-icons_0: 1009693943
       category-icons_machines: 1517466774
+      category-icons_1: 259777609
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

@@ -301,13 +301,13 @@
 
 .cell-background {
     position: absolute;
-    background-color: rgba(22, 40, 54, 255);
+    background-color: rgb(22, 40, 54);
     width: 100%;
     height: 100%;
-    border-left-color: rgba(44, 62, 76, 255);
-    border-right-color: rgba(44, 62, 76, 255);
-    border-top-color: rgba(44, 62, 76, 255);
-    border-bottom-color: rgba(44, 62, 76, 255);
+    border-left-color: rgb(44, 62, 76);
+    border-right-color: rgb(44, 62, 76);
+    border-top-color: rgb(44, 62, 76);
+    border-bottom-color: rgb(44, 62, 76);
     border-left-width: 1px;
     border-right-width: 1px;
     border-top-width: 1px;
@@ -326,24 +326,33 @@
 }
 
 .item-drag .cell-background {
-    background-color: rgba(22, 40, 54, 255);
+    background-color: rgb(22, 40, 54);
     border-left-width: 0;
     border-right-width: 0;
     border-top-width: 0;
     border-bottom-width: 0;
-    border-left-color: rgba(0, 0, 0, 255);
-    border-right-color: rgba(0, 0, 0, 255);
-    border-top-color: rgba(0, 0, 0, 255);
-    border-bottom-color: rgba(0, 0, 0, 255);
+    border-left-color: rgb(0, 0, 0);
+    border-right-color: rgb(0, 0, 0);
+    border-top-color: rgb(0, 0, 0);
+    border-bottom-color: rgb(0, 0, 0);
     width: 101%;
     height: 101%;
 }
 
 .item-drag .item-square {
-    background-color: rgba(22, 40, 54, 255);
+    background-color: rgb(22, 40, 54);
     border-left-width: 0;
     border-right-width: 0;
     border-top-width: 0;
     border-bottom-width: 0;
     white-space: nowrap;
+}
+
+.close:hover {
+    -unity-background-image-tint-color: rgba(166, 145, 118, 255);
+}
+
+.close {
+    background-image: url('project://database/Assets/Sprites/category-icons.png?fileID=1009693943&guid=5fb67ad0c979d2dfcb84d9732888b58b&type=3#category-icons_0');
+    -unity-background-image-tint-color: rgba(242, 211, 172, 255);
 }

@@ -29,27 +29,38 @@ namespace UI.Inventory
 
     public class PlayerInventoryViewer : InventoryViewer<PlayerInventory>
     {
-        private readonly VisualElement _draggedItem;
-        private readonly VisualElement _itemInfo;
-        private readonly Label _itemInfoName;
-        private readonly Label _itemInfoDescription;
-        private readonly VisualElement _itemInfoStats;
-        private readonly VisualElement _itemInfoDescriptors;
+        private bool _isContextOpen;
+        private readonly VisualElement _itemContext;
+        private readonly Label _contextTitle;
+        private readonly VisualElement _closeContext;
+        private readonly VisualElement _contextActions;
+        private readonly Label _noActionsLabel;
+        private readonly VisualTreeAsset _textButtonTemplate;
+        
         private readonly PlayerInventory _inventory;
         private readonly BoundsInt _inventoryBounds;
-
+        
         private readonly VisualElement[,] _inventoryCells =
             new VisualElement[InventoryConstants.PlayerInventoryMaxHeight,
                 InventoryConstants.PlayerInventoryMaxWidth];
 
         private float _cellHeight;
         private float _cellWidth;
+        
+        private readonly VisualElement _draggedItem;
         private DraggingProperties _draggingProperties;
-
         private bool _isDragging;
+        
         private bool _registeredGeometryChange;
         
         private bool _isInfoVisible;
+        private readonly VisualElement _itemInfo;
+        private readonly Label _itemInfoName;
+        private readonly Label _itemInfoDescription;
+        private readonly VisualElement _itemInfoStats;
+        private readonly VisualElement _itemInfoDescriptors;
+
+        private Vector2 _currentMousePosition;
 
         public PlayerInventoryViewer(VisualElement root, VisualElement inventoryContainer, VisualTreeAsset itemDescriptorTemplate, PlayerInventory inventory) :
             base(
@@ -66,7 +77,22 @@ namespace UI.Inventory
             _itemInfoDescription = _itemInfo.Q<Label>("InfoDescription");
             _itemInfoStats = _itemInfo.Q<VisualElement>("ItemInfoStats");
             _itemInfoDescriptors = _itemInfo.Q<VisualElement>("Descriptors");
+            
+            _textButtonTemplate = Resources.Load<VisualTreeAsset>("UI/TextButton");
+            _itemContext = root.Q<VisualElement>("ItemContext");
+            
+            _contextTitle = _itemContext.Q<Label>("ContextTitle");
+            _closeContext = _itemContext.Q<VisualElement>("CloseContext");
+            _contextActions = _itemContext.Q<VisualElement>("ContextActions");
+            _noActionsLabel = _itemContext.Q<Label>("NoActions");
+            _itemContext.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
+            
+            _closeContext.RegisterCallback((MouseUpEvent evt) =>
+            {
+                CloseContext();
+            });
         }
+        
 
         public override void Show()
         {
@@ -75,19 +101,60 @@ namespace UI.Inventory
             Refresh();
         }
 
+        private void SetTopLeft(Vector2 mousePos, VisualElement element)
+        {
+            if (mousePos.y - element.resolvedStyle.height < 0)
+            {
+                element.style.bottom = mousePos.y - 3;
+                element.style.top = new StyleLength(StyleKeyword.Auto);
+            }
+            else
+            {        
+                element.style.top = root.resolvedStyle.height - mousePos.y + 3;
+                element.style.bottom = new StyleLength(StyleKeyword.Auto);
+            }
+
+            if (mousePos.x + element.resolvedStyle.width > root.resolvedStyle.width)
+            {
+                element.style.right = root.resolvedStyle.width - mousePos.x - 3;
+                element.style.left = new StyleLength(StyleKeyword.Auto);
+            }
+            else
+            {
+                element.style.left = mousePos.x + 3;
+                element.style.right = new StyleLength(StyleKeyword.Auto);
+            }
+        }
+
         public override void Update()
         {
             Vector2 mousePos = Mouse.current.position.ReadValue();
             mousePos = RuntimePanelUtils.ScreenToPanel(root.panel, mousePos);
+            _currentMousePosition = mousePos;
+            
             if (_isDragging)
             {
                 _draggedItem.style.left = mousePos.x - (_draggingProperties.dragRelativePosition.x + 0.33f) * _cellWidth;
                 _draggedItem.style.top = root.resolvedStyle.height - mousePos.y -
                                          (_draggingProperties.dragRelativePosition.y + 0.33f) * _cellHeight;
+                
+                if (_draggedItem.style.display.value == DisplayStyle.None)
+                {
+                    _draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
+                }
             } else if (_isInfoVisible)
             {
-                _itemInfo.style.left = mousePos.x + 3;
-                _itemInfo.style.top = root.resolvedStyle.height - mousePos.y - 3;
+                if (_itemInfo.resolvedStyle.height == 0 || _itemInfo.resolvedStyle.width == 0)
+                {
+                    return;
+                }
+                
+                SetTopLeft(mousePos, _itemInfo);
+                
+                if (_itemInfo.style.visibility.value == Visibility.Hidden)
+                {
+                    _itemInfo.style.visibility = new StyleEnum<Visibility>(Visibility.Visible);
+                }
             }
 
         }
@@ -147,9 +214,22 @@ namespace UI.Inventory
                     if (relativePositionAndID != null)
                     {
                         RenderIconSquare(relativePositionAndID.relativePosition, relativePositionAndID.rotation,
-                            iconElement, _inventory.GetAt(position));
+                            iconElement, item);
                         MergeBorders(relativePositionAndID, background, position, previousID);
-                        cell.RegisterCallback<MouseDownEvent>(_ => ProcessCellClick(position));
+                        cell.RegisterCallback<MouseDownEvent>(evt =>
+                        {
+                            if(evt.button == 0)
+                            {
+                                    ProcessCellClick(position);
+                            }
+                        });
+                        cell.RegisterCallback<MouseUpEvent>(evt =>
+                        {
+                            if (evt.button == 1)
+                            {
+                                ProcessContextMenu(evt, item);
+                            }
+                        });
                         cell.RegisterCallback<MouseEnterEvent>(_ => OpenItemInfo(item));
                         cell.RegisterCallback<MouseLeaveEvent>(_ => CloseItemInfo());
                         previousID = relativePositionAndID.itemID;
@@ -176,6 +256,77 @@ namespace UI.Inventory
                 inventoryContainer.Add(rowElement);
             }
         }
+        
+        private void CloseContext()
+        {
+            _isContextOpen = false;
+            _itemContext.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
+        }
+
+        private void ProcessContextMenu(MouseUpEvent evt, Item item)
+        {
+            if (_isDragging)
+            {
+                return;
+            }
+
+            Vector2 position = _currentMousePosition;
+
+            CloseItemInfo();
+            _isContextOpen = true;
+            
+            _contextTitle.text = item.Name;
+            
+            List<ContextMenuAction> actions = item.GetContextMenuActions();
+            
+            _contextActions.Clear();
+
+            if (actions.Count == 0)
+            {
+                _noActionsLabel.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
+            }
+            else
+            {
+                _noActionsLabel.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
+                
+                foreach (ContextMenuAction action in actions)
+                {
+                    VisualElement textButton = _textButtonTemplate.Instantiate();
+                    Label label = textButton.Q<Label>("Label");
+                    
+                    label.text = action.Name;
+                    
+                    textButton.RegisterCallback<MouseUpEvent>(evt =>
+                    {
+                        if (evt.button == 0)
+                        {
+                            try
+                            {
+                                action.Action();
+                            }
+                            catch (NotImplementedException ex)
+                            {
+                                Debug.Log("Action not implemented");
+                            }
+
+                            CloseContext();
+                        }
+                    });
+                    
+                    _contextActions.Add(textButton);
+                }
+            }
+            
+            _itemContext.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
+            _itemContext.style.visibility = new StyleEnum<Visibility>(Visibility.Hidden);
+            
+            _itemContext.RegisterCallback<GeometryChangedEvent>(evt =>
+            {
+                SetTopLeft(position, _itemContext);
+                
+                _itemContext.style.visibility = new StyleEnum<Visibility>(Visibility.Visible);
+            });
+        }
 
         private void CloseItemInfo()
         {
@@ -185,13 +336,12 @@ namespace UI.Inventory
 
         private void OpenItemInfo(Item item)
         {
-            if (_isDragging)
+            if (_isDragging || _isContextOpen)
             {
                 return;
             }
             
             _isInfoVisible = true;
-            
             _itemInfoName.text = item.Name;
             _itemInfoDescription.text = item.Description;
 
@@ -217,6 +367,7 @@ namespace UI.Inventory
             }
             
             _itemInfo.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
+            _itemInfo.style.visibility = new StyleEnum<Visibility>(Visibility.Hidden);
         }
 
         public override void Rotate(int direction)
