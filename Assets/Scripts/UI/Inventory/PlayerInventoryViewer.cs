@@ -7,6 +7,22 @@ using UnityEngine.UIElements;
 
 namespace UI.Inventory
 {
+    public record DraggingProperties()
+    {
+        public Vector2Int dragStartPosition;
+        public Vector2Int dragRelativePosition;
+        public Item draggedItem;
+        public int draggedRotation;
+
+        public DraggingProperties(Vector2Int dragStartPosition, Vector2Int dragRelativePosition, Item draggedItem, int draggedRotation) : this()
+        {
+            this.dragStartPosition = dragStartPosition;
+            this.dragRelativePosition = dragRelativePosition;
+            this.draggedItem = draggedItem;
+            this.draggedRotation = draggedRotation;
+        }
+    }
+    
     public class PlayerInventoryViewer : InventoryViewer<PlayerInventory>
     {
         private readonly PlayerInventory _inventory;
@@ -14,11 +30,11 @@ namespace UI.Inventory
         private readonly VisualElement[,] _inventoryCells = new VisualElement[InventoryConstants.PlayerInventoryMaxHeight,
             InventoryConstants.PlayerInventoryMaxWidth];
         
-        private Vector2Int _dragStartPosition;
         private bool _isDragging;
+        private DraggingProperties _draggingProperties;
         private readonly VisualElement _draggedItem;
-        private readonly float _cellWidth;
-        private readonly float _cellHeight;
+        private float _cellWidth;
+        private float _cellHeight;
 
             public PlayerInventoryViewer(VisualElement root, VisualElement inventoryContainer, PlayerInventory inventory) : base(
             root, inventoryContainer, inventory)
@@ -27,18 +43,13 @@ namespace UI.Inventory
             _inventoryBounds = _inventory.GetBounds();
             _draggedItem = root.Q<VisualElement>("ItemDrag");
             _draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
-            
-            VisualElement cell = inventoryContainer.Q<VisualElement>("Cell0");
-            _cellWidth = cell.style.width.value.value;
-            _cellHeight = cell.style.height.value.value;
-            
-            Debug.Log($"Cell width: {_cellWidth}, Cell height: {_cellHeight}");
         }
 
         public override void Show()
         {
             inventoryContainer.Clear();
             Array.Clear(_inventoryCells, 0, _inventoryCells.Length);
+            bool registeredGeometryChange = false;
 
             root.RegisterCallback<MouseUpEvent>(ProcessMouseUpRoot);
 
@@ -88,7 +99,7 @@ namespace UI.Inventory
 
                     if (relativePositionAndID != null)
                     {
-                        RenderIconSquare(relativePositionAndID, iconElement, _inventory.GetAt(position));
+                        RenderIconSquare(relativePositionAndID.relativePosition, relativePositionAndID.rotation, iconElement, _inventory.GetAt(position));
                         MergeBorders(relativePositionAndID, background, position, previousID);
                         cell.RegisterCallback<MouseDownEvent>(evt => ProcessCellClick(evt, cell, position));
                         previousID = relativePositionAndID.itemID;
@@ -99,6 +110,15 @@ namespace UI.Inventory
                         // cell.RegisterCallback<MouseUpEvent>(e => ProcessMouseUp(e, "cell"));
                     }
 
+                    if (!registeredGeometryChange)
+                    {
+                        cell.RegisterCallback<GeometryChangedEvent>(evt =>
+                        {
+                            _cellWidth = cell.resolvedStyle.width;
+                            _cellHeight = cell.resolvedStyle.height;
+                        });
+                        registeredGeometryChange = true;
+                    }
                     rowElement.Add(cell);
                 }
 
@@ -116,8 +136,8 @@ namespace UI.Inventory
             Vector2 mousePos = Mouse.current.position.ReadValue();
             mousePos = RuntimePanelUtils.ScreenToPanel(root.panel, mousePos);
             
-            _draggedItem.style.left = mousePos.x - 26;
-            _draggedItem.style.top = root.resolvedStyle.height - mousePos.y - 26;
+            _draggedItem.style.left = mousePos.x - (_draggingProperties.dragRelativePosition.x + 0.33f) * _cellWidth;
+            _draggedItem.style.top = root.resolvedStyle.height - mousePos.y - (_draggingProperties.dragRelativePosition.y + 0.33f) * _cellHeight;
         }
 
         public override void Refresh()
@@ -134,11 +154,12 @@ namespace UI.Inventory
             }
 
             _isDragging = true;
-            _dragStartPosition = position;
+            RelativePositionAndID relativePositionAndID = _inventory.GetItemPositionAt(position);
+            _draggingProperties = new DraggingProperties(position, relativePositionAndID.relativePosition, item, relativePositionAndID.rotation);
             uint itemID = _inventory.GetItemPositionAt(position).itemID;
             
             DarkenItem(itemID);
-            RenderItemDrag(itemID);
+            RenderItemDrag();
         }
         
         private void ProcessMouseUpRoot(MouseUpEvent evt)
@@ -150,20 +171,22 @@ namespace UI.Inventory
             
             _isDragging = false;
             _draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
-            DarkenItem(_inventory.GetItemPositionAt(_dragStartPosition).itemID, false);
+            DarkenItem(_inventory.GetItemPositionAt(_draggingProperties.dragStartPosition).itemID, false);
         }
 
-        private void RenderItemDrag(uint itemID)
+        private void RenderItemDrag()
         {
             _draggedItem.Clear();
-            Vector2Int initialPosition = _inventory.GetInitialPosition(itemID);
+            
+            bool[,] itemGrid = ItemGrid<bool>.RotateMultiple(_draggingProperties.draggedItem.Grid, _draggingProperties.draggedRotation);
+            BoundsInt bounds = ItemGrid<bool>.GetBounds(itemGrid, true);
 
-            for (int y = initialPosition.y; y < initialPosition.y + ItemConstants.ItemHeight; y++)
+            for (int y = bounds.y; y < bounds.y + ItemConstants.ItemHeight; y++)
             {
                 VisualElement row = new();
                 row.AddToClassList("row");
 
-                for (int x = initialPosition.x; x < initialPosition.x + ItemConstants.ItemWidth; x++)
+                for (int x = bounds.x; x < bounds.x + ItemConstants.ItemWidth; x++)
                 {
                     VisualElement cell = new();
                     cell.AddToClassList("item-square");
@@ -174,19 +197,9 @@ namespace UI.Inventory
 
                     cell.Add(iconElement);
                     
-                    Vector2Int position = new(x, y);
-                    if (!_inventory.ValidatePosition(position))
+                    if (itemGrid[y, x])
                     {
-                        cell.visible = false;
-                        row.Add(cell);
-
-                        continue;
-                    }
-                    
-                    RelativePositionAndID relativePositionAndID = _inventory.GetItemPositionAt(position);
-                    if (relativePositionAndID != null && relativePositionAndID.itemID == itemID)
-                    {
-                        RenderIconSquare(relativePositionAndID, iconElement, _inventory.GetAt(position));
+                        RenderIconSquare(new Vector2Int(x, y), _draggingProperties.draggedRotation, iconElement, _draggingProperties.draggedItem);
                     }
                     else
                     {
@@ -265,10 +278,8 @@ namespace UI.Inventory
             }
         }
 
-        private void RenderIconSquare(RelativePositionAndID relativePositionAndID, VisualElement iconElement, Item item)
+        private void RenderIconSquare(Vector2Int relativePosition, int rotation, VisualElement iconElement, Item item)
         {
-            Vector2Int relativePosition = relativePositionAndID.relativePosition;
-            int rotation = relativePositionAndID.rotation;
             // TODO: This rotation should not really be done on every square, but don't know how to do it otherwise
             Sprite[,] rotatedIcons = ItemGrid<Sprite>.RotateMultiple(item.Icons, rotation);
                         
