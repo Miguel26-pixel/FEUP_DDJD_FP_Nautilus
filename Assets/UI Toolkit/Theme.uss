@@ -276,11 +276,11 @@
 }
 
 .inventory .item-square {
-    background-color: rgb(22, 40, 54);
-    border-left-color: rgb(44, 62, 76);
-    border-right-color: rgb(44, 62, 76);
-    border-top-color: rgb(44, 62, 76);
-    border-bottom-color: rgb(44, 62, 76);
+    background-color: rgba(0, 0, 0, 0);
+    border-left-width: 0;
+    border-right-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
 }
 
 .equipment-slot {
@@ -297,4 +297,26 @@
 
 .row {
     flex-direction: row;
+}
+
+.cell-background {
+    position: absolute;
+    background-color: rgba(22, 40, 54, 255);
+    width: 100%;
+    height: 100%;
+    border-left-color: rgba(44, 62, 76, 255);
+    border-right-color: rgba(44, 62, 76, 255);
+    border-top-color: rgba(44, 62, 76, 255);
+    border-bottom-color: rgba(44, 62, 76, 255);
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+}
+
+.inventory .overlay {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
 }

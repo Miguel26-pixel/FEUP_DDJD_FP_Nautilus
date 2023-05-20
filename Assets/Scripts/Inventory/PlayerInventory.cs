@@ -24,9 +24,9 @@ namespace Inventory
             _inventoryGrid = new InventoryGrid(gridShape);
         }
         
-        public ItemPositionAndID GetItemPositionAt(Vector2Int position)
+        public RelativePositionAndID GetItemPositionAt(Vector2Int position)
         {
-            return _inventoryGrid.GetItemPositionAt(position);
+            return _inventoryGrid.GetRelativePositionAt(position);
         }
         
         public Item GetAt(Vector2Int position)
@@ -92,6 +92,11 @@ namespace Inventory
         public BoundsInt GetBounds()
         {
             return _inventoryGrid.GetBounds();
+        }
+
+        public Vector2Int GetInitialPosition(uint itemID)
+        {
+            return _inventoryGrid.GetInitialPosition(itemID);
         }
 
         public void TransferItems(IInventory destination, TransferDirection direction)

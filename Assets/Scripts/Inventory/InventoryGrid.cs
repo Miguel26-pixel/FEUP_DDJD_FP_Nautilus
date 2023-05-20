@@ -56,13 +56,13 @@ namespace Inventory
         }
     }
     
-    public record ItemPositionAndID
+    public record RelativePositionAndID
     {
         public readonly Vector2Int relativePosition;
         public readonly int rotation;
         public readonly uint itemID;
 
-        public ItemPositionAndID(Vector2Int relativePosition, int rotation, uint itemID)
+        public RelativePositionAndID(Vector2Int relativePosition, int rotation, uint itemID)
         {
             this.relativePosition = relativePosition;
             this.rotation = rotation;
@@ -73,7 +73,7 @@ namespace Inventory
 
     public class InventoryGrid
     {
-        [ItemCanBeNull] private readonly ItemPositionAndID[,] _gridItemIDs;
+        [ItemCanBeNull] private readonly RelativePositionAndID[,] _gridItemIDs;
         private readonly bool[,] _gridShape;
         private readonly int _height;
         private readonly Dictionary<uint, ItemPosition> _itemPositions = new();
@@ -87,15 +87,20 @@ namespace Inventory
             _height = gridShape.GetLength(0);
 
             _gridShape = gridShape;
-            _gridItemIDs = new ItemPositionAndID[_height, _width];
+            _gridItemIDs = new RelativePositionAndID[_height, _width];
         }
         
         public BoundsInt GetBounds()
         {
             return ItemGrid<bool>.GetBounds(_gridShape, true);
         }
+
+        public Vector2Int GetInitialPosition(uint itemID)
+        {
+            return _itemPositions[itemID].position;
+        }
         
-        public ItemPositionAndID GetItemPositionAt(Vector2Int position)
+        public RelativePositionAndID GetRelativePositionAt(Vector2Int position)
         {
             return _gridItemIDs[position.y, position.x];
         }
@@ -223,7 +228,7 @@ namespace Inventory
                         continue;
                     }
 
-                    _gridItemIDs[y, x] = new ItemPositionAndID(new Vector2Int(xPosition, yPosition), rotation, itemID);
+                    _gridItemIDs[y, x] = new RelativePositionAndID(new Vector2Int(xPosition, yPosition), rotation, itemID);
                 }
             }
         }
@@ -252,7 +257,7 @@ namespace Inventory
                 throw new InvalidItemPositionException("Item position is out of bounds.");
             }
 
-            ItemPositionAndID positionAndID = _gridItemIDs[position.y, position.x];
+            RelativePositionAndID positionAndID = _gridItemIDs[position.y, position.x];
 
             return positionAndID == null ? null : _items[positionAndID.itemID];
         }
@@ -289,19 +294,19 @@ namespace Inventory
                 throw new InvalidItemPositionException("Item position is out of bounds.");
             }
 
-            ItemPositionAndID itemPositionAndID = _gridItemIDs[position.y, position.x];
+            RelativePositionAndID relativePositionAndID = _gridItemIDs[position.y, position.x];
 
-            if (itemPositionAndID == null)
+            if (relativePositionAndID == null)
             {
                 throw new ItemNotInInventoryPositionException("No item at position.");
             }
 
-            Item item = _items[itemPositionAndID.itemID];
+            Item item = _items[relativePositionAndID.itemID];
 
-            ItemPosition itemPositionObject = _itemPositions[itemPositionAndID.itemID];
+            ItemPosition itemPositionObject = _itemPositions[relativePositionAndID.itemID];
             Vector2Int itemPosition = itemPositionObject.position;
 
-            RemoveAtInternal(itemPosition, itemPositionAndID.itemID);
+            RemoveAtInternal(itemPosition, relativePositionAndID.itemID);
 
             return item;
         }

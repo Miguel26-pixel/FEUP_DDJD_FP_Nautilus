@@ -95,7 +95,6 @@ namespace UI
                 return;
             }
 
-            Debug.Log("inventory changed");
             foreach (CraftingInterface @interface in _interfaces)
             {
                 @interface.Refresh();

@@ -5,11 +5,13 @@ namespace UI.Inventory
 {
     public abstract class InventoryViewer<T> where T : IInventory
     {
+        protected readonly VisualElement root;
         protected readonly VisualElement inventoryContainer;
         protected IInventory inventory;
 
-        protected InventoryViewer(VisualElement inventoryContainer, T inventory)
+        protected InventoryViewer(VisualElement root, VisualElement inventoryContainer, T inventory)
         {
+            this.root = root;
             this.inventoryContainer = inventoryContainer;
             this.inventory = inventory;
         }

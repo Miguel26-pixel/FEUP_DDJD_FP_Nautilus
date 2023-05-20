@@ -19,7 +19,7 @@ namespace UI.Inventory
 
         private void Open()
         {
-            PlayerInventoryViewer inventoryViewer = new(_inventoryContainer, player.GetInventory());
+            PlayerInventoryViewer inventoryViewer = new(_root, _inventoryContainer, player.GetInventory());
             inventoryViewer.Show();
             _root.style.display = DisplayStyle.Flex;
             _isInventoryMenuOpen = true;
@@ -27,8 +27,6 @@ namespace UI.Inventory
 
         public void ToggleMenu()
         {
-            Debug.Log("hey2");
-
             if (!_isInventoryMenuOpen)
             {
                 Open();
