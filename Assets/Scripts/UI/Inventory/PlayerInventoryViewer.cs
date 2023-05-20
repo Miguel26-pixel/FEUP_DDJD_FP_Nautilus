@@ -18,13 +18,17 @@ namespace UI.Inventory
         public override void Show()
         {
             inventoryContainer.Clear();
-            for (int row = 0; row < InventoryConstants.PlayerInventoryMaxHeight; row++)
+            
+            // Get inventory bounds
+            BoundsInt bounds = _inventory.GetBounds();
+            
+            for (int row = bounds.y; row < bounds.y + bounds.size.y; row++)
             {
                 VisualElement rowElement = new();
                 rowElement.AddToClassList("row");
                 rowElement.name = $"Row{row}";
 
-                for (int col = 0; col < InventoryConstants.PlayerInventoryMaxWidth; col++)
+                for (int col = bounds.x; col < bounds.x + bounds.size.x; col++)
                 {
                     VisualElement cell = new();
                     cell.name = $"Cell{col}";

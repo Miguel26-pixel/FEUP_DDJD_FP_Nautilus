@@ -122,10 +122,13 @@ namespace Items
             int minY = int.MaxValue;
             int maxX = int.MinValue;
             int maxY = int.MinValue;
+            
+            int width = grid.GetLength(1);
+            int height = grid.GetLength(0);
 
-            for (int row = 0; row < ItemConstants.ItemHeight; row++)
+            for (int row = 0; row < height; row++)
             {
-                for (int col = 0; col < ItemConstants.ItemWidth; col++)
+                for (int col = 0; col < width; col++)
                 {
                     if (grid[row, col].Equals(value))
                     {

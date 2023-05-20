@@ -89,6 +89,11 @@ namespace Inventory
             NotifySubscribersOnInventoryChanged();
         }
 
+        public BoundsInt GetBounds()
+        {
+            return _inventoryGrid.GetBounds();
+        }
+
         public void TransferItems(IInventory destination, TransferDirection direction)
         {
             // TODO: Implement this

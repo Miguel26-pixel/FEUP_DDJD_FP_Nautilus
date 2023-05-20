@@ -90,6 +90,11 @@ namespace Inventory
             _gridItemIDs = new ItemPositionAndID[_height, _width];
         }
         
+        public BoundsInt GetBounds()
+        {
+            return ItemGrid<bool>.GetBounds(_gridShape, true);
+        }
+        
         public ItemPositionAndID GetItemPositionAt(Vector2Int position)
         {
             return _gridItemIDs[position.y, position.x];

@@ -12,7 +12,7 @@
                 </ui:VisualElement>
             </ui:VisualElement>
             <ui:VisualElement style="flex-grow: 1; flex-direction: row;">
-                <ui:VisualElement name="Grid" class="inventory" style="flex-grow: 1; padding-left: 50px; padding-right: 50px; padding-top: 0; padding-bottom: 0; align-items: center; justify-content: center;">
+                <ui:VisualElement name="Grid" class="inventory" style="flex-grow: 1; padding-left: 50px; padding-right: 50px; padding-top: 0; padding-bottom: 0; align-items: center; justify-content: center; max-width: none; width: 430px;">
                     <ui:VisualElement name="Row1" class="row">
                         <ui:VisualElement focusable="false" name="Cell1" class="item-square disabled" style="visibility: visible;">
                             <ui:VisualElement name="ItemIcon" class="icon" style="display: flex;" />
