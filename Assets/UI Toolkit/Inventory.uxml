@@ -40,13 +40,13 @@
                         </ui:VisualElement>
                     </ui:VisualElement>
                     <ui:VisualElement name="Row2" style="flex-direction: row;">
-                        <ui:VisualElement focusable="false" name="Cell1" class="item-square disabled" style="visibility: visible;">
+                        <ui:VisualElement focusable="false" name="Cell1" class="item-square disabled" style="visibility: visible; border-left-color: rgb(13, 34, 49); border-right-color: rgb(13, 34, 49); border-top-color: rgb(13, 34, 49); border-bottom-color: rgb(13, 34, 49); border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px;">
                             <ui:VisualElement name="ItemIcon" class="icon" style="display: flex;" />
                             <ui:VisualElement name="Overlay" style="border-top-left-radius: 0; border-bottom-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 0;" />
                         </ui:VisualElement>
-                        <ui:VisualElement focusable="false" name="Cell2" class="item-square">
+                        <ui:VisualElement focusable="false" name="Cell2" class="item-square" style="border-left-color: rgb(13, 34, 49); border-right-color: rgb(13, 34, 49); border-top-color: rgb(13, 34, 49); border-bottom-color: rgb(13, 34, 49); border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 0;">
                             <ui:VisualElement name="ItemIcon" class="icon" />
-                            <ui:VisualElement name="Overlay" class="overlay" style="border-top-left-radius: 0; border-bottom-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 0;" />
+                            <ui:VisualElement name="Overlay" class="overlay" style="border-top-left-radius: 0; border-bottom-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 0; border-left-color: rgb(19, 34, 46); border-right-color: rgb(19, 34, 46); border-top-color: rgb(19, 34, 46); border-bottom-color: rgb(19, 34, 46);" />
                         </ui:VisualElement>
                         <ui:VisualElement focusable="false" name="Cell3" class="item-square">
                             <ui:VisualElement name="ItemIcon" class="icon" />
@@ -56,8 +56,9 @@
                             <ui:VisualElement name="ItemIcon" class="icon" />
                             <ui:VisualElement name="Overlay" class="overlay" style="border-top-left-radius: 0; border-bottom-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 0;" />
                         </ui:VisualElement>
-                        <ui:VisualElement focusable="false" name="Cell5" class="item-square">
-                            <ui:VisualElement name="ItemIcon" class="icon" />
+                        <ui:VisualElement focusable="false" name="Cell5" class="item-square" style="background-color: rgba(255, 255, 255, 0); border-left-width: 2px; border-right-width: 2px; border-top-width: 2px; border-bottom-width: 2px;">
+                            <ui:VisualElement name="CellBackground" class="cell-background" />
+                            <ui:VisualElement name="ItemIcon" class="icon" style="background-image: url(&apos;project://database/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=3316425174430470091&amp;guid=736a5a9774e87cbaea05b2c8b66890fb&amp;type=3#arrow-up@2x&apos;);" />
                             <ui:VisualElement name="Overlay" class="overlay" style="border-top-left-radius: 0; border-bottom-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 0;" />
                         </ui:VisualElement>
                         <ui:VisualElement focusable="false" name="Cell6" class="item-square">
@@ -70,7 +71,7 @@
                             <ui:VisualElement name="ItemIcon" class="icon" style="display: flex;" />
                             <ui:VisualElement name="Overlay" style="border-top-left-radius: 0; border-bottom-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 0;" />
                         </ui:VisualElement>
-                        <ui:VisualElement focusable="false" name="Cell2" class="item-square">
+                        <ui:VisualElement focusable="false" name="Cell2" class="item-square" style="border-left-color: rgb(13, 34, 49); border-right-color: rgb(13, 34, 49); border-top-color: rgb(13, 34, 49); border-bottom-color: rgb(13, 34, 49); border-left-width: 2px; border-right-width: 2px; border-top-width: 0; border-bottom-width: 2px;">
                             <ui:VisualElement name="ItemIcon" class="icon" />
                             <ui:VisualElement name="Overlay" class="overlay" style="border-top-left-radius: 0; border-bottom-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 0;" />
                         </ui:VisualElement>
