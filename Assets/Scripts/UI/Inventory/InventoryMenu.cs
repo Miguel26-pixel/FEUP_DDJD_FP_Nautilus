@@ -27,7 +27,7 @@ namespace UI.Inventory
                 _inventoryViewer.Update();
             }
         }
-        
+
         public void Rotate(int direction)
         {
             _inventoryViewer?.Rotate(direction);
@@ -35,7 +35,8 @@ namespace UI.Inventory
 
         private void Open()
         {
-            GridInventoryViewer<PlayerInventory> inventoryViewer = new(_root, _inventoryContainer, itemDescriptorTemplate, player.GetInventory());
+            PlayerInventoryViewer inventoryViewer =
+                new(_root, _inventoryContainer, itemDescriptorTemplate, player.GetInventory());
             inventoryViewer.Show();
             _root.style.display = DisplayStyle.Flex;
             _isInventoryMenuOpen = true;
@@ -52,6 +53,7 @@ namespace UI.Inventory
             {
                 _root.style.display = DisplayStyle.None;
                 _isInventoryMenuOpen = false;
+                _inventoryViewer.Close();
             }
         }
     }

@@ -233,12 +233,12 @@ namespace Items
         public List<KeyValuePair<string, string>> GetDescriptors()
         {
             List<KeyValuePair<string, string>> descriptors = new();
-            
+
             foreach (ItemComponent component in components)
             {
                 descriptors.AddRange(component.GetDescriptors());
             }
-            
+
             return descriptors;
         }
     }

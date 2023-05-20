@@ -68,7 +68,7 @@ namespace Inventory
             this.itemID = itemID;
         }
     }
-    
+
 
     public class InventoryGrid : IInventory
     {
@@ -79,7 +79,7 @@ namespace Inventory
         private readonly Dictionary<uint, Item> _items = new();
         private readonly int _width;
         private uint _itemIDCounter;
-        private string _name;
+        private readonly string _name;
 
         public InventoryGrid(bool[,] gridShape, string name)
         {
@@ -89,6 +89,40 @@ namespace Inventory
             _gridShape = gridShape;
             _gridItemIDs = new RelativePositionAndID[_height, _width];
             _name = name;
+        }
+
+        public List<Item> GetItems()
+        {
+            return _items.Values.ToList();
+        }
+
+        public virtual void AddItem(Item item)
+        {
+            Vector2Int position = FindEmptyPosition(item, 0);
+
+            AddItem(item, position, 0);
+        }
+
+        public virtual Item RemoveItem(int itemHash)
+        {
+            KeyValuePair<uint, Item> pair = _items.FirstOrDefault(pair => pair.Value.IDHash == itemHash);
+
+            if (pair.Equals(default(KeyValuePair<uint, Item>)))
+            {
+                throw new ItemNotInInventoryException("Item not found.");
+            }
+
+            uint itemID = pair.Key;
+            Item item = pair.Value;
+
+            RemoveAtInternal(_itemPositions[itemID].position, itemID);
+
+            return item;
+        }
+
+        public string GetInventoryName()
+        {
+            return _name;
         }
 
         public BoundsInt GetBounds()
@@ -104,11 +138,6 @@ namespace Inventory
         public RelativePositionAndID GetRelativePositionAt(Vector2Int position)
         {
             return _gridItemIDs[position.y, position.x];
-        }
-
-        public List<Item> GetItems()
-        {
-            return _items.Values.ToList();
         }
 
         private Vector2Int FindEmptyPosition(Item item, int rotation)
@@ -151,7 +180,7 @@ namespace Inventory
             {
                 throw new InvalidItemPositionException("Item position is out of bounds.");
             }
-            
+
             bool[,] itemGrid = ItemGrid<bool>.RotateMultiple(item.Grid, rotation);
             BoundsInt bounds = ItemGrid<bool>.GetBounds(itemGrid, true);
 
@@ -184,13 +213,6 @@ namespace Inventory
             return new Tuple<bool[,], BoundsInt>(itemGrid, bounds);
         }
 
-        public virtual void AddItem(Item item)
-        {
-            Vector2Int position = FindEmptyPosition(item, 0);
-
-            AddItem(item, position, 0);
-        }
-
         public bool CheckFit(Item item, Vector2Int position, int rotation, uint ignoreItemID = 0)
         {
             try
@@ -205,7 +227,7 @@ namespace Inventory
             catch (PositionAlreadyOccupiedException)
             {
                 return false;
-            } 
+            }
             catch (InvalidItemPositionException)
             {
                 return false;
@@ -238,28 +260,6 @@ namespace Inventory
                         new RelativePositionAndID(new Vector2Int(xPosition, yPosition), rotation, itemID);
                 }
             }
-        }
-
-        public virtual Item RemoveItem(int itemHash)
-        {
-            KeyValuePair<uint, Item> pair = _items.FirstOrDefault(pair => pair.Value.IDHash == itemHash);
-
-            if (pair.Equals(default(KeyValuePair<uint, Item>)))
-            {
-                throw new ItemNotInInventoryException("Item not found.");
-            }
-
-            uint itemID = pair.Key;
-            Item item = pair.Value;
-
-            RemoveAtInternal(_itemPositions[itemID].position, itemID);
-
-            return item;
-        }
-
-        public string GetInventoryName()
-        {
-            return _name;
         }
 
         public Item GetAt(Vector2Int position)

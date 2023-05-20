@@ -11,10 +11,10 @@ namespace UI.Inventory
     public record DraggingProperties()
     {
         public readonly Item draggedItem;
-        public Vector2Int dragRelativePosition;
         public readonly ItemPosition dragStartPosition;
         public readonly uint itemID;
         public int currentRotation;
+        public Vector2Int dragRelativePosition;
 
         public DraggingProperties(ItemPosition dragStartPosition, Vector2Int dragRelativePosition, Item draggedItem,
             uint itemID) : this()
@@ -26,46 +26,48 @@ namespace UI.Inventory
             this.itemID = itemID;
         }
     }
-    
+
     public class GridInventoryViewer<T> : InventoryViewer<T> where T : InventoryGrid
     {
-        private bool _isContextOpen;
-        private readonly VisualElement _itemContext;
-        private readonly Label _contextTitle;
-        private readonly VisualElement _closeContext;
         private readonly VisualElement _contextActions;
-        private readonly Label _noActionsLabel;
-        private readonly VisualTreeAsset _textButtonTemplate;
-        
+        private readonly Label _contextTitle;
+
+        private readonly VisualElement _draggedItem;
+
         private readonly T _inventory;
         private readonly BoundsInt _inventoryBounds;
-        
+
         private readonly VisualElement[,] _inventoryCells =
             new VisualElement[InventoryConstants.PlayerInventoryMaxHeight,
                 InventoryConstants.PlayerInventoryMaxWidth];
 
+        private readonly VisualElement _itemContext;
+        private readonly VisualElement _itemInfo;
+        private readonly Label _itemInfoDescription;
+        private readonly VisualElement _itemInfoDescriptors;
+        private readonly Label _itemInfoName;
+        private readonly VisualElement _itemInfoStats;
+        private readonly Label _noActionsLabel;
+        private readonly VisualTreeAsset _textButtonTemplate;
+
         private float _cellHeight;
         private float _cellWidth;
-        
-        private readonly VisualElement _draggedItem;
-        private DraggingProperties _draggingProperties;
-        private bool _isDragging;
-        
-        private bool _registeredGeometryChange;
-        
-        private bool _isInfoVisible;
-        private readonly VisualElement _itemInfo;
-        private readonly Label _itemInfoName;
-        private readonly Label _itemInfoDescription;
-        private readonly VisualElement _itemInfoStats;
-        private readonly VisualElement _itemInfoDescriptors;
-        private uint _itemInfoID;
 
         private Vector2 _currentMousePosition;
+        private DraggingProperties _draggingProperties;
+        private bool _isContextOpen;
+        private bool _isDragging;
 
-        public GridInventoryViewer(VisualElement root, VisualElement inventoryContainer, VisualTreeAsset itemDescriptorTemplate, T inventory) :
+        private bool _isInfoVisible;
+        private uint _itemInfoID;
+        
+        private bool _registeredGeometryChange;
+
+        public GridInventoryViewer(VisualElement root, VisualElement inventoryContainer,
+            VisualTreeAsset itemDescriptorTemplate, T inventory, bool canMove = true, bool canOpenContext = true, bool refreshAfterMove = true
+            ) :
             base(
-                root, inventoryContainer, itemDescriptorTemplate, inventory)
+                root, inventoryContainer, itemDescriptorTemplate, inventory, canMove, canOpenContext, refreshAfterMove)
         {
             _inventory = inventory;
             _inventoryBounds = _inventory.GetBounds();
@@ -73,33 +75,34 @@ namespace UI.Inventory
             _draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
             _itemInfo = root.Q<VisualElement>("ItemInfo");
             _itemInfo.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
-            
+
             _itemInfoName = _itemInfo.Q<Label>("InfoTitle");
             _itemInfoDescription = _itemInfo.Q<Label>("InfoDescription");
             _itemInfoStats = _itemInfo.Q<VisualElement>("ItemInfoStats");
             _itemInfoDescriptors = _itemInfo.Q<VisualElement>("Descriptors");
-            
+
             _textButtonTemplate = Resources.Load<VisualTreeAsset>("UI/TextButton");
             _itemContext = root.Q<VisualElement>("ItemContext");
-            
+
             _contextTitle = _itemContext.Q<Label>("ContextTitle");
-            _closeContext = _itemContext.Q<VisualElement>("CloseContext");
+            VisualElement closeContext = _itemContext.Q<VisualElement>("CloseContext");
             _contextActions = _itemContext.Q<VisualElement>("ContextActions");
             _noActionsLabel = _itemContext.Q<Label>("NoActions");
             _itemContext.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
-            
-            _closeContext.RegisterCallback((MouseUpEvent evt) =>
-            {
-                CloseContext();
-            });
+
+            closeContext.RegisterCallback((MouseUpEvent evt) => { CloseContext(); });
         }
-        
+
 
         public override void Show()
         {
             _registeredGeometryChange = false;
 
             Refresh();
+        }
+
+        public override void Close()
+        {
         }
 
         private void SetTopLeft(Vector2 mousePos, VisualElement element)
@@ -110,7 +113,7 @@ namespace UI.Inventory
                 element.style.top = new StyleLength(StyleKeyword.Auto);
             }
             else
-            {        
+            {
                 element.style.top = root.resolvedStyle.height - mousePos.y + 3;
                 element.style.bottom = new StyleLength(StyleKeyword.Auto);
             }
@@ -132,32 +135,33 @@ namespace UI.Inventory
             Vector2 mousePos = Mouse.current.position.ReadValue();
             mousePos = RuntimePanelUtils.ScreenToPanel(root.panel, mousePos);
             _currentMousePosition = mousePos;
-            
+
             if (_isDragging)
             {
-                _draggedItem.style.left = mousePos.x - (_draggingProperties.dragRelativePosition.x + 0.33f) * _cellWidth;
+                _draggedItem.style.left =
+                    mousePos.x - (_draggingProperties.dragRelativePosition.x + 0.33f) * _cellWidth;
                 _draggedItem.style.top = root.resolvedStyle.height - mousePos.y -
                                          (_draggingProperties.dragRelativePosition.y + 0.33f) * _cellHeight;
-                
+
                 if (_draggedItem.style.display.value == DisplayStyle.None)
                 {
                     _draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
                 }
-            } else if (_isInfoVisible)
+            }
+            else if (_isInfoVisible)
             {
                 if (_itemInfo.resolvedStyle.height == 0 || _itemInfo.resolvedStyle.width == 0)
                 {
                     return;
                 }
-                
+
                 SetTopLeft(mousePos, _itemInfo);
-                
+
                 if (_itemInfo.style.visibility.value == Visibility.Hidden)
                 {
                     _itemInfo.style.visibility = new StyleEnum<Visibility>(Visibility.Visible);
                 }
             }
-
         }
 
         public override void Refresh()
@@ -217,20 +221,28 @@ namespace UI.Inventory
                         RenderIconSquare(relativePositionAndID.relativePosition, relativePositionAndID.rotation,
                             iconElement, item);
                         MergeBorders(relativePositionAndID, background, position, previousID);
-                        cell.RegisterCallback<MouseDownEvent>(evt =>
+                        if (canMove)
                         {
-                            if(evt.button == 0)
+                            cell.RegisterCallback<MouseDownEvent>(evt =>
                             {
+                                if (evt.button == 0)
+                                {
                                     ProcessCellClick(position);
-                            }
-                        });
-                        cell.RegisterCallback<MouseUpEvent>(evt =>
+                                }
+                            });
+                        }
+
+                        if (canOpenContextMenu)
                         {
-                            if (evt.button == 1)
+                            cell.RegisterCallback<MouseUpEvent>(evt =>
                             {
-                                ProcessContextMenu(evt, item, relativePositionAndID.itemID);
-                            }
-                        });
+                                if (evt.button == 1)
+                                {
+                                    ProcessContextMenu(evt, item, relativePositionAndID.itemID);
+                                }
+                            });
+                        }
+
                         cell.RegisterCallback<MouseEnterEvent>(_ => OpenItemInfo(item));
                         cell.RegisterCallback<MouseLeaveEvent>(_ => CloseItemInfo());
                         previousID = relativePositionAndID.itemID;
@@ -239,6 +251,7 @@ namespace UI.Inventory
                     {
                         previousID = 0;
                     }
+
                     cell.RegisterCallback<MouseUpEvent>(evt => ProcessMouseUpCell(evt, position));
 
                     if (!_registeredGeometryChange)
@@ -257,7 +270,7 @@ namespace UI.Inventory
                 inventoryContainer.Add(rowElement);
             }
         }
-        
+
         private void CloseContext()
         {
             _isContextOpen = false;
@@ -283,11 +296,11 @@ namespace UI.Inventory
             CloseItemInfo();
             _isContextOpen = true;
             _itemInfoID = itemID;
-            
+
             _contextTitle.text = item.Name;
-            
+
             List<ContextMenuAction> actions = item.GetContextMenuActions();
-            
+
             _contextActions.Clear();
 
             if (actions.Count == 0)
@@ -297,14 +310,14 @@ namespace UI.Inventory
             else
             {
                 _noActionsLabel.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
-                
+
                 foreach (ContextMenuAction action in actions)
                 {
                     VisualElement textButton = _textButtonTemplate.Instantiate();
                     Label label = textButton.Q<Label>("Label");
-                    
+
                     label.text = action.Name;
-                    
+
                     textButton.RegisterCallback<MouseUpEvent>(evt =>
                     {
                         if (evt.button == 0)
@@ -321,20 +334,20 @@ namespace UI.Inventory
                             CloseContext();
                         }
                     });
-                    
+
                     _contextActions.Add(textButton);
                 }
             }
-            
+
             _itemContext.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
             _itemContext.style.visibility = new StyleEnum<Visibility>(Visibility.Hidden);
             SetTopLeft(position, _itemContext);
 
-            
+
             _itemContext.RegisterCallback<GeometryChangedEvent>(evt =>
             {
                 SetTopLeft(position, _itemContext);
-                
+
                 _itemContext.style.visibility = new StyleEnum<Visibility>(Visibility.Visible);
             });
         }
@@ -351,12 +364,12 @@ namespace UI.Inventory
             {
                 return;
             }
-            
+
             _isInfoVisible = true;
             _itemInfoName.text = item.Name;
             _itemInfoDescription.text = item.Description;
 
-            var descriptors = item.GetDescriptors();
+            List<KeyValuePair<string, string>> descriptors = item.GetDescriptors();
 
             if (descriptors.Count == 0)
             {
@@ -366,17 +379,17 @@ namespace UI.Inventory
             {
                 _itemInfoStats.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
                 _itemInfoDescriptors.Clear();
-                foreach (var descriptor in descriptors)
+                foreach (KeyValuePair<string, string> descriptor in descriptors)
                 {
                     VisualElement descriptorElement = itemDescriptorTemplate.Instantiate();
                     descriptorElement.Q<Label>("DescriptorKey").text = descriptor.Key;
                     descriptorElement.Q<Label>("DescriptorValue").text = descriptor.Value;
                     descriptorElement.pickingMode = PickingMode.Ignore;
-                    
+
                     _itemInfoDescriptors.Add(descriptorElement);
                 }
             }
-            
+
             _itemInfo.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
             _itemInfo.style.visibility = new StyleEnum<Visibility>(Visibility.Hidden);
         }
@@ -400,7 +413,7 @@ namespace UI.Inventory
             {
                 return;
             }
-            
+
             Item item = _inventory.GetAt(position);
             if (item == null)
             {
@@ -424,8 +437,10 @@ namespace UI.Inventory
             {
                 _isDragging = false;
                 _draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
-                DarkenItem(_inventory.GetRelativePositionAt(_draggingProperties.dragStartPosition.position).itemID, false);
-            } else if (_isContextOpen)
+                DarkenItem(_inventory.GetRelativePositionAt(_draggingProperties.dragStartPosition.position).itemID,
+                    false);
+            }
+            else if (_isContextOpen)
             {
                 CloseContext();
             }
@@ -491,7 +506,8 @@ namespace UI.Inventory
                     }
 
                     VisualElement cell = _inventoryCells[y, x];
-                    RelativePositionAndID relativePositionAndID = _inventory.GetRelativePositionAt(new Vector2Int(x, y));
+                    RelativePositionAndID relativePositionAndID =
+                        _inventory.GetRelativePositionAt(new Vector2Int(x, y));
 
                     if (relativePositionAndID == null || relativePositionAndID.itemID != itemID)
                     {
@@ -536,7 +552,10 @@ namespace UI.Inventory
                 new ItemPosition(initialPosition, _draggingProperties.currentRotation));
             _isDragging = false;
             _draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
-            Refresh();
+            if (refreshAfterMove)
+            {
+                Refresh();
+            }
         }
 
 

@@ -1,46 +1,25 @@
-using System.Collections.Generic;
-using Items;
-
 namespace Inventory
 {
-    public class CraftingInventory : IInventory
+    public class CraftingInventory : InventoryGrid
     {
-        private readonly List<Item> _items;
-
-        public CraftingInventory(List<Item> items)
+        public CraftingInventory(bool[,] gridShape) : base(gridShape, "Crafting Result")
         {
-            _items = items;
         }
 
-        public List<Item> GetItems()
+        public static CraftingInventory CreateCraftingInventory()
         {
-            return _items;
-        }
+            bool[,] gridShape = new bool[InventoryConstants.PlayerInventoryMaxHeight,
+                InventoryConstants.PlayerInventoryMaxWidth];
 
-        public void AddItem(Item item)
-        {
-            _items.Add(item);
-        }
-
-        public Item RemoveItem(int itemID)
-        {
-            for (int i = 0; i < _items.Count; i++)
+            for (int y = 0; y < gridShape.GetLength(0); y++)
             {
-                if (_items[i].IDHash == itemID)
+                for (int x = 0; x < gridShape.GetLength(1); x++)
                 {
-                    Item item = _items[i];
-                    _items.RemoveAt(i);
-
-                    return item;
+                    gridShape[y, x] = true;
                 }
             }
 
-            return null;
-        }
-
-        public string GetInventoryName()
-        {
-            return "Crafting Result";
+            return new CraftingInventory(gridShape);
         }
     }
 }

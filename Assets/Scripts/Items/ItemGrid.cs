@@ -79,7 +79,7 @@ namespace Items
 
             return grid;
         }
-        
+
         public static Vector2Int RotatePointMultiple(Vector2Int point, int rotation)
         {
             // rotate 3 is the same as rotate -1, rotate 4 is the same as rotate 0, etc.
@@ -130,7 +130,7 @@ namespace Items
 
             return newGrid;
         }
-        
+
         public static Vector2Int RotatePointClockwise(Vector2Int point)
         {
             return new Vector2Int(ItemConstants.ItemWidth - point.y - 1, point.x);
@@ -153,7 +153,7 @@ namespace Items
 
             return newGrid;
         }
-        
+
         public static Vector2Int RotatePointCounterClockwise(Vector2Int point)
         {
             return new Vector2Int(point.y, ItemConstants.ItemHeight - point.x - 1);

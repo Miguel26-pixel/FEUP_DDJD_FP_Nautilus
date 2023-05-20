@@ -14,7 +14,7 @@ namespace Items
 
             actions.Add(new ContextMenuAction("Equip", OnEquip));
             actions.Add(new ContextMenuAction("Unequip", OnUnequip));
-            
+
             descriptors.Add(new KeyValuePair<string, string>("Slot", Slot.ToString()));
             descriptors.Add(new KeyValuePair<string, string>("Durability", Durability.ToString()));
         }

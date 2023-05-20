@@ -22,7 +22,7 @@ namespace Items
         {
             return actions;
         }
-        
+
         public List<KeyValuePair<string, string>> GetDescriptors()
         {
             return descriptors;

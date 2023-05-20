@@ -15,7 +15,7 @@ namespace Items
         {
             _enhancements = enhancements;
 
-            foreach (var enhancement in enhancements)
+            foreach (Tuple<string, int> enhancement in enhancements)
             {
                 descriptors.Add(new KeyValuePair<string, string>(enhancement.Item1, enhancement.Item2.ToString()));
             }

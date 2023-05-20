@@ -13,7 +13,7 @@ namespace Items
             Hunger = hunger;
 
             actions.Add(new ContextMenuAction("Consume", Consume));
-            
+
             descriptors.Add(new KeyValuePair<string, string>("Health", Health.ToString()));
             descriptors.Add(new KeyValuePair<string, string>("Hunger", Hunger.ToString()));
         }

@@ -7,17 +7,32 @@ namespace Inventory
 {
     public class PlayerInventory : InventoryGrid, IInventoryNotifier
     {
-        private readonly string _inventoryName;
         private readonly List<IInventorySubscriber> _subscribers = new();
 
         public PlayerInventory(string inventoryName, bool[,] gridShape) : base(gridShape, inventoryName)
         {
-            _inventoryName = inventoryName;
-
             if (gridShape.GetLength(1) > InventoryConstants.PlayerInventoryMaxWidth ||
                 gridShape.GetLength(0) > InventoryConstants.PlayerInventoryMaxHeight)
             {
                 throw new ArgumentException("Inventory grid is too large.");
+            }
+        }
+
+        public void AddSubscriber(IInventorySubscriber subscriber)
+        {
+            _subscribers.Add(subscriber);
+        }
+        
+        public void RemoveSubscriber(IInventorySubscriber subscriber)
+        {
+            _subscribers.Remove(subscriber);
+        }
+
+        public void NotifySubscribersOnInventoryChanged()
+        {
+            foreach (IInventorySubscriber subscriber in _subscribers)
+            {
+                subscriber.OnInventoryChanged();
             }
         }
 
@@ -41,20 +56,7 @@ namespace Inventory
 
             NotifySubscribersOnInventoryChanged();
         }
-        
-        public void AddSubscriber(IInventorySubscriber subscriber)
-        {
-            _subscribers.Add(subscriber);
-        }
 
-        public void NotifySubscribersOnInventoryChanged()
-        {
-            foreach (IInventorySubscriber subscriber in _subscribers)
-            {
-                subscriber.OnInventoryChanged();
-            }
-        }
-        
 
         public override void AddItem(Item item, Vector2Int position, int rotation)
         {

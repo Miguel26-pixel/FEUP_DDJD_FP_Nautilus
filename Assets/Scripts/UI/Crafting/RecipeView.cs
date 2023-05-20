@@ -93,7 +93,7 @@ namespace UI
             _craftingMenu.OnInventoryChanged();
 
             Item resultItem = resultData.CreateInstance();
-            CraftingInventory craftingInventory = new(new List<Item> { resultItem });
+            CraftingInventory craftingInventory = CraftingInventory.CreateCraftingInventory();
 
             _inventory.TransferItems(craftingInventory, TransferDirection.DestinationToSource);
         }
