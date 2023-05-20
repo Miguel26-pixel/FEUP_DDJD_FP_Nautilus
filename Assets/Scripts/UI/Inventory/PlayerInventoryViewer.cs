@@ -59,6 +59,7 @@ namespace UI.Inventory
         private readonly Label _itemInfoDescription;
         private readonly VisualElement _itemInfoStats;
         private readonly VisualElement _itemInfoDescriptors;
+        private uint _itemInfoID;
 
         private Vector2 _currentMousePosition;
 
@@ -227,7 +228,7 @@ namespace UI.Inventory
                         {
                             if (evt.button == 1)
                             {
-                                ProcessContextMenu(evt, item);
+                                ProcessContextMenu(evt, item, relativePositionAndID.itemID);
                             }
                         });
                         cell.RegisterCallback<MouseEnterEvent>(_ => OpenItemInfo(item));
@@ -263,17 +264,25 @@ namespace UI.Inventory
             _itemContext.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
         }
 
-        private void ProcessContextMenu(MouseUpEvent evt, Item item)
+        private void ProcessContextMenu(EventBase evt, Item item, uint itemID)
         {
             if (_isDragging)
             {
                 return;
             }
 
+            if (_isContextOpen && _itemInfoID == itemID)
+            {
+                CloseContext();
+                return;
+            }
+
             Vector2 position = _currentMousePosition;
+            evt.StopPropagation();
 
             CloseItemInfo();
             _isContextOpen = true;
+            _itemInfoID = itemID;
             
             _contextTitle.text = item.Name;
             
@@ -319,6 +328,8 @@ namespace UI.Inventory
             
             _itemContext.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
             _itemContext.style.visibility = new StyleEnum<Visibility>(Visibility.Hidden);
+            SetTopLeft(position, _itemContext);
+
             
             _itemContext.RegisterCallback<GeometryChangedEvent>(evt =>
             {
@@ -385,6 +396,11 @@ namespace UI.Inventory
 
         private void ProcessCellClick(Vector2Int position)
         {
+            if (_isContextOpen)
+            {
+                return;
+            }
+            
             Item item = _inventory.GetAt(position);
             if (item == null)
             {
@@ -404,14 +420,15 @@ namespace UI.Inventory
 
         private void ProcessMouseUpRoot(MouseUpEvent evt)
         {
-            if (!_isDragging)
+            if (_isDragging)
             {
-                return;
+                _isDragging = false;
+                _draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
+                DarkenItem(_inventory.GetItemPositionAt(_draggingProperties.dragStartPosition.position).itemID, false);
+            } else if (_isContextOpen)
+            {
+                CloseContext();
             }
-
-            _isDragging = false;
-            _draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
-            DarkenItem(_inventory.GetItemPositionAt(_draggingProperties.dragStartPosition.position).itemID, false);
         }
 
         private void RenderItemDrag()
