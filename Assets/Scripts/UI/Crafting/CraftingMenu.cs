@@ -4,6 +4,7 @@ using Crafting;
 using DataManager;
 using Inventory;
 using Items;
+using UI.Inventory;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -11,13 +12,15 @@ namespace UI.Crafting
 {
     public class CraftingMenu : MonoBehaviour, IInventorySubscriber
     {
+        [SerializeField] public Sprite crossIcon;
+        [SerializeField] public TransferInventoryMenu transferInventoryMenu;
         [SerializeField] public TypeSprite[] itemTypeIcons;
         [SerializeField] public VisualTreeAsset button;
         [SerializeField] public VisualTreeAsset recipeListing;
         [SerializeField] public VisualTreeAsset ingredientRecipe;
         [SerializeField] private CraftingRecipeRegistryObject recipeRegistryObject;
         [SerializeField] private ItemRegistryObject itemRegistryObject;
-        [SerializeField] private Player.Player player;
+        [SerializeField] public Player.Player player;
         private readonly List<CraftingInterface> _interfaces = new();
         public readonly Dictionary<ItemType, Sprite> _itemTypeIcons = new();
 
@@ -28,9 +31,8 @@ namespace UI.Crafting
         private VisualElement _root;
 
         [NonSerialized] public VisualElement categoryTabs;
-        [NonSerialized] public PlayerInventory inventory;
+        public PlayerInventory Inventory => player.GetInventory();
 
-        [NonSerialized] public bool isCrafting;
         [NonSerialized] public ItemRegistry itemRegistry;
         [NonSerialized] public VisualElement recipeCreateButton;
         [NonSerialized] public Label recipeDescription;
@@ -45,6 +47,8 @@ namespace UI.Crafting
 
         [NonSerialized] public VisualElement recipeView;
 
+        [NonSerialized] public bool isCrafting;
+
         private void Start()
         {
             foreach (TypeSprite typeSprite in itemTypeIcons)
@@ -52,7 +56,6 @@ namespace UI.Crafting
                 _itemTypeIcons.Add(typeSprite.type, typeSprite.sprite);
             }
 
-            inventory = player.GetInventory();
             player.GetInventoryNotifier().AddSubscriber(this);
 
             recipeRegistry = recipeRegistryObject.craftingRecipeRegistry;
@@ -88,13 +91,20 @@ namespace UI.Crafting
             recipeCreateButton = recipeView.Q<VisualElement>("CreateButton");
         }
 
+        public void UpdateInventory()
+        {
+            player.GetInventoryNotifier().AddSubscriber(this);
+            
+            OnInventoryChanged();
+        }
+
         public void OnInventoryChanged()
         {
             if (isCrafting)
             {
                 return;
             }
-
+            
             foreach (CraftingInterface @interface in _interfaces)
             {
                 @interface.Refresh();

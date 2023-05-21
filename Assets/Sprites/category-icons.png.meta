@@ -205,7 +205,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 256
+        y: 255
         width: 128
         height: 128
       alignment: 0
@@ -347,6 +347,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: category-icons_3
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 128
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fb641142ca04956fb853f7b15408d059
+      internalID: -924093827
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -359,6 +380,7 @@ TextureImporter:
     secondaryTextures: []
     nameFileIdTable:
       category-icons_tools: -358350054
+      category-icons_3: -924093827
       category-icons_equipment: 1753111964
       category-icons_weapons: -684457957
       category-icons_4: 1090043236

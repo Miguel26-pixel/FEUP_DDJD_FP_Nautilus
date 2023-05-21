@@ -184,6 +184,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dd4e640826355439a418e7a303ca752, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  crossIcon: {fileID: 1009693943, guid: 5fb67ad0c979d2dfcb84d9732888b58b, type: 3}
+  transferInventoryMenu: {fileID: 1659102883}
   itemTypeIcons:
   - type: 3
     sprite: {fileID: -1091374960, guid: 5fb67ad0c979d2dfcb84d9732888b58b, type: 3}
@@ -685,6 +687,7 @@ MonoBehaviour:
     sprite: {fileID: 259777609, guid: 5fb67ad0c979d2dfcb84d9732888b58b, type: 3}
   - direction: -1
     sprite: {fileID: -1497464784, guid: 5fb67ad0c979d2dfcb84d9732888b58b, type: 3}
+  checkmark: {fileID: -924093827, guid: 5fb67ad0c979d2dfcb84d9732888b58b, type: 3}
 --- !u!114 &1659102884
 MonoBehaviour:
   m_ObjectHideFlags: 0

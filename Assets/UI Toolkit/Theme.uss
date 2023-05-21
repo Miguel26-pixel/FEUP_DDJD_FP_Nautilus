@@ -364,3 +364,25 @@
 .create.warning .text {
     color: rgb(27, 50, 67);
 }
+
+.icon-button {
+    width: 28px;
+    height: 28px;
+    margin-left: 8px;
+}
+
+.green-tint {
+    -unity-background-image-tint-color: rgba(99, 140, 122, 255);
+}
+
+.red-tint {
+    -unity-background-image-tint-color: rgb(150, 65, 65);
+}
+
+.green-tint:hover {
+    -unity-background-image-tint-color: rgb(72, 102, 89);
+}
+
+.red-tint:hover {
+    -unity-background-image-tint-color: rgb(112, 49, 49);
+}

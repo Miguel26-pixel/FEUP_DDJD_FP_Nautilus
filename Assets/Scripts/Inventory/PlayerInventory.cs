@@ -8,6 +8,8 @@ namespace Inventory
     public class PlayerInventory : InventoryGrid, IInventoryNotifier
     {
         private readonly List<IInventorySubscriber> _subscribers = new();
+        
+        public bool Locked { get; set; }
 
         public PlayerInventory(string inventoryName, bool[,] gridShape) : base(gridShape, inventoryName)
         {
@@ -41,15 +43,25 @@ namespace Inventory
             _subscribers.Remove(subscriber);
         }
 
-        public override Item RemoveItem(int itemID)
+        public override Item RemoveItem(int itemHash)
         {
-            Item item = base.RemoveItem(itemID);
+            if (Locked)
+            {
+                throw new InvalidOperationException("Player inventory is locked");
+            }
+            
+            Item item = base.RemoveItem(itemHash);
             NotifySubscribersOnInventoryChanged();
             return item;
         }
 
         public override Item RemoveAt(Vector2Int position)
         {
+            if (Locked)
+            {
+                throw new InvalidOperationException("Player inventory is locked");
+            }
+            
             Item item = base.RemoveAt(position);
             NotifySubscribersOnInventoryChanged();
             return item;
@@ -57,6 +69,11 @@ namespace Inventory
 
         public override void AddItem(Item item)
         {
+            if (Locked)
+            {
+                // TODO: drop item, might need to be handled by the caller not sure yet
+            }
+            
             try
             {
                 base.AddItem(item);
@@ -72,26 +89,13 @@ namespace Inventory
 
         public override void AddItem(Item item, Vector2Int position, int rotation)
         {
+            if (Locked)
+            {
+                // TODO: drop item, might need to be handled by the caller not sure yet
+            }
+            
+            
             base.AddItem(item, position, rotation);
-            NotifySubscribersOnInventoryChanged();
-        }
-
-        public void TransferItems(IInventory destination, TransferDirection direction)
-        {
-            // TODO: Implement this
-            // Open transfer window
-            // Transfer items
-            // Close transfer window
-            // Notify subscribers
-            // if (direction == TransferDirection.DestinationToSource)
-            // {
-            //     _items.AddRange(destination.GetItems());
-            // }
-            // else
-            // {
-            //     throw new NotImplementedException();
-            // }
-
             NotifySubscribersOnInventoryChanged();
         }
     }

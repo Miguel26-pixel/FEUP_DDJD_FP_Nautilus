@@ -3,6 +3,8 @@ using Crafting;
 using DataManager;
 using Inventory;
 using Items;
+using UI.Inventory;
+using UI.Inventory.Builders;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -12,7 +14,6 @@ namespace UI.Crafting
     {
         private readonly CraftingMenu _craftingMenu;
         private readonly VisualTreeAsset _ingredientRecipe;
-        private readonly PlayerInventory _inventory;
         private readonly ItemRegistry _itemRegistry;
         private readonly CraftingRecipe _recipe;
         private readonly VisualElement _recipeCreateButton;
@@ -32,7 +33,6 @@ namespace UI.Crafting
             _recipeDescription = craftingMenu.recipeDescription;
             _recipeViewGrid = craftingMenu.recipeViewGrid;
             _recipeIngredients = craftingMenu.recipeIngredients;
-            _inventory = craftingMenu.inventory;
             _ingredientRecipe = craftingMenu.ingredientRecipe;
             _recipeCreateButton = craftingMenu.recipeCreateButton;
             _recipeView = craftingMenu.recipeView;
@@ -75,30 +75,73 @@ namespace UI.Crafting
 
         private void CraftItem(CraftingRecipe recipe, ItemData resultData)
         {
-            if (!recipe.CorrectCount(recipe.IngredientCount(_inventory.GetItems())))
+            if (!recipe.CorrectCount(recipe.IngredientCount(_craftingMenu.Inventory.GetItems())))
             {
                 return;
             }
 
-            PlayerInventory inventoryCopy = new PlayerInventory(_inventory);
-            
-            foreach (KeyValuePair<int, int> ingredient in recipe.Ingredients)
-            {
-                for (int i = 0; i < ingredient.Value; i++)
-                {
-                    inventoryCopy.RemoveItem(ingredient.Key);
-                }
-            }
-
+            PlayerInventory inventoryCopy = new PlayerInventory(_craftingMenu.Inventory);
+            bool hasSpace = HasSpace(recipe, inventoryCopy);
             Item resultItem = resultData.CreateInstance();
-            CraftingInventory craftingInventory = CraftingInventory.CreateCraftingInventory();
 
-            // _inventory.TransferItems(craftingInventory, TransferDirection.DestinationToSource);
+            if (hasSpace)
+            {
+                _craftingMenu.isCrafting = true; // This is to prevent the crafting menu from updating while we're crafting
+                foreach (KeyValuePair<int, int> ingredient in recipe.Ingredients)
+                {
+                    for (int i = 0; i < ingredient.Value; i++)
+                    {
+                        _craftingMenu.Inventory.RemoveItem(ingredient.Key);
+                    }
+                }
+                _craftingMenu.isCrafting = false;
+
+                _craftingMenu.Inventory.AddItem(resultItem);
+            }
+            else
+            {
+                _craftingMenu.Inventory.Locked = true;
+                
+                CraftingInventory craftingInventory = CraftingInventory.CreateCraftingInventory();
+                craftingInventory.AddItem(resultItem);
+                
+                PlayerInventoryViewerBuilder playerInventoryViewerBuilder = new(inventoryCopy);
+                GridInventoryViewerBuilder craftingBuilder = new(craftingInventory, canOpenContextMenu: false);
+                
+                _craftingMenu.transferInventoryMenu.Open(
+                    playerInventoryViewerBuilder,
+                    craftingBuilder,
+                    TransferDirection.DestinationToSource,
+                    new List<TransferAction>()
+                    {
+                        new TransferAction(
+                            new List<string> {"red-tint"}, 
+                            _craftingMenu.crossIcon, 
+                            () =>
+                        {
+                            _craftingMenu.Inventory.Locked = false;
+                            _craftingMenu.transferInventoryMenu.Close();
+                        })
+                    },
+                    ((_, right) => right.GetItems().Count == 0),
+                    ((grid, _) =>
+                    {
+                        _craftingMenu.player.SetInventory(new PlayerInventory(grid));
+                        _craftingMenu.UpdateInventory();
+                    }));
+            }
         }
 
         private bool HasSpace(CraftingRecipe recipe)
         {
-            PlayerInventory inventoryCopy = new PlayerInventory(_inventory);
+            PlayerInventory inventoryCopy = new PlayerInventory(_craftingMenu.Inventory);
+            return HasSpace(recipe, inventoryCopy);
+        }
+        
+        
+        private bool HasSpace(CraftingRecipe recipe, InventoryGrid inventoryCopy)
+        {
+
             Item resultItem = _itemRegistry.Get(recipe.Result).CreateInstance();
             
             foreach (KeyValuePair<int, int> ingredient in recipe.Ingredients)
@@ -134,7 +177,7 @@ namespace UI.Crafting
         public override void Refresh()
         {
             _recipeIngredients.Clear();
-            Dictionary<int, int> ingredientCount = _recipe.IngredientCount(_inventory.GetItems());
+            Dictionary<int, int> ingredientCount = _recipe.IngredientCount(_craftingMenu.Inventory.GetItems());
 
             foreach (KeyValuePair<int, int> ingredient in _recipe.Ingredients)
             {

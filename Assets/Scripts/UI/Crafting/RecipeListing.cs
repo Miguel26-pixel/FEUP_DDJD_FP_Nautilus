@@ -12,7 +12,6 @@ namespace UI.Crafting
     public class RecipeListing : CraftingInterface
     {
         private readonly CraftingMenu _craftingMenu;
-        private readonly IInventory _inventory;
         private readonly ItemRegistry _itemRegistry;
         private readonly ItemType _itemType;
         private readonly Dictionary<ItemType, Sprite> _itemTypeIcons;
@@ -38,7 +37,6 @@ namespace UI.Crafting
             _itemRegistry = craftingMenu.itemRegistry;
             _recipeListing = craftingMenu.recipeListing;
             _currentRecipeIndex = -1;
-            _inventory = craftingMenu.inventory;
             _recipeListContainer = craftingMenu.recipeListContainer;
             _recipeList = null;
         }
@@ -88,7 +86,7 @@ namespace UI.Crafting
                 recipe.userData = idx;
 
 
-                if (recipes[idx].CanCraft(_machineType, _inventory.GetItems()))
+                if (recipes[idx].CanCraft(_machineType, _craftingMenu.Inventory.GetItems()))
                 {
                     item.RemoveFromClassList("incomplete");
                 }

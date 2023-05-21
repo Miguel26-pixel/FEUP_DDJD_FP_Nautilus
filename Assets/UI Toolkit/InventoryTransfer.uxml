@@ -12,9 +12,13 @@
                         <ui:Label text="Inventory" display-tooltip-when-elided="true" name="Inventory1Label" picking-mode="Ignore" class="text" style="font-size: 22px;" />
                     </ui:VisualElement>
                 </ui:VisualElement>
-                <ui:VisualElement name="ContainerHeader" picking-mode="Ignore" style="border-left-width: 0; border-right-width: 0; border-top-width: 0; border-bottom-width: 0; background-color: rgb(27, 50, 67); flex-direction: row; padding-left: 15px; padding-top: 10px; padding-bottom: 10px; padding-right: 10px; flex-grow: 1; width: 50%;">
-                    <ui:VisualElement picking-mode="Ignore" style="flex-grow: 0; justify-content: flex-end;">
-                        <ui:Label text="Crafting Result" display-tooltip-when-elided="true" name="Inventory2Label" picking-mode="Ignore" class="text" style="font-size: 22px;" />
+                <ui:VisualElement name="ContainerHeader" picking-mode="Ignore" style="border-left-width: 0; border-right-width: 0; border-top-width: 0; border-bottom-width: 0; background-color: rgb(27, 50, 67); flex-direction: row; padding-left: 15px; padding-top: 10px; padding-bottom: 10px; padding-right: 10px; flex-grow: 1; width: 50%; justify-content: space-between;">
+                    <ui:VisualElement picking-mode="Ignore" style="flex-grow: 1; justify-content: flex-end;">
+                        <ui:Label text="Crafting Result" display-tooltip-when-elided="true" name="Inventory2Label" picking-mode="Ignore" class="text" style="font-size: 22px; white-space: normal;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="TopActions" style="flex-shrink: 0; justify-content: flex-end; flex-direction: row-reverse; align-items: center; margin-right: 4px;">
+                        <ui:VisualElement class="icon-button" style="background-image: url(&apos;project://database/Assets/Sprites/category-icons.png?fileID=-924093827&amp;guid=5fb67ad0c979d2dfcb84d9732888b58b&amp;type=3#category-icons_3&apos;); -unity-background-image-tint-color: rgb(99, 140, 122); margin-left: 8px;" />
+                        <ui:VisualElement class="red-tint" style="width: 32px; height: 32px;" />
                     </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>

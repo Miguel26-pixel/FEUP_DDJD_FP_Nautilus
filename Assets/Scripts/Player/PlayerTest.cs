@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Crafting;
 using DataManager;
 using Inventory;
@@ -79,22 +80,7 @@ namespace Player
                 return;
             }
             
-            GameObject transferViewer = GameObject.Find("TransferViewer");
-            TransferInventoryMenu transferInventoryMenu = transferViewer.GetComponent<TransferInventoryMenu>();
-
-            CraftingInventory craftingInventory = CraftingInventory.CreateCraftingInventory();
-            
-            craftingInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
-            craftingInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
-            craftingInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
-            craftingInventory.AddItem(_itemRegistry.Get(0x238E2A2D).CreateInstance());
-            craftingInventory.AddItem(_itemRegistry.Get(0x2E79821C).CreateInstance());
-
-            PlayerInventoryViewerBuilder playerInventoryViewerBuilder = new(playerInventory);
-            GridInventoryViewerBuilder craftingBuilder = new(craftingInventory, canOpenContextMenu: false);
-
-            transferInventoryMenu.ToggleMenu(playerInventoryViewerBuilder, craftingBuilder,
-                transferDirection);
+            onInventoryEvent.Invoke();
         }
 
         public void OnRotateClockwise(InputAction.CallbackContext context)
@@ -124,18 +110,17 @@ namespace Player
                 yield return new WaitUntil(() => _itemRegistry.Initialized);
             }
 
-            // playerInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
-            // playerInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
-            // playerInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
-            // playerInventory.AddItem(_itemRegistry.Get(0x238E2A2D).CreateInstance());
-            // playerInventory.AddItem(_itemRegistry.Get(0x2E79821C).CreateInstance());
+            playerInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
+            playerInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
+            playerInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
+            playerInventory.AddItem(_itemRegistry.Get(0x238E2A2D).CreateInstance());
+            playerInventory.AddItem(_itemRegistry.Get(0x2E79821C).CreateInstance());
             playerInventory.AddItem(_itemRegistry.Get(0x755CFE42).CreateInstance());
             playerInventory.AddItem(_itemRegistry.Get(0xE3847C27).CreateInstance());
             playerInventory.AddItem(_itemRegistry.Get(0xDEC31753).CreateInstance());
             playerInventory.AddItem(_itemRegistry.Get(0x5BFE8AE3).CreateInstance());
             playerInventory.AddItem(_itemRegistry.Get(0xFE3EC9B0).CreateInstance());
-
-            playerInventory.AddItem(_itemRegistry.Get(0x5C5C52AF).CreateInstance(), new Vector2Int(1, 3), 4);
+            playerInventory.AddItem(_itemRegistry.Get(0x5C5C52AF).CreateInstance());
 
 
             Debug.Log("Gave items");
@@ -144,6 +129,11 @@ namespace Player
         public override PlayerInventory GetInventory()
         {
             return playerInventory;
+        }
+
+        public override void SetInventory(PlayerInventory inventory)
+        {
+            playerInventory = inventory;
         }
 
         public override IInventoryNotifier GetInventoryNotifier()
