@@ -93,7 +93,7 @@ namespace Player
             GridInventoryViewerBuilder craftingBuilder = new(craftingInventory, canOpenContextMenu: false);
 
             transferInventoryMenu.ToggleMenu(playerInventoryViewerBuilder, craftingBuilder,
-                TransferDirection.SourceToDestination );
+                TransferDirection.SourceToDestination | TransferDirection.DestinationToSource );
         }
 
         public void OnRotateClockwise(InputAction.CallbackContext context)

@@ -29,11 +29,12 @@ namespace Inventory
         public void NotifySubscribersOnInventoryChanged();
     }
 
+    [Serializable]
     [Flags]
     public enum TransferDirection
     {
-        None = 0,
-        SourceToDestination = 1,
-        DestinationToSource = 2
+        None = 1,
+        SourceToDestination = 2,
+        DestinationToSource = 4
     }
 }

@@ -112,6 +112,7 @@ namespace UI.Inventory.Components
                 VisualElement rowElement = new();
                 rowElement.AddToClassList("row");
                 rowElement.name = $"Row{row}";
+                rowElement.pickingMode = PickingMode.Ignore;
                 uint previousID = 0;
 
                 for (int col = _inventoryBounds.x; col < _inventoryBounds.x + _inventoryBounds.size.x; col++)
@@ -123,14 +124,17 @@ namespace UI.Inventory.Components
                     VisualElement iconElement = new();
                     iconElement.name = "ItemIcon";
                     iconElement.AddToClassList("icon");
+                    iconElement.pickingMode = PickingMode.Ignore;
 
                     VisualElement overlayElement = new();
                     overlayElement.name = "Overlay";
                     overlayElement.AddToClassList("overlay");
+                    overlayElement.pickingMode = PickingMode.Ignore;
 
                     VisualElement background = new();
                     background.name = "Background";
                     background.AddToClassList("cell-background");
+                    background.pickingMode = PickingMode.Ignore;
 
                     cell.Add(background);
                     cell.Add(iconElement);
@@ -193,7 +197,7 @@ namespace UI.Inventory.Components
 
                     if (!_registeredGeometryChange)
                     {
-                        cell.RegisterCallback<GeometryChangedEvent>(evt =>
+                        cell.RegisterCallback<GeometryChangedEvent>(_ =>
                         {
                             _cellWidth = cell.resolvedStyle.width;
                             _cellHeight = cell.resolvedStyle.height;

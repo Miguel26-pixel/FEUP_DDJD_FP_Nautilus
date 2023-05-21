@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Inventory;
 using UI.Inventory.Builders;
 using UI.Inventory.Components;
@@ -8,24 +10,47 @@ namespace UI.Inventory
 {
     public class TransferInventoryMenu : MonoBehaviour
     {
-        private Label _inventory1Label;
-        private Label _inventory2Label;
+        [Serializable]
+        public class DirectionSprite
+        {
+            public TransferDirection direction;
+            public Sprite sprite;
+        }
+        
+        public DirectionSprite[] transferDirectionArrows;
+        
+        private readonly Dictionary<TransferDirection, Sprite> _transferDirectionArrows =
+            new Dictionary<TransferDirection, Sprite>();
+
+        private VisualElement _root;
         private VisualElement _inventoryContainerLeft;
         private VisualElement _inventoryContainerRight;
+        private VisualElement _directionArrow;
+
+        private Label _inventory1Label;
+        private Label _inventory2Label;
+        
         private InventoryViewer<InventoryGrid> _inventoryViewerLeft;
         private InventoryViewer<InventoryGrid> _inventoryViewerRight;
+        
         private bool _isTransferOpen;
-        private VisualElement _root;
-
+        
         private void Start()
         {
             _root = GetComponent<UIDocument>().rootVisualElement;
             _root.style.display = DisplayStyle.None;
+            
             _inventoryContainerLeft = _root.Q<VisualElement>("GridLeft");
             _inventoryContainerRight = _root.Q<VisualElement>("GridRight");
+            _directionArrow = _root.Q<VisualElement>("DirectionArrow");
 
             _inventory1Label = _root.Q<Label>("Inventory1Label");
             _inventory2Label = _root.Q<Label>("Inventory2Label");
+            
+            foreach (DirectionSprite directionSprite in transferDirectionArrows)
+            {
+                _transferDirectionArrows.Add(directionSprite.direction, directionSprite.sprite);
+            }
         }
 
         public void Update()
@@ -55,6 +80,8 @@ namespace UI.Inventory
 
             _inventory1Label.text = inventoryViewerBuilderLeft.inventory.GetInventoryName();
             _inventory2Label.text = inventoryViewerBuilderRight.inventory.GetInventoryName();
+            
+            _directionArrow.style.backgroundImage = new StyleBackground(_transferDirectionArrows[direction]);
 
             InventoryViewer<InventoryGrid> inventoryViewerLeft = inventoryViewerBuilderLeft.Build();
             InventoryViewer<InventoryGrid> inventoryViewerRight = inventoryViewerBuilderRight.Build();

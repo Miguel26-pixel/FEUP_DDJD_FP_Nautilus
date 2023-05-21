@@ -205,7 +205,6 @@ MonoBehaviour:
   recipeRegistryObject: {fileID: 317371959}
   itemRegistryObject: {fileID: 317371960}
   player: {fileID: 1699484530}
-  isCrafting: 0
 --- !u!1 &317371954
 GameObject:
   m_ObjectHideFlags: 0
@@ -679,7 +678,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66a9bc2799b742b4b0fc5186f805e6ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemDescriptorTemplate: {fileID: 9197481963319205126, guid: af722d286dd6863cf953ae0c46b261d4, type: 3}
+  transferDirectionArrows:
+  - direction: 2
+    sprite: {fileID: 1090043236, guid: 5fb67ad0c979d2dfcb84d9732888b58b, type: 3}
+  - direction: 4
+    sprite: {fileID: 259777609, guid: 5fb67ad0c979d2dfcb84d9732888b58b, type: 3}
+  - direction: 6
+    sprite: {fileID: -1497464784, guid: 5fb67ad0c979d2dfcb84d9732888b58b, type: 3}
 --- !u!114 &1659102884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -829,7 +834,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1699484530}
-  itemDescriptorTemplate: {fileID: 9197481963319205126, guid: af722d286dd6863cf953ae0c46b261d4, type: 3}
 --- !u!114 &1877112995
 MonoBehaviour:
   m_ObjectHideFlags: 0
