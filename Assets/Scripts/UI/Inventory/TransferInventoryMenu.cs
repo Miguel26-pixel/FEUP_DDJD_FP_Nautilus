@@ -70,6 +70,8 @@ namespace UI.Inventory
             _inventory1Label = _root.Q<Label>("Inventory1Label");
             _inventory2Label = _root.Q<Label>("Inventory2Label");
             
+            
+            
             foreach (DirectionSprite directionSprite in transferDirectionArrows)
             {
                 _transferDirectionArrows.Add(directionSprite.direction, directionSprite.sprite);

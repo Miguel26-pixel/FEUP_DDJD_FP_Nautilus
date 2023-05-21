@@ -8,6 +8,7 @@ namespace Inventory
     public class PlayerInventory : InventoryGrid, IInventoryNotifier
     {
         private readonly List<IInventorySubscriber> _subscribers = new();
+        private bool _notify = true;
         
         public bool Locked { get; set; }
 
@@ -32,6 +33,11 @@ namespace Inventory
 
         public void NotifySubscribersOnInventoryChanged()
         {
+            if (!_notify)
+            {
+                return;
+            }
+            
             foreach (IInventorySubscriber subscriber in _subscribers)
             {
                 subscriber.OnInventoryChanged();
@@ -96,6 +102,19 @@ namespace Inventory
             
             
             base.AddItem(item, position, rotation);
+            NotifySubscribersOnInventoryChanged();
+        }
+
+        public override void MoveItem(ItemPosition source, ItemPosition destination)
+        {
+            if (Locked)
+            {
+                return;
+            }
+
+            _notify = false;
+            base.MoveItem(source, destination);
+            _notify = true;
             NotifySubscribersOnInventoryChanged();
         }
     }

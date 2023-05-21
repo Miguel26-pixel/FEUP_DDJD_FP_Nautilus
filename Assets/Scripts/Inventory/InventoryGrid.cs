@@ -349,7 +349,7 @@ namespace Inventory
             return item;
         }
 
-        public void MoveItem(ItemPosition source, ItemPosition destination)
+        public virtual void MoveItem(ItemPosition source, ItemPosition destination)
         {
             Item sourceItem = GetAt(source.position);
             if (sourceItem == null)

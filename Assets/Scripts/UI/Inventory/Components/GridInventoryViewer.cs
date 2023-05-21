@@ -61,11 +61,17 @@ namespace UI.Inventory.Components
         {
             _inventory = inventory;
             _inventoryBounds = _inventory.GetBounds();
+            
             _draggedItem = root.Q<VisualElement>("ItemDrag");
-            _draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
+            if (_draggedItem == null)
+            {
+                Resources.Load<VisualTreeAsset>("UI/ItemDrag").CloneTree(root);
+                _draggedItem = root.Q<VisualElement>("ItemDrag");
+            }
+            _draggedItem.style.display = DisplayStyle.None;
 
-            _infoBoxViewer = new InfoBoxViewer(root, root.Q<VisualElement>("ItemInfo"));
-            _contextMenuViewer = new ContextMenuViewer(root, root.Q<VisualElement>("ItemContext"));
+            _infoBoxViewer = new InfoBoxViewer(root);
+            _contextMenuViewer = new ContextMenuViewer(root);
         }
 
         public override void Show()
@@ -361,12 +367,12 @@ namespace UI.Inventory.Components
                 new ItemPosition(initialPosition, _draggingProperties.currentRotation));
             _isDragging = false;
             _draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
+
+            onDragEnd?.Invoke(_draggingProperties);
             if (refreshAfterMove)
             {
                 Refresh();
             }
-
-            onDragEnd?.Invoke(_draggingProperties);
         }
 
         private void ProcessOtherDraggable(EventBase evt, Vector2Int position, DraggingProperties draggingProperties)

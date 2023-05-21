@@ -17,10 +17,17 @@ namespace UI.Inventory.Components
 
         private readonly VisualTreeAsset _textButtonTemplate;
 
-        public ContextMenuViewer(VisualElement root, VisualElement itemContext)
+        public ContextMenuViewer(VisualElement root)
         {
             _root = root;
-            _itemContext = itemContext;
+            
+            _itemContext = root.Q<VisualElement>("ItemContext");
+            if (_itemContext == null)
+            {
+                Resources.Load<VisualTreeAsset>("UI/ItemContext").CloneTree(root);
+                _itemContext = root.Q<VisualElement>("ItemContext");
+            }
+            
             _contextActions = _itemContext.Q<VisualElement>("ContextActions");
 
             _textButtonTemplate = Resources.Load<VisualTreeAsset>("UI/TextButton");

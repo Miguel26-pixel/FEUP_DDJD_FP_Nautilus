@@ -154,7 +154,7 @@ namespace UI.Crafting
         public override void Refresh()
         {
             _recipeList.RefreshItems();
-            _recipeView.Refresh();
+            _recipeView?.Refresh();
         }
     }
 }

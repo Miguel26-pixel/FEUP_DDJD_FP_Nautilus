@@ -16,8 +16,15 @@ namespace UI.Inventory.Components
         private readonly VisualElement _itemInfoStats;
         private readonly VisualElement _root;
 
-        public InfoBoxViewer(VisualElement root, VisualElement itemInfo)
+        public InfoBoxViewer(VisualElement root)
         {
+            VisualElement itemInfo = root.Q<VisualElement>("ItemInfo");
+            if (itemInfo == null)
+            {
+                Resources.Load<VisualTreeAsset>("UI/ItemInfo").CloneTree(root);
+                itemInfo = root.Q<VisualElement>("ItemInfo");
+            }
+            
             _itemInfo = itemInfo;
             _itemInfo.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
 
