@@ -32,8 +32,6 @@ namespace UI.Inventory
 
     public class GridInventoryViewer : InventoryViewer<InventoryGrid>
     {
-        private readonly VisualElement _draggedItem;
-
         private readonly InventoryGrid _inventory;
         private readonly BoundsInt _inventoryBounds;
 
@@ -41,25 +39,19 @@ namespace UI.Inventory
             new VisualElement[InventoryConstants.PlayerInventoryMaxHeight,
                 InventoryConstants.PlayerInventoryMaxWidth];
 
-        private readonly VisualElement _contextActions;
-        private readonly Label _contextTitle;
-        private readonly VisualElement _itemContext;
-        private readonly Label _noActionsLabel;
-        private readonly VisualTreeAsset _textButtonTemplate;
-
-        private readonly InfoBoxViewer _infoBoxViewer;
-
         private float _cellHeight;
         private float _cellWidth;
+        
+        private readonly InfoBoxViewer _infoBoxViewer;
+        private readonly ContextMenuViewer _contextMenuViewer;
 
-        private Vector2 _currentMousePosition;
+        private readonly VisualElement _draggedItem;
         private DraggingProperties _draggingProperties;
-        private IDraggable _otherDraggable;
-        private bool _isContextOpen;
+        private Vector2 _currentMousePosition;
         private bool _isDragging;
-        
-        private uint _itemInfoID;
-        
+
+        private IDraggable _otherDraggable;
+
         private bool _registeredGeometryChange;
 
         public GridInventoryViewer(VisualElement root, VisualElement inventoryContainer,
@@ -72,21 +64,10 @@ namespace UI.Inventory
             _inventoryBounds = _inventory.GetBounds();
             _draggedItem = root.Q<VisualElement>("ItemDrag");
             _draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
-
-            _textButtonTemplate = Resources.Load<VisualTreeAsset>("UI/TextButton");
-            _itemContext = root.Q<VisualElement>("ItemContext");
-
-            _contextTitle = _itemContext.Q<Label>("ContextTitle");
-            VisualElement closeContext = _itemContext.Q<VisualElement>("CloseContext");
-            _contextActions = _itemContext.Q<VisualElement>("ContextActions");
-            _noActionsLabel = _itemContext.Q<Label>("NoActions");
-            _itemContext.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
             
             _infoBoxViewer = new InfoBoxViewer(root, root.Q<VisualElement>("ItemInfo"));
-
-            closeContext.RegisterCallback((MouseUpEvent evt) => { CloseContext(); });
+            _contextMenuViewer = new ContextMenuViewer(root, root.Q<VisualElement>("ItemContext"));
         }
-
 
         public override void Show()
         {
@@ -177,13 +158,14 @@ namespace UI.Inventory
                         RenderIconSquare(relativePositionAndID.relativePosition, relativePositionAndID.rotation,
                             iconElement, item);
                         MergeBorders(relativePositionAndID, background, position, previousID);
+                        
                         if (canMove)
                         {
                             cell.RegisterCallback<MouseDownEvent>(evt =>
                             {
                                 if (evt.button == 0)
                                 {
-                                    ProcessCellClick(position);
+                                    ProcessMouseDownLeftCell(position);
                                 }
                             });
                         }
@@ -194,7 +176,7 @@ namespace UI.Inventory
                             {
                                 if (evt.button == 1)
                                 {
-                                    ProcessContextMenu(evt, item, relativePositionAndID.itemID);
+                                    ProcessMouseUpRightCell(evt, item, relativePositionAndID.itemID);
                                 }
                             });
                         }
@@ -229,88 +211,31 @@ namespace UI.Inventory
 
         private void CloseContext()
         {
-            _isContextOpen = false;
-            _itemContext.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
+            _contextMenuViewer.Close();
         }
 
-        private void ProcessContextMenu(EventBase evt, Item item, uint itemID)
+        private void ProcessMouseUpRightCell(EventBase evt, Item item, uint itemID)
         {
             if (_isDragging)
             {
                 return;
             }
 
-            if (_isContextOpen && _itemInfoID == itemID)
+            if (_contextMenuViewer.IsOpen && _contextMenuViewer.ItemInfoID == itemID)
             {
                 CloseContext();
                 return;
             }
-
-            Vector2 position = _currentMousePosition;
             evt.StopPropagation();
 
+            Vector2 position = _currentMousePosition;
             CloseItemInfo();
-            _isContextOpen = true;
-            _itemInfoID = itemID;
-
-            _contextTitle.text = item.Name;
-
-            List<ContextMenuAction> actions = item.GetContextMenuActions();
-
-            _contextActions.Clear();
-
-            if (actions.Count == 0)
-            {
-                _noActionsLabel.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
-            }
-            else
-            {
-                _noActionsLabel.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
-
-                foreach (ContextMenuAction action in actions)
-                {
-                    VisualElement textButton = _textButtonTemplate.Instantiate();
-                    Label label = textButton.Q<Label>("Label");
-
-                    label.text = action.Name;
-
-                    textButton.RegisterCallback<MouseUpEvent>(evt =>
-                    {
-                        if (evt.button == 0)
-                        {
-                            try
-                            {
-                                action.Action();
-                            }
-                            catch (NotImplementedException ex)
-                            {
-                                Debug.Log("Action not implemented");
-                            }
-
-                            CloseContext();
-                        }
-                    });
-
-                    _contextActions.Add(textButton);
-                }
-            }
-
-            _itemContext.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
-            _itemContext.style.visibility = new StyleEnum<Visibility>(Visibility.Hidden);
-            UiUtils.SetTopLeft(position, _itemContext, root);
-
-
-            _itemContext.RegisterCallback<GeometryChangedEvent>(evt =>
-            {
-                UiUtils.SetTopLeft(position, _itemContext, root);
-
-                _itemContext.style.visibility = new StyleEnum<Visibility>(Visibility.Visible);
-            });
+            _contextMenuViewer.Open(item, itemID, position);
         }
         
         private void OpenItemInfo(Item item)
         {
-            if (_isDragging || _isContextOpen)
+            if (_isDragging || _contextMenuViewer.IsOpen)
             {
                 return;
             }
@@ -336,9 +261,9 @@ namespace UI.Inventory
             RenderItemDrag();
         }
 
-        private void ProcessCellClick(Vector2Int position)
+        private void ProcessMouseDownLeftCell(Vector2Int position)
         {
-            if (_isContextOpen)
+            if (_contextMenuViewer.IsOpen)
             {
                 return;
             }
@@ -398,7 +323,7 @@ namespace UI.Inventory
                     false);
                 onDragEnd?.Invoke(_draggingProperties);
             }
-            else if (_isContextOpen)
+            else if (_contextMenuViewer.IsOpen)
             {
                 CloseContext();
             }
