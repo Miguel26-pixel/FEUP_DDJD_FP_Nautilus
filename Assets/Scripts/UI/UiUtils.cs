@@ -29,5 +29,15 @@ namespace UI
                 element.style.right = new StyleLength(StyleKeyword.Auto);
             }
         }
+        
+        public static void MakeVisible(VisualElement element)
+        {
+            element.style.visibility = new StyleEnum<Visibility>(Visibility.Visible);
+        }
+        
+        public static bool IsNotStyleResolved(VisualElement element)
+        {
+            return element.resolvedStyle.width == 0 || element.resolvedStyle.height == 0;
+        }
     }
 }

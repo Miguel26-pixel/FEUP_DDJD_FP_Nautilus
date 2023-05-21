@@ -32,9 +32,6 @@ namespace UI.Inventory
 
     public class GridInventoryViewer : InventoryViewer<InventoryGrid>
     {
-        private readonly VisualElement _contextActions;
-        private readonly Label _contextTitle;
-
         private readonly VisualElement _draggedItem;
 
         private readonly InventoryGrid _inventory;
@@ -44,6 +41,8 @@ namespace UI.Inventory
             new VisualElement[InventoryConstants.PlayerInventoryMaxHeight,
                 InventoryConstants.PlayerInventoryMaxWidth];
 
+        private readonly VisualElement _contextActions;
+        private readonly Label _contextTitle;
         private readonly VisualElement _itemContext;
         private readonly Label _noActionsLabel;
         private readonly VisualTreeAsset _textButtonTemplate;

@@ -64,16 +64,6 @@ namespace UI.Inventory.Components
             _itemInfo.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
             _itemInfo.style.visibility = new StyleEnum<Visibility>(Visibility.Hidden);
         }
-        
-        private void MakeVisible()
-        {
-            _itemInfo.style.visibility = new StyleEnum<Visibility>(Visibility.Visible);
-        }
-        
-        private bool IsNotStyleResolved()
-        {
-            return _itemInfo.resolvedStyle.width == 0|| _itemInfo.resolvedStyle.height == 0;
-        }
 
         public void Update(Vector2 mousePos)
         {
@@ -82,7 +72,7 @@ namespace UI.Inventory.Components
                 return;
             }
 
-            if (IsNotStyleResolved())
+            if (UiUtils.IsNotStyleResolved(_itemInfo))
             {
                 return;
             }
@@ -91,7 +81,7 @@ namespace UI.Inventory.Components
 
             if (_itemInfo.style.visibility.value == Visibility.Hidden)
             {
-                MakeVisible();
+                UiUtils.MakeVisible(_itemInfo);
             }
         }
         
