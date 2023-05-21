@@ -7,7 +7,6 @@ namespace UI.Inventory.Components
 {
     public class InfoBoxViewer
     {
-        private readonly Item _item;
         private readonly VisualElement _root;
         private readonly VisualElement _itemInfo;
         private readonly VisualElement _itemInfoStats;
@@ -18,12 +17,11 @@ namespace UI.Inventory.Components
         private readonly Label _itemInfoName;
         private readonly Label _itemInfoDescription;
 
-        public bool IsOpen { get; private set; }
+        private bool IsOpen { get; set; }
 
-
-        public InfoBoxViewer(Item item, VisualElement root)
+        public InfoBoxViewer(VisualElement root, VisualElement itemInfo)
         {
-            _itemInfo = root.Q<VisualElement>("ItemInfo");
+            _itemInfo = itemInfo;
             _itemInfo.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
 
             _itemInfoName = _itemInfo.Q<Label>("InfoTitle");
@@ -34,16 +32,15 @@ namespace UI.Inventory.Components
             _itemDescriptorTemplate = Resources.Load<VisualTreeAsset>("UI/Descriptor");
 
             _root = root;
-            _item = item;
         }
         
-        public void Open()
+        public void Open(Item item)
         {
             IsOpen = true;
-            _itemInfoName.text = _item.Name;
-            _itemInfoDescription.text = _item.Description;
+            _itemInfoName.text = item.Name;
+            _itemInfoDescription.text = item.Description;
 
-            List<KeyValuePair<string, string>> descriptors = _item.GetDescriptors();
+            List<KeyValuePair<string, string>> descriptors = item.GetDescriptors();
 
             if (descriptors.Count == 0)
             {
@@ -68,14 +65,34 @@ namespace UI.Inventory.Components
             _itemInfo.style.visibility = new StyleEnum<Visibility>(Visibility.Hidden);
         }
         
-        public void MakeVisible()
+        private void MakeVisible()
         {
             _itemInfo.style.visibility = new StyleEnum<Visibility>(Visibility.Visible);
         }
         
-        public bool IsStyleResolved()
+        private bool IsNotStyleResolved()
         {
-            return _itemInfo.resolvedStyle.width != 0 && _itemInfo.resolvedStyle.height != 0;
+            return _itemInfo.resolvedStyle.width == 0|| _itemInfo.resolvedStyle.height == 0;
+        }
+
+        public void Update(Vector2 mousePos)
+        {
+            if (!IsOpen)
+            {
+                return;
+            }
+
+            if (IsNotStyleResolved())
+            {
+                return;
+            }
+
+            UiUtils.SetTopLeft(mousePos, _itemInfo, _root);
+
+            if (_itemInfo.style.visibility.value == Visibility.Hidden)
+            {
+                MakeVisible();
+            }
         }
         
         public void Close()
