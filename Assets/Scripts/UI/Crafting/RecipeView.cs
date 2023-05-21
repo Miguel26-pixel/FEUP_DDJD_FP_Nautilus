@@ -6,7 +6,7 @@ using Items;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace UI
+namespace UI.Crafting
 {
     public class RecipeView : CraftingInterface
     {
@@ -80,22 +80,44 @@ namespace UI
                 return;
             }
 
-            _craftingMenu.isCrafting = true;
+            PlayerInventory inventoryCopy = new PlayerInventory(_inventory);
+            
             foreach (KeyValuePair<int, int> ingredient in recipe.Ingredients)
             {
                 for (int i = 0; i < ingredient.Value; i++)
                 {
-                    _inventory.RemoveItem(ingredient.Key);
+                    inventoryCopy.RemoveItem(ingredient.Key);
                 }
             }
-
-            _craftingMenu.isCrafting = false;
-            _craftingMenu.OnInventoryChanged();
 
             Item resultItem = resultData.CreateInstance();
             CraftingInventory craftingInventory = CraftingInventory.CreateCraftingInventory();
 
             // _inventory.TransferItems(craftingInventory, TransferDirection.DestinationToSource);
+        }
+
+        private bool HasSpace(CraftingRecipe recipe)
+        {
+            PlayerInventory inventoryCopy = new PlayerInventory(_inventory);
+            Item resultItem = _itemRegistry.Get(recipe.Result).CreateInstance();
+            
+            foreach (KeyValuePair<int, int> ingredient in recipe.Ingredients)
+            {
+                for (int i = 0; i < ingredient.Value; i++)
+                {
+                    inventoryCopy.RemoveItem(ingredient.Key);
+                }
+            }
+
+            try
+            {
+                inventoryCopy.FindEmptyPosition(resultItem, 0);
+                return true;
+            }
+            catch (ItemDoesNotFitException)
+            {
+                return false;
+            }
         }
 
 
@@ -138,18 +160,32 @@ namespace UI
             }
 
             bool canCraft = _recipe.CorrectCount(ingredientCount);
+            string postfix = "";
 
             if (_createCallback != null)
             {
                 _recipeCreateButton.UnregisterCallback(_createCallback);
             }
+            _recipeCreateButton.RemoveFromClassList("warning");
 
             if (canCraft)
             {
+                bool hasSpace = HasSpace(_recipe);
+                
                 _recipeCreateButton.RemoveFromClassList("disabled");
                 _recipeCreateButton.RemoveFromClassList("incomplete");
-                _createCallback = _ => { CraftItem(_recipe, _resultItem); };
 
+                if (!hasSpace)
+                {
+                    _recipeCreateButton.AddToClassList("warning");
+                    postfix = " (Inventory Full)";
+                }
+                else
+                {
+                    _recipeCreateButton.RemoveFromClassList("warning");
+                }
+                
+                _createCallback = _ => { CraftItem(_recipe, _resultItem); };
                 _recipeCreateButton.RegisterCallback(_createCallback);
             }
             else
@@ -160,7 +196,7 @@ namespace UI
             }
 
             _recipeCreateButton.Q<Label>("CreateText").text =
-                _recipe.Quantity > 1 ? $"Create (x{_recipe.Quantity})" : "Create";
+                _recipe.Quantity > 1 ? $"Create (x{_recipe.Quantity})" : "Create" + postfix;
         }
     }
 }

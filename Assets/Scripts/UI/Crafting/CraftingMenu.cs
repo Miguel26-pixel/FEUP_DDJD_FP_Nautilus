@@ -7,7 +7,7 @@ using Items;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace UI
+namespace UI.Crafting
 {
     public class CraftingMenu : MonoBehaviour, IInventorySubscriber
     {

@@ -1,4 +1,4 @@
-namespace UI
+namespace UI.Crafting
 {
     public abstract class CraftingInterface
     {

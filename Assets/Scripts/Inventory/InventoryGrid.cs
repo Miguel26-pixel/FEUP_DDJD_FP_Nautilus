@@ -91,6 +91,27 @@ namespace Inventory
             _name = name;
         }
 
+        public InventoryGrid(InventoryGrid other)
+        {
+            _width = other._width;
+            _height = other._height;
+            _gridShape = other._gridShape;
+            _gridItemIDs = new RelativePositionAndID[_height, _width];
+            _name = other._name;
+
+            foreach (KeyValuePair<uint, Item> pair in other._items)
+            {
+                uint itemID = pair.Key;
+                Item item = pair.Value;
+                ItemPosition itemPosition = other._itemPositions[itemID];
+                
+                bool[,] itemGrid = ItemGrid<bool>.RotateMultiple(item.Grid, itemPosition.rotation);
+                BoundsInt bounds = ItemGrid<bool>.GetBounds(itemGrid, true);
+
+                AddItemInternal(item, itemPosition.position, itemPosition.rotation, itemGrid, bounds);
+            }
+        }
+
         public List<Item> GetItems()
         {
             return _items.Values.ToList();
@@ -239,6 +260,23 @@ namespace Inventory
         {
             (bool[,] itemGrid, BoundsInt bounds) = CheckFitAndGetBounds(item, position, rotation);
 
+            AddItemInternal(item, position, rotation, itemGrid, bounds);
+        }
+
+        public Item GetAt(Vector2Int position)
+        {
+            if (!ValidatePosition(position))
+            {
+                throw new InvalidItemPositionException("Item position is out of bounds.");
+            }
+
+            RelativePositionAndID positionAndID = _gridItemIDs[position.y, position.x];
+
+            return positionAndID == null ? null : _items[positionAndID.itemID];
+        }
+
+        private void AddItemInternal(Item item, Vector2Int position, int rotation, bool[,] itemGrid, BoundsInt bounds)
+        {
             uint itemID = ++_itemIDCounter;
 
             _items.Add(itemID, item);
@@ -260,18 +298,6 @@ namespace Inventory
                         new RelativePositionAndID(new Vector2Int(xPosition, yPosition), rotation, itemID);
                 }
             }
-        }
-
-        public Item GetAt(Vector2Int position)
-        {
-            if (!ValidatePosition(position))
-            {
-                throw new InvalidItemPositionException("Item position is out of bounds.");
-            }
-
-            RelativePositionAndID positionAndID = _gridItemIDs[position.y, position.x];
-
-            return positionAndID == null ? null : _items[positionAndID.itemID];
         }
 
         // ONLY USE WITH ROOT POSITION

@@ -18,6 +18,11 @@ namespace Inventory
             }
         }
 
+        public PlayerInventory(InventoryGrid inventory) : base(inventory)
+        {
+            
+        }
+
         public void AddSubscriber(IInventorySubscriber subscriber)
         {
             _subscribers.Add(subscriber);

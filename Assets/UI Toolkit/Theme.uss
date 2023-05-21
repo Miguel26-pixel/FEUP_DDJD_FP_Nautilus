@@ -349,10 +349,18 @@
 }
 
 .close:hover {
-    -unity-background-image-tint-color: rgba(166, 145, 118, 255);
+    -unity-background-image-tint-color: rgb(166, 145, 118);
 }
 
 .close {
     background-image: url('project://database/Assets/Sprites/category-icons.png?fileID=1009693943&guid=5fb67ad0c979d2dfcb84d9732888b58b&type=3#category-icons_0');
-    -unity-background-image-tint-color: rgba(242, 211, 172, 255);
+    -unity-background-image-tint-color: rgb(242, 211, 172);
+}
+
+.create.warning {
+    background-color: rgb(192, 144, 83);
+}
+
+.create.warning .text {
+    color: rgb(27, 50, 67);
 }
