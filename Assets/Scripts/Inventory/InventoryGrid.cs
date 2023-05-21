@@ -140,7 +140,7 @@ namespace Inventory
             return _gridItemIDs[position.y, position.x];
         }
 
-        private Vector2Int FindEmptyPosition(Item item, int rotation)
+        public Vector2Int FindEmptyPosition(Item item, int rotation)
         {
             for (int y = 0; y < _height; y++)
             {
@@ -299,7 +299,7 @@ namespace Inventory
             _itemPositions.Remove(itemID);
         }
 
-        public Item RemoveAt(Vector2Int position)
+        public virtual Item RemoveAt(Vector2Int position)
         {
             if (!ValidatePosition(position))
             {

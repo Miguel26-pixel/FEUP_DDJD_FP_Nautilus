@@ -9,7 +9,7 @@ namespace UI.Inventory
         [SerializeField] private Player.Player player;
         [SerializeField] private VisualTreeAsset itemDescriptorTemplate;
         private VisualElement _inventoryContainer;
-        private GridInventoryViewer<PlayerInventory> _inventoryViewer;
+        private GridInventoryViewer _inventoryViewer;
         private bool _isInventoryMenuOpen;
         private VisualElement _root;
 

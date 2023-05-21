@@ -3,6 +3,7 @@ using System.Collections;
 using Crafting;
 using DataManager;
 using Inventory;
+using UI.Inventory;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -76,7 +77,15 @@ namespace Player
                 return;
             }
 
-            onInventoryEvent.Invoke();
+            GameObject transferViewer = GameObject.Find("TransferViewer");
+            TransferInventoryMenu transferInventoryMenu = transferViewer.GetComponent<TransferInventoryMenu>();
+
+            CraftingInventory craftingInventory = CraftingInventory.CreateCraftingInventory();
+            
+            PlayerInventoryViewerBuilder playerInventoryViewerBuilder = new PlayerInventoryViewerBuilder(this.playerInventory);
+            GridInventoryViewerBuilder craftingBuilder = new GridInventoryViewerBuilder(craftingInventory, canOpenContextMenu: false);
+
+            transferInventoryMenu.ToggleMenu(playerInventoryViewerBuilder, craftingBuilder);
         }
 
         public void OnRotateClockwise(InputAction.CallbackContext context)

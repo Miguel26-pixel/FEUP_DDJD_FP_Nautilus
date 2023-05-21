@@ -43,6 +43,13 @@ namespace Inventory
             return item;
         }
 
+        public override Item RemoveAt(Vector2Int position)
+        {
+            Item item = base.RemoveAt(position);
+            NotifySubscribersOnInventoryChanged();
+            return item;
+        }
+
         public override void AddItem(Item item)
         {
             try

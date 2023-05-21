@@ -8,7 +8,7 @@ using UnityEngine.UIElements;
 
 namespace UI.Inventory
 {
-    public record DraggingProperties()
+    public record DraggingProperties() : IDraggable
     {
         public readonly Item draggedItem;
         public readonly ItemPosition dragStartPosition;
@@ -25,16 +25,18 @@ namespace UI.Inventory
             currentRotation = this.dragStartPosition.rotation;
             this.itemID = itemID;
         }
+
+        public Item Item => draggedItem;
     }
 
-    public class GridInventoryViewer<T> : InventoryViewer<T> where T : InventoryGrid
+    public class GridInventoryViewer : InventoryViewer<InventoryGrid>
     {
         private readonly VisualElement _contextActions;
         private readonly Label _contextTitle;
 
         private readonly VisualElement _draggedItem;
 
-        private readonly T _inventory;
+        private readonly InventoryGrid _inventory;
         private readonly BoundsInt _inventoryBounds;
 
         private readonly VisualElement[,] _inventoryCells =
@@ -55,6 +57,7 @@ namespace UI.Inventory
 
         private Vector2 _currentMousePosition;
         private DraggingProperties _draggingProperties;
+        private IDraggable _otherDraggable;
         private bool _isContextOpen;
         private bool _isDragging;
 
@@ -64,10 +67,10 @@ namespace UI.Inventory
         private bool _registeredGeometryChange;
 
         public GridInventoryViewer(VisualElement root, VisualElement inventoryContainer,
-            VisualTreeAsset itemDescriptorTemplate, T inventory, bool canMove = true, bool canOpenContext = true, bool refreshAfterMove = true
+            VisualTreeAsset itemDescriptorTemplate, InventoryGrid inventory, Action<IDraggable> onDragStart = null, Action<IDraggable> onDragEnd = null,  bool canMove = true, bool canOpenContext = true, bool refreshAfterMove = true
             ) :
             base(
-                root, inventoryContainer, itemDescriptorTemplate, inventory, canMove, canOpenContext, refreshAfterMove)
+                root, inventoryContainer, itemDescriptorTemplate, inventory, onDragStart, onDragEnd, canMove, canOpenContext, refreshAfterMove)
         {
             _inventory = inventory;
             _inventoryBounds = _inventory.GetBounds();
@@ -429,9 +432,37 @@ namespace UI.Inventory
 
             DarkenItem(itemID);
             RenderItemDrag();
+            onDragStart?.Invoke(_draggingProperties);
         }
 
-        private void ProcessMouseUpRoot(MouseUpEvent evt)
+        public override void HandleDragStart(IDraggable draggable)
+        {
+            _otherDraggable = draggable;
+        }
+
+        public override void HandleDragEnd(IDraggable draggable)
+        {
+            if (_isDragging)
+            {
+                // item successfully dropped on another inventory
+                if(draggable is not DraggingProperties draggingProperties) return;
+            
+                _inventory.RemoveAt(draggingProperties.dragStartPosition.position);
+            
+                _isDragging = false;
+                _draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
+                if (refreshAfterMove)
+                {
+                    Refresh();
+                }
+            }
+            else
+            {
+                _otherDraggable = null;
+            }
+        }
+
+        private void ProcessMouseUpRoot(MouseUpEvent evt) 
         {
             if (_isDragging)
             {
@@ -439,6 +470,7 @@ namespace UI.Inventory
                 _draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
                 DarkenItem(_inventory.GetRelativePositionAt(_draggingProperties.dragStartPosition.position).itemID,
                     false);
+                onDragEnd?.Invoke(_draggingProperties);
             }
             else if (_isContextOpen)
             {
@@ -526,8 +558,65 @@ namespace UI.Inventory
             }
         }
 
+        private void ProcessOtherDraggable(EventBase evt, Vector2Int position, DraggingProperties draggingProperties)
+        {
+            bool[,] itemGrid = ItemGrid<bool>.RotateMultiple(draggingProperties.draggedItem.Grid,
+                draggingProperties.currentRotation);
+            BoundsInt bounds = ItemGrid<bool>.GetBounds(itemGrid, true);
+
+            Vector2Int initialPosition =
+                position - (draggingProperties.dragRelativePosition - new Vector2Int(bounds.x, bounds.y));
+
+            if (!_inventory.CheckFit(draggingProperties.draggedItem, initialPosition,
+                    draggingProperties.currentRotation))
+            {
+                return;
+            }
+            evt.StopPropagation();
+
+            _inventory.AddItem(draggingProperties.Item, initialPosition, draggingProperties.currentRotation);
+            
+            if (refreshAfterMove)
+            {
+                Refresh();
+            }
+            onDragEnd?.Invoke(draggingProperties);
+        }
+        
+        private void ProcessOtherDraggableSimple(EventBase evt, Vector2Int position, IDraggable draggingProperties)
+        {
+            if (!_inventory.CheckFit(draggingProperties.Item, position, 0))
+            {
+                return;
+            }
+            evt.StopPropagation();
+
+            _inventory.AddItem(draggingProperties.Item, position, 0);
+            if (refreshAfterMove)
+            {
+                Refresh();
+            }
+
+            onDragEnd?.Invoke(draggingProperties);
+        }
+
         private void ProcessMouseUpCell(EventBase evt, Vector2Int position)
         {
+            if (_otherDraggable != null)
+            {
+                if (_otherDraggable is DraggingProperties draggingProperties)
+                {
+                    ProcessOtherDraggable(evt, position, draggingProperties);
+                }
+                else
+                {
+                    ProcessOtherDraggableSimple(evt, position, _otherDraggable);
+                }
+                
+                _otherDraggable = null;
+                return;
+            }
+            
             if (!_isDragging)
             {
                 return;
@@ -556,6 +645,7 @@ namespace UI.Inventory
             {
                 Refresh();
             }
+            onDragEnd?.Invoke(_draggingProperties);
         }
 
 
