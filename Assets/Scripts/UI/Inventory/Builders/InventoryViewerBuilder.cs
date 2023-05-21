@@ -11,7 +11,7 @@ namespace UI.Inventory
         public VisualTreeAsset itemDescriptorTemplate;
         public Action<IDraggable> onDragStart = null;
         public Action<IDraggable> onDragEnd = null;
-        protected readonly T inventory;
+        public readonly T inventory;
         protected readonly bool canMove;
         protected readonly bool canOpenContextMenu;
         protected readonly bool refreshAfterMove;

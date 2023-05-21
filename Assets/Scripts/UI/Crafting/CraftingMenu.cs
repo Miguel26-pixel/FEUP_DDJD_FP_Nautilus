@@ -19,7 +19,7 @@ namespace UI
         [SerializeField] private ItemRegistryObject itemRegistryObject;
         [SerializeField] private Player.Player player;
 
-        public bool isCrafting;
+        [NonSerialized] public bool isCrafting;
         private readonly List<CraftingInterface> _interfaces = new();
         public readonly Dictionary<ItemType, Sprite> _itemTypeIcons = new();
 

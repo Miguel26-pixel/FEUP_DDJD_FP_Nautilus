@@ -95,7 +95,7 @@ namespace UI
             Item resultItem = resultData.CreateInstance();
             CraftingInventory craftingInventory = CraftingInventory.CreateCraftingInventory();
 
-            _inventory.TransferItems(craftingInventory, TransferDirection.DestinationToSource);
+            // _inventory.TransferItems(craftingInventory, TransferDirection.DestinationToSource);
         }
 
 

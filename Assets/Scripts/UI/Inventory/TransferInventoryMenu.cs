@@ -12,6 +12,9 @@ namespace UI.Inventory
         private VisualElement _inventoryContainerRight;
         private InventoryViewer<InventoryGrid> _inventoryViewerLeft;
         private InventoryViewer<InventoryGrid> _inventoryViewerRight;
+
+        private Label _inventory1Label;
+        private Label _inventory2Label;
         private bool _isTransferOpen;
 
         private void Start()
@@ -20,6 +23,9 @@ namespace UI.Inventory
             _root.style.display = DisplayStyle.None;
             _inventoryContainerLeft = _root.Q<VisualElement>("GridLeft");
             _inventoryContainerRight = _root.Q<VisualElement>("GridRight");
+            
+            _inventory1Label = _root.Q<Label>("Inventory1Label");
+            _inventory2Label = _root.Q<Label>("Inventory2Label");
         }
 
         public void Update()
@@ -47,6 +53,9 @@ namespace UI.Inventory
             inventoryViewerBuilderRight.itemDescriptorTemplate = itemDescriptorTemplate;
             inventoryViewerBuilderLeft.root = _root;
             inventoryViewerBuilderRight.root = _root;
+            
+            _inventory1Label.text = inventoryViewerBuilderLeft.inventory.GetInventoryName();
+            _inventory2Label.text = inventoryViewerBuilderRight.inventory.GetInventoryName();
             
             InventoryViewer<InventoryGrid> inventoryViewerLeft = inventoryViewerBuilderLeft.Build();
             InventoryViewer<InventoryGrid> inventoryViewerRight = inventoryViewerBuilderRight.Build();
