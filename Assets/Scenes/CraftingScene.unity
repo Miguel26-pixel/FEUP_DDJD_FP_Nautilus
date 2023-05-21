@@ -679,11 +679,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   transferDirectionArrows:
-  - direction: 2
+  - direction: 1
     sprite: {fileID: 1090043236, guid: 5fb67ad0c979d2dfcb84d9732888b58b, type: 3}
-  - direction: 4
+  - direction: 2
     sprite: {fileID: 259777609, guid: 5fb67ad0c979d2dfcb84d9732888b58b, type: 3}
-  - direction: 6
+  - direction: -1
     sprite: {fileID: -1497464784, guid: 5fb67ad0c979d2dfcb84d9732888b58b, type: 3}
 --- !u!114 &1659102884
 MonoBehaviour:
@@ -803,6 +803,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  transferDirection: 2
 --- !u!1 &1877112993
 GameObject:
   m_ObjectHideFlags: 0

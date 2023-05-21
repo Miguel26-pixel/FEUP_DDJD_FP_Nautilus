@@ -19,6 +19,7 @@ namespace Player
         public UnityEvent onInventoryEvent = new();
         public UnityEvent<int> onRotate = new();
         private ItemRegistry _itemRegistry;
+        public TransferDirection transferDirection;
 
         private ItemRegistryObject _itemRegistryObject;
         private PlayerActions _playerActions;
@@ -93,7 +94,7 @@ namespace Player
             GridInventoryViewerBuilder craftingBuilder = new(craftingInventory, canOpenContextMenu: false);
 
             transferInventoryMenu.ToggleMenu(playerInventoryViewerBuilder, craftingBuilder,
-                TransferDirection.SourceToDestination | TransferDirection.DestinationToSource );
+                transferDirection);
         }
 
         public void OnRotateClockwise(InputAction.CallbackContext context)

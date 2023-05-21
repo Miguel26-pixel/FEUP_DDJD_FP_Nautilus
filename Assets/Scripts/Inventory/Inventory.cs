@@ -33,8 +33,8 @@ namespace Inventory
     [Flags]
     public enum TransferDirection
     {
-        None = 1,
-        SourceToDestination = 2,
-        DestinationToSource = 4
+        None = 0,
+        SourceToDestination = 1,
+        DestinationToSource = 2
     }
 }
