@@ -77,9 +77,9 @@ namespace Inventory
         private readonly int _height;
         private readonly Dictionary<uint, ItemPosition> _itemPositions = new();
         private readonly Dictionary<uint, Item> _items = new();
+        private readonly string _name;
         private readonly int _width;
         private uint _itemIDCounter;
-        private readonly string _name;
 
         public InventoryGrid(bool[,] gridShape, string name)
         {

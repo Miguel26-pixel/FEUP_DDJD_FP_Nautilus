@@ -1,4 +1,4 @@
-using Inventory;
+using UI.Inventory.Components;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -7,7 +7,6 @@ namespace UI.Inventory
     public class InventoryMenu : MonoBehaviour
     {
         [SerializeField] private Player.Player player;
-        [SerializeField] private VisualTreeAsset itemDescriptorTemplate;
         private VisualElement _inventoryContainer;
         private GridInventoryViewer _inventoryViewer;
         private bool _isInventoryMenuOpen;
@@ -36,7 +35,7 @@ namespace UI.Inventory
         private void Open()
         {
             PlayerInventoryViewer inventoryViewer =
-                new(_root, _inventoryContainer, itemDescriptorTemplate, player.GetInventory());
+                new(_root, _inventoryContainer, player.GetInventory());
             inventoryViewer.Show();
             _root.style.display = DisplayStyle.Flex;
             _isInventoryMenuOpen = true;

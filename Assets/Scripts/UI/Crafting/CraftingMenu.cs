@@ -18,8 +18,6 @@ namespace UI
         [SerializeField] private CraftingRecipeRegistryObject recipeRegistryObject;
         [SerializeField] private ItemRegistryObject itemRegistryObject;
         [SerializeField] private Player.Player player;
-
-        [NonSerialized] public bool isCrafting;
         private readonly List<CraftingInterface> _interfaces = new();
         public readonly Dictionary<ItemType, Sprite> _itemTypeIcons = new();
 
@@ -31,6 +29,8 @@ namespace UI
 
         [NonSerialized] public VisualElement categoryTabs;
         [NonSerialized] public PlayerInventory inventory;
+
+        [NonSerialized] public bool isCrafting;
         [NonSerialized] public ItemRegistry itemRegistry;
         [NonSerialized] public VisualElement recipeCreateButton;
         [NonSerialized] public Label recipeDescription;

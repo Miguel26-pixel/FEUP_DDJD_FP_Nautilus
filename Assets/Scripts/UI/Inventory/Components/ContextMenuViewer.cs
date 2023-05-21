@@ -8,35 +8,35 @@ namespace UI.Inventory.Components
 {
     public class ContextMenuViewer
     {
-        private readonly VisualElement _root;
-        private readonly VisualElement _itemContext;
         private readonly VisualElement _contextActions;
+        private readonly Label _contextTitle;
+        private readonly VisualElement _itemContext;
+
+        private readonly Label _noActionsLabel;
+        private readonly VisualElement _root;
 
         private readonly VisualTreeAsset _textButtonTemplate;
 
-        private readonly Label _noActionsLabel;
-        private readonly Label _contextTitle;
-        
-        public bool IsOpen { get; private set; }
-        public uint ItemInfoID { get; private set;  }
-        
         public ContextMenuViewer(VisualElement root, VisualElement itemContext)
         {
             _root = root;
             _itemContext = itemContext;
             _contextActions = _itemContext.Q<VisualElement>("ContextActions");
-            
+
             _textButtonTemplate = Resources.Load<VisualTreeAsset>("UI/TextButton");
 
             _contextTitle = _itemContext.Q<Label>("ContextTitle");
             _noActionsLabel = _itemContext.Q<Label>("NoActions");
-            
+
             VisualElement closeContext = _itemContext.Q<VisualElement>("CloseContext");
             closeContext.RegisterCallback<MouseUpEvent>(_ => Close());
-            
+
             _itemContext.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
         }
-        
+
+        public bool IsOpen { get; private set; }
+        public uint ItemInfoID { get; private set; }
+
         public void Open(Item item, uint itemID, Vector2 position)
         {
             IsOpen = true;
@@ -62,10 +62,7 @@ namespace UI.Inventory.Components
 
                     label.text = action.Name;
 
-                    textButton.RegisterCallback<MouseUpEvent>(evt =>
-                    {
-                        ProcessMouseUpAction(evt, action);
-                    });
+                    textButton.RegisterCallback<MouseUpEvent>(evt => { ProcessMouseUpAction(evt, action); });
 
                     _contextActions.Add(textButton);
                 }
@@ -81,7 +78,7 @@ namespace UI.Inventory.Components
                 UiUtils.MakeVisible(_itemContext);
             });
         }
-        
+
         public void Close()
         {
             IsOpen = false;

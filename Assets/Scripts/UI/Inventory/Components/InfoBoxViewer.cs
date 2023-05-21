@@ -7,17 +7,14 @@ namespace UI.Inventory.Components
 {
     public class InfoBoxViewer
     {
-        private readonly VisualElement _root;
-        private readonly VisualElement _itemInfo;
-        private readonly VisualElement _itemInfoStats;
-        private readonly VisualElement _itemInfoDescriptors;
-        
         private readonly VisualTreeAsset _itemDescriptorTemplate;
-        
-        private readonly Label _itemInfoName;
+        private readonly VisualElement _itemInfo;
         private readonly Label _itemInfoDescription;
+        private readonly VisualElement _itemInfoDescriptors;
 
-        private bool IsOpen { get; set; }
+        private readonly Label _itemInfoName;
+        private readonly VisualElement _itemInfoStats;
+        private readonly VisualElement _root;
 
         public InfoBoxViewer(VisualElement root, VisualElement itemInfo)
         {
@@ -28,12 +25,14 @@ namespace UI.Inventory.Components
             _itemInfoDescription = _itemInfo.Q<Label>("InfoDescription");
             _itemInfoStats = _itemInfo.Q<VisualElement>("ItemInfoStats");
             _itemInfoDescriptors = _itemInfo.Q<VisualElement>("Descriptors");
-            
+
             _itemDescriptorTemplate = Resources.Load<VisualTreeAsset>("UI/Descriptor");
 
             _root = root;
         }
-        
+
+        private bool IsOpen { get; set; }
+
         public void Open(Item item)
         {
             IsOpen = true;
@@ -84,7 +83,7 @@ namespace UI.Inventory.Components
                 UiUtils.MakeVisible(_itemInfo);
             }
         }
-        
+
         public void Close()
         {
             IsOpen = false;

@@ -1,22 +1,20 @@
-using System;
 using Inventory;
+using UI.Inventory.Components;
 using UnityEngine.UIElements;
 
-namespace UI.Inventory
+namespace UI.Inventory.Builders
 {
     public abstract class InventoryViewerBuilder<T> where T : IInventory
     {
-        public VisualElement root;
-        public VisualElement inventoryContainer;
-        public VisualTreeAsset itemDescriptorTemplate;
-        public Action<IDraggable> onDragStart = null;
-        public Action<IDraggable> onDragEnd = null;
-        public readonly T inventory;
         protected readonly bool canMove;
         protected readonly bool canOpenContextMenu;
+        public readonly T inventory;
         protected readonly bool refreshAfterMove;
+        public VisualElement inventoryContainer;
+        public VisualElement root;
 
-        protected InventoryViewerBuilder(T inventory, bool canMove = true, bool canOpenContextMenu = true, bool refreshAfterMove = true)
+        protected InventoryViewerBuilder(T inventory, bool canMove = true, bool canOpenContextMenu = true,
+            bool refreshAfterMove = true)
         {
             this.inventory = inventory;
             this.canMove = canMove;

@@ -22,11 +22,6 @@ namespace Inventory
         {
             _subscribers.Add(subscriber);
         }
-        
-        public void RemoveSubscriber(IInventorySubscriber subscriber)
-        {
-            _subscribers.Remove(subscriber);
-        }
 
         public void NotifySubscribersOnInventoryChanged()
         {
@@ -34,6 +29,11 @@ namespace Inventory
             {
                 subscriber.OnInventoryChanged();
             }
+        }
+
+        public void RemoveSubscriber(IInventorySubscriber subscriber)
+        {
+            _subscribers.Remove(subscriber);
         }
 
         public override Item RemoveItem(int itemID)

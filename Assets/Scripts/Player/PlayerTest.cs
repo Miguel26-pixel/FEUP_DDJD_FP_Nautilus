@@ -4,6 +4,7 @@ using Crafting;
 using DataManager;
 using Inventory;
 using UI.Inventory;
+using UI.Inventory.Builders;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -76,16 +77,23 @@ namespace Player
             {
                 return;
             }
-
+            
             GameObject transferViewer = GameObject.Find("TransferViewer");
             TransferInventoryMenu transferInventoryMenu = transferViewer.GetComponent<TransferInventoryMenu>();
 
             CraftingInventory craftingInventory = CraftingInventory.CreateCraftingInventory();
             
-            PlayerInventoryViewerBuilder playerInventoryViewerBuilder = new PlayerInventoryViewerBuilder(this.playerInventory);
-            GridInventoryViewerBuilder craftingBuilder = new GridInventoryViewerBuilder(craftingInventory, canOpenContextMenu: false);
+            craftingInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
+            craftingInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
+            craftingInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
+            craftingInventory.AddItem(_itemRegistry.Get(0x238E2A2D).CreateInstance());
+            craftingInventory.AddItem(_itemRegistry.Get(0x2E79821C).CreateInstance());
 
-            transferInventoryMenu.ToggleMenu(playerInventoryViewerBuilder, craftingBuilder);
+            PlayerInventoryViewerBuilder playerInventoryViewerBuilder = new(playerInventory);
+            GridInventoryViewerBuilder craftingBuilder = new(craftingInventory, canOpenContextMenu: false);
+
+            transferInventoryMenu.ToggleMenu(playerInventoryViewerBuilder, craftingBuilder,
+                TransferDirection.SourceToDestination );
         }
 
         public void OnRotateClockwise(InputAction.CallbackContext context)

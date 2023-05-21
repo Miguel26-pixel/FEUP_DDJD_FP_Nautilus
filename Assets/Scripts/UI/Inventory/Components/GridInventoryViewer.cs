@@ -1,13 +1,11 @@
 using System;
-using System.Collections.Generic;
 using Inventory;
 using Items;
-using UI.Inventory.Components;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
-namespace UI.Inventory
+namespace UI.Inventory.Components
 {
     public record DraggingProperties() : IDraggable
     {
@@ -32,6 +30,11 @@ namespace UI.Inventory
 
     public class GridInventoryViewer : InventoryViewer<InventoryGrid>
     {
+        private readonly ContextMenuViewer _contextMenuViewer;
+
+        private readonly VisualElement _draggedItem;
+
+        private readonly InfoBoxViewer _infoBoxViewer;
         private readonly InventoryGrid _inventory;
         private readonly BoundsInt _inventoryBounds;
 
@@ -41,13 +44,8 @@ namespace UI.Inventory
 
         private float _cellHeight;
         private float _cellWidth;
-        
-        private readonly InfoBoxViewer _infoBoxViewer;
-        private readonly ContextMenuViewer _contextMenuViewer;
-
-        private readonly VisualElement _draggedItem;
-        private DraggingProperties _draggingProperties;
         private Vector2 _currentMousePosition;
+        private DraggingProperties _draggingProperties;
         private bool _isDragging;
 
         private IDraggable _otherDraggable;
@@ -55,16 +53,17 @@ namespace UI.Inventory
         private bool _registeredGeometryChange;
 
         public GridInventoryViewer(VisualElement root, VisualElement inventoryContainer,
-            VisualTreeAsset itemDescriptorTemplate, InventoryGrid inventory, Action<IDraggable> onDragStart = null, Action<IDraggable> onDragEnd = null,  bool canMove = true, bool canOpenContext = true, bool refreshAfterMove = true
-            ) :
+            InventoryGrid inventory, Action<IDraggable> onDragStart = null, Action<IDraggable> onDragEnd = null,
+            bool canMove = true, bool canOpenContext = true, bool refreshAfterMove = true
+        ) :
             base(
-                root, inventoryContainer, itemDescriptorTemplate, inventory, onDragStart, onDragEnd, canMove, canOpenContext, refreshAfterMove)
+                root, inventoryContainer, inventory, onDragStart, onDragEnd, canMove, canOpenContext, refreshAfterMove)
         {
             _inventory = inventory;
             _inventoryBounds = _inventory.GetBounds();
             _draggedItem = root.Q<VisualElement>("ItemDrag");
             _draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
-            
+
             _infoBoxViewer = new InfoBoxViewer(root, root.Q<VisualElement>("ItemInfo"));
             _contextMenuViewer = new ContextMenuViewer(root, root.Q<VisualElement>("ItemContext"));
         }
@@ -99,7 +98,7 @@ namespace UI.Inventory
                     _draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
                 }
             }
-            
+
             _infoBoxViewer.Update(mousePos);
         }
 
@@ -158,7 +157,7 @@ namespace UI.Inventory
                         RenderIconSquare(relativePositionAndID.relativePosition, relativePositionAndID.rotation,
                             iconElement, item);
                         MergeBorders(relativePositionAndID, background, position, previousID);
-                        
+
                         if (canMove)
                         {
                             cell.RegisterCallback<MouseDownEvent>(evt =>
@@ -209,9 +208,47 @@ namespace UI.Inventory
             }
         }
 
-        private void CloseContext()
+        public override void Rotate(int direction)
         {
-            _contextMenuViewer.Close();
+            if (!_isDragging)
+            {
+                return;
+            }
+
+            _draggingProperties.currentRotation = (_draggingProperties.currentRotation + direction) % 4;
+            _draggingProperties.dragRelativePosition = ItemGrid<bool>.RotatePointMultiple(
+                _draggingProperties.dragRelativePosition, direction);
+            RenderItemDrag();
+        }
+
+        public override void HandleDragStart(IDraggable draggable)
+        {
+            _otherDraggable = draggable;
+        }
+
+        public override void HandleDragEnd(IDraggable draggable)
+        {
+            if (_isDragging)
+            {
+                // item successfully dropped on another inventory
+                if (draggable is not DraggingProperties draggingProperties)
+                {
+                    return;
+                }
+
+                _inventory.RemoveAt(draggingProperties.dragStartPosition.position);
+
+                _isDragging = false;
+                _draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
+                if (refreshAfterMove)
+                {
+                    Refresh();
+                }
+            }
+            else
+            {
+                _otherDraggable = null;
+            }
         }
 
         private void ProcessMouseUpRightCell(EventBase evt, Item item, uint itemID)
@@ -226,13 +263,19 @@ namespace UI.Inventory
                 CloseContext();
                 return;
             }
+
             evt.StopPropagation();
 
             Vector2 position = _currentMousePosition;
             CloseItemInfo();
             _contextMenuViewer.Open(item, itemID, position);
         }
-        
+
+        private void CloseContext()
+        {
+            _contextMenuViewer.Close();
+        }
+
         private void OpenItemInfo(Item item)
         {
             if (_isDragging || _contextMenuViewer.IsOpen)
@@ -246,19 +289,6 @@ namespace UI.Inventory
         private void CloseItemInfo()
         {
             _infoBoxViewer.Close();
-        }
-
-        public override void Rotate(int direction)
-        {
-            if (!_isDragging)
-            {
-                return;
-            }
-
-            _draggingProperties.currentRotation = (_draggingProperties.currentRotation + direction) % 4;
-            _draggingProperties.dragRelativePosition = ItemGrid<bool>.RotatePointMultiple(
-                _draggingProperties.dragRelativePosition, direction);
-            RenderItemDrag();
         }
 
         private void ProcessMouseDownLeftCell(Vector2Int position)
@@ -286,34 +316,101 @@ namespace UI.Inventory
             onDragStart?.Invoke(_draggingProperties);
         }
 
-        public override void HandleDragStart(IDraggable draggable)
+        private void ProcessMouseUpCell(EventBase evt, Vector2Int position)
         {
-            _otherDraggable = draggable;
-        }
-
-        public override void HandleDragEnd(IDraggable draggable)
-        {
-            if (_isDragging)
+            if (_otherDraggable != null)
             {
-                // item successfully dropped on another inventory
-                if(draggable is not DraggingProperties draggingProperties) return;
-            
-                _inventory.RemoveAt(draggingProperties.dragStartPosition.position);
-            
-                _isDragging = false;
-                _draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
-                if (refreshAfterMove)
+                if (_otherDraggable is DraggingProperties draggingProperties)
                 {
-                    Refresh();
+                    ProcessOtherDraggable(evt, position, draggingProperties);
                 }
-            }
-            else
-            {
+                else
+                {
+                    ProcessOtherDraggableSimple(evt, position, _otherDraggable);
+                }
+
                 _otherDraggable = null;
+                return;
             }
+
+            if (!_isDragging)
+            {
+                return;
+            }
+
+            bool[,] itemGrid = ItemGrid<bool>.RotateMultiple(_draggingProperties.draggedItem.Grid,
+                _draggingProperties.currentRotation);
+            BoundsInt bounds = ItemGrid<bool>.GetBounds(itemGrid, true);
+
+            Vector2Int initialPosition =
+                position - (_draggingProperties.dragRelativePosition - new Vector2Int(bounds.x, bounds.y));
+
+            if (!_inventory.CheckFit(_draggingProperties.draggedItem, initialPosition,
+                    _draggingProperties.currentRotation, _draggingProperties.itemID))
+            {
+                return;
+            }
+
+            evt.StopPropagation();
+
+            _inventory.MoveItem(_draggingProperties.dragStartPosition,
+                new ItemPosition(initialPosition, _draggingProperties.currentRotation));
+            _isDragging = false;
+            _draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
+            if (refreshAfterMove)
+            {
+                Refresh();
+            }
+
+            onDragEnd?.Invoke(_draggingProperties);
         }
 
-        private void ProcessMouseUpRoot(MouseUpEvent evt) 
+        private void ProcessOtherDraggable(EventBase evt, Vector2Int position, DraggingProperties draggingProperties)
+        {
+            bool[,] itemGrid = ItemGrid<bool>.RotateMultiple(draggingProperties.draggedItem.Grid,
+                draggingProperties.currentRotation);
+            BoundsInt bounds = ItemGrid<bool>.GetBounds(itemGrid, true);
+
+            Vector2Int initialPosition =
+                position - (draggingProperties.dragRelativePosition - new Vector2Int(bounds.x, bounds.y));
+
+            if (!_inventory.CheckFit(draggingProperties.draggedItem, initialPosition,
+                    draggingProperties.currentRotation))
+            {
+                return;
+            }
+
+            evt.StopPropagation();
+
+            _inventory.AddItem(draggingProperties.Item, initialPosition, draggingProperties.currentRotation);
+
+            if (refreshAfterMove)
+            {
+                Refresh();
+            }
+
+            onDragEnd?.Invoke(draggingProperties);
+        }
+
+        private void ProcessOtherDraggableSimple(EventBase evt, Vector2Int position, IDraggable draggingProperties)
+        {
+            if (!_inventory.CheckFit(draggingProperties.Item, position, 0))
+            {
+                return;
+            }
+
+            evt.StopPropagation();
+
+            _inventory.AddItem(draggingProperties.Item, position, 0);
+            if (refreshAfterMove)
+            {
+                Refresh();
+            }
+
+            onDragEnd?.Invoke(draggingProperties);
+        }
+
+        private void ProcessMouseUpRoot(MouseUpEvent evt)
         {
             if (_isDragging)
             {
@@ -408,97 +505,6 @@ namespace UI.Inventory
                 }
             }
         }
-
-        private void ProcessOtherDraggable(EventBase evt, Vector2Int position, DraggingProperties draggingProperties)
-        {
-            bool[,] itemGrid = ItemGrid<bool>.RotateMultiple(draggingProperties.draggedItem.Grid,
-                draggingProperties.currentRotation);
-            BoundsInt bounds = ItemGrid<bool>.GetBounds(itemGrid, true);
-
-            Vector2Int initialPosition =
-                position - (draggingProperties.dragRelativePosition - new Vector2Int(bounds.x, bounds.y));
-
-            if (!_inventory.CheckFit(draggingProperties.draggedItem, initialPosition,
-                    draggingProperties.currentRotation))
-            {
-                return;
-            }
-            evt.StopPropagation();
-
-            _inventory.AddItem(draggingProperties.Item, initialPosition, draggingProperties.currentRotation);
-            
-            if (refreshAfterMove)
-            {
-                Refresh();
-            }
-            onDragEnd?.Invoke(draggingProperties);
-        }
-        
-        private void ProcessOtherDraggableSimple(EventBase evt, Vector2Int position, IDraggable draggingProperties)
-        {
-            if (!_inventory.CheckFit(draggingProperties.Item, position, 0))
-            {
-                return;
-            }
-            evt.StopPropagation();
-
-            _inventory.AddItem(draggingProperties.Item, position, 0);
-            if (refreshAfterMove)
-            {
-                Refresh();
-            }
-
-            onDragEnd?.Invoke(draggingProperties);
-        }
-
-        private void ProcessMouseUpCell(EventBase evt, Vector2Int position)
-        {
-            if (_otherDraggable != null)
-            {
-                if (_otherDraggable is DraggingProperties draggingProperties)
-                {
-                    ProcessOtherDraggable(evt, position, draggingProperties);
-                }
-                else
-                {
-                    ProcessOtherDraggableSimple(evt, position, _otherDraggable);
-                }
-                
-                _otherDraggable = null;
-                return;
-            }
-            
-            if (!_isDragging)
-            {
-                return;
-            }
-
-            bool[,] itemGrid = ItemGrid<bool>.RotateMultiple(_draggingProperties.draggedItem.Grid,
-                _draggingProperties.currentRotation);
-            BoundsInt bounds = ItemGrid<bool>.GetBounds(itemGrid, true);
-
-            Vector2Int initialPosition =
-                position - (_draggingProperties.dragRelativePosition - new Vector2Int(bounds.x, bounds.y));
-
-            if (!_inventory.CheckFit(_draggingProperties.draggedItem, initialPosition,
-                    _draggingProperties.currentRotation, _draggingProperties.itemID))
-            {
-                return;
-            }
-
-            evt.StopPropagation();
-
-            _inventory.MoveItem(_draggingProperties.dragStartPosition,
-                new ItemPosition(initialPosition, _draggingProperties.currentRotation));
-            _isDragging = false;
-            _draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
-            if (refreshAfterMove)
-            {
-                Refresh();
-            }
-            onDragEnd?.Invoke(_draggingProperties);
-        }
-
 
         private void MergeBorders(RelativePositionAndID relativePositionAndID, VisualElement cell, Vector2Int position,
             uint previousID)
