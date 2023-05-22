@@ -366,7 +366,7 @@ MonoBehaviour:
   boundsSize: 60
   seed: 4
   player: {fileID: 1678036745}
-  chunkPrefab: {fileID: 5382608540069460159, guid: c50d8f676bf4e53f3bee1fef7779aa00, type: 3}
+  chunkPrefab: {fileID: 5382608540069460159, guid: 5ce4b8303c03e926dbe92f284d48c1d4, type: 3}
   generationConfigs: {fileID: 1060819886}
   chunksParent: {fileID: 175995}
   numChunksX: 16
