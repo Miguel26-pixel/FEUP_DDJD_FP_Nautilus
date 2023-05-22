@@ -105,7 +105,7 @@ namespace UI.Crafting
                 CraftingInventory craftingInventory = CraftingInventory.CreateCraftingInventory();
                 craftingInventory.AddItem(resultItem);
                 
-                PlayerInventoryViewerBuilder playerInventoryViewerBuilder = new(inventoryCopy);
+                GridInventoryViewerBuilder playerInventoryViewerBuilder = new(inventoryCopy, canOpenContextMenu: false, refreshAfterMove: true);
                 GridInventoryViewerBuilder craftingBuilder = new(craftingInventory, canOpenContextMenu: false);
                 
                 _craftingMenu.transferInventoryMenu.Open(
