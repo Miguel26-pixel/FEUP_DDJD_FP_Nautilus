@@ -12,7 +12,7 @@ namespace Generation.Resource
             int[,] grid = new int[Mathf.CeilToInt(sampleRegionSize.x / cellSize), Mathf.CeilToInt(sampleRegionSize.y / cellSize)];
             List<Vector2> points = new List<Vector2>();
             List<Vector2> spawnPoints = new List<Vector2>();
-            
+
             spawnPoints.Add(sampleRegionSize/2);
             while (spawnPoints.Count > 0)
             {

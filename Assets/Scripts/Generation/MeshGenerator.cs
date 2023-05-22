@@ -25,6 +25,34 @@ public class MeshGenerator : MonoBehaviour
 
     public Vector3 lastPosition = Vector3.positiveInfinity;
     public Vector3Int lastChunkPosition = new (Int32.MaxValue, Int32.MaxValue, Int32.MaxValue);
+
+    public Chunk[] getChunksAt(Vector2 position, int minY, int maxY)
+    {
+        Vector3Int chunkPosition = ChunkPosition(
+            new Vector3(position.x, 0, position.y));
+        
+        List<Chunk> chunks = new List<Chunk>();
+        
+        for (int y = minY; y <= maxY; y++)
+        {
+            Vector3Int chunkPositionY = chunkPosition;
+            chunkPositionY.y = y;
+
+            
+            
+            if (_chunks.TryGetValue(chunkPositionY, out var chunk))
+            {
+                if (chunkPositionY == new Vector3Int(4, -1, 0))
+                {
+                    Debug.Log("test");
+                }
+                
+                chunks.Add(chunk);
+            }
+        }
+        
+        return chunks.ToArray();
+    }
     
     private void Update()
     {
@@ -36,19 +64,18 @@ public class MeshGenerator : MonoBehaviour
 
     private void UpdateTerrain()
     {
-        Vector3Int playerChunkPosition = ChunkPosition();
+        Vector3Int playerChunkPosition = ChunkPosition(player.transform.position);
 
         if (playerChunkPosition.Equals(lastChunkPosition)) return;
         lastChunkPosition = playerChunkPosition;
 
         UpdateChunks(playerChunkPosition);
-        
-        
     }
 
-    private Vector3Int ChunkPosition()
+    private Vector3Int ChunkPosition(Vector3 position)
     {
-        var position = player.transform.position;
+        position = chunksParent.transform.InverseTransformPoint(position);
+        
         return new Vector3Int(
             Mathf.RoundToInt(position.x / boundsSize),
             Mathf.RoundToInt(position.y / boundsSize),
