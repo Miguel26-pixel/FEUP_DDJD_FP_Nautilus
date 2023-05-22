@@ -8,16 +8,17 @@ namespace Generation.Resource
     {
         public MeshFilter meshFilter;
         public Vector2 point;
-        private Vector2 lastPoint;
 
-        private void Start()
+        private bool settingsChanges = false;
+        
+        private void OnValidate()
         {
-            lastPoint = new Vector2(point.x, point.y);
+            settingsChanges = true;
         }
-
+        
         private void Update()
         {
-            if (Math.Abs(lastPoint.x - point.x) > 0.001)
+            if (settingsChanges)
             {
                 Vector3[] points = FindUpwardSurfacePoints(point.x, point.y);
                 Debug.Log("test");
@@ -27,8 +28,8 @@ namespace Generation.Resource
                     Debug.DrawLine(p, p + Vector3.up * 20, Color.red, 10000);
                     Debug.Log(p);
                 }
-                
-                lastPoint = new Vector2(point.x, point.y);
+
+                settingsChanges = false;
             }
         }
 
@@ -40,6 +41,8 @@ namespace Generation.Resource
             int[] triangles = mesh.triangles;
             
             List<Vector3> points = new List<Vector3>();
+            
+            Vector2 relativePoint = meshFilter.transform.InverseTransformPoint(new Vector2(x, z));
 
             for (int i = 0; i < triangles.Length; i += 3)
             {
@@ -47,11 +50,6 @@ namespace Generation.Resource
                 Vector3 v1 = vertices[triangles[i]];
                 Vector3 v2 = vertices[triangles[i + 1]];
                 Vector3 v3 = vertices[triangles[i + 2]];
-                
-                // TODO: doing mesh to world for debugging, later do world to mesh
-                v1 = meshFilter.transform.TransformPoint(v1);
-                v2 = meshFilter.transform.TransformPoint(v2);
-                v3 = meshFilter.transform.TransformPoint(v3);
                 
                 // Get the normal of the triangle
                 Vector3 normal = Vector3.Cross(v2 - v1, v3 - v1).normalized;
@@ -63,7 +61,7 @@ namespace Generation.Resource
                     Vector2 v1xz = new Vector2(v1.x, v1.z);
                     Vector2 v2xz = new Vector2(v2.x, v2.z);
                     Vector2 v3xz = new Vector2(v3.x, v3.z);
-                    (float u, float v, float w) = BarycentricCoordinates(new Vector2(x, z), v1xz, v2xz, v3xz);
+                    (float u, float v, float w) = BarycentricCoordinates(relativePoint, v1xz, v2xz, v3xz);
                     
                     // Check if the point is inside the triangle
                     if (PointInTriangle(u, v, w))
@@ -72,8 +70,12 @@ namespace Generation.Resource
                         // Get the height of the triangle at the point
                         float height = GetHeightAtPoint(u, v, w, v1.y, v1.y, v1.y);
                         
+                        // Get the point in world space
+                        Vector3 result = new Vector3(x, height, z);
+                        result = meshFilter.transform.TransformPoint(result);
+                        
                         // Add the point to the list
-                        points.Add(new Vector3(x, height, z));
+                        points.Add(result);
                     }
                 }
             }
