@@ -1,48 +1,44 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Generation.Resource
 {
-    public class RaycastSurfacePointsFinder : MonoBehaviour
+    public class RaycastSurfacePointsFinder
     {
-        public Chunk chunk;
-        public Vector2 point;
-        public float boundsSize;
-        public LayerMask layerMask;
-        
-        private bool settingsChanged;
+        private readonly Chunk _chunk;
+        private readonly float _boundsSize;
+        private readonly LayerMask _layerMask;
 
-        private void OnValidate()
+        public RaycastSurfacePointsFinder(Chunk chunk, LayerMask layerMask, float boundsSize)
         {
-            settingsChanged = true;
-        }
-
-        private void Update()
-        {
-            if (settingsChanged)
-            {
-                Vector3[] points = FindUpwardSurfacePoints(point.x, point.y);
-                Debug.Log("test");
-                Debug.DrawLine(new Vector3(point.x, 10, point.y), new Vector3(point.x, 10, point.y) + Vector3.down * 3, Color.yellow);
-
-                foreach (Vector3 p in points)
-                {
-                    Debug.DrawLine(p, p + Vector3.up * 20, Color.red, 10000);
-                    Debug.Log(p);
-                }
-
-                settingsChanged = false;
-            }
+            _chunk = chunk;
+            _layerMask = layerMask;
+            _boundsSize = boundsSize;
         }
 
         public Vector3[] FindUpwardSurfacePoints(float x, float z)
         {
-            if (chunk == null) return Array.Empty<Vector3>();
+            Vector3 yPos = new Vector3(0, _chunk.chunkGridPosition.y * _boundsSize + _boundsSize / 2 + 5, 0);
+            yPos = _chunk.transform.TransformPoint(yPos);
+            
             Vector3 rayStart = new Vector3(x, 
-                chunk.chunkGridPosition.y * boundsSize + boundsSize / 2 + 5, 
+                yPos.y, 
                 z);
 
-            return Physics.Raycast(rayStart, Vector3.down, out RaycastHit hit, boundsSize * 1.2f, layerMask) ? new[] { hit.point } : Array.Empty<Vector3>();
+            RaycastHit[] results = new RaycastHit[5];
+            var size = Physics.RaycastNonAlloc(rayStart, Vector3.down, results, _boundsSize * 1.2f, _layerMask);
+
+            List<Vector3> vectorResults = new List<Vector3>();
+            for (int i = 0; i < size; i++)
+            {
+                if (Vector3.Dot(results[i].normal, Vector3.up) > 0)
+                {
+                    vectorResults.Add(results[i].point);
+                }
+            }
+
+            return vectorResults.ToArray();
         }
     }
 }

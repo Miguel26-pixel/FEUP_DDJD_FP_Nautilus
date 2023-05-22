@@ -4,45 +4,32 @@ using UnityEngine;
 
 namespace Generation.Resource
 {
-    public class TriangleSurfacePointsFinder : MonoBehaviour
+    public class TriangleSurfacePointsFinder
     {
-        public MeshFilter meshFilter;
-        public Vector2 point;
+        private readonly MeshFilter _meshFilter;
 
-        private bool settingsChanges = false;
-        
-        private void OnValidate()
+        public TriangleSurfacePointsFinder(MeshFilter meshFilter)
         {
-            settingsChanges = true;
-        }
-        
-        private void Update()
-        {
-            if (settingsChanges)
-            {
-                Vector3[] points = FindUpwardSurfacePoints(point.x, point.y);
-                Debug.Log("test");
-                
-                foreach (Vector3 p in points)
-                {
-                    Debug.DrawLine(p, p + Vector3.up * 20, Color.red, 10000);
-                    Debug.Log(p);
-                }
-
-                settingsChanges = false;
-            }
+            this._meshFilter = meshFilter;
         }
 
-        public Vector3[] FindUpwardSurfacePoints(float x, float z)
+        public Vector3[] FindUpwardSurfacePoints(Vector2[] search)
         {
-            if (meshFilter == null) return Array.Empty<Vector3>();
-            Mesh mesh = meshFilter.sharedMesh;
+             if (_meshFilter == null) return Array.Empty<Vector3>();
+            Mesh mesh = _meshFilter.sharedMesh;
             Vector3[] vertices = mesh.vertices;
             int[] triangles = mesh.triangles;
             
             List<Vector3> points = new List<Vector3>();
+
+            Vector3[] relativePoints = new Vector3[search.Length];
             
-            Vector2 relativePoint = meshFilter.transform.InverseTransformPoint(new Vector2(x, z));
+            for (int i = 0; i < search.Length; i++)
+            {
+                Vector2 point = search[i];
+                Vector3 relativePoint = _meshFilter.transform.InverseTransformPoint(new Vector3(point.x, 0, point.y));
+                relativePoints[i] = relativePoint;
+            }
 
             for (int i = 0; i < triangles.Length; i += 3)
             {
@@ -61,26 +48,35 @@ namespace Generation.Resource
                     Vector2 v1xz = new Vector2(v1.x, v1.z);
                     Vector2 v2xz = new Vector2(v2.x, v2.z);
                     Vector2 v3xz = new Vector2(v3.x, v3.z);
-                    (float u, float v, float w) = BarycentricCoordinates(relativePoint, v1xz, v2xz, v3xz);
-                    
-                    // Check if the point is inside the triangle
-                    if (PointInTriangle(u, v, w))
+
+                    foreach (var relativePoint in relativePoints)
                     {
-                        // Calculate barycentric coordinates of the point relative to the triangle
-                        // Get the height of the triangle at the point
-                        float height = GetHeightAtPoint(u, v, w, v1.y, v1.y, v1.y);
+                        (float u, float v, float w) = BarycentricCoordinates(new Vector2(relativePoint.x, relativePoint.z), v1xz, v2xz, v3xz);
+                    
+                        // Check if the point is inside the triangle
+                        if (PointInTriangle(u, v, w))
+                        {
+                            // Calculate barycentric coordinates of the point relative to the triangle
+                            // Get the height of the triangle at the point
+                            float height = GetHeightAtPoint(u, v, w, v1.y, v1.y, v1.y);
                         
-                        // Get the point in world space
-                        Vector3 result = new Vector3(x, height, z);
-                        result = meshFilter.transform.TransformPoint(result);
+                            // Get the point in world space
+                            Vector3 result = new Vector3(relativePoint.x, height, relativePoint.z);
+                            result = _meshFilter.transform.TransformPoint(result);
                         
-                        // Add the point to the list
-                        points.Add(result);
+                            // Add the point to the list
+                            points.Add(result);
+                        }
                     }
                 }
             }
             
             return points.ToArray();
+        }
+
+        public Vector3[] FindUpwardSurfacePoints(float x, float z)
+        {
+            return FindUpwardSurfacePoints(new Vector2[]{ new Vector2(x, z) });
         }
         
         private Tuple<float, float, float> BarycentricCoordinates(Vector2 p, Vector2 p1, Vector2 p2, Vector2 p3)

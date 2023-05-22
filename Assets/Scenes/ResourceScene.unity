@@ -623,7 +623,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1642166463}
-  - component: {fileID: 1642166462}
   - component: {fileID: 1642166464}
   m_Layer: 0
   m_Name: SurfaceFinder
@@ -632,20 +631,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1642166462
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1642166461}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7698478569ee4763b4b649b4ac324784, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  meshFilter: {fileID: 0}
-  point: {x: 0, y: 0}
 --- !u!4 &1642166463
 Transform:
   m_ObjectHideFlags: 0
@@ -670,12 +655,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1642166461}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6091f46c04d143e5968a3a304566a448, type: 3}
+  m_Script: {fileID: 11500000, guid: 358cc80ac0864a428c309cc2c09c9147, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   chunk: {fileID: 0}
   point: {x: 0, y: 0}
-  boundsSize: 60
+  boundsSize: 0
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  meshFilter: {fileID: 0}
 --- !u!1 &1678036741
 GameObject:
   m_ObjectHideFlags: 0
