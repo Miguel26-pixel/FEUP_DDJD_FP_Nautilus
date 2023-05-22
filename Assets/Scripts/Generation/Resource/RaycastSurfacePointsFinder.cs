@@ -6,21 +6,19 @@ namespace Generation.Resource
 {
     public class RaycastSurfacePointsFinder
     {
-        private readonly Chunk _chunk;
         private readonly float _boundsSize;
         private readonly LayerMask _layerMask;
 
-        public RaycastSurfacePointsFinder(Chunk chunk, LayerMask layerMask, float boundsSize)
+        public RaycastSurfacePointsFinder(LayerMask layerMask, float boundsSize)
         {
-            _chunk = chunk;
             _layerMask = layerMask;
             _boundsSize = boundsSize;
         }
 
-        public Vector3[] FindUpwardSurfacePoints(float x, float z)
+        public Vector3[] FindUpwardSurfacePoints(Chunk chunk, float x, float z)
         {
-            Vector3 yPos = new Vector3(0, _chunk.chunkGridPosition.y * _boundsSize + _boundsSize / 2 + 5, 0);
-            yPos = _chunk.transform.TransformPoint(yPos);
+            Vector3 yPos = new Vector3(0, chunk.chunkGridPosition.y * _boundsSize + _boundsSize / 2 + 5, 0);
+            yPos = chunk.transform.TransformPoint(yPos);
             
             Vector3 rayStart = new Vector3(x, 
                 yPos.y, 

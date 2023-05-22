@@ -38,8 +38,8 @@ namespace Generation.Resource
         public Vector3[] FindUpwardSurfacePoints(float x, float z)
         {
             if (chunk == null) return new Vector3[]{};
-            RaycastSurfacePointsFinder finder = new RaycastSurfacePointsFinder(chunk, layerMask, boundsSize);
-            return finder.FindUpwardSurfacePoints(x, z);
+            RaycastSurfacePointsFinder finder = new RaycastSurfacePointsFinder(layerMask, boundsSize);
+            return finder.FindUpwardSurfacePoints(chunk, x, z);
         }
     }
 }

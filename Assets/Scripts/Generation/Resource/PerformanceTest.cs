@@ -78,13 +78,13 @@ namespace Generation.Resource
         
         private void Raycasting(float minX, float maxX, float minZ, float maxZ, int step)
         {
-            RaycastSurfacePointsFinder finder = new RaycastSurfacePointsFinder(chunk, layerMask, boundsSize);
+            RaycastSurfacePointsFinder finder = new RaycastSurfacePointsFinder(layerMask, boundsSize);
 
             for (float x = minX; x < maxX; x += step)
             {
                 for (float z = minZ; z < maxZ; z += step)
                 {
-                    Vector3[] points = finder.FindUpwardSurfacePoints(x, z);
+                    Vector3[] points = finder.FindUpwardSurfacePoints(chunk, x, z);
 
                     foreach (var point in points)
                     {
