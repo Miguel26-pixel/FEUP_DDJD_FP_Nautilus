@@ -33,7 +33,8 @@ public class CharacterMovement : MonoBehaviour
     float groundGravity = -.05f;
 
     //Life Points
-    public int Health = 100;
+    public int Health = 1000;
+    public int maxhealth = 1000;
 
     void FixedUpdate()
     {
