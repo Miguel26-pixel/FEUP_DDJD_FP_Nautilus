@@ -374,7 +374,8 @@ MonoBehaviour:
   numChunksZ: 16
   lastPosition: {x: Infinity, y: Infinity, z: Infinity}
   lastChunkPosition: {x: 2147483647, y: 2147483647, z: 2147483647}
-  resourceGeneratorMono: {fileID: 1271832657}
+  pointsGeneratorMono: {fileID: 1271832657}
+  resourceGenerator: {fileID: 1271832658}
 --- !u!4 &1060819885
 Transform:
   m_ObjectHideFlags: 0
@@ -414,6 +415,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1271832656}
   - component: {fileID: 1271832657}
+  - component: {fileID: 1271832658}
   m_Layer: 0
   m_Name: ResourceGenerator
   m_TagString: Untagged
@@ -453,8 +455,22 @@ MonoBehaviour:
     numSamplesBeforeRejection: 30
   - radius: 10
     numSamplesBeforeRejection: 30
-  pointsCount: 0
-  testObject: {fileID: 1814693354015679715, guid: 97046f96da47ca68d8fc5b38da494980, type: 3}
+--- !u!114 &1271832658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1271832655}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c88b368e85046aea83ef7f4aafa797a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 8
+  test: {fileID: 1814693354015679715, guid: 97046f96da47ca68d8fc5b38da494980, type: 3}
 --- !u!1 &1493078992
 GameObject:
   m_ObjectHideFlags: 0
@@ -709,6 +725,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1642166463}
+  - component: {fileID: 1642166464}
   m_Layer: 0
   m_Name: SurfaceFinder
   m_TagString: Untagged
@@ -731,6 +748,25 @@ Transform:
   m_Father: {fileID: 1493078993}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1642166464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1642166461}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 358cc80ac0864a428c309cc2c09c9147, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chunk: {fileID: 0}
+  point: {x: 0, y: 0}
+  boundsSize: 0
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  meshFilter: {fileID: 0}
 --- !u!1 &1678036741
 GameObject:
   m_ObjectHideFlags: 0

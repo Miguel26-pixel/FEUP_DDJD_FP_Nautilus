@@ -22,12 +22,14 @@ public class MeshGenerator : MonoBehaviour
     public int numChunksZ = 1;
 
     private readonly Dictionary<Vector3Int, Chunk> _chunks = new();
+    private readonly Dictionary<Vector2Int, float[,]> _biomeNoise = new();
     private readonly List<Chunk> _activeChunks = new();
 
     public Vector3 lastPosition = Vector3.positiveInfinity;
     public Vector3Int lastChunkPosition = new (Int32.MaxValue, Int32.MaxValue, Int32.MaxValue);
     
-    public ResourceGeneratorMono resourceGeneratorMono;
+    public PointsGeneratorMono pointsGeneratorMono;
+    public ResourceGenerator resourceGenerator;
 
     public Chunk[] getChunksAt(Vector2 position, int minY, int maxY)
     {
@@ -111,9 +113,17 @@ public class MeshGenerator : MonoBehaviour
                         currentChunk = chunkObject.GetComponent<Chunk>();
                         currentChunk.chunkGridPosition = new Vector3Int(x, y, z);
                         ProcessingResult result = currentChunk.Generate(isoLevel, boundsSize, seed);
+
+                        if (!_biomeNoise.ContainsKey(new Vector2Int(x, z)))
+                        {
+                            _biomeNoise.Add(new Vector2Int(x, z), result.biomeNoise);
+                        }
+
                         _chunks[chunkPosition] = currentChunk;
                         currentChunk.colorGenerator.UpdateColors(seed);
-                        resourceGeneratorMono.resourceGenerator.GeneratePoints(new Vector2Int(x, z));
+                        LinkedList<Vector2>[] points = pointsGeneratorMono.pointsGenerator.GeneratePoints(new Vector2Int(x, z));
+                        
+                        resourceGenerator.GenerateResources(currentChunk, result.biomeNoise, points);
                     }
 
                     _activeChunks.Add(currentChunk);
