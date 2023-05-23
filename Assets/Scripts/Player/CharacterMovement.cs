@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.InputSystem;
 
 public class CharacterMovement : MonoBehaviour
@@ -10,6 +11,7 @@ public class CharacterMovement : MonoBehaviour
     CharacterController characterController;
     Animator animator;
     Rigidbody playerRigidbody;
+    public Image healthBar;
 
     // Movement
     Vector2 currentMovementInput;
@@ -60,6 +62,7 @@ public class CharacterMovement : MonoBehaviour
     {
         animator.SetTrigger("Damage1");
         Health -= amount;
+        healthBar.fillAmount = Health/maxhealth;
         if (Health < 0)
         {
             Health = 0;
