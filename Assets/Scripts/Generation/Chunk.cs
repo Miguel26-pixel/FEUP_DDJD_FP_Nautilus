@@ -100,4 +100,14 @@ public class Chunk : MonoBehaviour
         GenerateMesh(triangles);
         GenerateCollider();
     }
+    
+    public Vector3 GetWorldPosition(float boundsSize)
+    {
+        Vector3 local = new Vector3(
+            chunkGridPosition.x * boundsSize,
+            chunkGridPosition.y * boundsSize,
+            chunkGridPosition.z * boundsSize);
+        
+        return transform.TransformPoint(local);
+    }
 }

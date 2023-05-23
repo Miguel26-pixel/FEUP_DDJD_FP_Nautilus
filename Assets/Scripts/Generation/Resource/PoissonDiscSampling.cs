@@ -5,8 +5,10 @@ namespace Generation.Resource
 {
     public static class PoissonDiscSampling
     {
-        public static List<Vector2> GeneratePoints(float radius, Vector2 sampleRegionSize, int numSamplesBeforeRejection = 30)
+        public static List<Vector2> GeneratePoints(float radius, Vector2 sampleRegionSize, Vector2 sampleStart, int numSamplesBeforeRejection = 30, int seed = 0)
         {
+            Random.State state = Random.state;
+            Random.InitState(seed);
             float cellSize = radius / Mathf.Sqrt(2);
             
             int[,] grid = new int[Mathf.CeilToInt(sampleRegionSize.x / cellSize), Mathf.CeilToInt(sampleRegionSize.y / cellSize)];
@@ -28,7 +30,7 @@ namespace Generation.Resource
 
                     if (IsValid(candidate, sampleRegionSize, cellSize, radius, points, grid))
                     {
-                        points.Add(candidate);
+                        points.Add(candidate + sampleStart);
                         spawnPoints.Add(candidate);
                         grid[(int) (candidate.x / cellSize), (int) (candidate.y / cellSize)] = points.Count;
                         candidateAccepted = true;
@@ -42,6 +44,7 @@ namespace Generation.Resource
                 }
             }
 
+            Random.state = state;
             return points;
         }
 

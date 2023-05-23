@@ -29,7 +29,7 @@ public class GenerationTest : MonoBehaviour
     {
         raycastSurfacePointsFinder = new RaycastSurfacePointsFinder(layerMask, boundsSize);
 
-        points = PoissonDiscSampling.GeneratePoints(radius, sampleRegionSize, numSamplesBeforeRejection);
+        points = PoissonDiscSampling.GeneratePoints(radius, sampleRegionSize, new Vector2(0,0), numSamplesBeforeRejection);
         
         pointsWorld = new List<Vector3>();
         foreach (Vector2 point in points)
