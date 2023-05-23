@@ -449,7 +449,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings:
-  - radius: 3
+  - radius: 5
+    numSamplesBeforeRejection: 30
+  - radius: 10
     numSamplesBeforeRejection: 30
   pointsCount: 0
   testObject: {fileID: 1814693354015679715, guid: 97046f96da47ca68d8fc5b38da494980, type: 3}

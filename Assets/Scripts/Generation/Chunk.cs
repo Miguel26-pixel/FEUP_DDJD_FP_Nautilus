@@ -30,10 +30,13 @@ public class Chunk : MonoBehaviour
         _meshCollider.sharedMesh = _meshFilter.sharedMesh;
     }
 
-    private Triangle[] GenerateTriangles(float isoLevel, float boundsSize, int seed)
+    private ProcessingResult GenerateNoise(float boundsSize, int seed)
     {
-        var pointsBuffer = _noiseGenerator.Generate(chunkGridPosition, boundsSize, seed);
+        return _noiseGenerator.Generate(chunkGridPosition, boundsSize, seed);
+    }
 
+    private Triangle[] GenerateTriangles(float isoLevel, ComputeBuffer pointsBuffer)
+    {
         int numVoxelsPerAxis = _noiseGenerator.numPointsPerAxis - 1;
         int numVoxels = numVoxelsPerAxis * numVoxelsPerAxis * numVoxelsPerAxis;
         int maxTriangleCount = numVoxels * 5;
@@ -94,11 +97,14 @@ public class Chunk : MonoBehaviour
         mesh.RecalculateNormals();
     }
 
-    public void Generate(float isoLevel, float chunkSize, int seed)
+    public ProcessingResult Generate(float isoLevel, float chunkSize, int seed)
     {
-        Triangle[] triangles = GenerateTriangles(isoLevel, chunkSize, seed);
+        ProcessingResult result = GenerateNoise(chunkSize, seed);
+        Triangle[] triangles = GenerateTriangles(isoLevel, result.pointsBuffer);
         GenerateMesh(triangles);
         GenerateCollider();
+
+        return result;
     }
     
     public Vector3 GetWorldPosition(float boundsSize)

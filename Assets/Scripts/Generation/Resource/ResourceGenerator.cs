@@ -13,13 +13,19 @@ namespace Generation.Resource
     
     public record ChunkPoints
     {
-        public readonly List<Vector2> points = new List<Vector2>();
+        public readonly LinkedList<Vector2>[] points;
         // A list of whether each resource type has been generated in this chunk
         public readonly bool[] generated;
         
         public ChunkPoints(int size)
         {
             generated = new bool[size];
+            points = new LinkedList<Vector2>[size];
+
+            for (int i = 0; i < size; i++)
+            {
+                points[i] = new LinkedList<Vector2>();
+            }
         }
     }
 
@@ -39,7 +45,7 @@ namespace Generation.Resource
         // Cells can span multiple chunks
         // Cells are generated in a grid pattern
         // The size of the grid is determined by the resource radius
-        private Dictionary<Vector2Int, bool>[] _cells;
+        private HashSet<Vector2Int>[] _cells;
         public List<Vector2> pointsTest = new List<Vector2>();
         
         private readonly float _chunkSize;
@@ -51,15 +57,15 @@ namespace Generation.Resource
             _chunkSize = chunkSize;
             _seed = seed;
             _chunkPoints = new Dictionary<Vector2Int, ChunkPoints>();
-            _cells = new Dictionary<Vector2Int, bool>[_settings.Count];
+            _cells = new HashSet<Vector2Int>[_settings.Count];
             
             for (int i = 0; i < _settings.Count; i++)
             {
-                _cells[i] = new Dictionary<Vector2Int, bool>();
+                _cells[i] = new HashSet<Vector2Int>();
             }
         }
 
-        public List<Vector2> GeneratePoints(Vector2Int chunkPosition)
+        public LinkedList<Vector2>[] GeneratePoints(Vector2Int chunkPosition)
         {
             ChunkPoints chunkPoints;
             if (!_chunkPoints.TryGetValue(chunkPosition, out chunkPoints))
@@ -91,7 +97,7 @@ namespace Generation.Resource
         private void GeneratePointsInCell(Vector2Int cellPosition, int cellIndex)
         {
             // If cell is already generated, return
-            if (_cells[cellIndex].ContainsKey(cellPosition))
+            if (_cells[cellIndex].Contains(cellPosition))
             {
                 return;
             }
@@ -119,7 +125,7 @@ namespace Generation.Resource
                     _chunkPoints[chunkPosition] = chunkPoints;
                 }
                 
-                chunkPoints.points.Add(newPoint);
+                chunkPoints.points[cellIndex].AddLast(newPoint);
                 pointsTest.Add(newPoint);
                 alteredChunks.Add(chunkPosition);
             }
@@ -138,14 +144,14 @@ namespace Generation.Resource
             }
             
             // Mark cell as generated
-            _cells[cellIndex][cellPosition] = true;
+            _cells[cellIndex].Add(cellPosition);
         }
 
         private bool CheckGeneratedCells(HashSet<Vector2Int> cells, int cellIndex)
         {
             foreach (var cell in cells)
             {
-                if (!_cells[cellIndex].ContainsKey(cell))
+                if (!_cells[cellIndex].Contains(cell))
                 {
                     return false;
                 }

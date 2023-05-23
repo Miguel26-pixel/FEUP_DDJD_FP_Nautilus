@@ -110,7 +110,7 @@ public class MeshGenerator : MonoBehaviour
                         chunkObject.name = $"Chunk {x} {y} {z}";
                         currentChunk = chunkObject.GetComponent<Chunk>();
                         currentChunk.chunkGridPosition = new Vector3Int(x, y, z);
-                        currentChunk.Generate(isoLevel, boundsSize, seed);
+                        ProcessingResult result = currentChunk.Generate(isoLevel, boundsSize, seed);
                         _chunks[chunkPosition] = currentChunk;
                         currentChunk.colorGenerator.UpdateColors(seed);
                         resourceGeneratorMono.resourceGenerator.GeneratePoints(new Vector2Int(x, z));
