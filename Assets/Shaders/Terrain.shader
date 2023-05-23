@@ -13,9 +13,7 @@ Shader "Custom/Terrain"
         LOD 200
 
         CGPROGRAM
-// Upgrade NOTE: excluded shader from DX11, OpenGL ES 2.0 because it uses unsized arrays
-#pragma exclude_renderers d3d11 gles
-        #define SHADER_API_D3D11 1
+
         // Physically based Standard lighting model, and enable shadows on all light types
         #pragma surface surf Standard fullforwardshadows
 
