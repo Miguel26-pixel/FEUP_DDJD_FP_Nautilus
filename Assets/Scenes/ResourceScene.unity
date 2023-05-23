@@ -374,6 +374,7 @@ MonoBehaviour:
   numChunksZ: 16
   lastPosition: {x: Infinity, y: Infinity, z: Infinity}
   lastChunkPosition: {x: 2147483647, y: 2147483647, z: 2147483647}
+  resourceGeneratorMono: {fileID: 1271832657}
 --- !u!4 &1060819885
 Transform:
   m_ObjectHideFlags: 0
@@ -401,7 +402,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: feb6090dee185e3ee8bd73754a3dbd4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chunkDistanceRadius: 5
+  chunkDistanceRadius: 3
   sqrCheckDistanceInterval: 10
 --- !u!1 &1271832655
 GameObject:
@@ -449,7 +450,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settings:
   - radius: 3
-    numSamplesBeforeRejection: 0
+    numSamplesBeforeRejection: 30
+  pointsCount: 0
+  testObject: {fileID: 1814693354015679715, guid: 97046f96da47ca68d8fc5b38da494980, type: 3}
 --- !u!1 &1493078992
 GameObject:
   m_ObjectHideFlags: 0

@@ -13,10 +13,14 @@ namespace Generation.Resource
     
     public record ChunkPoints
     {
-        public Vector2Int chunkPosition;
-        public List<Vector2> points;
+        public readonly List<Vector2> points = new List<Vector2>();
         // A list of whether each resource type has been generated in this chunk
-        public List<bool> generated;
+        public readonly bool[] generated;
+        
+        public ChunkPoints(int size)
+        {
+            generated = new bool[size];
+        }
     }
 
     public class ResourceGenerator
@@ -35,25 +39,24 @@ namespace Generation.Resource
         // Cells can span multiple chunks
         // Cells are generated in a grid pattern
         // The size of the grid is determined by the resource radius
-        private List<Dictionary<Vector2Int, bool>> _cells;
+        private Dictionary<Vector2Int, bool>[] _cells;
+        public List<Vector2> pointsTest = new List<Vector2>();
         
         private readonly float _chunkSize;
         private readonly int _seed;
         
         public ResourceGenerator(List<ResourceGeneratorSettings> settings, float chunkSize, int seed)
         {
-            this._settings = settings;
+            _settings = settings;
             _chunkSize = chunkSize;
             _seed = seed;
             _chunkPoints = new Dictionary<Vector2Int, ChunkPoints>();
-            _cells = new List<Dictionary<Vector2Int, bool>>();
+            _cells = new Dictionary<Vector2Int, bool>[_settings.Count];
             
-            // Tests
-
-            var set = TouchingCells(new Vector2Int(0, 0), 0);
-            var set2 = TouchingCells(new Vector2Int(0, 1), 0);
-
-            Debug.Log(set.Count);
+            for (int i = 0; i < _settings.Count; i++)
+            {
+                _cells[i] = new Dictionary<Vector2Int, bool>();
+            }
         }
 
         public List<Vector2> GeneratePoints(Vector2Int chunkPosition)
@@ -61,7 +64,7 @@ namespace Generation.Resource
             ChunkPoints chunkPoints;
             if (!_chunkPoints.TryGetValue(chunkPosition, out chunkPoints))
             {
-                chunkPoints = new ChunkPoints();
+                chunkPoints = new ChunkPoints(_settings.Count);
             }
             _chunkPoints[chunkPosition] = chunkPoints;
 
@@ -74,6 +77,7 @@ namespace Generation.Resource
                 }
 
                 HashSet<Vector2Int> touchingCells = TouchingCells(chunkPosition, cellIndex);
+                
 
                 foreach (var cellPosition in touchingCells)
                 {
@@ -87,7 +91,7 @@ namespace Generation.Resource
         private void GeneratePointsInCell(Vector2Int cellPosition, int cellIndex)
         {
             // If cell is already generated, return
-            if (_cells[cellIndex][cellPosition])
+            if (_cells[cellIndex].ContainsKey(cellPosition))
             {
                 return;
             }
@@ -95,7 +99,6 @@ namespace Generation.Resource
             List<Vector2> points = PoissonDiscSampling.GeneratePoints(
                 _settings[cellIndex].radius, 
                 CellSamplingRegion(cellIndex),
-                CellSamplingStart(cellIndex),
                 _settings[cellIndex].numSamplesBeforeRejection, 
                 CellSeed(cellPosition, cellIndex));
             
@@ -104,14 +107,20 @@ namespace Generation.Resource
             // Assign points to chunks
             foreach (Vector2 point in points)
             {
-                Vector2Int chunkPosition = ChunkPosition(point);
+                Vector2 newPoint = new Vector2(point.x, point.y);
+                newPoint += CellWorldPosition(cellPosition, cellIndex) + CellSamplingStart(cellIndex);
+                
+                Vector2Int chunkPosition = ChunkPosition(newPoint);
+                
                 ChunkPoints chunkPoints;
                 if (!_chunkPoints.TryGetValue(chunkPosition, out chunkPoints))
                 {
-                    chunkPoints = new ChunkPoints();
+                    chunkPoints = new ChunkPoints(_settings.Count);
                     _chunkPoints[chunkPosition] = chunkPoints;
                 }
-                chunkPoints.points.Add(point);
+                
+                chunkPoints.points.Add(newPoint);
+                pointsTest.Add(newPoint);
                 alteredChunks.Add(chunkPosition);
             }
             
@@ -136,7 +145,7 @@ namespace Generation.Resource
         {
             foreach (var cell in cells)
             {
-                if (!_cells[cellIndex][cell])
+                if (!_cells[cellIndex].ContainsKey(cell))
                 {
                     return false;
                 }
@@ -153,7 +162,7 @@ namespace Generation.Resource
             );
         }
         
-        private float CellRadius(int cellIndex)
+        private float CellSize(int cellIndex)
         {
             return _settings[cellIndex].radius * 20;
         }
@@ -165,8 +174,8 @@ namespace Generation.Resource
 
         private Vector2 CellSamplingRegion(int cellIndex)
         {
-            return new Vector2(CellRadius(cellIndex) - CellPadding(cellIndex) * 2, 
-                CellRadius(cellIndex) - CellPadding(cellIndex) * 2);
+            return new Vector2(CellSize(cellIndex) - CellPadding(cellIndex) * 2, 
+                CellSize(cellIndex) - CellPadding(cellIndex) * 2);
         }
 
         private Vector2 CellSamplingStart(int cellIndex)
@@ -183,8 +192,17 @@ namespace Generation.Resource
         // Top left corner of the cell
         private Vector2Int CellPosition(Vector2 position, int cellIndex)
         {
-            int cellRadius = (int) CellRadius(cellIndex);
-            return new Vector2Int((int) (position.x / cellRadius), (int) (position.y / cellRadius));
+            int cellSize = (int) CellSize(cellIndex);
+            return new Vector2Int(
+                Mathf.FloorToInt(position.x / cellSize),
+                Mathf.FloorToInt(position.y / cellSize)
+            );
+        }
+
+        private Vector2 CellWorldPosition(Vector2Int cellPosition, int cellIndex)
+        {
+            int cellRadius = (int) CellSize(cellIndex);
+            return new Vector2(cellPosition.x * cellRadius, cellPosition.y * cellRadius);
         }
 
         private HashSet<Vector2Int> TouchingCells(Vector2Int chunkPosition, int cellIndex)
@@ -194,7 +212,7 @@ namespace Generation.Resource
             Vector2 chunkPositionWorldBottomLeft = chunkPositionWorld + new Vector2(-_chunkSize / 2, _chunkSize / 2);
             Vector2 chunkPositionWorldBottomRight = chunkPositionWorld + new Vector2(_chunkSize / 2, _chunkSize / 2);
             Vector2 chunkPositionWorldTopRight = chunkPositionWorld + new Vector2(_chunkSize / 2, -_chunkSize / 2);
-            
+
             HashSet<Vector2Int> touchingCells = new HashSet<Vector2Int>();
             
             Vector2Int topLeftCell = CellPosition(chunkPositionWorldTopLeft, cellIndex);

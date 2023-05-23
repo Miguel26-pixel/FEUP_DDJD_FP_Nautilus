@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Generation.Resource;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -25,6 +26,8 @@ public class MeshGenerator : MonoBehaviour
 
     public Vector3 lastPosition = Vector3.positiveInfinity;
     public Vector3Int lastChunkPosition = new (Int32.MaxValue, Int32.MaxValue, Int32.MaxValue);
+    
+    public ResourceGeneratorMono resourceGeneratorMono;
 
     public Chunk[] getChunksAt(Vector2 position, int minY, int maxY)
     {
@@ -110,6 +113,7 @@ public class MeshGenerator : MonoBehaviour
                         currentChunk.Generate(isoLevel, boundsSize, seed);
                         _chunks[chunkPosition] = currentChunk;
                         currentChunk.colorGenerator.UpdateColors(seed);
+                        resourceGeneratorMono.resourceGenerator.GeneratePoints(new Vector2Int(x, z));
                     }
 
                     _activeChunks.Add(currentChunk);
