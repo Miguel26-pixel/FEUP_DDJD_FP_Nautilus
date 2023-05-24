@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Generation.Resource
@@ -11,7 +12,7 @@ namespace Generation.Resource
         public void Start()
         {
             MeshGenerator generator = GameObject.Find("GenerationManager").GetComponent<MeshGenerator>();
-            pointsGenerator = new PointsGenerator(generator.resourceGeneratorConfigs, generator.boundsSize, generator.seed);
+            pointsGenerator = new PointsGenerator(generator.resourceGeneratorConfigs , generator.boundsSize, generator.seed);
         }
     }
 }

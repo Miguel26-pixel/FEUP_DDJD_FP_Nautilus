@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Generation.Resource
 {
     [Serializable]
-    public record ResourceGeneratorSettings
+    public class ResourceGeneratorSettings
     {
         public float radius = 120;
         public int numSamplesBeforeRejection = 20;
@@ -17,8 +18,12 @@ namespace Generation.Resource
         public float maxSlope = 1f;
         public float chanceOfGenerating = 1f;
         public GameObject prefab;
+        public bool isClustered = false;
+        public float clusterPointRadius = 2f;
+        public float clusterRadius = 10f;
+        public float clusterChance = 1f;
     }
-    
+
     public record ChunkPoints
     {
         public readonly LinkedList<Vector2>[] points;
@@ -101,6 +106,42 @@ namespace Generation.Resource
             return chunkPoints.points;
         }
 
+        private List<Vector2> GenerateCluster(Vector2 position, int cellIndex)
+        {
+            ResourceGeneratorSettings settings = _settings[cellIndex];
+            int seed = (int) (position.x * 10000 + position.y * 10000);
+
+            List<Vector2> randomCircle = PoissonDiscSampling.GeneratePoints(
+                settings.clusterPointRadius,
+                new Vector2(settings.clusterRadius * 2, settings.clusterRadius * 2),
+                settings.numSamplesBeforeRejection,
+                seed
+            );
+            
+            List<Vector2> resourceObjects = new();
+            Random.State state = Random.state;
+            Random.InitState(seed);
+            
+            foreach (Vector2 point in randomCircle)
+            {
+                Vector2 newPoint = point - new Vector2(settings.clusterRadius, settings.clusterRadius);
+                if (newPoint.x * newPoint.x + newPoint.y * newPoint.y > settings.clusterRadius * settings.clusterRadius)
+                {
+                    continue;
+                }
+                
+                if (!(Random.value < settings.clusterChance))
+                {
+                    continue;
+                }
+                
+                resourceObjects.Add(new Vector2(position.x + newPoint.x, position.y + newPoint.y));
+            }
+            
+            Random.state = state;
+            return resourceObjects;
+        }
+
         private void GeneratePointsInCell(Vector2Int cellPosition, int cellIndex)
         {
             // If cell is already generated, return
@@ -114,6 +155,18 @@ namespace Generation.Resource
                 CellSamplingRegion(cellIndex),
                 _settings[cellIndex].numSamplesBeforeRejection, 
                 CellSeed(cellPosition, cellIndex));
+            
+            if (_settings[cellIndex].isClustered)
+            {
+                List<Vector2> newPoints = new List<Vector2>();
+                
+                foreach (Vector2 point in points)
+                {
+                    newPoints.AddRange(GenerateCluster(point, cellIndex));
+                }
+                
+                points = newPoints;
+            }
             
             HashSet<Vector2Int> alteredChunks = new HashSet<Vector2Int>();
             

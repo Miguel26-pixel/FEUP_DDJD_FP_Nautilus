@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Pool;
 using Random = UnityEngine.Random;
@@ -15,8 +16,8 @@ namespace Generation.Resource
     public class ResourceGenerator : MonoBehaviour
     {
         public LayerMask layerMask;
-        // public GenerationConfigs generationConfigs;
-        
+        public GameObject resourceParent;
+
         private RaycastSurfacePointsFinder _pointsFinder;
         private Dictionary<Vector3Int, List<ResourceObject>[]> _resourceObjects;
         private Dictionary<Vector3Int, List<GameObject>[]> _activeResourceObjects;
@@ -38,7 +39,7 @@ namespace Generation.Resource
                 int i1 = i;
                 _objectPools[i] = new ObjectPool<GameObject>(() =>
                 {
-                    GameObject gameObject = Instantiate(_resourceGeneratorConfigs[i1].prefab);
+                    GameObject gameObject = Instantiate(_resourceGeneratorConfigs[i1].prefab, resourceParent.transform, true);
                     gameObject.SetActive(false);
                     return gameObject;
                 }, OnTakeFromPool, defaultCapacity: 100, actionOnRelease: OnReturnToPool, actionOnDestroy: OnDestroyFromPool);
