@@ -6,14 +6,12 @@ namespace Generation.Resource
 {
     public class PointsGeneratorMono : MonoBehaviour
     {
-        // A list of settings for each resource type
-        public List<ResourceGeneratorSettings> settings;
         public PointsGenerator pointsGenerator;
 
         public void Start()
         {
             MeshGenerator generator = GameObject.Find("GenerationManager").GetComponent<MeshGenerator>();
-            pointsGenerator = new PointsGenerator(settings, generator.boundsSize, generator.seed);
+            pointsGenerator = new PointsGenerator(generator.resourceGeneratorConfigs, generator.boundsSize, generator.seed);
         }
     }
 }

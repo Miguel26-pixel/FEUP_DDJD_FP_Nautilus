@@ -23,10 +23,11 @@ namespace Generation.Resource
         {
             if (settingsChanged)
             {
-                Vector3[] points = FindUpwardSurfacePoints(point.x, point.y);
+                HitInformation[] points = FindUpwardSurfacePoints(point.x, point.y);
 
-                foreach (Vector3 p in points)
+                foreach (var r in points)
                 {
+                    Vector3 p = r.position;
                     Debug.DrawLine(p, p + Vector3.up * 20, Color.red, 10000);
                     Debug.Log(p);
                 }
@@ -35,9 +36,9 @@ namespace Generation.Resource
             }
         }
 
-        public Vector3[] FindUpwardSurfacePoints(float x, float z)
+        public HitInformation[] FindUpwardSurfacePoints(float x, float z)
         {
-            if (chunk == null) return new Vector3[]{};
+            if (chunk == null) return new HitInformation[]{};
             RaycastSurfacePointsFinder finder = new RaycastSurfacePointsFinder(layerMask, boundsSize);
             return finder.FindUpwardSurfacePoints(chunk, x, z);
         }

@@ -84,10 +84,11 @@ namespace Generation.Resource
             {
                 for (float z = minZ; z < maxZ; z += step)
                 {
-                    Vector3[] points = finder.FindUpwardSurfacePoints(chunk, x, z);
+                    HitInformation[] points = finder.FindUpwardSurfacePoints(chunk, x, z);
 
-                    foreach (var point in points)
+                    foreach (var r in points)
                     {
+                        Vector3 point = r.position;
                         Debug.Log(x + ", " + point.y + ", " + z);
 
                         Debug.DrawLine(point, point + Vector3.up * 20, Color.red, 10000);

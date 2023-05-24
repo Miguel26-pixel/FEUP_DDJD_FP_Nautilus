@@ -14,6 +14,7 @@ public class MeshGenerator : MonoBehaviour
 
     public GameObject chunkPrefab;
     public GenerationConfigs generationConfigs;
+    public ResourceGeneratorSettings[] resourceGeneratorConfigs;
 
     public GameObject chunksParent;
     

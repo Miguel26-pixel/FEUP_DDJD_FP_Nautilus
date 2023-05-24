@@ -16,6 +16,9 @@ public class Chunk : MonoBehaviour
     private ComputeBuffer triCountBuffer;
     public ComputeShader shader;
     private NoiseGenerator _noiseGenerator;
+    private float numPointsPerAxis;
+    private float boundsSize;
+    private int seed;
 
     private void Awake()
     {
@@ -99,6 +102,9 @@ public class Chunk : MonoBehaviour
 
     public ProcessingResult Generate(float isoLevel, float chunkSize, int seed)
     {
+        numPointsPerAxis = _noiseGenerator.numPointsPerAxis;
+        this.seed = seed;
+        boundsSize = chunkSize;
         ProcessingResult result = GenerateNoise(chunkSize, seed);
         Triangle[] triangles = GenerateTriangles(isoLevel, result.pointsBuffer);
         GenerateMesh(triangles);
@@ -106,14 +112,24 @@ public class Chunk : MonoBehaviour
 
         return result;
     }
-    
-    public Vector3 GetWorldPosition(float boundsSize)
+
+    public Vector2Int GetPointPosition(Vector3 position)
     {
-        Vector3 local = new Vector3(
-            chunkGridPosition.x * boundsSize,
-            chunkGridPosition.y * boundsSize,
-            chunkGridPosition.z * boundsSize);
+        Vector3 local = transform.InverseTransformPoint(position);
         
-        return transform.TransformPoint(local);
+        float y = local.z;
+        float x = local.x;
+            
+        float cellSize = boundsSize / (numPointsPerAxis - 1);
+            
+        int yIndex = Mathf.FloorToInt((y - chunkGridPosition.z * boundsSize + boundsSize / 2) / cellSize);
+        int xIndex = Mathf.FloorToInt((x - chunkGridPosition.x * boundsSize + boundsSize / 2) / cellSize);
+        
+        return new Vector2Int(xIndex, yIndex);
+    }
+    
+    public int ChunkSeed()
+    {
+        return (seed + chunkGridPosition.x + chunkGridPosition.y + chunkGridPosition.z) * 31;
     }
 }

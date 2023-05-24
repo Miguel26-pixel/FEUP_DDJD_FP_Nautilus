@@ -42,7 +42,7 @@ public class GenerationTest : MonoBehaviour
                 {
                     Debug.Log("test");
                 }
-                pointsWorld.Add(raycastSurfacePointsFinder.FindUpwardSurfacePoints(chunk, point.x, point.y).FirstOrDefault());
+                // pointsWorld.Add(raycastSurfacePointsFinder.FindUpwardSurfacePoints(chunk, point.x, point.y).FirstOrDefault());
             }
         }
     }

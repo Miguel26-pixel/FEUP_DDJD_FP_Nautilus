@@ -9,6 +9,14 @@ namespace Generation.Resource
     {
         public float radius = 120;
         public int numSamplesBeforeRejection = 20;
+        public float minBiomeValue = 0.5f;
+        public float maxBiomeValue = 1f;
+        public float minHeight = 0.5f;
+        public float maxHeight = 1f;
+        public float minSlope = 0.5f;
+        public float maxSlope = 1f;
+        public float chanceOfGenerating = 1f;
+        public GameObject prefab;
     }
     
     public record ChunkPoints
@@ -32,7 +40,7 @@ namespace Generation.Resource
     public class PointsGenerator
     {
         // A list of settings for each resource type
-        private readonly List<ResourceGeneratorSettings> _settings;
+        private readonly ResourceGeneratorSettings[] _settings;
 
         // A dictionary of chunk positions to a list of points in that chunk
         private readonly Dictionary<Vector2Int, ChunkPoints> _chunkPoints;
@@ -46,20 +54,19 @@ namespace Generation.Resource
         // Cells are generated in a grid pattern
         // The size of the grid is determined by the resource radius
         private HashSet<Vector2Int>[] _cells;
-        public List<Vector2> pointsTest = new List<Vector2>();
         
         private readonly float _chunkSize;
         private readonly int _seed;
         
-        public PointsGenerator(List<ResourceGeneratorSettings> settings, float chunkSize, int seed)
+        public PointsGenerator(ResourceGeneratorSettings[] settings, float chunkSize, int seed)
         {
             _settings = settings;
             _chunkSize = chunkSize;
             _seed = seed;
             _chunkPoints = new Dictionary<Vector2Int, ChunkPoints>();
-            _cells = new HashSet<Vector2Int>[_settings.Count];
+            _cells = new HashSet<Vector2Int>[_settings.Length];
             
-            for (int i = 0; i < _settings.Count; i++)
+            for (int i = 0; i < _settings.Length; i++)
             {
                 _cells[i] = new HashSet<Vector2Int>();
             }
@@ -70,11 +77,11 @@ namespace Generation.Resource
             ChunkPoints chunkPoints;
             if (!_chunkPoints.TryGetValue(chunkPosition, out chunkPoints))
             {
-                chunkPoints = new ChunkPoints(_settings.Count);
+                chunkPoints = new ChunkPoints(_settings.Length);
             }
             _chunkPoints[chunkPosition] = chunkPoints;
 
-            for (int cellIndex = 0; cellIndex < _settings.Count; cellIndex++)
+            for (int cellIndex = 0; cellIndex < _settings.Length; cellIndex++)
             {
                 bool generated = chunkPoints.generated[cellIndex];
                 if (generated)
@@ -117,16 +124,15 @@ namespace Generation.Resource
                 newPoint += CellWorldPosition(cellPosition, cellIndex) + CellSamplingStart(cellIndex);
                 
                 Vector2Int chunkPosition = ChunkPosition(newPoint);
-                
+
                 ChunkPoints chunkPoints;
                 if (!_chunkPoints.TryGetValue(chunkPosition, out chunkPoints))
                 {
-                    chunkPoints = new ChunkPoints(_settings.Count);
+                    chunkPoints = new ChunkPoints(_settings.Length);
                     _chunkPoints[chunkPosition] = chunkPoints;
                 }
-                
+
                 chunkPoints.points[cellIndex].AddLast(newPoint);
-                pointsTest.Add(newPoint);
                 alteredChunks.Add(chunkPosition);
             }
             

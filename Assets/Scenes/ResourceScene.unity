@@ -368,6 +368,17 @@ MonoBehaviour:
   player: {fileID: 1678036745}
   chunkPrefab: {fileID: 5382608540069460159, guid: 5ce4b8303c03e926dbe92f284d48c1d4, type: 3}
   generationConfigs: {fileID: 1060819886}
+  resourceGeneratorConfigs:
+  - radius: 4
+    numSamplesBeforeRejection: 30
+    minBiomeValue: 0
+    maxBiomeValue: 1
+    minHeight: -100
+    maxHeight: 300
+    minSlope: 0.6
+    maxSlope: 1
+    chanceOfGenerating: 1
+    prefab: {fileID: 1814693354015679715, guid: 97046f96da47ca68d8fc5b38da494980, type: 3}
   chunksParent: {fileID: 175995}
   numChunksX: 16
   numChunksY: 3
@@ -450,11 +461,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27e5c0284f1041628ccccb69ee761eed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  settings:
-  - radius: 5
-    numSamplesBeforeRejection: 30
-  - radius: 10
-    numSamplesBeforeRejection: 30
 --- !u!114 &1271832658
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -470,7 +476,6 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 8
-  test: {fileID: 1814693354015679715, guid: 97046f96da47ca68d8fc5b38da494980, type: 3}
 --- !u!1 &1493078992
 GameObject:
   m_ObjectHideFlags: 0
