@@ -375,10 +375,20 @@ MonoBehaviour:
     maxBiomeValue: 1
     minHeight: -100
     maxHeight: 300
-    minSlope: 0.6
+    minSlope: 0.9
     maxSlope: 1
     chanceOfGenerating: 1
     prefab: {fileID: 1814693354015679715, guid: 97046f96da47ca68d8fc5b38da494980, type: 3}
+  - radius: 15
+    numSamplesBeforeRejection: 30
+    minBiomeValue: 0.76
+    maxBiomeValue: 1
+    minHeight: -100
+    maxHeight: 300
+    minSlope: 0.9
+    maxSlope: 1
+    chanceOfGenerating: 1
+    prefab: {fileID: 5075434370377151460, guid: 497da39165a2ae584890e34120be43c6, type: 3}
   chunksParent: {fileID: 175995}
   numChunksX: 16
   numChunksY: 3

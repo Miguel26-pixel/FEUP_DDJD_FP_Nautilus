@@ -131,6 +131,8 @@ public class MeshGenerator : MonoBehaviour
                 }
             }
         }
+        
+        resourceGenerator.UpdateResources(_activeChunks);
     }
     
     private void GenerateFixedChunks()
