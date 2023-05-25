@@ -116,7 +116,9 @@ namespace Generation.Resource
                         ResourceObject resourceObject = new ResourceObject()
                         {
                             position = surfacePoint,
-                            rotation = Quaternion.Euler(0, Random.value * 360, 0),
+                            rotation = 
+                                (settings.alignToSurface ? Quaternion.FromToRotation(Vector3.up, hit.normal) : Quaternion.identity) *
+                                Quaternion.Euler(0, Random.value * 360, 0),
                             activeIndex = activeIndex
                         };
                         resourceObjects.Add(resourceObject);

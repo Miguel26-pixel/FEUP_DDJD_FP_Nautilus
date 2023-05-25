@@ -245,7 +245,7 @@ MonoBehaviour:
   meshRenderer: {fileID: 5382608540069460156}
   biomes:
   - sections:
-    - minHeight: 10
+    - minHeight: 24
       colors:
       - color: {r: 0.4245283, g: 0.2316898, b: 0.09011215, a: 0}
         minNoise: 0.75
