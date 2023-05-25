@@ -1342,7 +1342,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isoLevel: 15.18
   boundsSize: 60
-  seed: 4
+  seed: 1
   player: {fileID: 1529412837}
   chunkPrefab: {fileID: 5382608540069460159, guid: 5ce4b8303c03e926dbe92f284d48c1d4, type: 3}
   generationConfigs: {fileID: 1060819886}
@@ -1351,7 +1351,7 @@ MonoBehaviour:
     numSamplesBeforeRejection: 31
     minBiomeValue: 0.85
     maxBiomeValue: 1
-    minHeight: -100
+    minHeight: 22
     maxHeight: 1000
     minSlope: 0.9
     maxSlope: 1
@@ -1366,7 +1366,7 @@ MonoBehaviour:
     numSamplesBeforeRejection: 30
     minBiomeValue: 0.85
     maxBiomeValue: 1
-    minHeight: -100
+    minHeight: 22
     maxHeight: 1000
     minSlope: 0.9
     maxSlope: 1
@@ -2206,7 +2206,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3058,15 +3058,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fc8b148eca244dd4a87cbcd82430aa86, type: 3}
       propertyPath: m_LocalScale.x
-      value: 10
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fc8b148eca244dd4a87cbcd82430aa86, type: 3}
       propertyPath: m_LocalScale.y
-      value: 10
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fc8b148eca244dd4a87cbcd82430aa86, type: 3}
       propertyPath: m_LocalScale.z
-      value: 10
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fc8b148eca244dd4a87cbcd82430aa86, type: 3}
       propertyPath: m_LocalPosition.x

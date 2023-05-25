@@ -81,7 +81,7 @@ public class Player : AbstractPlayer, PlayerActions.ICraftingTestActions
 
     private static readonly int Attack = Animator.StringToHash("Attack");
     private static readonly int Run = Animator.StringToHash("Run");
-    public float speed = 1.0f;
+    public float speed = 4.0f;
     private static readonly int Walk = Animator.StringToHash("Walk");
 
     public void Start()
@@ -274,12 +274,12 @@ public class Player : AbstractPlayer, PlayerActions.ICraftingTestActions
             if (playerInput.CharacterControls.Run.WasPressedThisFrame())
             {
                 animator.SetTrigger(Run);
-                speed = 3.0f;
+                speed = 8.0f;
             }
             if (playerInput.CharacterControls.Run.WasReleasedThisFrame())
             {
                 animator.SetTrigger(Walk);
-                speed = 1.0f;
+                speed = 6.0f;
             }
         }
     }
