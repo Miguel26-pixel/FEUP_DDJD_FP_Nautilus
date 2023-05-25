@@ -80,6 +80,9 @@ public class Player : AbstractPlayer, PlayerActions.ICraftingTestActions
     });
 
     private static readonly int Attack = Animator.StringToHash("Attack");
+    private static readonly int Run = Animator.StringToHash("Run");
+    public float speed = 1.0f;
+    private static readonly int Walk = Animator.StringToHash("Walk");
 
     public void Start()
     {
@@ -253,11 +256,11 @@ public class Player : AbstractPlayer, PlayerActions.ICraftingTestActions
             cameraRelativeMovement = ConvertToCameraSpace(currentMovement);
             HandleRotation();
             HandleAnimation();
-            characterController.Move(cameraRelativeMovement * Time.deltaTime);
+            characterController.Move(cameraRelativeMovement * Time.deltaTime * speed);
             HandleGravity();
             HandleJump();
 
-            if (Input.GetMouseButtonDown(0))
+            if (playerInput.CharacterControls.Attack.WasPerformedThisFrame())
             {
 
                 if(readyToThrow){
@@ -268,9 +271,15 @@ public class Player : AbstractPlayer, PlayerActions.ICraftingTestActions
                 HandleAttack();
             }
 
-            if (Input.GetMouseButtonDown(1))
+            if (playerInput.CharacterControls.Run.WasPressedThisFrame())
             {
-                animator.SetTrigger("Run");
+                animator.SetTrigger(Run);
+                speed = 3.0f;
+            }
+            if (playerInput.CharacterControls.Run.WasReleasedThisFrame())
+            {
+                animator.SetTrigger(Walk);
+                speed = 1.0f;
             }
         }
     }
