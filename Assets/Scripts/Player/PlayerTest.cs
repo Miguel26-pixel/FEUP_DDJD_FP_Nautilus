@@ -19,6 +19,7 @@ namespace Player
         public UnityEvent<MachineType> OnCraftEvent = new();
         public UnityEvent onInventoryEvent = new();
         public UnityEvent<int> onRotate = new();
+        public UnityEvent onPlacePosition = new();
         private ItemRegistry _itemRegistry;
         public TransferDirection transferDirection;
 
@@ -101,6 +102,16 @@ namespace Player
             }
 
             onRotate.Invoke(1);
+        }
+
+        public void OnPlacePosition(InputAction.CallbackContext context)
+        {
+            if (!context.performed)
+            {
+                return;
+            }
+
+            onPlacePosition.Invoke();
         }
 
         private IEnumerator GiveItems()

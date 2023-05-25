@@ -62,6 +62,15 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Place Position"",
+                    ""type"": ""Value"",
+                    ""id"": ""db4842a3-de94-4bea-9118-9fbffccf7fa5"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -108,6 +117,17 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
                     ""action"": ""Rotate Anti Clockwise"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4aa52d89-5217-4c0b-be19-b33757c2fc64"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Place Position"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -126,6 +146,7 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
         m_CraftingTest_Inventory = m_CraftingTest.FindAction("Inventory", throwIfNotFound: true);
         m_CraftingTest_RotateClockwise = m_CraftingTest.FindAction("Rotate Clockwise", throwIfNotFound: true);
         m_CraftingTest_RotateAntiClockwise = m_CraftingTest.FindAction("Rotate Anti Clockwise", throwIfNotFound: true);
+        m_CraftingTest_PlacePosition = m_CraftingTest.FindAction("Place Position", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -189,6 +210,7 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
     private readonly InputAction m_CraftingTest_Inventory;
     private readonly InputAction m_CraftingTest_RotateClockwise;
     private readonly InputAction m_CraftingTest_RotateAntiClockwise;
+    private readonly InputAction m_CraftingTest_PlacePosition;
     public struct CraftingTestActions
     {
         private @PlayerActions m_Wrapper;
@@ -197,6 +219,7 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
         public InputAction @Inventory => m_Wrapper.m_CraftingTest_Inventory;
         public InputAction @RotateClockwise => m_Wrapper.m_CraftingTest_RotateClockwise;
         public InputAction @RotateAntiClockwise => m_Wrapper.m_CraftingTest_RotateAntiClockwise;
+        public InputAction @PlacePosition => m_Wrapper.m_CraftingTest_PlacePosition;
         public InputActionMap Get() { return m_Wrapper.m_CraftingTest; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -218,6 +241,9 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
                 @RotateAntiClockwise.started -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnRotateAntiClockwise;
                 @RotateAntiClockwise.performed -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnRotateAntiClockwise;
                 @RotateAntiClockwise.canceled -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnRotateAntiClockwise;
+                @PlacePosition.started -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnPlacePosition;
+                @PlacePosition.performed -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnPlacePosition;
+                @PlacePosition.canceled -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnPlacePosition;
             }
             m_Wrapper.m_CraftingTestActionsCallbackInterface = instance;
             if (instance != null)
@@ -234,6 +260,9 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
                 @RotateAntiClockwise.started += instance.OnRotateAntiClockwise;
                 @RotateAntiClockwise.performed += instance.OnRotateAntiClockwise;
                 @RotateAntiClockwise.canceled += instance.OnRotateAntiClockwise;
+                @PlacePosition.started += instance.OnPlacePosition;
+                @PlacePosition.performed += instance.OnPlacePosition;
+                @PlacePosition.canceled += instance.OnPlacePosition;
             }
         }
     }
@@ -253,5 +282,6 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
         void OnInventory(InputAction.CallbackContext context);
         void OnRotateClockwise(InputAction.CallbackContext context);
         void OnRotateAntiClockwise(InputAction.CallbackContext context);
+        void OnPlacePosition(InputAction.CallbackContext context);
     }
 }

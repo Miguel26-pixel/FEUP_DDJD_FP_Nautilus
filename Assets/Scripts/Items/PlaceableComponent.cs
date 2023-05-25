@@ -1,6 +1,7 @@
 using System;
 using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Items
 {
@@ -17,7 +18,19 @@ namespace Items
 
         private void Place()
         {
-            throw new NotImplementedException();
+
+            Vector3 mousePosition = Mouse.current.position.ReadValue();
+            Debug.Log("Mouse Position: " + mousePosition);
+
+            GameObject placing = GameObject.Instantiate(PlacedGameObject.LoadedObject);
+            
+            Ray ray = Camera.main.ScreenPointToRay(mousePosition);
+
+            if (Physics.Raycast(ray, out RaycastHit hitInfo))
+            {
+                Debug.Log(hitInfo.ToString());
+                placing.transform.position = hitInfo.point;
+            }
         }
 
         public override ItemComponent CreateInstance()
