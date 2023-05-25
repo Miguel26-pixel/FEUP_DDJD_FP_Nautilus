@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Generation.Resource;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -13,6 +14,7 @@ public class MeshGenerator : MonoBehaviour
 
     public GameObject chunkPrefab;
     public GenerationConfigs generationConfigs;
+    public ResourceGeneratorSettings[] resourceGeneratorConfigs;
 
     public GameObject chunksParent;
     
@@ -21,10 +23,42 @@ public class MeshGenerator : MonoBehaviour
     public int numChunksZ = 1;
 
     private readonly Dictionary<Vector3Int, Chunk> _chunks = new();
+    private readonly Dictionary<Vector2Int, float[,]> _biomeNoise = new();
     private readonly List<Chunk> _activeChunks = new();
 
     public Vector3 lastPosition = Vector3.positiveInfinity;
     public Vector3Int lastChunkPosition = new (Int32.MaxValue, Int32.MaxValue, Int32.MaxValue);
+    
+    public PointsGeneratorMono pointsGeneratorMono;
+    public ResourceGenerator resourceGenerator;
+
+    public Chunk[] getChunksAt(Vector2 position, int minY, int maxY)
+    {
+        Vector3Int chunkPosition = ChunkPosition(
+            new Vector3(position.x, 0, position.y));
+        
+        List<Chunk> chunks = new List<Chunk>();
+        
+        for (int y = minY; y <= maxY; y++)
+        {
+            Vector3Int chunkPositionY = chunkPosition;
+            chunkPositionY.y = y;
+
+            
+            
+            if (_chunks.TryGetValue(chunkPositionY, out var chunk))
+            {
+                if (chunkPositionY == new Vector3Int(4, -1, 0))
+                {
+                    Debug.Log("test");
+                }
+                
+                chunks.Add(chunk);
+            }
+        }
+        
+        return chunks.ToArray();
+    }
     
     private void Update()
     {
@@ -36,19 +70,18 @@ public class MeshGenerator : MonoBehaviour
 
     private void UpdateTerrain()
     {
-        Vector3Int playerChunkPosition = ChunkPosition();
+        Vector3Int playerChunkPosition = ChunkPosition(player.transform.position);
 
         if (playerChunkPosition.Equals(lastChunkPosition)) return;
         lastChunkPosition = playerChunkPosition;
 
         UpdateChunks(playerChunkPosition);
-        
-        
     }
 
-    private Vector3Int ChunkPosition()
+    private Vector3Int ChunkPosition(Vector3 position)
     {
-        var position = player.transform.position;
+        position = chunksParent.transform.InverseTransformPoint(position);
+        
         return new Vector3Int(
             Mathf.RoundToInt(position.x / boundsSize),
             Mathf.RoundToInt(position.y / boundsSize),
@@ -80,15 +113,26 @@ public class MeshGenerator : MonoBehaviour
                         chunkObject.name = $"Chunk {x} {y} {z}";
                         currentChunk = chunkObject.GetComponent<Chunk>();
                         currentChunk.chunkGridPosition = new Vector3Int(x, y, z);
-                        currentChunk.Generate(isoLevel, boundsSize, seed);
+                        ProcessingResult result = currentChunk.Generate(isoLevel, boundsSize, seed);
+
+                        if (!_biomeNoise.ContainsKey(new Vector2Int(x, z)))
+                        {
+                            _biomeNoise.Add(new Vector2Int(x, z), result.biomeNoise);
+                        }
+
                         _chunks[chunkPosition] = currentChunk;
                         currentChunk.colorGenerator.UpdateColors(seed);
+                        LinkedList<Vector2>[] points = pointsGeneratorMono.pointsGenerator.GeneratePoints(new Vector2Int(x, z));
+                        
+                        resourceGenerator.GenerateResources(currentChunk, result.biomeNoise, points);
                     }
 
                     _activeChunks.Add(currentChunk);
                 }
             }
         }
+        
+        resourceGenerator.UpdateResources(_activeChunks);
     }
     
     private void GenerateFixedChunks()
