@@ -14,16 +14,20 @@ public class BiomeProcessingStep : ProcessingStep
 
     public ComputeShader shader;
 
-    public override void Process(ComputeBuffer pointsBuffer, int numPointsPerAxis, int seed, float boundsSize, Vector3 centre)
+    public override void Process(ComputeBuffer pointsBuffer, int numPointsPerAxis, int seed, float boundsSize, Vector3 centre, ProcessingResult result)
     {
+        Vector3[] biomeNoise = new Vector3[numPointsPerAxis * numPointsPerAxis];
+        
         var size = 19 * sizeof(float);
         ComputeBuffer biomeParametersBuffer = new ComputeBuffer(biomeParameters.Count, size);
         biomeParametersBuffer.SetData(biomeParameters);
         ComputeBuffer biomeValuesBuffer = new ComputeBuffer(biomesValues.Count, sizeof(float));
         biomeValuesBuffer.SetData(biomesValues);
+        ComputeBuffer biomeNoiseBuffer = new ComputeBuffer(biomeNoise.Length, sizeof(float) * 3);
 
         shader.SetBuffer(0, "biomes", biomeParametersBuffer);
         shader.SetBuffer(0, "biomesValues", biomeValuesBuffer);
+        shader.SetBuffer(0, "biomeNoiseB", biomeNoiseBuffer);
         shader.SetInt("numBiomes", biomeParameters.Count);
         shader.SetFloat("biomeScale", biomeScale);
         shader.SetFloat("boundsSize", boundsSize);
@@ -55,9 +59,25 @@ public class BiomeProcessingStep : ProcessingStep
         var numThreads = Mathf.CeilToInt(numPointsPerAxis / 8f);
 
         shader.Dispatch(0, numThreads, numThreads, numThreads);
+
+        biomeNoiseBuffer.GetData(biomeNoise);
         
+        for (int i = 0; i < biomeNoise.Length; i++)
+        {
+            float y = biomeNoise[i].y;
+            float x = biomeNoise[i].x;
+            float biome = biomeNoise[i].z;
+            
+            float cellSize = boundsSize / (numPointsPerAxis - 1);
+            
+            int yIndex = Mathf.FloorToInt((y - centre.z * boundsSize + boundsSize / 2) / cellSize);
+            int xIndex = Mathf.FloorToInt((x - centre.x * boundsSize + boundsSize / 2) / cellSize);
+            result.biomeNoise[yIndex, xIndex] = biome;
+        }
+
         offsetsBuffer.Release();
         biomeParametersBuffer.Release();
         biomeValuesBuffer.Release();
+        biomeNoiseBuffer.Release();
     }
 }
