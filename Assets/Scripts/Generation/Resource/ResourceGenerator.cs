@@ -11,6 +11,7 @@ namespace Generation.Resource
     {
         public Vector3 position;
         public Quaternion rotation;
+        public int activeIndex;
     }
     
     public class ResourceGenerator : MonoBehaviour
@@ -49,6 +50,12 @@ namespace Generation.Resource
         private static void OnTakeFromPool(GameObject gameObject)
         {
             gameObject.SetActive(true);
+            int childCount = gameObject.transform.childCount;
+
+            for (int i = 0; i < childCount; i++)
+            {
+                gameObject.transform.GetChild(i).gameObject.SetActive(false);
+            }
         }
         
         private static void OnReturnToPool(GameObject gameObject)
@@ -104,10 +111,13 @@ namespace Generation.Resource
                             continue;
                         }
                         
+                        int activeIndex = Random.Range(0, settings.prefab.transform.childCount);
+                        
                         ResourceObject resourceObject = new ResourceObject()
                         {
                             position = surfacePoint,
-                            rotation = Quaternion.Euler(0, Random.value * 360, 0)
+                            rotation = Quaternion.Euler(0, Random.value * 360, 0),
+                            activeIndex = activeIndex
                         };
                         resourceObjects.Add(resourceObject);
                     }
@@ -153,6 +163,7 @@ namespace Generation.Resource
                     GameObject gameObject = objectPool.Get();
                     gameObject.transform.position = resourceObject.position;
                     gameObject.transform.rotation = resourceObject.rotation;
+                    gameObject.transform.GetChild(resourceObject.activeIndex).gameObject.SetActive(true);
                     
                     _activeResourceObjects[chunkGridPosition][i].Add(gameObject);
                 }
