@@ -21,9 +21,15 @@ namespace Player
         public UnityEvent<int> onRotate = new();
         private ItemRegistry _itemRegistry;
         public TransferDirection transferDirection;
+        public TerraformController terraformController;
+        
 
         private ItemRegistryObject _itemRegistryObject;
         private PlayerActions _playerActions;
+        private Camera _camera;
+        private float _verticalRotation = 0f;
+        private float _horizontalRotation = 0f;
+        private Vector3 _currentMovement;
 
         public PlayerInventory playerInventory = new("Inventory", new[,]
         {
@@ -42,6 +48,7 @@ namespace Player
         {
             _itemRegistryObject = GameObject.Find("DataManager").GetComponent<ItemRegistryObject>();
             _itemRegistry = _itemRegistryObject.itemRegistry;
+            _camera = Camera.main;
 
             StartCoroutine(GiveItems());
         }
@@ -60,6 +67,29 @@ namespace Player
         public void OnDisable()
         {
             _playerActions.CraftingTest.Disable();
+        }
+
+        private void Update()
+        {
+            Vector2 mouseDelta = Mouse.current.delta.ReadValue();
+            
+            transform.Rotate(Vector3.up * (mouseDelta.x * 0.1f), Space.World);
+            
+            _verticalRotation -= mouseDelta.y * 0.1f;
+            _verticalRotation = Mathf.Clamp(_verticalRotation, -90f, 90f);
+            
+            _horizontalRotation += mouseDelta.x * 0.1f;
+            
+            _camera.transform.localRotation = Quaternion.Euler(_verticalRotation, _horizontalRotation, 0f);
+            
+            if (_currentMovement != Vector3.zero)
+            {
+                Vector3 forward = _camera.transform.forward;
+                forward.Normalize();
+                
+                transform.position += forward * (_currentMovement.x * 0.5f);
+                _camera.transform.position += forward * (_currentMovement.x * 0.5f);
+            }
         }
 
 
@@ -101,6 +131,29 @@ namespace Player
             }
 
             onRotate.Invoke(1);
+        }
+
+        public void OnUseTool(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                terraformController.ActivateTerraform();
+            } else if (context.canceled)
+            {
+                terraformController.DeactivateTerraform();
+            }
+        }
+
+        public void OnForward(InputAction.CallbackContext context)
+        {
+            // Move in the direction of the camera
+            if (context.performed)
+            {
+                _currentMovement = new Vector3(1, 1, 1);
+            } else if (context.canceled)
+            {
+                _currentMovement = Vector3.zero;
+            }
         }
 
         private IEnumerator GiveItems()

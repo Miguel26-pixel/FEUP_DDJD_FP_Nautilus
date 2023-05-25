@@ -40,6 +40,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Use Tool",
+                    "type": "Button",
+                    "id": "b20ba3fb-68c6-45d5-8d27-f4e424457f73",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Forward",
+                    "type": "Button",
+                    "id": "a0215b2e-7321-4369-b4c3-54fa789f6be6",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -84,6 +102,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Rotate Anti Clockwise",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "594ddd39-adf9-4a03-b747-c0530ba2542e",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Use Tool",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "71aec895-62dd-4e9b-a2f1-c312dd5062e6",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Forward",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
