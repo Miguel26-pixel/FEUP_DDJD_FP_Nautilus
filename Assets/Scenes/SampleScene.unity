@@ -858,7 +858,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isoLevel: 15.18
   boundsSize: 60
-  seed: 4
+  seed: 1
   player: {fileID: 1678036745}
   chunkPrefab: {fileID: 5382608540069460159, guid: 5ce4b8303c03e926dbe92f284d48c1d4, type: 3}
   generationConfigs: {fileID: 1298936910}
@@ -867,7 +867,7 @@ MonoBehaviour:
     numSamplesBeforeRejection: 31
     minBiomeValue: 0.85
     maxBiomeValue: 1
-    minHeight: -100
+    minHeight: 23.7
     maxHeight: 1000
     minSlope: 0.9
     maxSlope: 1
@@ -882,7 +882,7 @@ MonoBehaviour:
     numSamplesBeforeRejection: 30
     minBiomeValue: 0.85
     maxBiomeValue: 1
-    minHeight: -100
+    minHeight: 23.7
     maxHeight: 1000
     minSlope: 0.9
     maxSlope: 1
@@ -1218,7 +1218,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1565541019}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.4, y: 23.7, z: 0}
+  m_LocalPosition: {x: -3.4, y: 21, z: 0}
   m_LocalScale: {x: 30, y: 30, z: 30}
   m_ConstrainProportionsScale: 0
   m_Children: []
