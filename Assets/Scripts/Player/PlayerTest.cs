@@ -49,6 +49,9 @@ namespace Player
             _itemRegistryObject = GameObject.Find("DataManager").GetComponent<ItemRegistryObject>();
             _itemRegistry = _itemRegistryObject.itemRegistry;
             _camera = Camera.main;
+            Debug.Log(SystemInfo.supportsAsyncCompute);
+            Debug.Log(SystemInfo.supportsAsyncGPUReadback);
+            Debug.Log(SystemInfo.supportsComputeShaders);
 
             StartCoroutine(GiveItems());
         }

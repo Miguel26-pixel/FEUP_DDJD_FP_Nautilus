@@ -15,6 +15,7 @@ namespace Player
         private Transform _camera;
         private MeshGenerator _meshGenerator;
         private GameObject terraformCursor;
+        private TerraformType _terraformType = TerraformType.Raise;
 
         private void Start()
         {
@@ -31,21 +32,46 @@ namespace Player
 
         private void Update()
         {
-            if (canTerraform)
+            if (!canTerraform)
             {
-                RaycastHit hit;
+                return;
+            }
 
-                if (Physics.Raycast(_camera.position, _camera.forward, out hit, maxDistance, layerMask))
+            RaycastHit hit;
+
+            if (Physics.Raycast(_camera.position, _camera.forward, out hit, 200, layerMask))
+            {
+                terraformCursor.SetActive(true);
+                terraformCursor.transform.position = hit.point;
+                terraformCursor.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
+                
+                float distance = Vector3.Distance(_camera.position, hit.point);
+                
+                if (distance > maxDistance)
                 {
-                    terraformCursor.SetActive(true);
-                    terraformCursor.transform.position = hit.point;
-                    terraformCursor.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
+                    // TODO: Add a way to show that the player can't terraform here
+                    return;
                 }
-                else
+
+                switch (_terraformType)
                 {
-                    terraformCursor.SetActive(false);
+                    case TerraformType.Lower:
+                        _meshGenerator.Terraform(hit.point, power, radius);
+                        break;
+                    case TerraformType.Raise:
+                        _meshGenerator.Terraform(hit.point, -power, radius);
+                        break;
                 }
             }
+            else
+            {
+                terraformCursor.SetActive(false);
+            }
+        }
+        
+        public void SetTerraformType(TerraformType terraformType)
+        {
+            _terraformType = terraformType;
         }
         
         public void ActivateTerraform()
@@ -60,5 +86,11 @@ namespace Player
             canTerraform = false;
             terraformCursor.SetActive(false);
         }
+    }
+
+    public enum TerraformType
+    {
+        Raise,
+        Lower
     }
 }

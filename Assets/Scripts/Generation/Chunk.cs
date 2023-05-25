@@ -9,16 +9,22 @@ public class Chunk : MonoBehaviour
 {
     public Vector3Int chunkGridPosition;
     public ColorGenerator colorGenerator;
+    public ComputeShader shader;
+
+    [NonSerialized]
+    public float[] modifiedNoise;
+    // TODO: CHECK if can be just computeBuffer
+    private Vector4[] _points;
+    
     private MeshFilter _meshFilter;
     private MeshCollider _meshCollider;
     
-    private ComputeBuffer triangleBuffer;
-    private ComputeBuffer triCountBuffer;
-    public ComputeShader shader;
+    private ComputeBuffer _triangleBuffer;
+    private ComputeBuffer _triCountBuffer;
     private NoiseGenerator _noiseGenerator;
-    private float numPointsPerAxis;
-    private float boundsSize;
-    private int seed;
+    private float _numPointsPerAxis;
+    private float _boundsSize;
+    private int _seed;
 
     private void Awake()
     {
@@ -38,33 +44,39 @@ public class Chunk : MonoBehaviour
         return _noiseGenerator.Generate(chunkGridPosition, boundsSize, seed);
     }
 
-    private Triangle[] GenerateTriangles(float isoLevel, ComputeBuffer pointsBuffer)
+    private Triangle[] GenerateTriangles(float isoLevel, ComputeBuffer pointsBuffer, ComputeBuffer modifiedNoiseBuffer)
     {
         int numVoxelsPerAxis = _noiseGenerator.numPointsPerAxis - 1;
         int numVoxels = numVoxelsPerAxis * numVoxelsPerAxis * numVoxelsPerAxis;
         int maxTriangleCount = numVoxels * 5;
 
-        triangleBuffer = new ComputeBuffer (maxTriangleCount, sizeof (float) * 9, ComputeBufferType.Append);
-        triCountBuffer = new ComputeBuffer (1, sizeof (int), ComputeBufferType.Raw);
+        _triangleBuffer = new ComputeBuffer (maxTriangleCount, sizeof (float) * 9, ComputeBufferType.Append);
+        _triCountBuffer = new ComputeBuffer (1, sizeof (int), ComputeBufferType.Raw);
 
         shader.SetInt("numPointsPerAxis", _noiseGenerator.numPointsPerAxis);
         shader.SetFloat("isoLevel", isoLevel);
         shader.SetBuffer(0, "points", pointsBuffer);
-        shader.SetBuffer(0, "triangles", triangleBuffer);
+        shader.SetBuffer(0, "triangles", _triangleBuffer);
+        shader.SetBuffer(0, "modifiedNoise", modifiedNoiseBuffer);
 
         int numThreadsPerAxis = Mathf.CeilToInt (numVoxelsPerAxis / 8f);
         shader.Dispatch(0, numThreadsPerAxis, numThreadsPerAxis, numThreadsPerAxis);
+        
+        // TODO: try to thread this
+        _points = new Vector4[pointsBuffer.count];
+        pointsBuffer.GetData(_points);
 
-        _noiseGenerator.ReleaseBuffers();
+        pointsBuffer.Release();
+        modifiedNoiseBuffer.Release();
 
-        ComputeBuffer.CopyCount(triangleBuffer, triCountBuffer, 0);
+        ComputeBuffer.CopyCount(_triangleBuffer, _triCountBuffer, 0);
         int[] triCountArray = { 0 };
-        triCountBuffer.GetData(triCountArray);
+        _triCountBuffer.GetData(triCountArray);
 
         int numTriangles = triCountArray[0];
 
         Triangle[] triangles = new Triangle[numTriangles];
-        triangleBuffer.GetData(triangles);
+        _triangleBuffer.GetData(triangles);
 
         ReleaseBuffers();
 
@@ -73,8 +85,8 @@ public class Chunk : MonoBehaviour
 
     private void ReleaseBuffers()
     {
-        triangleBuffer.Release();
-        triCountBuffer.Release();
+        _triangleBuffer.Release();
+        _triCountBuffer.Release();
     }
 
     private void GenerateMesh(Triangle[] triangles)
@@ -100,13 +112,29 @@ public class Chunk : MonoBehaviour
         mesh.RecalculateNormals();
     }
 
+    public void Regenerate(ComputeBuffer modifiedNoiseBuffer)
+    {
+        ComputeBuffer pointsBuffer = new ComputeBuffer(
+            _noiseGenerator.numPointsPerAxis * _noiseGenerator.numPointsPerAxis * _noiseGenerator.numPointsPerAxis,
+            sizeof(float) * 4);
+        pointsBuffer.SetData(_points);
+        
+        Triangle[] triangles = GenerateTriangles(0, pointsBuffer, modifiedNoiseBuffer);
+    }
+
     public ProcessingResult Generate(float isoLevel, float chunkSize, int seed)
     {
-        numPointsPerAxis = _noiseGenerator.numPointsPerAxis;
-        this.seed = seed;
-        boundsSize = chunkSize;
+        _numPointsPerAxis = _noiseGenerator.numPointsPerAxis;
+        _seed = seed;
+        _boundsSize = chunkSize;
         ProcessingResult result = GenerateNoise(chunkSize, seed);
-        Triangle[] triangles = GenerateTriangles(isoLevel, result.pointsBuffer);
+        ComputeBuffer modifiedNoiseBuffer =
+            new ComputeBuffer(
+                _noiseGenerator.numPointsPerAxis * _noiseGenerator.numPointsPerAxis * _noiseGenerator.numPointsPerAxis,
+                sizeof(float));
+        
+
+        Triangle[] triangles = GenerateTriangles(isoLevel, result.pointsBuffer, modifiedNoiseBuffer);
         GenerateMesh(triangles);
         GenerateCollider();
 
@@ -120,16 +148,16 @@ public class Chunk : MonoBehaviour
         float y = local.z;
         float x = local.x;
             
-        float cellSize = boundsSize / (numPointsPerAxis - 1);
+        float cellSize = _boundsSize / (_numPointsPerAxis - 1);
             
-        int yIndex = Mathf.FloorToInt((y - chunkGridPosition.z * boundsSize + boundsSize / 2) / cellSize);
-        int xIndex = Mathf.FloorToInt((x - chunkGridPosition.x * boundsSize + boundsSize / 2) / cellSize);
+        int yIndex = Mathf.FloorToInt((y - chunkGridPosition.z * _boundsSize + _boundsSize / 2) / cellSize);
+        int xIndex = Mathf.FloorToInt((x - chunkGridPosition.x * _boundsSize + _boundsSize / 2) / cellSize);
         
         return new Vector2Int(xIndex, yIndex);
     }
     
     public int ChunkSeed()
     {
-        return (seed + chunkGridPosition.x + chunkGridPosition.y + chunkGridPosition.z) * 31;
+        return (_seed + chunkGridPosition.x + chunkGridPosition.y + chunkGridPosition.z) * 31;
     }
 }

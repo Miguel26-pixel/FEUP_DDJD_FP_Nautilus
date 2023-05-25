@@ -22,11 +22,6 @@ public class NoiseGenerator : MonoBehaviour
         result.pointsBuffer = pointsBuffer;
         return result;
     }
-
-    public void ReleaseBuffers()
-    {
-        pointsBuffer.Release();
-    }
 }
 
 

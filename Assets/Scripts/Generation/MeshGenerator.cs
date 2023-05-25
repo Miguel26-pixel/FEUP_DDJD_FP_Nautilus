@@ -31,33 +31,19 @@ public class MeshGenerator : MonoBehaviour
     
     public PointsGeneratorMono pointsGeneratorMono;
     public ResourceGenerator resourceGenerator;
+    
+    public ComputeShader terraformShader;
 
-    public Chunk[] getChunksAt(Vector2 position, int minY, int maxY)
+    public void Terraform(Vector3 position, float weight, float radius)
     {
-        Vector3Int chunkPosition = ChunkPosition(
-            new Vector3(position.x, 0, position.y));
+        // RWStructuredBuffer<float> modifiedNoise;
+        // int3 centre;
+        // int radius;
+        // int numPointsPerAxis;
+        // float weight;
+        // float deltaTime;
         
-        List<Chunk> chunks = new List<Chunk>();
-        
-        for (int y = minY; y <= maxY; y++)
-        {
-            Vector3Int chunkPositionY = chunkPosition;
-            chunkPositionY.y = y;
-
-            
-            
-            if (_chunks.TryGetValue(chunkPositionY, out var chunk))
-            {
-                if (chunkPositionY == new Vector3Int(4, -1, 0))
-                {
-                    Debug.Log("test");
-                }
-                
-                chunks.Add(chunk);
-            }
-        }
-        
-        return chunks.ToArray();
+        // terraformShader.SetBuffer(0, "modifiedNoise", );
     }
     
     private void Update()

@@ -1,0 +1,26 @@
+#pragma kernel Terraform
+
+RWStructuredBuffer<float> modifiedNoise;
+int3 centre;
+int radius;
+int numPointsPerAxis;
+float weight;
+float deltaTime;
+
+int indexFromCoord(uint x, uint y, uint z) {
+    return z * numPointsPerAxis * numPointsPerAxis + y * numPointsPerAxis + x;
+}
+
+[numthreads(8,8,8)]
+void Terraform (uint3 id : SV_DispatchThreadID)
+{
+    int3 pos = id - centre;
+    int dist = pos.x * pos.x + pos.y * pos.y + pos.z * pos.z;
+    if (dist < radius * radius)
+    {
+        float dst = sqrt(dist);
+        float brushWeight = 1 - smoothstep(radius * 0.7, radius, dst);
+        
+        modifiedNoise[indexFromCoord(id.x, id.y, id.z)] += brushWeight * weight * deltaTime;
+    }
+}
