@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 
-public class CharacterMovement : MonoBehaviour
+public class Player : MonoBehaviour
 {
     PlayerInput playerInput;
     CharacterController characterController;
@@ -38,17 +38,19 @@ public class CharacterMovement : MonoBehaviour
     public int Health = 1000;
     public int maxhealth = 1000;
 
-    void FixedUpdate()
-    {
-        // Cast a ray downwards to detect the floor
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, Mathf.Infinity))
-        {
-            // Adjust the player's position and rotation to match the floor
-            playerRigidbody.MovePosition(hit.point);
-            playerRigidbody.MoveRotation(Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation);
-        }
-    }
+    private Camera mainCamera;
+
+    [Header("References")]
+    public Transform cam;
+    public Transform attackPoint = null;
+    public GameObject weapon;
+
+    [Header("Attacking")]
+    public float throwForce;
+    public float throwUpwardForce;
+    public float throwCooldown;
+
+    bool readyToThrow;
 
     public bool isDead
     {
@@ -80,6 +82,8 @@ public class CharacterMovement : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
         playerRigidbody = GetComponent<Rigidbody>();
+        mainCamera = Camera.main;
+        readyToThrow = true;
 
         playerInput.CharacterControls.Move.started += onMovementInput;
         playerInput.CharacterControls.Move.canceled += onMovementInput;
@@ -209,11 +213,38 @@ public class CharacterMovement : MonoBehaviour
             HandleGravity();
             HandleJump();
 
-            if (Input.GetKeyDown("e"))
+            if (Input.GetMouseButtonDown(0))
             {
+
+                if(readyToThrow){
+                    Throw();
+                }
+    
+
                 HandleAttack();
             }
         }
+    }
+
+    private void Throw()
+    {
+        readyToThrow = false;
+
+        GameObject spear = Instantiate(weapon, attackPoint.position, cam.rotation);
+
+        Rigidbody projectileRb = spear.GetComponent<Rigidbody>();
+
+        Vector3 forceToAdd = cam.transform.forward * throwForce + transform.up * throwUpwardForce;
+
+        projectileRb.AddForce(forceToAdd, ForceMode.Impulse);
+
+        Invoke(nameof(ResetThrow), throwCooldown);
+
+    }
+
+    private void ResetThrow()
+    {
+        readyToThrow = true;
     }
 
 }
