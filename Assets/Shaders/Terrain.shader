@@ -62,9 +62,10 @@ Shader "Custom/Terrain"
             // Albedo comes from a texture tinted by color
 
             float3 color = half3(0.9, 0.2,0.2);
-
+            float3 local_pos = IN.worldPos -  mul(unity_ObjectToWorld, float4(0,0,0,1)).xyz;
+            
             int general = 0;
-            const float3 biomePos = float3(IN.worldPos.xz * biome_scale , 0) + biome_offset;
+            const float3 biomePos = float3(local_pos.xz * biome_scale , 0) + biome_offset;
             float biome_noise = (snoise(biomePos) + 0.866025403785f) / (0.866025403785f*2.f);
 
             const float3 biome_init_pos = float3(init_pos.xz * biomeScale, 0) + biome_offset;
@@ -75,6 +76,8 @@ Shader "Custom/Terrain"
             const float mult_island = 1 - mult_normal;
 
             biome_noise = mult_normal * biome_noise + mult_island * 0.9;
+
+            biome_noise += snoise(local_pos*0.05)*0.01;
             
             for (int biome = biomes_count - 1; biome >= 0; biome --)
             {
@@ -101,19 +104,36 @@ Shader "Custom/Terrain"
                     // float multBiomeB = smoothstep(a, b, biomeNoise);
                     // float multBiomeA = 1 - multBiomeB;
                     
-                    if (IN.worldPos.y > min_height + snoise(IN.worldPos*0.05)*5)
+                    if (local_pos.y > min_height + snoise(local_pos*0.05)*5)
                     {
                         const float noise = (snoise(IN.worldPos*0.03) + 0.866025403785f) / (0.866025403785f*2.f);
                         for (int color_index = general + 1; color_index < next; color_index++)
                         {
                             float4 c = height_properties[color_index];
+                            // float4 c_prev = height_properties[color_index-1];
                             if (noise > c.w) // Min Noise
                             {
+                                // noise = smoothstep(c_prev.w, c.w, noise);
+                                // color = saturate(lerp(c_prev, c, noise)); //float3(c.x, c.y, c.z);
                                 color = float3(c.x, c.y, c.z);
                         
                                 break;
                             }
                         }
+                        // color_index = general + num_colors + 1; 
+                        //
+                        // for(int normal_index = color_index; normal_index < next - 1; normal_index++)
+                        // {
+                        //     float4 n = height_properties[normal_index];
+                        //     float4 n_next = height_properties[normal_index+1];
+                        //     float normal = saturate(IN.worldNormal.y);
+                        //     if (normal > n.w) // Min Noise
+                        //     {
+                        //         normal = smoothstep(n.w, n_next.w, normal);
+                        //         color =  saturate(color + lerp(n, n_next, normal));
+                        //         break;
+                        //     }
+                        // }
             
                         break;
                     }

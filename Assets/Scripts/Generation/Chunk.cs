@@ -16,6 +16,9 @@ public class Chunk : MonoBehaviour
     private ComputeBuffer triCountBuffer;
     public ComputeShader shader;
     private NoiseGenerator _noiseGenerator;
+    private float numPointsPerAxis;
+    private float boundsSize;
+    private int seed;
 
     private void Awake()
     {
@@ -30,10 +33,13 @@ public class Chunk : MonoBehaviour
         _meshCollider.sharedMesh = _meshFilter.sharedMesh;
     }
 
-    private Triangle[] GenerateTriangles(float isoLevel, float boundsSize, int seed)
+    private ProcessingResult GenerateNoise(float boundsSize, int seed)
     {
-        var pointsBuffer = _noiseGenerator.Generate(chunkGridPosition, boundsSize, seed);
+        return _noiseGenerator.Generate(chunkGridPosition, boundsSize, seed);
+    }
 
+    private Triangle[] GenerateTriangles(float isoLevel, ComputeBuffer pointsBuffer)
+    {
         int numVoxelsPerAxis = _noiseGenerator.numPointsPerAxis - 1;
         int numVoxels = numVoxelsPerAxis * numVoxelsPerAxis * numVoxelsPerAxis;
         int maxTriangleCount = numVoxels * 5;
@@ -94,10 +100,36 @@ public class Chunk : MonoBehaviour
         mesh.RecalculateNormals();
     }
 
-    public void Generate(float isoLevel, float chunkSize, int seed)
+    public ProcessingResult Generate(float isoLevel, float chunkSize, int seed)
     {
-        Triangle[] triangles = GenerateTriangles(isoLevel, chunkSize, seed);
+        numPointsPerAxis = _noiseGenerator.numPointsPerAxis;
+        this.seed = seed;
+        boundsSize = chunkSize;
+        ProcessingResult result = GenerateNoise(chunkSize, seed);
+        Triangle[] triangles = GenerateTriangles(isoLevel, result.pointsBuffer);
         GenerateMesh(triangles);
         GenerateCollider();
+
+        return result;
+    }
+
+    public Vector2Int GetPointPosition(Vector3 position)
+    {
+        Vector3 local = transform.InverseTransformPoint(position);
+        
+        float y = local.z;
+        float x = local.x;
+            
+        float cellSize = boundsSize / (numPointsPerAxis - 1);
+            
+        int yIndex = Mathf.FloorToInt((y - chunkGridPosition.z * boundsSize + boundsSize / 2) / cellSize);
+        int xIndex = Mathf.FloorToInt((x - chunkGridPosition.x * boundsSize + boundsSize / 2) / cellSize);
+        
+        return new Vector2Int(xIndex, yIndex);
+    }
+    
+    public int ChunkSeed()
+    {
+        return (seed + chunkGridPosition.x + chunkGridPosition.y + chunkGridPosition.z) * 31;
     }
 }

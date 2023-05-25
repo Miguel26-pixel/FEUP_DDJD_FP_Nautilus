@@ -24,6 +24,7 @@ struct BiomeParameter
 int numBiomes;
 StructuredBuffer<BiomeParameter> biomes;
 StructuredBuffer<float> biomesValues;
+RWStructuredBuffer<float3> biomeNoiseB;
 float biomeScale;
 float3 biomeOffset;
 
@@ -34,6 +35,10 @@ float falloff;
 
 // Noise settings
 StructuredBuffer<float3> offsets;
+
+int indexFromCoord(uint x, uint y) {
+    return y * numPointsPerAxis + x;
+}
 
 [numthreads(numThreads,numThreads,numThreads)]
 void Density (int3 id : SV_DispatchThreadID)
@@ -118,4 +123,6 @@ void Density (int3 id : SV_DispatchThreadID)
     
     int index = indexFromCoord(id.x,id.y,id.z);
     points[index] = float4(pos, finalVal);
+    index = indexFromCoord(id.x, id.z);
+    biomeNoiseB[index] = float3(pos.xz, biomeNoise);
 }

@@ -256,9 +256,10 @@ Shader "Universal Render Pipeline/Custom/Physically Based Example"
                 float3 worldPos = input.positionWSAndFogFactor.xyz;
 
                 float3 vertex_color = half3(0.9, 0.2,0.2);
+                float3 local_pos = worldPos - mul(unity_ObjectToWorld, float4(0,0,0,1)).xyz;
 
                 int general = 0;
-                const float3 biomePos = float3(worldPos.xz * biome_scale , 0) + biome_offset;
+                const float3 biomePos = float3(local_pos.xz * biome_scale , 0) + biome_offset;
                 float biome_noise = (snoise(biomePos) + 0.866025403785f) / (0.866025403785f*2.f);
 
                 const float3 biome_init_pos = float3(init_pos.xz * biomeScale, 0) + biome_offset;
@@ -269,6 +270,7 @@ Shader "Universal Render Pipeline/Custom/Physically Based Example"
                 const float mult_island = 1 - mult_normal;
 
                 biome_noise = mult_normal * biome_noise + mult_island * 0.9;
+                biome_noise += snoise(local_pos*0.05)*0.01;
                 
                 for (int biome = biomes_count - 1; biome >= 0; biome --)
                 {
@@ -295,9 +297,9 @@ Shader "Universal Render Pipeline/Custom/Physically Based Example"
                         // float multBiomeB = smoothstep(a, b, biomeNoise);
                         // float multBiomeA = 1 - multBiomeB;
                         
-                        if (worldPos.y > min_height + snoise(worldPos*0.05)*5)
+                        if (local_pos.y > min_height + snoise(local_pos*0.05)*5)
                         {
-                            const float noise = (snoise(worldPos*0.03) + 0.866025403785f) / (0.866025403785f*2.f);
+                            const float noise = (snoise(local_pos*0.03) + 0.866025403785f) / (0.866025403785f*2.f);
                             for (int color_index = general + 1; color_index < next; color_index++)
                             {
                                 float4 c = height_properties[color_index];
