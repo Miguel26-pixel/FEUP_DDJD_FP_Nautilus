@@ -223,6 +223,11 @@ public class Player : MonoBehaviour
 
                 HandleAttack();
             }
+
+            if (Input.GetMouseButtonDown(1))
+            {
+                animator.SetTrigger("Run");
+            }
         }
     }
 
