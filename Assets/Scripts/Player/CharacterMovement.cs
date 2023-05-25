@@ -42,12 +42,12 @@ public class CharacterMovement : MonoBehaviour
     {
         // Cast a ray downwards to detect the floor
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, Mathf.Infinity))
-        {
-            // Adjust the player's position and rotation to match the floor
-            playerRigidbody.MovePosition(hit.point);
-            playerRigidbody.MoveRotation(Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation);
-        }
+        // if (Physics.Raycast(transform.position, Vector3.down, out hit, Mathf.Infinity))
+        // {
+        //     // Adjust the player's position and rotation to match the floor
+        //     playerRigidbody.MovePosition(hit.point);
+        //     playerRigidbody.MoveRotation(Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation);
+        // }
     }
 
     public bool isDead

@@ -1277,7 +1277,7 @@ MonoBehaviour:
   isoLevel: 15.18
   boundsSize: 60
   seed: 4
-  player: {fileID: 0}
+  player: {fileID: 1529412837}
   chunkPrefab: {fileID: 5382608540069460159, guid: c50d8f676bf4e53f3bee1fef7779aa00, type: 3}
   generationConfigs: {fileID: 1060819886}
   chunksParent: {fileID: 175995}
@@ -1339,7 +1339,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1092333243}
-  m_LocalRotation: {x: 0.05581053, y: -0.11305622, z: 0.0063606156, w: 0.9919995}
+  m_LocalRotation: {x: 0.055810533, y: -0.11305622, z: 0.0063606165, w: 0.9919995}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1905,7 +1905,7 @@ CapsuleCollider:
   m_Radius: 0.05
   m_Height: 0.26
   m_Direction: 1
-  m_Center: {x: 0, y: 0.13, z: 0}
+  m_Center: {x: 0, y: 0.135, z: 0}
 --- !u!114 &1529412834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1938,7 +1938,12 @@ CharacterController:
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0.13, z: 0}
+  m_Center: {x: 0, y: 0.135, z: 0}
+--- !u!4 &1529412837 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: fc8b148eca244dd4a87cbcd82430aa86, type: 3}
+  m_PrefabInstance: {fileID: 1702474869}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1548586664
 GameObject:
   m_ObjectHideFlags: 0
