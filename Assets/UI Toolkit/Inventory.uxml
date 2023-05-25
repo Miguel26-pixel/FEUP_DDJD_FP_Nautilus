@@ -1,0 +1,60 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/Theme.uss?fileID=7433441132597879392&amp;guid=b674df751d5a19162b7bfb6da9f4cfd4&amp;type=3#Theme" />
+    <ui:VisualElement style="flex-grow: 1; width: 100%; height: 100%; align-items: center; justify-content: center;">
+        <ui:VisualElement name="InventoryContainer" style="width: auto; height: 90%;">
+            <ui:VisualElement name="TopFlair" picking-mode="Ignore" style="position: absolute; width: 100%; height: 4px; margin-right: 0; padding-right: 0; top: -2px; background-color: rgb(95, 116, 131); border-top-left-radius: 2px; border-bottom-left-radius: 0; border-top-right-radius: 2px; border-bottom-right-radius: 0;" />
+            <ui:VisualElement name="Background" class="background" style="width: 100%; height: 100%; position: absolute;" />
+            <ui:VisualElement>
+                <ui:VisualElement name="ContainerHeader" style="border-left-width: 0; border-right-width: 0; border-top-width: 0; border-bottom-width: 0; background-color: rgb(27, 50, 67); flex-direction: row; padding-left: 15px; padding-top: 10px; padding-bottom: 10px; padding-right: 10px;">
+                    <ui:VisualElement style="flex-grow: 0; justify-content: flex-end;">
+                        <ui:Label text="Inventory" display-tooltip-when-elided="true" name="ContainerLabel" class="text" style="font-size: 22px;" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-grow: 1; flex-direction: row;">
+                <ui:VisualElement name="Grid" class="inventory" style="flex-grow: 1; padding-left: 50px; padding-right: 50px; padding-top: 0; padding-bottom: 0; align-items: center; justify-content: center; max-width: none; width: 430px;">
+                    <ui:VisualElement name="Row" class="row">
+                        <ui:VisualElement name="Cell0" class="item-square">
+                            <ui:VisualElement class="cell-background" />
+                            <ui:VisualElement class="icon" />
+                            <ui:VisualElement class="overlay" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="Cell" class="item-square disabled">
+                            <ui:VisualElement class="cell-background" style="position: absolute; background-color: rgb(22, 40, 54); width: 100%; height: 100%;" />
+                            <ui:VisualElement class="icon" />
+                            <ui:VisualElement class="overlay" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement style="width: 300px; background-color: rgb(22, 40, 54);">
+                    <ui:VisualElement name="EquipmentSlots" style="flex-grow: 1; align-items: stretch; justify-content: center; height: 50%;">
+                        <ui:VisualElement name="Top" style="flex-grow: 0; flex-shrink: 1; align-items: center; justify-content: flex-end; height: auto;">
+                            <ui:VisualElement name="Head" class="equipment-slot" style="width: 55px; height: 55px; margin-bottom: 20px;">
+                                <ui:VisualElement name="ItemIcon" class="icon" style="display: flex;" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="Middle" style="align-items: flex-end; flex-grow: 0; flex-shrink: 1; height: auto; flex-direction: row; justify-content: flex-start;">
+                            <ui:VisualElement style="flex-grow: 1; align-items: flex-end; width: 0;">
+                                <ui:VisualElement name="Hand" class="equipment-slot" style="width: 55px; height: 110px;">
+                                    <ui:VisualElement name="ItemIcon" class="icon" style="display: flex;" />
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                            <ui:VisualElement style="flex-grow: 1; align-items: center; width: 0;">
+                                <ui:VisualElement name="Body" class="equipment-slot" style="width: 55px; height: 110px;">
+                                    <ui:VisualElement name="ItemIcon" class="icon" style="display: flex;" />
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                            <ui:VisualElement style="flex-grow: 1;" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="Bottom" style="flex-grow: 0; flex-shrink: 0; flex-direction: column; align-items: center;">
+                            <ui:VisualElement name="Feet" class="equipment-slot" style="width: 110px; height: 55px; margin-top: 20px;">
+                                <ui:VisualElement name="ItemIcon" class="icon" style="display: flex;" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:VisualElement style="flex-grow: 1; height: 50%; border-left-color: rgb(44, 62, 76); border-right-color: rgb(44, 62, 76); border-top-color: rgb(44, 62, 76); border-bottom-color: rgb(44, 62, 76); border-top-width: 2px;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

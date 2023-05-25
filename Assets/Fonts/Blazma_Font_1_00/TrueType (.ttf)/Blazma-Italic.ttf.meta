@@ -1,0 +1,24 @@
+fileFormatVersion: 2
+guid: b9e11b20b48f3576c8b6348011f75813
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Blazma
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: e16cbc98b1f122e91bab23106f3903e7, type: 3}
+  - {fileID: 12800000, guid: 757dcf7fa066ec467918583b53cfc989, type: 3}
+  - {fileID: 12800000, guid: c7afa4bbefcd3234d92cd205eb24a4a4, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
