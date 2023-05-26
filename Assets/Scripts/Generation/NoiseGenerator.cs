@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NoiseGenerator : MonoBehaviour
+public class NoiseGenerator : MonoBehaviour, IDisposable
 {
     private ComputeBuffer pointsBuffer;
 
@@ -20,6 +20,14 @@ public class NoiseGenerator : MonoBehaviour
 
         result.pointsBuffer = pointsBuffer;
         return result;
+    }
+
+    public void Dispose()
+    {
+        foreach (var step in processingSteps)
+        {
+            step.Dispose();
+        }
     }
 }
 

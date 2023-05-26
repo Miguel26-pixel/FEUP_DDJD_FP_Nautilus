@@ -6,6 +6,8 @@ using DataManager;
 using Inventory;
 using UI.Inventory;
 using UI.Inventory.Builders;
+using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -30,6 +32,7 @@ namespace Player
         private float _verticalRotation = 0f;
         private float _horizontalRotation = 0f;
         private Vector3 _currentMovement;
+        private Rigidbody _rigidbody;
 
         public PlayerInventory playerInventory = new("Inventory", new[,]
         {
@@ -49,9 +52,10 @@ namespace Player
             _itemRegistryObject = GameObject.Find("DataManager").GetComponent<ItemRegistryObject>();
             _itemRegistry = _itemRegistryObject.itemRegistry;
             _camera = Camera.main;
+            _rigidbody = GetComponent<Rigidbody>();
             Debug.Log(SystemInfo.supportsAsyncCompute);
             Debug.Log(SystemInfo.supportsAsyncGPUReadback);
-            Debug.Log(SystemInfo.supportsComputeShaders);
+            Debug.Log(SystemInfo.supportsComputeShaders);j
 
             StartCoroutine(GiveItems());
         }
@@ -80,18 +84,21 @@ namespace Player
             
             _verticalRotation -= mouseDelta.y * 0.1f;
             _verticalRotation = Mathf.Clamp(_verticalRotation, -90f, 90f);
-            
             _horizontalRotation += mouseDelta.x * 0.1f;
             
-            _camera.transform.localRotation = Quaternion.Euler(_verticalRotation, _horizontalRotation, 0f);
+            _camera.transform.localRotation = Quaternion.Euler(_verticalRotation, 0, 0f);
             
             if (_currentMovement != Vector3.zero)
             {
                 Vector3 forward = _camera.transform.forward;
                 forward.Normalize();
                 
-                transform.position += forward * (_currentMovement.x * 0.5f);
-                _camera.transform.position += forward * (_currentMovement.x * 0.5f);
+                // transform.position += forward * (_currentMovement.x * 0.5f);
+                _rigidbody.velocity = forward * (_currentMovement.x * 20f);
+            }
+            else
+            {
+                _rigidbody.velocity = Vector3.zero;
             }
         }
 

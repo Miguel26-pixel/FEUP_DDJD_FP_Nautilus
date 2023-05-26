@@ -1,8 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BiomeProcessingStep : ProcessingStep
+public class BiomeProcessingStep : ProcessingStep, IDisposable
 {
     public List<BiomeParameters> biomeParameters;
     public List<float> biomesValues;
@@ -21,7 +22,7 @@ public class BiomeProcessingStep : ProcessingStep
     
     private bool _initialized = false;
 
-    private void InitializeBuffers (int noiseLength, int seed, float boundsSize)
+    private void InitializeBuffers (int noiseLength, int seed, float boundsSize, int numPointsPerAxis)
     {
         if (_initialized)
         {
@@ -58,27 +59,35 @@ public class BiomeProcessingStep : ProcessingStep
         shader.SetInt("numBiomes", biomeParameters.Count);
         shader.SetFloat("biomeScale", biomeScale);
         shader.SetFloat("boundsSize", boundsSize);
-        
+        shader.SetInt("numPointsPerAxis", numPointsPerAxis);
+        shader.SetFloat("spacing", boundsSize / (numPointsPerAxis - 1));
+
         shader.SetFloat("falloff", islandFalloff);
         shader.SetFloat("radius", islandRadius);
         shader.SetVector("initPos", initPos);
-            
+
         _initialized = true;
     }
 
     public override void Process(ComputeBuffer pointsBuffer, int numPointsPerAxis, int seed, float boundsSize, Vector3 centre, ProcessingResult result)
     {
         Vector3[] biomeNoise = new Vector3[numPointsPerAxis * numPointsPerAxis];
-        InitializeBuffers(biomeNoise.Length, seed, boundsSize);
+        InitializeBuffers(biomeNoise.Length, seed, boundsSize, numPointsPerAxis);
         
         shader.SetVector("centre", centre * boundsSize);
-        shader.SetFloat("spacing", boundsSize / (numPointsPerAxis - 1));
-        shader.SetInt("numPointsPerAxis", numPointsPerAxis);
         shader.SetBuffer(0, "points", pointsBuffer);
 
         var numThreads = Mathf.CeilToInt(numPointsPerAxis / 8f);
 
         shader.Dispatch(0, numThreads, numThreads, numThreads);
         result.biomeBuffer = _biomeNoiseBuffer;
+    }
+
+    public override void Dispose()
+    {
+        _biomeParametersBuffer?.Release();
+        _biomeValuesBuffer?.Release();
+        _biomeNoiseBuffer?.Release();
+        _offsetsBuffer?.Release();
     }
 }

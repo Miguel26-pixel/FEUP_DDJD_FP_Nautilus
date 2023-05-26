@@ -5,7 +5,7 @@ using Generation.Resource;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class MeshGenerator : MonoBehaviour
+public class MeshGenerator : MonoBehaviour, IDisposable
 {
     public float isoLevel;
     public float boundsSize = 1;
@@ -124,6 +124,7 @@ public class MeshGenerator : MonoBehaviour
                             _biomeNoise.Add(new Vector2Int(x, z), biomePoints);
                         }
 
+                        result.biomeBuffer.Release();
                         _chunks[chunkPosition] = currentChunk;
                         currentChunk.colorGenerator.UpdateColors(seed);
                         LinkedList<Vector2>[] points = pointsGeneratorMono.pointsGenerator.GeneratePoints(new Vector2Int(x, z));
@@ -154,6 +155,14 @@ public class MeshGenerator : MonoBehaviour
                     chunk.Generate(isoLevel, boundsSize, numPointsPerAxis, seed);
                 }
             }
+        }
+    }
+
+    public void Dispose()
+    {
+        foreach (var chunkPair in _chunks)
+        {
+            chunkPair.Value.Dispose();
         }
     }
 }
