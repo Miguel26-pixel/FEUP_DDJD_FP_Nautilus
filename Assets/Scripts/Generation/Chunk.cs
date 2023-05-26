@@ -22,7 +22,7 @@ public class Chunk : MonoBehaviour
     private ComputeBuffer _triangleBuffer;
     private ComputeBuffer _triCountBuffer;
     private NoiseGenerator _noiseGenerator;
-    private float _numPointsPerAxis;
+    private int _numPointsPerAxis;
     private float _boundsSize;
     private int _seed;
 
@@ -41,19 +41,19 @@ public class Chunk : MonoBehaviour
 
     private ProcessingResult GenerateNoise(float boundsSize, int seed)
     {
-        return _noiseGenerator.Generate(chunkGridPosition, boundsSize, seed);
+        return _noiseGenerator.Generate(chunkGridPosition, boundsSize, _numPointsPerAxis, seed);
     }
 
     private Triangle[] GenerateTriangles(float isoLevel, ComputeBuffer pointsBuffer, ComputeBuffer modifiedNoiseBuffer)
     {
-        int numVoxelsPerAxis = _noiseGenerator.numPointsPerAxis - 1;
+        int numVoxelsPerAxis = _numPointsPerAxis - 1;
         int numVoxels = numVoxelsPerAxis * numVoxelsPerAxis * numVoxelsPerAxis;
         int maxTriangleCount = numVoxels * 5;
 
         _triangleBuffer = new ComputeBuffer (maxTriangleCount, sizeof (float) * 9, ComputeBufferType.Append);
         _triCountBuffer = new ComputeBuffer (1, sizeof (int), ComputeBufferType.Raw);
 
-        shader.SetInt("numPointsPerAxis", _noiseGenerator.numPointsPerAxis);
+        shader.SetInt("numPointsPerAxis", _numPointsPerAxis);
         shader.SetFloat("isoLevel", isoLevel);
         shader.SetBuffer(0, "points", pointsBuffer);
         shader.SetBuffer(0, "triangles", _triangleBuffer);
@@ -115,22 +115,22 @@ public class Chunk : MonoBehaviour
     public void Regenerate(ComputeBuffer modifiedNoiseBuffer)
     {
         ComputeBuffer pointsBuffer = new ComputeBuffer(
-            _noiseGenerator.numPointsPerAxis * _noiseGenerator.numPointsPerAxis * _noiseGenerator.numPointsPerAxis,
+            _numPointsPerAxis * _numPointsPerAxis * _numPointsPerAxis,
             sizeof(float) * 4);
         pointsBuffer.SetData(_points);
         
         Triangle[] triangles = GenerateTriangles(0, pointsBuffer, modifiedNoiseBuffer);
     }
 
-    public ProcessingResult Generate(float isoLevel, float chunkSize, int seed)
+    public ProcessingResult Generate(float isoLevel, float chunkSize, int numPointsPerAxis, int seed)
     {
-        _numPointsPerAxis = _noiseGenerator.numPointsPerAxis;
+        _numPointsPerAxis = numPointsPerAxis;
         _seed = seed;
         _boundsSize = chunkSize;
         ProcessingResult result = GenerateNoise(chunkSize, seed);
         ComputeBuffer modifiedNoiseBuffer =
             new ComputeBuffer(
-                _noiseGenerator.numPointsPerAxis * _noiseGenerator.numPointsPerAxis * _noiseGenerator.numPointsPerAxis,
+                numPointsPerAxis * numPointsPerAxis * numPointsPerAxis,
                 sizeof(float));
         
 

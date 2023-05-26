@@ -10,11 +10,6 @@ public abstract class ProcessingStep : MonoBehaviour
 
 public record ProcessingResult
 {
-    public float[,] biomeNoise;
+    public ComputeBuffer biomeBuffer;
     public ComputeBuffer pointsBuffer;
-
-    public ProcessingResult(float[,] biomeNoise)
-    {
-        this.biomeNoise = biomeNoise;
-    }
 }

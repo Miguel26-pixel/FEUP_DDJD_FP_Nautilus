@@ -9,6 +9,7 @@ public class MeshGenerator : MonoBehaviour
 {
     public float isoLevel;
     public float boundsSize = 1;
+    public int numPointsPerAxis = 16;
     public int seed = 0;
     public Transform player;
 
@@ -23,7 +24,7 @@ public class MeshGenerator : MonoBehaviour
     public int numChunksZ = 1;
 
     private readonly Dictionary<Vector3Int, Chunk> _chunks = new();
-    private readonly Dictionary<Vector2Int, float[,]> _biomeNoise = new();
+    private readonly Dictionary<Vector2Int, float[]> _biomeNoise = new();
     private readonly List<Chunk> _activeChunks = new();
 
     public Vector3 lastPosition = Vector3.positiveInfinity;
@@ -99,18 +100,35 @@ public class MeshGenerator : MonoBehaviour
                         chunkObject.name = $"Chunk {x} {y} {z}";
                         currentChunk = chunkObject.GetComponent<Chunk>();
                         currentChunk.chunkGridPosition = new Vector3Int(x, y, z);
-                        ProcessingResult result = currentChunk.Generate(isoLevel, boundsSize, seed);
+                        ProcessingResult result = currentChunk.Generate(isoLevel, boundsSize, numPointsPerAxis, seed);
+
+                        float[] biomePoints = new float[numPointsPerAxis * numPointsPerAxis]; 
+                        Vector3[] biomeNoise = new Vector3[numPointsPerAxis * numPointsPerAxis];
+                        result.biomeBuffer.GetData(biomeNoise);
+        
+                        for (int i = 0; i < biomeNoise.Length; i++)
+                        {
+                            float yPos = biomeNoise[i].y;
+                            float xPos = biomeNoise[i].x;
+                            float biome = biomeNoise[i].z;
+            
+                            float cellSize = boundsSize / (numPointsPerAxis - 1);
+            
+                            int yIndex = Mathf.FloorToInt((yPos - z * boundsSize + boundsSize / 2) / cellSize);
+                            int xIndex = Mathf.FloorToInt((xPos - x * boundsSize + boundsSize / 2) / cellSize);
+                            biomePoints[yIndex * numPointsPerAxis  + xIndex] = biome;
+                        }
 
                         if (!_biomeNoise.ContainsKey(new Vector2Int(x, z)))
                         {
-                            _biomeNoise.Add(new Vector2Int(x, z), result.biomeNoise);
+                            _biomeNoise.Add(new Vector2Int(x, z), biomePoints);
                         }
 
                         _chunks[chunkPosition] = currentChunk;
                         currentChunk.colorGenerator.UpdateColors(seed);
                         LinkedList<Vector2>[] points = pointsGeneratorMono.pointsGenerator.GeneratePoints(new Vector2Int(x, z));
                         
-                        resourceGenerator.GenerateResources(currentChunk, result.biomeNoise, points);
+                        resourceGenerator.GenerateResources(currentChunk, biomePoints, points);
                     }
 
                     _activeChunks.Add(currentChunk);
@@ -133,7 +151,7 @@ public class MeshGenerator : MonoBehaviour
                     chunkObject.name = $"Chunk {x} {y} {z}";
                     Chunk chunk = chunkObject.GetComponent<Chunk>();
                     chunk.chunkGridPosition = new Vector3Int(x, y, z);
-                    chunk.Generate(isoLevel, boundsSize, seed);
+                    chunk.Generate(isoLevel, boundsSize, numPointsPerAxis, seed);
                 }
             }
         }

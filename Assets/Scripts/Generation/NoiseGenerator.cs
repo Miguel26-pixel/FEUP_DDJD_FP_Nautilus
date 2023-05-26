@@ -4,15 +4,14 @@ using UnityEngine;
 
 public class NoiseGenerator : MonoBehaviour
 {
-    public int numPointsPerAxis = 24;
     private ComputeBuffer pointsBuffer;
 
     public List<ProcessingStep> processingSteps;
 
-    public ProcessingResult Generate(Vector3 centre, float boundsSize, int seed)
+    public ProcessingResult Generate(Vector3 centre, float boundsSize, int numPointsPerAxis, int seed)
     {
         pointsBuffer = new ComputeBuffer(numPointsPerAxis * numPointsPerAxis * numPointsPerAxis, sizeof(float) * 4);
-        ProcessingResult result = new ProcessingResult(new float[numPointsPerAxis, numPointsPerAxis]);
+        ProcessingResult result = new ProcessingResult();
         
         foreach (var step in processingSteps)
         {

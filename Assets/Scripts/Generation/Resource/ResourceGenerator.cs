@@ -25,6 +25,7 @@ namespace Generation.Resource
         private IObjectPool<GameObject>[] _objectPools;
         private ResourceGeneratorSettings[] _resourceGeneratorConfigs;
         private List<Chunk> _previouslyActiveChunks = new List<Chunk>();
+        private int _numPointsPerAxis;
 
         private void Start()
         {
@@ -34,6 +35,7 @@ namespace Generation.Resource
             _resourceObjects = new Dictionary<Vector3Int, List<ResourceObject>[]>();
             _objectPools = new IObjectPool<GameObject>[_resourceGeneratorConfigs.Length];
             _activeResourceObjects = new Dictionary<Vector3Int, List<GameObject>[]>();
+            _numPointsPerAxis = generator.numPointsPerAxis;
 
             for (int i = 0; i < _resourceGeneratorConfigs.Length; i++)
             {
@@ -68,7 +70,7 @@ namespace Generation.Resource
             Destroy(gameObject);
         }
 
-        public void GenerateResources(Chunk chunk, float[,] biomeNoise , LinkedList<Vector2>[] points)
+        public void GenerateResources(Chunk chunk, float[] biomeNoise , LinkedList<Vector2>[] points)
         {
             Random.State state = Random.state;
             Random.InitState(chunk.ChunkSeed());
@@ -95,7 +97,7 @@ namespace Generation.Resource
 
                         Vector2Int biomeIndex = chunk.GetPointPosition(surfacePoint);
                         
-                        float noise = biomeNoise[biomeIndex.y, biomeIndex.x];
+                        float noise = biomeNoise[biomeIndex.y * _numPointsPerAxis + biomeIndex.x];
                         if (noise < settings.minBiomeValue || noise > settings.maxBiomeValue)
                         {
                             continue;
