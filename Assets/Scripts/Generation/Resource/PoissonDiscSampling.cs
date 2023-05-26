@@ -13,9 +13,8 @@ namespace Generation.Resource
             
             int[,] grid = new int[Mathf.CeilToInt(sampleRegionSize.x / cellSize), Mathf.CeilToInt(sampleRegionSize.y / cellSize)];
             List<Vector2> points = new List<Vector2>();
-            List<Vector2> spawnPoints = new List<Vector2>();
+            List<Vector2> spawnPoints = new List<Vector2> { sampleRegionSize/2 };
 
-            spawnPoints.Add(sampleRegionSize/2);
             while (spawnPoints.Count > 0)
             {
                 int spawnIndex = Random.Range(0, spawnPoints.Count);
@@ -25,8 +24,8 @@ namespace Generation.Resource
                 for (int i = 0; i < numSamplesBeforeRejection; i++)
                 {
                     float angle = Random.value * Mathf.PI * 2;
-                    Vector2 dir = new Vector2(Mathf.Sin(angle), Mathf.Cos(angle));
-                    Vector2 candidate = spawnCentre + dir * Random.Range(radius, 2 * radius);
+                    float randomRadius = Random.Range(radius, 2 * radius);
+                    Vector2 candidate = new(spawnCentre.x + Mathf.Sin(angle) * randomRadius, spawnCentre.y + Mathf.Cos(angle) * randomRadius);
 
                     if (IsValid(candidate, sampleRegionSize, cellSize, radius, points, grid))
                     {

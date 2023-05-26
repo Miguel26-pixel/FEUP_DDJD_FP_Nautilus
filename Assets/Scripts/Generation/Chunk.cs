@@ -42,7 +42,7 @@ public class Chunk : MonoBehaviour, IDisposable
         return noiseGenerator.Generate(chunkGridPosition, boundsSize, _numPointsPerAxis, seed);
     }
 
-    private Triangle[] GenerateTriangles(float isoLevel, ComputeBuffer pointsBuffer, ComputeBuffer modifiedNoiseBuffer)
+    private void DispatchMarchingCubes(float isoLevel, ComputeBuffer pointsBuffer, ComputeBuffer modifiedNoiseBuffer)
     {
         int numVoxelsPerAxis = _numPointsPerAxis - 1;
         int numVoxels = numVoxelsPerAxis * numVoxelsPerAxis * numVoxelsPerAxis;
@@ -60,10 +60,12 @@ public class Chunk : MonoBehaviour, IDisposable
         int numThreadsPerAxis = Mathf.CeilToInt (numVoxelsPerAxis / 8f);
         shader.Dispatch(0, numThreadsPerAxis, numThreadsPerAxis, numThreadsPerAxis);
         
-        // TODO: try to thread this
         _points = pointsBuffer;
         _modifiedNoise = modifiedNoiseBuffer;
-
+    }
+    
+    private Triangle[] GenerateTriangles()
+    {
         ComputeBuffer.CopyCount(_triangleBuffer, _triCountBuffer, 0);
         int[] triCountArray = { 0 };
         _triCountBuffer.GetData(triCountArray);
@@ -110,12 +112,10 @@ public class Chunk : MonoBehaviour, IDisposable
     public void Regenerate(float isoLevel)
     {
         shader.SetBool("useModifiedNoise", true);
-        Triangle[] triangles = GenerateTriangles(isoLevel, _points, _modifiedNoise);
-        GenerateMesh(triangles);
-        GenerateCollider();
+        DispatchMarchingCubes(isoLevel, _points, _modifiedNoise);
     }
 
-    public ProcessingResult Generate(float isoLevel, float chunkSize, int numPointsPerAxis, NoiseGenerator noiseGenerator, int seed)
+    public ProcessingResult DispatchShaders(float isoLevel, float chunkSize, int numPointsPerAxis, NoiseGenerator noiseGenerator, int seed)
     {
         _numPointsPerAxis = numPointsPerAxis;
         _seed = seed;
@@ -126,11 +126,16 @@ public class Chunk : MonoBehaviour, IDisposable
                 numPointsPerAxis * numPointsPerAxis * numPointsPerAxis,
                 sizeof(float));
 
-        Triangle[] triangles = GenerateTriangles(isoLevel, result.pointsBuffer, modifiedNoiseBuffer);
-        GenerateMesh(triangles);
-        GenerateCollider();
+        DispatchMarchingCubes(isoLevel, result.pointsBuffer, modifiedNoiseBuffer);
 
         return result;
+    }
+
+    public void Generate()
+    {
+        Triangle[] triangles = GenerateTriangles();
+        GenerateMesh(triangles);
+        GenerateCollider();
     }
     
     public int GetFloatDistance(float distance)

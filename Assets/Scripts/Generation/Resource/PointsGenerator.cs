@@ -20,7 +20,7 @@ namespace Generation.Resource
         public float chanceOfGenerating = 1f;
         public GameObject prefab;
         public bool isClustered = false;
-        public float clusterPointRadius = 2f;
+        public float clusterMaxCount = 10f;
         public float clusterRadius = 10f;
         public float clusterChance = 1f;
     }
@@ -112,21 +112,17 @@ namespace Generation.Resource
             ResourceGeneratorSettings settings = _settings[cellIndex];
             int seed = (int) (position.x * 10000 + position.y * 10000);
 
-            List<Vector2> randomCircle = PoissonDiscSampling.GeneratePoints(
-                settings.clusterPointRadius,
-                new Vector2(settings.clusterRadius * 2, settings.clusterRadius * 2),
-                settings.numSamplesBeforeRejection,
-                seed
-            );
-            
-            List<Vector2> resourceObjects = new();
             Random.State state = Random.state;
             Random.InitState(seed);
             
-            foreach (Vector2 point in randomCircle)
+            List<Vector2> resourceObjects = new();
+
+            for (int i = 0; i < settings.clusterMaxCount; i++)
             {
-                Vector2 newPoint = point - new Vector2(settings.clusterRadius, settings.clusterRadius);
-                if (newPoint.x * newPoint.x + newPoint.y * newPoint.y > settings.clusterRadius * settings.clusterRadius)
+                float x = Random.Range(-settings.clusterRadius, settings.clusterRadius);
+                float y = Random.Range(-settings.clusterRadius, settings.clusterRadius);
+                
+                if (x * x + y * y > settings.clusterRadius * settings.clusterRadius)
                 {
                     continue;
                 }
@@ -136,9 +132,10 @@ namespace Generation.Resource
                     continue;
                 }
                 
-                resourceObjects.Add(new Vector2(position.x + newPoint.x, position.y + newPoint.y));
+                resourceObjects.Add(new Vector2(position.x + x, position.y + y));
+
             }
-            
+
             Random.state = state;
             return resourceObjects;
         }
@@ -230,7 +227,7 @@ namespace Generation.Resource
         
         private float CellSize(int cellIndex)
         {
-            return _settings[cellIndex].radius * 20;
+            return _settings[cellIndex].radius * 15;
         }
         
         private float CellPadding(int cellIndex)

@@ -872,6 +872,10 @@ GameObject:
   - component: {fileID: 1298936909}
   - component: {fileID: 1298936911}
   - component: {fileID: 1298936910}
+  - component: {fileID: 1298936915}
+  - component: {fileID: 1298936914}
+  - component: {fileID: 1298936913}
+  - component: {fileID: 1298936912}
   m_Layer: 0
   m_Name: GenerationManager
   m_TagString: Untagged
@@ -929,7 +933,7 @@ MonoBehaviour:
   generationConfigs: {fileID: 1298936910}
   resourceGeneratorConfigs:
   - radius: 23
-    numSamplesBeforeRejection: 31
+    numSamplesBeforeRejection: 10
     minBiomeValue: 0.85
     maxBiomeValue: 1
     minHeight: 23.7
@@ -940,11 +944,11 @@ MonoBehaviour:
     chanceOfGenerating: 1
     prefab: {fileID: 1063185408827613290, guid: 3594d021d3d687eea96998a537fa2c2b, type: 3}
     isClustered: 1
-    clusterPointRadius: 2
+    clusterMaxCount: 16
     clusterRadius: 10
-    clusterChance: 0.5
+    clusterChance: 1
   - radius: 30
-    numSamplesBeforeRejection: 30
+    numSamplesBeforeRejection: 10
     minBiomeValue: 0.85
     maxBiomeValue: 1
     minHeight: 23.7
@@ -955,11 +959,11 @@ MonoBehaviour:
     chanceOfGenerating: 1
     prefab: {fileID: 3227079481712756029, guid: d35052ca7b6d8fc06a1916450f8cb984, type: 3}
     isClustered: 0
-    clusterPointRadius: 2
+    clusterMaxCount: 10
     clusterRadius: 10
     clusterChance: 1
   - radius: 22
-    numSamplesBeforeRejection: 25
+    numSamplesBeforeRejection: 10
     minBiomeValue: 0.2
     maxBiomeValue: 1
     minHeight: -100
@@ -970,7 +974,7 @@ MonoBehaviour:
     chanceOfGenerating: 1
     prefab: {fileID: 3158366126859447154, guid: 10279e33eb70b8cd48a072740fb47869, type: 3}
     isClustered: 0
-    clusterPointRadius: 2
+    clusterMaxCount: 10
     clusterRadius: 10
     clusterChance: 1
   chunksParent: {fileID: 175995}
@@ -982,6 +986,178 @@ MonoBehaviour:
   pointsGeneratorMono: {fileID: 1024297185}
   resourceGenerator: {fileID: 1024297184}
   terraformShader: {fileID: 7200000, guid: dff5b01a328946b39a5680beb5ce39ba, type: 3}
+--- !u!114 &1298936912
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1298936908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f9686916627dd581877df760acd8160, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  biomes:
+  - sections:
+    - minHeight: 24
+      colors:
+      - color: {r: 0.4245283, g: 0.2316898, b: 0.09011215, a: 0}
+        minNoise: 0.75
+      - color: {r: 0.1435728, g: 0.5566038, b: 0.07613921, a: 0}
+        minNoise: -1
+    - minHeight: -3
+      colors:
+      - color: {r: 0.8901961, g: 0.58431375, b: 0.36078432, a: 0}
+        minNoise: -1
+  - sections:
+    - minHeight: -10
+      colors:
+      - color: {r: 0.8666667, g: 0.3529412, b: 0.39215687, a: 0}
+        minNoise: 0.55
+      - color: {r: 0.8901961, g: 0.58431375, b: 0.36078432, a: 0}
+        minNoise: 0.41
+      - color: {r: 0.13333334, g: 0.4862745, b: 0.44705883, a: 0}
+        minNoise: -1
+    - minHeight: -14
+      colors:
+      - color: {r: 0.6431373, g: 0.33333334, b: 0.105882354, a: 0}
+        minNoise: -1
+    - minHeight: -1000
+      colors:
+      - color: {r: 0.627451, g: 0.101960786, b: 0.14117648, a: 0}
+        minNoise: 0.45
+      - color: {r: 0.6431373, g: 0.33333334, b: 0.105882354, a: 0}
+        minNoise: 0.31
+      - color: {r: 0.06666667, g: 0.4, b: 0.3647059, a: 0}
+        minNoise: -1
+  - sections:
+    - minHeight: -100
+      colors:
+      - color: {r: 0.49056602, g: 0.18280526, b: 0.37718046, a: 0}
+        minNoise: 0.65
+      - color: {r: 0.36078432, g: 0.46666667, b: 0.105882354, a: 0}
+        minNoise: 0.58
+      - color: {r: 0.582, g: 0.09457498, b: 0.13095002, a: 0}
+        minNoise: 0.1
+      - color: {r: 0.589, g: 0.30527437, b: 0.096969485, a: 0}
+        minNoise: -1
+    - minHeight: -1000
+      colors:
+      - color: {r: 0.019607844, g: 0.019607844, b: 0.019607844, a: 0}
+        minNoise: -1
+  biomeProcessingStep: {fileID: 1298936914}
+--- !u!114 &1298936913
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1298936908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 195de888df22436eadf02736683b8ee7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  caveParameters:
+    lacunarity: 1.3
+    persistence: 1.1
+    noiseScale: 0.19
+    noiseWeight: 40
+    floorOffset: 260
+    weightMultiplier: 2
+    hardFloor: -50
+    hardFloorWeight: 0
+    hardCeil: -100
+    hardCeilWeight: 140
+    warpEffect: 0
+    warpFrequency: 0
+    offset: {x: 0, y: 0, z: 0}
+    shaderParams: {x: 1, y: 1, z: 0, w: 0}
+  mixA: 0.3
+  mixB: 0.5
+  biomeScale: 0.0015
+  shader: {fileID: 7200000, guid: 5cd0550b57254a98b544eb3b9bf5feaf, type: 3}
+--- !u!114 &1298936914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1298936908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c37a361c776392268dbc390594fd88f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  biomeParameters:
+  - lacunarity: 2.4
+    persistence: 0.34
+    noiseScale: 0.42
+    noiseWeight: 59
+    floorOffset: 75
+    weightMultiplier: 2.3
+    hardFloor: -4
+    hardFloorWeight: 0
+    hardCeil: 0
+    hardCeilWeight: 0
+    warpEffect: 0
+    warpFrequency: 0.009
+    offset: {x: 0, y: 0, z: 0}
+    shaderParams: {x: 1, y: 0, z: 0, w: 0}
+  - lacunarity: 2.4
+    persistence: 0.39
+    noiseScale: 0.42
+    noiseWeight: 19
+    floorOffset: 7
+    weightMultiplier: 4
+    hardFloor: 0
+    hardFloorWeight: 4
+    hardCeil: 0
+    hardCeilWeight: 0
+    warpEffect: 0
+    warpFrequency: 0.002
+    offset: {x: 0, y: 0, z: 0}
+    shaderParams: {x: 1, y: 0, z: 0, w: 0}
+  - lacunarity: 2.4
+    persistence: 0.39
+    noiseScale: 0.42
+    noiseWeight: 20
+    floorOffset: -11
+    weightMultiplier: 4
+    hardFloor: 33
+    hardFloorWeight: 15
+    hardCeil: 0
+    hardCeilWeight: 0
+    warpEffect: 0
+    warpFrequency: 0.002
+    offset: {x: 0, y: 0, z: 0}
+    shaderParams: {x: 1, y: 0.2, z: 0, w: 0}
+  biomesValues:
+  - 0.3
+  - 0.5
+  - 0.8
+  - 0.9
+  biomeScale: 0.0015
+  initPos: {x: 0, y: 0, z: 0}
+  islandRadius: 0.002
+  islandFalloff: 0.06
+  shader: {fileID: 7200000, guid: c6851149be19f7320adfb6906f638288, type: 3}
+--- !u!114 &1298936915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1298936908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8df3bc0ebee831c779c07c37cd6f9e3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  processingSteps:
+  - {fileID: 1298936914}
+  - {fileID: 1298936913}
 --- !u!1 &1449632362
 GameObject:
   m_ObjectHideFlags: 0
