@@ -29,6 +29,11 @@ public class NoiseGenerator : MonoBehaviour, IDisposable
             step.Dispose();
         }
     }
+
+    private void OnDestroy()
+    {
+        Dispose();
+    }
 }
 
 

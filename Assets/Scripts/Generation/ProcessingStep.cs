@@ -9,6 +9,11 @@ public abstract class ProcessingStep : MonoBehaviour, IDisposable
         Vector3 centre, ProcessingResult result);
 
     public abstract void Dispose();
+
+    private void OnDestroy()
+    {
+        Dispose();
+    }
 }
 
 public record ProcessingResult

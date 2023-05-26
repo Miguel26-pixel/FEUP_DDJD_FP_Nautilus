@@ -6,6 +6,7 @@ using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.Rendering;
+using Utils;
 
 public class MeshGenerator : MonoBehaviour, IDisposable
 {
@@ -38,29 +39,37 @@ public class MeshGenerator : MonoBehaviour, IDisposable
 
     public HashSet<Vector3Int> Terraform(Vector3 position, float weight, float radius)
     {
-        // RWStructuredBuffer<float> modifiedNoise;
-        // int3 centre;
-        // int radius;
-        // int numPointsPerAxis;
-        // float weight;
-        // float deltaTime;
-        // TODO: GET NEIGHBOURS
         Vector3Int chunkPosition = ChunkPosition(position);
-        Chunk chunk = _chunks[chunkPosition];
+        HashSet<Vector3Int> modifiedChunks = new();
 
-        Vector3Int chunkIndexes = chunk.GetVectorPosition(position);
+        for (int x = chunkPosition.x - 1; x <= chunkPosition.x + 1; x++)
+        {
+            for (int y = chunkPosition.y - 1; y <= chunkPosition.y + 1; y++)
+            {
+                for (int z = chunkPosition.z - 1; z <= chunkPosition.z + 1; z++)
+                {
+                    Vector3 localPosition = chunksParent.transform.InverseTransformPoint(position);
+                    if (!MathUtils.SphereIntersectsBox(localPosition, radius, new Vector3(x, y, z) * boundsSize,
+                            new Vector3(boundsSize, boundsSize, boundsSize))) continue;
+                    Chunk chunk = _chunks[new Vector3Int(x, y, z)];
+                    
+                    Vector3Int chunkIndexes = chunk.GetVectorPosition(position);
         
-        terraformShader.SetBuffer(0, "modifiedNoise", chunk.GetModifiedNoiseBuffer());
-        terraformShader.SetInts("centre", chunkIndexes.x, chunkIndexes.y, chunkIndexes.z);
-        terraformShader.SetInt("radius", Mathf.RoundToInt(radius));
-        terraformShader.SetInt("numPointsPerAxis", numPointsPerAxis);
-        terraformShader.SetFloat("weight", weight);
-        terraformShader.SetFloat("deltaTime", Time.deltaTime);
+                    terraformShader.SetBuffer(0, "modifiedNoise", chunk.GetModifiedNoiseBuffer());
+                    terraformShader.SetInts("centre", chunkIndexes.x, chunkIndexes.y, chunkIndexes.z);
+                    terraformShader.SetInt("radius", chunk.GetFloatDistance(radius));
+                    terraformShader.SetInt("numPointsPerAxis", numPointsPerAxis);
+                    terraformShader.SetFloat("weight", weight);
+                    terraformShader.SetFloat("deltaTime", Time.deltaTime);
         
-        int numThreadsPerAxis = Mathf.CeilToInt(numPointsPerAxis / 8f);
-        terraformShader.Dispatch(0, numThreadsPerAxis, numThreadsPerAxis, numThreadsPerAxis);
+                    int numThreadsPerAxis = Mathf.CeilToInt(numPointsPerAxis / 8f);
+                    terraformShader.Dispatch(0, numThreadsPerAxis, numThreadsPerAxis, numThreadsPerAxis);
+                    modifiedChunks.Add(chunk.chunkGridPosition);
+                }
+            }
+        }
 
-        return new HashSet<Vector3Int>() { chunkPosition };
+        return modifiedChunks;
     }
 
     public void RegenerateChunk(Vector3Int position)
@@ -181,6 +190,11 @@ public class MeshGenerator : MonoBehaviour, IDisposable
         {
             chunkPair.Value.Dispose();
         }
+    }
+
+    public void OnDestroy()
+    {
+        Dispose();
     }
 }
 

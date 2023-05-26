@@ -134,6 +134,14 @@ public class Chunk : MonoBehaviour, IDisposable
 
         return result;
     }
+    
+    public int GetFloatDistance(float distance)
+    {
+        float cellSize = _boundsSize / (_numPointsPerAxis - 1);
+        int cellDistance = Mathf.RoundToInt(distance / cellSize);
+        
+        return cellDistance;
+    }
 
     public Vector2Int GetPointPosition(Vector3 position)
     {
@@ -144,8 +152,8 @@ public class Chunk : MonoBehaviour, IDisposable
             
         float cellSize = _boundsSize / (_numPointsPerAxis - 1);
             
-        int yIndex = Mathf.FloorToInt((y - chunkGridPosition.z * _boundsSize + _boundsSize / 2) / cellSize);
-        int xIndex = Mathf.FloorToInt((x - chunkGridPosition.x * _boundsSize + _boundsSize / 2) / cellSize);
+        int yIndex = Mathf.RoundToInt((y - chunkGridPosition.z * _boundsSize + _boundsSize / 2) / cellSize);
+        int xIndex = Mathf.RoundToInt((x - chunkGridPosition.x * _boundsSize + _boundsSize / 2) / cellSize);
         
         return new Vector2Int(xIndex, yIndex);
     }
@@ -160,9 +168,9 @@ public class Chunk : MonoBehaviour, IDisposable
             
         float cellSize = _boundsSize / (_numPointsPerAxis - 1);
             
-        int zIndex = Mathf.FloorToInt((z - chunkGridPosition.z * _boundsSize + _boundsSize / 2) / cellSize);
-        int yIndex = Mathf.FloorToInt((y - chunkGridPosition.y * _boundsSize + _boundsSize / 2) / cellSize);
-        int xIndex = Mathf.FloorToInt((x - chunkGridPosition.x * _boundsSize + _boundsSize / 2) / cellSize);
+        int zIndex = Mathf.RoundToInt((z - chunkGridPosition.z * _boundsSize + _boundsSize / 2) / cellSize);
+        int yIndex = Mathf.RoundToInt((y - chunkGridPosition.y * _boundsSize + _boundsSize / 2) / cellSize);
+        int xIndex = Mathf.RoundToInt((x - chunkGridPosition.x * _boundsSize + _boundsSize / 2) / cellSize);
         
         return new Vector3Int(xIndex, yIndex, zIndex);
     }
@@ -182,5 +190,10 @@ public class Chunk : MonoBehaviour, IDisposable
         _modifiedNoise?.Release();
         _points?.Release();
         _noiseGenerator.Dispose();
+    }
+
+    private void OnDestroy()
+    {
+        Dispose();
     }
 }

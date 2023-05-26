@@ -55,12 +55,7 @@ namespace Player
                     return;
                 }
                 
-                HashSet<Vector3Int> newChunks = Terraform(hit.point);
-                
-                foreach (var newChunk in newChunks)
-                {
-                    alteredChunks.Add(newChunk);
-                }
+                alteredChunks = Terraform(hit.point);
             }
             else
             {
