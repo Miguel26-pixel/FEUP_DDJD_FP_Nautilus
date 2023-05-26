@@ -24,7 +24,7 @@ namespace Generation.Resource
         private Dictionary<Vector3Int, List<GameObject>[]> _activeResourceObjects;
         private IObjectPool<GameObject>[] _objectPools;
         private ResourceGeneratorSettings[] _resourceGeneratorConfigs;
-        private List<Chunk> _previouslyActiveChunks = new List<Chunk>();
+        private HashSet<Vector3Int> _previouslyActiveChunks = new();
         private int _numPointsPerAxis;
 
         private void Start()
@@ -45,7 +45,7 @@ namespace Generation.Resource
                     GameObject gameObject = Instantiate(_resourceGeneratorConfigs[i1].prefab, resourceParent.transform, true);
                     gameObject.SetActive(false);
                     return gameObject;
-                }, OnTakeFromPool, defaultCapacity: 100, actionOnRelease: OnReturnToPool, actionOnDestroy: OnDestroyFromPool);
+                }, OnTakeFromPool, defaultCapacity: 500, actionOnRelease: OnReturnToPool, actionOnDestroy: OnDestroyFromPool);
             }
         }
         
@@ -131,13 +131,13 @@ namespace Generation.Resource
             Random.state = state;
         }
 
-        public void UpdateResources(List<Chunk> activeChunks)
+        public void UpdateResources(HashSet<Vector3Int> activeChunks)
         {
             foreach (var chunk in _previouslyActiveChunks)
             {
                 if (!activeChunks.Contains(chunk))
                 {
-                    RemoveResources(chunk.chunkGridPosition);
+                    RemoveResources(chunk);
                 }
             }
             
@@ -145,11 +145,11 @@ namespace Generation.Resource
             {
                 if (!_previouslyActiveChunks.Contains(chunk))
                 {
-                    GetResources(chunk.chunkGridPosition);
+                    GetResources(chunk);
                 }
             }
 
-            _previouslyActiveChunks = new List<Chunk>(activeChunks);
+            _previouslyActiveChunks = new HashSet<Vector3Int>(activeChunks);
         }
 
         private void GetResources(Vector3Int chunkGridPosition)

@@ -8,7 +8,6 @@ using UnityEngine.Serialization;
 public class Chunk : MonoBehaviour, IDisposable
 {
     public Vector3Int chunkGridPosition;
-    public ColorGenerator colorGenerator;
     public ComputeShader shader;
 
     [NonSerialized]
@@ -18,10 +17,10 @@ public class Chunk : MonoBehaviour, IDisposable
     
     private MeshFilter _meshFilter;
     private MeshCollider _meshCollider;
+    private MeshRenderer _meshRenderer;
     
     private ComputeBuffer _triangleBuffer;
     private ComputeBuffer _triCountBuffer;
-    private NoiseGenerator _noiseGenerator;
     private int _numPointsPerAxis;
     private float _boundsSize;
     private int _seed;
@@ -30,8 +29,7 @@ public class Chunk : MonoBehaviour, IDisposable
     {
         _meshFilter = GetComponent<MeshFilter>();
         _meshCollider = GetComponent<MeshCollider>();
-        _noiseGenerator = GetComponent<NoiseGenerator>();
-        colorGenerator = GetComponent<ColorGenerator>();
+        _meshRenderer = GetComponent<MeshRenderer>();
     }
 
     private void GenerateCollider()
@@ -39,9 +37,9 @@ public class Chunk : MonoBehaviour, IDisposable
         _meshCollider.sharedMesh = _meshFilter.sharedMesh;
     }
 
-    private ProcessingResult GenerateNoise(float boundsSize, int seed)
+    private ProcessingResult GenerateNoise(float boundsSize, NoiseGenerator noiseGenerator, int seed)
     {
-        return _noiseGenerator.Generate(chunkGridPosition, boundsSize, _numPointsPerAxis, seed);
+        return noiseGenerator.Generate(chunkGridPosition, boundsSize, _numPointsPerAxis, seed);
     }
 
     private Triangle[] GenerateTriangles(float isoLevel, ComputeBuffer pointsBuffer, ComputeBuffer modifiedNoiseBuffer)
@@ -117,12 +115,12 @@ public class Chunk : MonoBehaviour, IDisposable
         GenerateCollider();
     }
 
-    public ProcessingResult Generate(float isoLevel, float chunkSize, int numPointsPerAxis, int seed)
+    public ProcessingResult Generate(float isoLevel, float chunkSize, int numPointsPerAxis, NoiseGenerator noiseGenerator, int seed)
     {
         _numPointsPerAxis = numPointsPerAxis;
         _seed = seed;
         _boundsSize = chunkSize;
-        ProcessingResult result = GenerateNoise(chunkSize, seed);
+        ProcessingResult result = GenerateNoise(chunkSize, noiseGenerator, seed);
         ComputeBuffer modifiedNoiseBuffer =
             new ComputeBuffer(
                 numPointsPerAxis * numPointsPerAxis * numPointsPerAxis,
@@ -180,6 +178,11 @@ public class Chunk : MonoBehaviour, IDisposable
         return _modifiedNoise;
     }
     
+    public MeshRenderer GetMeshRenderer()
+    {
+        return _meshRenderer;
+    }
+    
     public int ChunkSeed()
     {
         return (_seed + chunkGridPosition.x + chunkGridPosition.y + chunkGridPosition.z) * 31;
@@ -189,7 +192,6 @@ public class Chunk : MonoBehaviour, IDisposable
     {
         _modifiedNoise?.Release();
         _points?.Release();
-        _noiseGenerator.Dispose();
     }
 
     private void OnDestroy()

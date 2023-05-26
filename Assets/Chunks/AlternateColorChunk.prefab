@@ -11,11 +11,8 @@ GameObject:
   - component: {fileID: 5382608540069460154}
   - component: {fileID: 5382608540069460155}
   - component: {fileID: 5382608540069460156}
-  - component: {fileID: 5382608540069460158}
-  - component: {fileID: 5382608540069460152}
   - component: {fileID: 1117030778486291149}
-  - component: {fileID: 2950186666612986353}
-  - component: {fileID: -7730389142229968132}
+  - component: {fileID: 5382608540069460152}
   - component: {fileID: 4969987593713701929}
   m_Layer: 3
   m_Name: AlternateColorChunk
@@ -89,22 +86,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &5382608540069460158
-MonoBehaviour:
+--- !u!64 &1117030778486291149
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5382608540069460159}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8df3bc0ebee831c779c07c37cd6f9e3c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  numPointsPerAxis: 16
-  processingSteps:
-  - {fileID: 2950186666612986353}
-  - {fileID: -7730389142229968132}
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &5382608540069460152
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -120,116 +115,6 @@ MonoBehaviour:
   chunkGridPosition: {x: 0, y: 0, z: 0}
   colorGenerator: {fileID: 0}
   shader: {fileID: 7200000, guid: 728a80c570a390ef2b6cd044370914d8, type: 3}
---- !u!64 &1117030778486291149
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5382608540069460159}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &2950186666612986353
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5382608540069460159}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c37a361c776392268dbc390594fd88f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  biomeParameters:
-  - lacunarity: 2.4
-    persistence: 0.34
-    noiseScale: 0.42
-    noiseWeight: 59
-    floorOffset: 75
-    weightMultiplier: 2.3
-    hardFloor: -4
-    hardFloorWeight: 0
-    hardCeil: 0
-    hardCeilWeight: 0
-    warpEffect: 0
-    warpFrequency: 0.009
-    offset: {x: 0, y: 0, z: 0}
-    shaderParams: {x: 1, y: 0, z: 0, w: 0}
-  - lacunarity: 2.4
-    persistence: 0.39
-    noiseScale: 0.42
-    noiseWeight: 19
-    floorOffset: 7
-    weightMultiplier: 4
-    hardFloor: 0
-    hardFloorWeight: 4
-    hardCeil: 0
-    hardCeilWeight: 0
-    warpEffect: 0
-    warpFrequency: 0.002
-    offset: {x: 0, y: 0, z: 0}
-    shaderParams: {x: 1, y: 0, z: 0, w: 0}
-  - lacunarity: 2.4
-    persistence: 0.39
-    noiseScale: 0.42
-    noiseWeight: 20
-    floorOffset: -11
-    weightMultiplier: 4
-    hardFloor: 33
-    hardFloorWeight: 15
-    hardCeil: 0
-    hardCeilWeight: 0
-    warpEffect: 0
-    warpFrequency: 0.002
-    offset: {x: 0, y: 0, z: 0}
-    shaderParams: {x: 1, y: 0.2, z: 0, w: 0}
-  biomesValues:
-  - 0.3
-  - 0.5
-  - 0.8
-  - 0.9
-  biomeScale: 0.0015
-  initPos: {x: 0, y: 0, z: 0}
-  islandRadius: 0.002
-  islandFalloff: 0.06
-  shader: {fileID: 7200000, guid: c6851149be19f7320adfb6906f638288, type: 3}
---- !u!114 &-7730389142229968132
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5382608540069460159}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 195de888df22436eadf02736683b8ee7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  caveParameters:
-    lacunarity: 1.3
-    persistence: 1.1
-    noiseScale: 0.19
-    noiseWeight: 40
-    floorOffset: 260
-    weightMultiplier: 2
-    hardFloor: -50
-    hardFloorWeight: 0
-    hardCeil: -100
-    hardCeilWeight: 140
-    warpEffect: 0
-    warpFrequency: 0
-    offset: {x: 0, y: 0, z: 0}
-    shaderParams: {x: 1, y: 1, z: 0, w: 0}
-  mixA: 0.3
-  mixB: 0.5
-  biomeScale: 0.0015
-  shader: {fileID: 7200000, guid: 5cd0550b57254a98b544eb3b9bf5feaf, type: 3}
 --- !u!114 &4969987593713701929
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -291,4 +176,4 @@ MonoBehaviour:
       colors:
       - color: {r: 0.019607844, g: 0.019607844, b: 0.019607844, a: 0}
         minNoise: -1
-  biomeProcessingStep: {fileID: 2950186666612986353}
+  biomeProcessingStep: {fileID: 0}

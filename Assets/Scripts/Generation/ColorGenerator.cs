@@ -33,19 +33,14 @@ internal class ReverseSectionComparer : IComparer<ColorHeightSection>
 }
 
 public class ColorGenerator : MonoBehaviour {
-    public MeshRenderer meshRenderer;
-
     public List<BiomeColorSections> biomes;
     private List<Vector4> sectionBuffer;
-    private Material mat;
     public BiomeProcessingStep biomeProcessingStep;
     
-    public void UpdateColors(int seed)
+    public void UpdateColors(int seed, Material mat)
     {
         // sections.Sort(new ReverseSectionComparer());
         sectionBuffer = SerializeSection();
-
-        mat = meshRenderer.material;
 
         // mat.SetBuffer("height_properties", sectionBuffer);
         mat.SetVectorArray("height_properties", sectionBuffer);
