@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Player
@@ -38,6 +39,7 @@ namespace Player
             }
 
             RaycastHit hit;
+            HashSet<Vector3Int> alteredChunks = new HashSet<Vector3Int>();
 
             if (Physics.Raycast(_camera.position, _camera.forward, out hit, 200, layerMask))
             {
@@ -52,32 +54,59 @@ namespace Player
                     // TODO: Add a way to show that the player can't terraform here
                     return;
                 }
-
-                switch (_terraformType)
+                
+                HashSet<Vector3Int> newChunks = Terraform(hit.point);
+                
+                foreach (var newChunk in newChunks)
                 {
-                    case TerraformType.Lower:
-                        _meshGenerator.Terraform(hit.point, power, radius);
-                        break;
-                    case TerraformType.Raise:
-                        _meshGenerator.Terraform(hit.point, -power, radius);
-                        break;
+                    alteredChunks.Add(newChunk);
                 }
             }
             else
             {
                 terraformCursor.SetActive(false);
             }
+
+            foreach (var alteredChunk in alteredChunks)
+            {
+                _meshGenerator.RegenerateChunk(alteredChunk);
+            }
+        }
+
+        private HashSet<Vector3Int> Terraform(Vector3 position)
+        {
+            switch (_terraformType)
+            {
+                case TerraformType.Lower:
+                    return _meshGenerator.Terraform(position, -power, radius);
+                case TerraformType.Raise:
+                    return _meshGenerator.Terraform(position, power, radius);
+                case TerraformType.None:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            return new HashSet<Vector3Int>();
         }
         
         public void SetTerraformType(TerraformType terraformType)
         {
             _terraformType = terraformType;
         }
+
+        public void ToggleTerraform()
+        {
+            if(canTerraform) DeactivateTerraform();
+            else ActivateTerraform();
+        }
+        
         
         public void ActivateTerraform()
         {
             Debug.Log("Activate");
             canTerraform = true;
+            _terraformType = TerraformType.None;
         }
         
         public void DeactivateTerraform()
@@ -90,6 +119,7 @@ namespace Player
 
     public enum TerraformType
     {
+        None,
         Raise,
         Lower
     }

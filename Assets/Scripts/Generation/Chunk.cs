@@ -109,9 +109,12 @@ public class Chunk : MonoBehaviour, IDisposable
         mesh.RecalculateNormals();
     }
 
-    public void Regenerate(ComputeBuffer modifiedNoiseBuffer)
+    public void Regenerate(float isoLevel)
     {
-        Triangle[] triangles = GenerateTriangles(0, _points, modifiedNoiseBuffer);
+        shader.SetBool("useModifiedNoise", true);
+        Triangle[] triangles = GenerateTriangles(isoLevel, _points, _modifiedNoise);
+        GenerateMesh(triangles);
+        GenerateCollider();
     }
 
     public ProcessingResult Generate(float isoLevel, float chunkSize, int numPointsPerAxis, int seed)
@@ -145,6 +148,23 @@ public class Chunk : MonoBehaviour, IDisposable
         int xIndex = Mathf.FloorToInt((x - chunkGridPosition.x * _boundsSize + _boundsSize / 2) / cellSize);
         
         return new Vector2Int(xIndex, yIndex);
+    }
+    
+    public Vector3Int GetVectorPosition(Vector3 position)
+    {
+        Vector3 local = transform.InverseTransformPoint(position);
+        
+        float z = local.z;
+        float y = local.y;
+        float x = local.x;
+            
+        float cellSize = _boundsSize / (_numPointsPerAxis - 1);
+            
+        int zIndex = Mathf.FloorToInt((z - chunkGridPosition.z * _boundsSize + _boundsSize / 2) / cellSize);
+        int yIndex = Mathf.FloorToInt((y - chunkGridPosition.y * _boundsSize + _boundsSize / 2) / cellSize);
+        int xIndex = Mathf.FloorToInt((x - chunkGridPosition.x * _boundsSize + _boundsSize / 2) / cellSize);
+        
+        return new Vector3Int(xIndex, yIndex, zIndex);
     }
     
     public ComputeBuffer GetModifiedNoiseBuffer()

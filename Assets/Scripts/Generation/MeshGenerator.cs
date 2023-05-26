@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Generation.Resource;
+using Unity.Collections;
+using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -24,7 +26,6 @@ public class MeshGenerator : MonoBehaviour, IDisposable
     public int numChunksZ = 1;
 
     private readonly Dictionary<Vector3Int, Chunk> _chunks = new();
-    private readonly Dictionary<Vector2Int, float[]> _biomeNoise = new();
     private readonly List<Chunk> _activeChunks = new();
 
     public Vector3 lastPosition = Vector3.positiveInfinity;
@@ -35,7 +36,7 @@ public class MeshGenerator : MonoBehaviour, IDisposable
     
     public ComputeShader terraformShader;
 
-    public void Terraform(Vector3 position, float weight, float radius)
+    public HashSet<Vector3Int> Terraform(Vector3 position, float weight, float radius)
     {
         // RWStructuredBuffer<float> modifiedNoise;
         // int3 centre;
@@ -43,8 +44,29 @@ public class MeshGenerator : MonoBehaviour, IDisposable
         // int numPointsPerAxis;
         // float weight;
         // float deltaTime;
+        // TODO: GET NEIGHBOURS
+        Vector3Int chunkPosition = ChunkPosition(position);
+        Chunk chunk = _chunks[chunkPosition];
+
+        Vector3Int chunkIndexes = chunk.GetVectorPosition(position);
         
-        // terraformShader.SetBuffer(0, "modifiedNoise", );
+        terraformShader.SetBuffer(0, "modifiedNoise", chunk.GetModifiedNoiseBuffer());
+        terraformShader.SetInts("centre", chunkIndexes.x, chunkIndexes.y, chunkIndexes.z);
+        terraformShader.SetInt("radius", Mathf.RoundToInt(radius));
+        terraformShader.SetInt("numPointsPerAxis", numPointsPerAxis);
+        terraformShader.SetFloat("weight", weight);
+        terraformShader.SetFloat("deltaTime", Time.deltaTime);
+        
+        int numThreadsPerAxis = Mathf.CeilToInt(numPointsPerAxis / 8f);
+        terraformShader.Dispatch(0, numThreadsPerAxis, numThreadsPerAxis, numThreadsPerAxis);
+
+        return new HashSet<Vector3Int>() { chunkPosition };
+    }
+
+    public void RegenerateChunk(Vector3Int position)
+    {
+        Chunk chunk = _chunks[position];
+        chunk.Regenerate(isoLevel);
     }
     
     private void Update()
@@ -117,11 +139,6 @@ public class MeshGenerator : MonoBehaviour, IDisposable
                             int yIndex = Mathf.FloorToInt((yPos - z * boundsSize + boundsSize / 2) / cellSize);
                             int xIndex = Mathf.FloorToInt((xPos - x * boundsSize + boundsSize / 2) / cellSize);
                             biomePoints[yIndex * numPointsPerAxis  + xIndex] = biome;
-                        }
-
-                        if (!_biomeNoise.ContainsKey(new Vector2Int(x, z)))
-                        {
-                            _biomeNoise.Add(new Vector2Int(x, z), biomePoints);
                         }
 
                         result.biomeBuffer.Release();

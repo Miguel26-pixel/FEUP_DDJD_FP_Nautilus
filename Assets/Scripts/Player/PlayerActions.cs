@@ -80,6 +80,24 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Use Right Tool"",
+                    ""type"": ""Button"",
+                    ""id"": ""639770f7-e28b-48e4-8024-1deff51316b7"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Equip Tool"",
+                    ""type"": ""Button"",
+                    ""id"": ""9863c829-dd32-4fab-9fab-c982932576e1"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -148,6 +166,28 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
                     ""action"": ""Forward"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""25bd9dd1-0347-4c47-8c74-bf2b22419eeb"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Use Right Tool"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3776cac3-f22b-4379-a16d-78489e549c35"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Equip Tool"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -168,6 +208,8 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
         m_CraftingTest_RotateAntiClockwise = m_CraftingTest.FindAction("Rotate Anti Clockwise", throwIfNotFound: true);
         m_CraftingTest_UseTool = m_CraftingTest.FindAction("Use Tool", throwIfNotFound: true);
         m_CraftingTest_Forward = m_CraftingTest.FindAction("Forward", throwIfNotFound: true);
+        m_CraftingTest_UseRightTool = m_CraftingTest.FindAction("Use Right Tool", throwIfNotFound: true);
+        m_CraftingTest_EquipTool = m_CraftingTest.FindAction("Equip Tool", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -233,6 +275,8 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
     private readonly InputAction m_CraftingTest_RotateAntiClockwise;
     private readonly InputAction m_CraftingTest_UseTool;
     private readonly InputAction m_CraftingTest_Forward;
+    private readonly InputAction m_CraftingTest_UseRightTool;
+    private readonly InputAction m_CraftingTest_EquipTool;
     public struct CraftingTestActions
     {
         private @PlayerActions m_Wrapper;
@@ -243,6 +287,8 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
         public InputAction @RotateAntiClockwise => m_Wrapper.m_CraftingTest_RotateAntiClockwise;
         public InputAction @UseTool => m_Wrapper.m_CraftingTest_UseTool;
         public InputAction @Forward => m_Wrapper.m_CraftingTest_Forward;
+        public InputAction @UseRightTool => m_Wrapper.m_CraftingTest_UseRightTool;
+        public InputAction @EquipTool => m_Wrapper.m_CraftingTest_EquipTool;
         public InputActionMap Get() { return m_Wrapper.m_CraftingTest; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -270,6 +316,12 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
                 @Forward.started -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnForward;
                 @Forward.performed -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnForward;
                 @Forward.canceled -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnForward;
+                @UseRightTool.started -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnUseRightTool;
+                @UseRightTool.performed -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnUseRightTool;
+                @UseRightTool.canceled -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnUseRightTool;
+                @EquipTool.started -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnEquipTool;
+                @EquipTool.performed -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnEquipTool;
+                @EquipTool.canceled -= m_Wrapper.m_CraftingTestActionsCallbackInterface.OnEquipTool;
             }
             m_Wrapper.m_CraftingTestActionsCallbackInterface = instance;
             if (instance != null)
@@ -292,6 +344,12 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
                 @Forward.started += instance.OnForward;
                 @Forward.performed += instance.OnForward;
                 @Forward.canceled += instance.OnForward;
+                @UseRightTool.started += instance.OnUseRightTool;
+                @UseRightTool.performed += instance.OnUseRightTool;
+                @UseRightTool.canceled += instance.OnUseRightTool;
+                @EquipTool.started += instance.OnEquipTool;
+                @EquipTool.performed += instance.OnEquipTool;
+                @EquipTool.canceled += instance.OnEquipTool;
             }
         }
     }
@@ -313,5 +371,7 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
         void OnRotateAntiClockwise(InputAction.CallbackContext context);
         void OnUseTool(InputAction.CallbackContext context);
         void OnForward(InputAction.CallbackContext context);
+        void OnUseRightTool(InputAction.CallbackContext context);
+        void OnEquipTool(InputAction.CallbackContext context);
     }
 }

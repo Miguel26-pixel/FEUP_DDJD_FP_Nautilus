@@ -646,9 +646,9 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 8
-  radius: 5
-  power: 5
-  maxDistance: 20
+  radius: 2
+  power: 12
+  maxDistance: 200
   canTerraform: 0
   terraformCursorPrefab: {fileID: 7922233391476220167, guid: 326cef111a0578c1ab6a3044eacd35a6, type: 3}
 --- !u!1 &963194225
@@ -981,7 +981,7 @@ MonoBehaviour:
   lastChunkPosition: {x: 2147483647, y: 2147483647, z: 2147483647}
   pointsGeneratorMono: {fileID: 1024297185}
   resourceGenerator: {fileID: 1024297184}
-  terraformShader: {fileID: 0}
+  terraformShader: {fileID: 7200000, guid: dff5b01a328946b39a5680beb5ce39ba, type: 3}
 --- !u!1 &1449632362
 GameObject:
   m_ObjectHideFlags: 0

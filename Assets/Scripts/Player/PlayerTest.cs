@@ -55,7 +55,7 @@ namespace Player
             _rigidbody = GetComponent<Rigidbody>();
             Debug.Log(SystemInfo.supportsAsyncCompute);
             Debug.Log(SystemInfo.supportsAsyncGPUReadback);
-            Debug.Log(SystemInfo.supportsComputeShaders);j
+            Debug.Log(SystemInfo.supportsComputeShaders);
 
             StartCoroutine(GiveItems());
         }
@@ -147,10 +147,31 @@ namespace Player
         {
             if (context.performed)
             {
-                terraformController.ActivateTerraform();
+
+                terraformController.SetTerraformType(TerraformType.Lower);
+            } 
+            else if (context.canceled)
+            {
+                terraformController.SetTerraformType(TerraformType.None);
+            }
+        }
+        
+        public void OnUseRightTool(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                terraformController.SetTerraformType(TerraformType.Raise);
             } else if (context.canceled)
             {
-                terraformController.DeactivateTerraform();
+                terraformController.SetTerraformType(TerraformType.None);
+            }
+        }
+
+        public void OnEquipTool(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                terraformController.ToggleTerraform();
             }
         }
 

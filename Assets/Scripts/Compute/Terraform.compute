@@ -21,6 +21,6 @@ void Terraform (uint3 id : SV_DispatchThreadID)
         float dst = sqrt(dist);
         float brushWeight = 1 - smoothstep(radius * 0.7, radius, dst);
         
-        modifiedNoise[indexFromCoord(id.x, id.y, id.z)] += brushWeight * weight * deltaTime;
+        modifiedNoise[indexFromCoord(id.x, id.y, id.z)] += (brushWeight * weight * deltaTime);
     }
 }
