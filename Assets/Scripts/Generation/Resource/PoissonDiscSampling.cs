@@ -25,10 +25,13 @@ namespace Generation.Resource
                 {
                     float angle = Random.value * Mathf.PI * 2;
                     float randomRadius = Random.Range(radius, 2 * radius);
-                    Vector2 candidate = new(spawnCentre.x + Mathf.Sin(angle) * randomRadius, spawnCentre.y + Mathf.Cos(angle) * randomRadius);
+                    float candidateX = spawnCentre.x + Mathf.Sin(angle) * randomRadius;
+                    float candidateY = spawnCentre.y + Mathf.Cos(angle) * randomRadius;
 
-                    if (IsValid(candidate, sampleRegionSize, cellSize, radius, points, grid))
+                    if (IsValid(candidateX, candidateY, sampleRegionSize, cellSize, radius, points, grid))
                     {
+                        Vector2 candidate = new Vector2(candidateX, candidateY);
+                        
                         points.Add(candidate);
                         spawnPoints.Add(candidate);
                         grid[(int) (candidate.x / cellSize), (int) (candidate.y / cellSize)] = points.Count;
@@ -47,17 +50,17 @@ namespace Generation.Resource
             return points;
         }
 
-        public static bool IsValid(Vector2 candidate, Vector2 sampleRegionSize, float cellSize, float radius, List<Vector2> points,
+        public static bool IsValid(float candidateX, float candidateY, Vector2 sampleRegionSize, float cellSize, float radius, List<Vector2> points,
             int[,] grid)
         {
-            if (!(candidate.x >= 0) || !(candidate.x < sampleRegionSize.x) || !(candidate.y >= 0) ||
-                !(candidate.y < sampleRegionSize.y))
+            if (!(candidateX >= 0) || !(candidateX < sampleRegionSize.x) || !(candidateY >= 0) ||
+                !(candidateY < sampleRegionSize.y))
             {
                 return false;
             }
             
-            int cellX = (int) (candidate.x / cellSize);
-            int cellY = (int) (candidate.y / cellSize);
+            int cellX = (int) (candidateX / cellSize);
+            int cellY = (int) (candidateY / cellSize);
             
             int searchStartX = Mathf.Max(0, cellX - 2);
             int searchEndX = Mathf.Min(cellX + 2, grid.GetLength(0) - 1);
@@ -70,13 +73,17 @@ namespace Generation.Resource
                 for (int y = searchStartY; y <= searchEndY; y++)
                 {
                     int pointIndex = grid[x, y] - 1;
-                    if (pointIndex != -1)
+                    if (pointIndex == -1)
                     {
-                        float dst = (candidate - points[pointIndex]).sqrMagnitude;
-                        if (dst < radius * radius)
-                        {
-                            return false;
-                        }
+                        continue;
+                    }
+
+                    Vector2 point = points[pointIndex];
+
+                    float dst = new Vector2(candidateX - point.x, candidateY - point.y).sqrMagnitude;
+                    if (dst < radius * radius)
+                    {
+                        return false;
                     }
                 }
             }
