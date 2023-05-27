@@ -41,30 +41,40 @@ namespace Player
             RaycastHit hit;
             HashSet<Vector3Int> alteredChunks = new HashSet<Vector3Int>();
 
-            if (Physics.Raycast(_camera.position, _camera.forward, out hit, 200, layerMask))
-            {
-                terraformCursor.SetActive(true);
-                terraformCursor.transform.position = hit.point;
-                terraformCursor.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
-                
-                float distance = Vector3.Distance(_camera.position, hit.point);
-                
-                if (distance > maxDistance)
-                {
-                    // TODO: Add a way to show that the player can't terraform here
-                    return;
-                }
-                
-                alteredChunks = Terraform(hit.point);
-            }
-            else
-            {
-                terraformCursor.SetActive(false);
-            }
+            int numIterations = 5;
 
-            foreach (var alteredChunk in alteredChunks)
+
+            for (int i = 0; i < numIterations; i++)
             {
-                _meshGenerator.RegenerateChunk(alteredChunk);
+                float rayRadius = Mathf.Lerp(0.01f, 1f, i / (numIterations - 1f));
+
+                if (Physics.SphereCast(_camera.position, rayRadius, _camera.forward, out hit, 200, layerMask))
+                {
+                    terraformCursor.SetActive(true);
+                    terraformCursor.transform.position = hit.point;
+                    terraformCursor.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
+
+                    float distance = Vector3.Distance(_camera.position, hit.point);
+
+                    if (distance > maxDistance)
+                    {
+                        // TODO: Add a way to show that the player can't terraform here
+                        continue;
+                    }
+
+                    alteredChunks = Terraform(hit.point);
+                }
+                else
+                {
+                    terraformCursor.SetActive(false);
+                    continue;
+                }
+
+                foreach (var alteredChunk in alteredChunks)
+                {
+                    _meshGenerator.RegenerateChunk(alteredChunk);
+                }
+                break;
             }
         }
 

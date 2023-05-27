@@ -5,6 +5,12 @@ namespace Generation.Resource
 {
     public static class PoissonDiscSampling
     {
+        public static int MaxPoints(float radius, Vector2 sampleRegionSize)
+        {
+            float cellSize = radius / Mathf.Sqrt(2);
+            return Mathf.CeilToInt(sampleRegionSize.x / cellSize) * Mathf.CeilToInt(sampleRegionSize.y / cellSize);
+        }
+        
         public static List<Vector2> GeneratePoints(float radius, Vector2 sampleRegionSize, int numSamplesBeforeRejection = 30, int seed = 0)
         {
             Random.State state = Random.state;

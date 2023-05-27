@@ -1,0 +1,81 @@
+#pragma kernel ResourceGen
+
+
+struct Triangle
+{
+    float3 vertex_c;
+    float3 vertex_b;
+    float3 vertex_a;
+};
+
+struct hit_information
+{
+    float4 hit_position;
+    float3 hit_normal;
+};
+
+StructuredBuffer<float3> points;
+int num_points;
+StructuredBuffer<Triangle> triangles;
+int num_triangles;
+
+AppendStructuredBuffer<hit_information> hit_information_buffer;
+
+float3 barycentric_coordinates(float2 p, float2 p1, float2 p2, float2 p3)
+{
+    const float det = (p2.y - p3.y) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.y - p3.y);
+
+    float u = ((p2.y - p3.y) * (p.x - p3.x) + (p3.x - p2.x) * (p.y - p3.y)) / det;
+    float v = ((p3.y - p1.y) * (p.x - p3.x) + (p1.x - p3.x) * (p.y - p3.y)) / det;
+            
+    float w = 1 - u - v;
+
+    return float3(u, v, w);
+}
+
+bool point_in_triangle(const float u, const float v, const float w)
+{
+    return u >= 0 && u <= 1 && v >= 0 && v <= 1 && w >= 0 && w <= 1;
+}
+
+float height_at_point(const float u, const float v, const float w, const float y1, const float y2, const float y3)
+{
+    return u * y1 + v * y2 + w * y3;
+}
+
+// try 2 approaches:
+// 1. thread only per triangle, and then loop through all points
+// 2. thread per triangle and point numthreads(32, 32, 1)
+[numthreads(32, 32, 1)]
+void ResourceGen (int3 id : SV_DispatchThreadID)
+{
+    if (id.x >= num_triangles || id.y >= num_points) {
+        return;
+    }
+
+    float3 v1 = triangles[id.x].vertex_a;
+    float3 v2 = triangles[id.x].vertex_b;
+    float3 v3 = triangles[id.x].vertex_c;
+
+    // project triangle onto xz plane
+    const float2 p1 = float2(v1.x, v1.z);
+    const float2 p2 = float2(v2.x, v2.z);
+    const float2 p3 = float2(v3.x, v3.z);
+
+    float2 p = float2(points[id.y].x, points[id.y].y);
+
+    float3 barycentric = barycentric_coordinates(p, p1, p2, p3);
+
+    if (point_in_triangle(barycentric.x, barycentric.y, barycentric.z))
+    {
+        float height = height_at_point(barycentric.x, barycentric.y, barycentric.z, v1.y, v2.y, v3.y);
+        // calculate normal
+        const float3 normal = normalize(cross(v3 - v1, v2 - v1));
+
+        hit_information hit;
+        hit.hit_position = float4(p.x, height, p.y, points[id.y].z);
+        hit.hit_normal = normal;
+
+        hit_information_buffer.Append(hit);
+    }
+}

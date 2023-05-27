@@ -4,12 +4,13 @@ using UnityEngine;
 
 namespace Generation.Resource
 {
-    public record HitInformation
-    {
-        public Vector3 position;
-        public Vector3 normal;
-        public float slope;
-    }
+    // public struct HitInformation
+    // {
+    //     public Vector3 position;
+    //     public Vector3 normal;
+    //     public float slope;
+    //     public int resourceIndex;
+    // }
     
     public class RaycastSurfacePointsFinder
     {
@@ -50,7 +51,7 @@ namespace Generation.Resource
                 {
                     position = vectorResults[i],
                     normal = results[i].normal,
-                    slope = Vector3.Dot(results[i].normal, Vector3.up)
+                    // slope = Vector3.Dot(results[i].normal, Vector3.up)
                 };
             }
             

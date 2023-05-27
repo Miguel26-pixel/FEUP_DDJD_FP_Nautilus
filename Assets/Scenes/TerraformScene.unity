@@ -849,6 +849,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   resourceParent: {fileID: 1001064956}
+  pointsFinderShader: {fileID: 7200000, guid: b47426ebb2354854ba64574eb6f32a97, type: 3}
 --- !u!114 &1024297185
 MonoBehaviour:
   m_ObjectHideFlags: 0

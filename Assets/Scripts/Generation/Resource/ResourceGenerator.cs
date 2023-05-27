@@ -18,8 +18,10 @@ namespace Generation.Resource
     {
         public LayerMask layerMask;
         public GameObject resourceParent;
+        public ComputeShader pointsFinderShader;
 
         private RaycastSurfacePointsFinder _pointsFinder;
+        private BarycentricSurfacePointsFinder _barycentricSurfacePointsFinder;
         private Dictionary<Vector3Int, List<ResourceObject>[]> _resourceObjects;
         private Dictionary<Vector3Int, List<GameObject>[]> _activeResourceObjects;
         private IObjectPool<GameObject>[] _objectPools;
@@ -30,7 +32,9 @@ namespace Generation.Resource
         private void Start()
         {
             MeshGenerator generator = GameObject.Find("GenerationManager").GetComponent<MeshGenerator>();
+            PointsGeneratorMono pointsGeneratorMono = GetComponent<PointsGeneratorMono>();
             _pointsFinder = new RaycastSurfacePointsFinder(layerMask, generator.boundsSize);
+            _barycentricSurfacePointsFinder = new BarycentricSurfacePointsFinder(pointsFinderShader, pointsGeneratorMono.pointsGenerator.MaxPoints());
             _resourceGeneratorConfigs = generator.resourceGeneratorConfigs;
             _resourceObjects = new Dictionary<Vector3Int, List<ResourceObject>[]>();
             _objectPools = new IObjectPool<GameObject>[_resourceGeneratorConfigs.Length];
@@ -76,58 +80,72 @@ namespace Generation.Resource
             Random.InitState(chunk.ChunkSeed());
             _resourceObjects[chunk.chunkGridPosition] = new List<ResourceObject>[_resourceGeneratorConfigs.Length];
             
+            List<Vector3> pointsWithIndex = new List<Vector3>();
+            List<ResourceObject>[] resourceObjects = _resourceObjects[chunk.chunkGridPosition];
+
             for (int i = 0; i < points.Length; i++)
             {
-                ResourceGeneratorSettings settings = _resourceGeneratorConfigs[i];
-                _resourceObjects[chunk.chunkGridPosition][i] = new List<ResourceObject>();
-                List<ResourceObject> resourceObjects = _resourceObjects[chunk.chunkGridPosition][i];
-                
                 foreach (var point in points[i])
                 {
-                    HitInformation[] hits = _pointsFinder.FindUpwardSurfacePoints(chunk, point.x, point.y);
-
-                    foreach (var hit in hits)
-                    {
-                        Vector3 surfacePoint = hit.position;
-                        
-                        if (settings.maxHeight < surfacePoint.y || settings.minHeight > surfacePoint.y)
-                        {
-                            continue;
-                        }
-
-                        Vector2Int biomeIndex = chunk.GetPointPosition(surfacePoint);
-                        
-                        float noise = biomeNoise[biomeIndex.y * _numPointsPerAxis + biomeIndex.x];
-                        if (noise < settings.minBiomeValue || noise > settings.maxBiomeValue)
-                        {
-                            continue;
-                        }
-
-                        if (settings.maxSlope < hit.slope || settings.minSlope > hit.slope)
-                        {
-                            continue;
-                        }
-                        
-                        if (Random.value > settings.chanceOfGenerating)
-                        {
-                            continue;
-                        }
-                        
-                        int activeIndex = Random.Range(0, settings.prefab.transform.childCount);
-                        
-                        ResourceObject resourceObject = new ResourceObject()
-                        {
-                            position = surfacePoint,
-                            rotation = 
-                                (settings.alignToSurface ? Quaternion.FromToRotation(Vector3.up, hit.normal) : Quaternion.identity) *
-                                Quaternion.Euler(0, Random.value * 360, 0),
-                            activeIndex = activeIndex
-                        };
-                        resourceObjects.Add(resourceObject);
-                    }
+                    pointsWithIndex.Add(new Vector3(point.x, point.y, i));
                 }
             }
-            
+
+            Tuple<ComputeBuffer, int> triangles = chunk.GetTriangleBuffer();
+
+            HitInformation[] hits = _barycentricSurfacePointsFinder.FindUpwardSurfacePoints(triangles.Item1, triangles.Item2, pointsWithIndex);
+
+            for (int i = 0; i < points.Length; i++)
+            {
+                resourceObjects[i] = new List<ResourceObject>();
+                _resourceObjects[chunk.chunkGridPosition][i] = resourceObjects[i];
+            }
+           
+            foreach (var hit in hits)
+            {
+                int i = Mathf.RoundToInt(hit.position.w);
+                ResourceGeneratorSettings settings = _resourceGeneratorConfigs[i];
+                
+                Vector3 surfacePoint = hit.position;
+                
+                if (settings.maxHeight < surfacePoint.y || settings.minHeight > surfacePoint.y)
+                {
+                    continue;
+                }
+
+                Vector2Int biomeIndex = chunk.GetPointPosition(surfacePoint);
+                        
+                float noise = biomeNoise[biomeIndex.y * _numPointsPerAxis + biomeIndex.x];
+                if (noise < settings.minBiomeValue || noise > settings.maxBiomeValue)
+                {
+                    continue;
+                }
+
+                float slope = Vector3.Dot(hit.normal, Vector3.up);
+
+                if (settings.maxSlope < slope || settings.minSlope > slope)
+                {
+                    continue;
+                }
+                        
+                if (Random.value > settings.chanceOfGenerating)
+                {
+                    continue;
+                }
+                        
+                int activeIndex = Random.Range(0, settings.prefab.transform.childCount);
+                        
+                ResourceObject resourceObject = new ResourceObject()
+                {
+                    position = surfacePoint,
+                    rotation = 
+                        (settings.alignToSurface ? Quaternion.FromToRotation(Vector3.up, hit.normal) : Quaternion.identity) *
+                        Quaternion.Euler(0, Random.value * 360, 0),
+                    activeIndex = activeIndex
+                };
+                resourceObjects[i].Add(resourceObject);
+            }
+
             Random.state = state;
         }
 

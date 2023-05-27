@@ -34,6 +34,9 @@ public class BiomeProcessingStep : ProcessingStep, IDisposable
         _biomeParametersBuffer.SetData(biomeParameters);
         _biomeValuesBuffer = new ComputeBuffer(biomesValues.Count, sizeof(float));
         _biomeValuesBuffer.SetData(biomesValues);
+        _biomeNoiseBuffer = new ComputeBuffer(numPointsPerAxis * numPointsPerAxis, sizeof(float) * 3);
+        
+        shader.SetBuffer(0, "biomeNoiseB", _biomeNoiseBuffer);
         shader.SetBuffer(0, "biomes", _biomeParametersBuffer);
         shader.SetBuffer(0, "biomesValues", _biomeValuesBuffer);
         
@@ -69,11 +72,7 @@ public class BiomeProcessingStep : ProcessingStep, IDisposable
 
     public override void Process(ComputeBuffer pointsBuffer, int numPointsPerAxis, int seed, float boundsSize, Vector3 centre, ProcessingResult result)
     {
-        Vector3[] biomeNoise = new Vector3[numPointsPerAxis * numPointsPerAxis];
         InitializeBuffers(seed, boundsSize, numPointsPerAxis);
-        
-        _biomeNoiseBuffer = new ComputeBuffer(biomeNoise.Length, sizeof(float) * 3);
-        shader.SetBuffer(0, "biomeNoiseB", _biomeNoiseBuffer);
         
         shader.SetVector("centre", centre * boundsSize);
         shader.SetBuffer(0, "points", pointsBuffer);

@@ -6,23 +6,23 @@ using Random = UnityEngine.Random;
 namespace Generation.Resource
 {
     [Serializable]
-    public class ResourceGeneratorSettings
+    public struct ResourceGeneratorSettings
     {
-        public float radius = 120;
-        public int numSamplesBeforeRejection = 20;
-        public float minBiomeValue = 0.5f;
-        public float maxBiomeValue = 1f;
-        public float minHeight = 0.5f;
-        public float maxHeight = 1f;
-        public float minSlope = 0.5f;
-        public float maxSlope = 1f;
-        public bool alignToSurface = true;
-        public float chanceOfGenerating = 1f;
+        public float radius;
+        public int numSamplesBeforeRejection;
+        public float minBiomeValue;
+        public float maxBiomeValue;
+        public float minHeight;
+        public float maxHeight;
+        public float minSlope;
+        public float maxSlope;
+        public bool alignToSurface;
+        public float chanceOfGenerating;
         public GameObject prefab;
-        public bool isClustered = false;
-        public float clusterMaxCount = 10f;
-        public float clusterRadius = 10f;
-        public float clusterChance = 1f;
+        public bool isClustered;
+        public float clusterMaxCount;
+        public float clusterRadius;
+        public float clusterChance;
     }
 
     public record ChunkPoints
@@ -76,6 +76,19 @@ namespace Generation.Resource
             {
                 _cells[i] = new HashSet<Vector2Int>();
             }
+        }
+        
+        public int MaxPoints()
+        {
+            int maxPoints = 0;
+            
+            for (int i = 0; i < _settings.Length; i++)
+            {
+                ResourceGeneratorSettings settings = _settings[i];
+                maxPoints += PoissonDiscSampling.MaxPoints(settings.radius, CellSamplingRegion(i));
+            }
+
+            return maxPoints;
         }
 
         public LinkedList<Vector2>[] GeneratePoints(Vector2Int chunkPosition)

@@ -56,6 +56,7 @@ namespace Player
             Debug.Log(SystemInfo.supportsAsyncCompute);
             Debug.Log(SystemInfo.supportsAsyncGPUReadback);
             Debug.Log(SystemInfo.supportsComputeShaders);
+            UnsafeUtility.SetLeakDetectionMode(NativeLeakDetectionMode.EnabledWithStackTrace);
 
             StartCoroutine(GiveItems());
         }

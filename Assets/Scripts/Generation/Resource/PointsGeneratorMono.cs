@@ -9,7 +9,7 @@ namespace Generation.Resource
     {
         public PointsGenerator pointsGenerator;
 
-        public void Start()
+        public void Awake()
         {
             MeshGenerator generator = GameObject.Find("GenerationManager").GetComponent<MeshGenerator>();
             pointsGenerator = new PointsGenerator(generator.resourceGeneratorConfigs , generator.boundsSize, generator.seed);
