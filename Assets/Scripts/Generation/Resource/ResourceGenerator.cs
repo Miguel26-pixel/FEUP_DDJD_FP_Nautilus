@@ -14,6 +14,12 @@ namespace Generation.Resource
         public int activeIndex;
     }
 
+    public record ActiveObject
+    {
+        public ResourceData resourceData;
+        public GameObject gameObject;
+    }
+
     public class ResourceGenerator : MonoBehaviour, IDisposable
     {
         public LayerMask layerMask;
@@ -22,7 +28,7 @@ namespace Generation.Resource
 
         private BarycentricSurfacePointsFinder _barycentricSurfacePointsFinder;
         private Dictionary<Vector3Int, List<ResourceData>[]> _resourceObjects;
-        private Dictionary<Vector3Int, List<GameObject>[]> _activeResourceObjects;
+        private Dictionary<Vector3Int, List<ActiveObject>[]> _activeResourceObjects;
         private IObjectPool<GameObject>[] _objectPools;
         private ResourceGeneratorSettings[] _resourceGeneratorConfigs;
         private HashSet<Vector3Int> _previouslyActiveChunks = new();
@@ -35,7 +41,7 @@ namespace Generation.Resource
             _resourceGeneratorConfigs = generator.resourceGeneratorConfigs;
             _resourceObjects = new Dictionary<Vector3Int, List<ResourceData>[]>();
             _objectPools = new IObjectPool<GameObject>[_resourceGeneratorConfigs.Length];
-            _activeResourceObjects = new Dictionary<Vector3Int, List<GameObject>[]>();
+            _activeResourceObjects = new Dictionary<Vector3Int, List<ActiveObject>[]>();
             _numPointsPerAxis = generator.numPointsPerAxis;
             
             int numVoxelsPerAxis = _numPointsPerAxis - 1;
@@ -81,19 +87,28 @@ namespace Generation.Resource
 
         public void CheckGrounded(Vector3Int chunkPosition)
         {
-            List<GameObject>[] activeObject = _activeResourceObjects[chunkPosition];
+            List<ActiveObject>[] activeObjects = _activeResourceObjects[chunkPosition];
             
-            for (int i = 0; i < activeObject.Length; i++)
+            for (int i = 0; i < activeObjects.Length; i++)
             {
                 float offset = _resourceGeneratorConfigs[i].offset;
-                
-                foreach (var resourceObject in activeObject[i])
+                IObjectPool<GameObject> objectPool = _objectPools[i];
+                List<ActiveObject> activeObjectList = new List<ActiveObject>(activeObjects[i]);
+
+                foreach (var resource in activeObjectList)
                 {
+                    var resourceObject = resource.gameObject;
                     if (resourceObject.activeSelf)
                     {
                         if (!Physics.BoxCast(resourceObject.transform.position + resourceObject.transform.up.normalized * (-offset + 0.5f) , new Vector3(0.1f,0.4f,0.1f), -resourceObject.transform.up.normalized, out _, resourceObject.transform.rotation,  -offset + 0.2f, layerMask))
                         {
-                            resourceObject.SetActive(false);
+                            GameObject droppedObject = Instantiate(resourceObject, resourceObject.transform.position, resourceObject.transform.rotation);
+                            
+                            objectPool.Release(resourceObject.gameObject);
+                            _activeResourceObjects[chunkPosition][i].Remove(resource);
+
+                            droppedObject.transform.GetChild(resource.resourceData.activeIndex).gameObject
+                                .AddComponent<Rigidbody>();
                         }
                     }
                 }
@@ -199,13 +214,13 @@ namespace Generation.Resource
 
         private void GetResources(Vector3Int chunkGridPosition)
         {
-            _activeResourceObjects[chunkGridPosition] = new List<GameObject>[_resourceGeneratorConfigs.Length];
+            _activeResourceObjects[chunkGridPosition] = new List<ActiveObject>[_resourceGeneratorConfigs.Length];
 
             for (int i = 0; i < _resourceGeneratorConfigs.Length; i++)
             {
                 List<ResourceData> resourceObjects = _resourceObjects[chunkGridPosition][i];
                 IObjectPool<GameObject> objectPool = _objectPools[i];
-                _activeResourceObjects[chunkGridPosition][i] = new List<GameObject>();
+                _activeResourceObjects[chunkGridPosition][i] = new List<ActiveObject>();
 
                 foreach (var resourceObject in resourceObjects)
                 {
@@ -214,7 +229,7 @@ namespace Generation.Resource
                     gameObject.transform.rotation = resourceObject.rotation;
                     gameObject.transform.GetChild(resourceObject.activeIndex).gameObject.SetActive(true);
                     
-                    _activeResourceObjects[chunkGridPosition][i].Add(gameObject);
+                    _activeResourceObjects[chunkGridPosition][i].Add(new ActiveObject { gameObject = gameObject, resourceData = resourceObject});
                 }
             }
         }
@@ -223,17 +238,17 @@ namespace Generation.Resource
         {
             for (int i = 0; i < _resourceGeneratorConfigs.Length; i++)
             {
-                if (!_activeResourceObjects.TryGetValue(chunkGridPosition, out List<GameObject>[] resourceObjectsList))
+                if (!_activeResourceObjects.TryGetValue(chunkGridPosition, out List<ActiveObject>[] resourceObjectsList))
                 {
                     continue;
                 }
                 
-                List<GameObject> resourceObjects = new List<GameObject>(resourceObjectsList[i]);
+                List<ActiveObject> resourceObjects = new List<ActiveObject>(resourceObjectsList[i]);
                 IObjectPool<GameObject> objectPool = _objectPools[i];
                 
                 foreach (var resourceObject in resourceObjects)
                 {
-                    objectPool.Release(resourceObject);
+                    objectPool.Release(resourceObject.gameObject);
                     _activeResourceObjects[chunkGridPosition][i].Remove(resourceObject);
                 }
             }

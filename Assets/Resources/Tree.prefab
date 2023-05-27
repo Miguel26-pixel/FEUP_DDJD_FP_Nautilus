@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2084464421469638057}
   - component: {fileID: 4254061138527107427}
   - component: {fileID: 447136593409024250}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Tree_Tropic_002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -110,7 +110,7 @@ GameObject:
   - component: {fileID: 2084464420131141865}
   - component: {fileID: 4254061140407716899}
   - component: {fileID: 682749717220153533}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Tree_Tropic_001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -206,8 +206,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3227079481712756028}
   - component: {fileID: 3579745540977317858}
-  - component: {fileID: 7691623046451881238}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Tree
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -245,19 +244,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemHash: E3847C27
---- !u!65 &7691623046451881238
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3227079481712756029}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1.8754802, y: 0.7625102, z: 1}
-  m_Center: {x: -0.012098432, y: -0.118744925, z: 0}
 --- !u!1 &6776120467800781402
 GameObject:
   m_ObjectHideFlags: 0
@@ -270,7 +256,7 @@ GameObject:
   - component: {fileID: 7128519330991155013}
   - component: {fileID: 4974614851401503631}
   - component: {fileID: 5414013733144258648}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Tree
   m_TagString: Untagged
   m_Icon: {fileID: 0}

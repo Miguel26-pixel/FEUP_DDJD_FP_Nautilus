@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1063185408827613293}
   - component: {fileID: 5696313292563343920}
-  - component: {fileID: 8136621110241918591}
   m_Layer: 6
   m_Name: Grass
   m_TagString: Untagged
@@ -50,19 +49,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemHash: 755CFE42
---- !u!65 &8136621110241918591
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1063185408827613290}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 0.34744644, z: 1}
-  m_Center: {x: 0.44, y: 0.03286743, z: 0}
 --- !u!1 &1384876150755638872
 GameObject:
   m_ObjectHideFlags: 0
@@ -105,7 +91,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 1384876150755638872}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 0
+  m_Enabled: 1
   m_Radius: 0.15058066
   m_Height: 0.5719184
   m_Direction: 1
@@ -152,7 +138,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 2314700212554946989}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 0
+  m_Enabled: 1
   m_Radius: 0.08300277
   m_Height: 0.30601674
   m_Direction: 1
@@ -365,7 +351,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 4648291167963682419}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 0
+  m_Enabled: 1
   m_Radius: 0.08300277
   m_Height: 0.30601674
   m_Direction: 1
@@ -578,7 +564,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 8912728054004233704}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 0
+  m_Enabled: 1
   m_Radius: 0.13554677
   m_Height: 0.43809274
   m_Direction: 1

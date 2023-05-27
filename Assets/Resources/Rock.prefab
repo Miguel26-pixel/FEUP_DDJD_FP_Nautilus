@@ -93,7 +93,7 @@ BoxCollider:
   m_GameObject: {fileID: 187270025627183457}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1.3761264, y: 0.6305254, z: 1.032964}
   m_Center: {x: -0.029374063, y: 0.30384353, z: -0.021890402}
@@ -106,7 +106,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2350621645353595336}
-  - component: {fileID: 751676959628813832}
   m_Layer: 6
   m_Name: Rock
   m_TagString: Untagged
@@ -132,19 +131,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &751676959628813832
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3158366126859447154}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1.6411421, y: 0.49317586, z: 1}
-  m_Center: {x: -0.042913586, y: 0.04, z: 0}
 --- !u!1 &4906330710334436340
 GameObject:
   m_ObjectHideFlags: 0
@@ -238,7 +224,7 @@ BoxCollider:
   m_GameObject: {fileID: 4906330710334436340}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1.5930978, y: 0.8078427, z: 2.0389783}
   m_Center: {x: -0.071635105, y: 0.3593271, z: 0.12463302}
@@ -335,7 +321,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 7303840994546727967}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 0
+  m_Enabled: 1
   m_Radius: 0.7357784
   m_Height: 1.4715568
   m_Direction: 1

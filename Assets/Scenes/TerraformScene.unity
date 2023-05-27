@@ -609,7 +609,7 @@ GameObject:
   m_Component:
   - component: {fileID: 949587183}
   - component: {fileID: 949587184}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Terraformer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -663,7 +663,7 @@ GameObject:
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
   - component: {fileID: 963194229}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -1320,7 +1320,7 @@ GameObject:
   - component: {fileID: 1565541022}
   - component: {fileID: 1565541021}
   - component: {fileID: 1565541020}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1422,7 +1422,7 @@ GameObject:
   - component: {fileID: 1678036747}
   - component: {fileID: 1678036748}
   - component: {fileID: 1678036749}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
