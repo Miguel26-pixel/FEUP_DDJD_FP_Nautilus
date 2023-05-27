@@ -234,6 +234,7 @@ public class Chunk : MonoBehaviour, IDisposable
         _modifiedNoise?.Release();
         _points?.Release();
         _triangleBuffer?.Release();
+        _triCountBuffer?.Release();
     }
 
     private void OnDestroy()

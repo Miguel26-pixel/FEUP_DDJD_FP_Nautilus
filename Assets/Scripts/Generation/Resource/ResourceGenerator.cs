@@ -14,13 +14,12 @@ namespace Generation.Resource
         public int activeIndex;
     }
 
-    public class ResourceGenerator : MonoBehaviour
+    public class ResourceGenerator : MonoBehaviour, IDisposable
     {
         public LayerMask layerMask;
         public GameObject resourceParent;
         public ComputeShader pointsFinderShader;
 
-        private RaycastSurfacePointsFinder _pointsFinder;
         private BarycentricSurfacePointsFinder _barycentricSurfacePointsFinder;
         private Dictionary<Vector3Int, List<ResourceData>[]> _resourceObjects;
         private Dictionary<Vector3Int, List<GameObject>[]> _activeResourceObjects;
@@ -33,7 +32,6 @@ namespace Generation.Resource
         {
             MeshGenerator generator = GameObject.Find("GenerationManager").GetComponent<MeshGenerator>();
             PointsGeneratorMono pointsGeneratorMono = GetComponent<PointsGeneratorMono>();
-            _pointsFinder = new RaycastSurfacePointsFinder(layerMask, generator.boundsSize);
             _resourceGeneratorConfigs = generator.resourceGeneratorConfigs;
             _resourceObjects = new Dictionary<Vector3Int, List<ResourceData>[]>();
             _objectPools = new IObjectPool<GameObject>[_resourceGeneratorConfigs.Length];
@@ -79,6 +77,27 @@ namespace Generation.Resource
         private static void OnDestroyFromPool(GameObject gameObject)
         {
             Destroy(gameObject);
+        }
+
+        public void CheckGrounded(Vector3Int chunkPosition)
+        {
+            List<GameObject>[] activeObject = _activeResourceObjects[chunkPosition];
+            
+            for (int i = 0; i < activeObject.Length; i++)
+            {
+                float offset = _resourceGeneratorConfigs[i].offset;
+                
+                foreach (var resourceObject in activeObject[i])
+                {
+                    if (resourceObject.activeSelf)
+                    {
+                        if (!Physics.BoxCast(resourceObject.transform.position + resourceObject.transform.up.normalized * (-offset + 0.5f) , new Vector3(0.1f,0.4f,0.1f), -resourceObject.transform.up.normalized, out _, resourceObject.transform.rotation,  -offset + 0.2f, layerMask))
+                        {
+                            resourceObject.SetActive(false);
+                        }
+                    }
+                }
+            }
         }
 
         public void GenerateResources(Chunk chunk, float[] biomeNoise , LinkedList<Vector2>[] points)
@@ -218,6 +237,16 @@ namespace Generation.Resource
                     _activeResourceObjects[chunkGridPosition][i].Remove(resourceObject);
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            _barycentricSurfacePointsFinder?.Dispose();
+        }
+
+        private void OnDestroy()
+        {
+            Dispose();
         }
     }
 }

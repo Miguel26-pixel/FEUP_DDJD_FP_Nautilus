@@ -647,7 +647,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   radius: 8
-  power: 16
+  power: 6
   maxDistance: 200
   canTerraform: 0
   terraformCursorPrefab: {fileID: 7922233391476220167, guid: 326cef111a0578c1ab6a3044eacd35a6, type: 3}

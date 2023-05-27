@@ -79,6 +79,8 @@ public class MeshGenerator : MonoBehaviour, IDisposable
     {
         Chunk chunk = _chunks[position];
         chunk.RenderMesh();
+        
+        resourceGenerator.CheckGrounded(position);
     }
 
     private void Start()
