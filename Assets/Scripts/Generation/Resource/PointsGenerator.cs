@@ -16,6 +16,7 @@ namespace Generation.Resource
         public float maxHeight;
         public float minSlope;
         public float maxSlope;
+        public float offset;
         public bool alignToSurface;
         public float chanceOfGenerating;
         public GameObject prefab;

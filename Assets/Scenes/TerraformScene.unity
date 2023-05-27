@@ -941,6 +941,7 @@ MonoBehaviour:
     maxHeight: 1000
     minSlope: 0.9
     maxSlope: 1
+    offset: -0.5
     alignToSurface: 1
     chanceOfGenerating: 1
     prefab: {fileID: 1063185408827613290, guid: 3594d021d3d687eea96998a537fa2c2b, type: 3}
@@ -956,6 +957,7 @@ MonoBehaviour:
     maxHeight: 1000
     minSlope: 0.9
     maxSlope: 1
+    offset: -2
     alignToSurface: 0
     chanceOfGenerating: 1
     prefab: {fileID: 3227079481712756029, guid: d35052ca7b6d8fc06a1916450f8cb984, type: 3}
@@ -971,6 +973,7 @@ MonoBehaviour:
     maxHeight: 1000
     minSlope: 0.9
     maxSlope: 1
+    offset: -0.5
     alignToSurface: 1
     chanceOfGenerating: 1
     prefab: {fileID: 3158366126859447154, guid: 10279e33eb70b8cd48a072740fb47869, type: 3}

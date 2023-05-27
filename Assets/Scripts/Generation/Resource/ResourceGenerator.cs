@@ -7,13 +7,13 @@ using Random = UnityEngine.Random;
 
 namespace Generation.Resource
 {
-    public record ResourceObject
+    public record ResourceData
     {
         public Vector3 position;
         public Quaternion rotation;
         public int activeIndex;
     }
-    
+
     public class ResourceGenerator : MonoBehaviour
     {
         public LayerMask layerMask;
@@ -22,7 +22,7 @@ namespace Generation.Resource
 
         private RaycastSurfacePointsFinder _pointsFinder;
         private BarycentricSurfacePointsFinder _barycentricSurfacePointsFinder;
-        private Dictionary<Vector3Int, List<ResourceObject>[]> _resourceObjects;
+        private Dictionary<Vector3Int, List<ResourceData>[]> _resourceObjects;
         private Dictionary<Vector3Int, List<GameObject>[]> _activeResourceObjects;
         private IObjectPool<GameObject>[] _objectPools;
         private ResourceGeneratorSettings[] _resourceGeneratorConfigs;
@@ -34,12 +34,19 @@ namespace Generation.Resource
             MeshGenerator generator = GameObject.Find("GenerationManager").GetComponent<MeshGenerator>();
             PointsGeneratorMono pointsGeneratorMono = GetComponent<PointsGeneratorMono>();
             _pointsFinder = new RaycastSurfacePointsFinder(layerMask, generator.boundsSize);
-            _barycentricSurfacePointsFinder = new BarycentricSurfacePointsFinder(pointsFinderShader, pointsGeneratorMono.pointsGenerator.MaxPoints());
             _resourceGeneratorConfigs = generator.resourceGeneratorConfigs;
-            _resourceObjects = new Dictionary<Vector3Int, List<ResourceObject>[]>();
+            _resourceObjects = new Dictionary<Vector3Int, List<ResourceData>[]>();
             _objectPools = new IObjectPool<GameObject>[_resourceGeneratorConfigs.Length];
             _activeResourceObjects = new Dictionary<Vector3Int, List<GameObject>[]>();
             _numPointsPerAxis = generator.numPointsPerAxis;
+            
+            int numVoxelsPerAxis = _numPointsPerAxis - 1;
+            int numVoxels = numVoxelsPerAxis * numVoxelsPerAxis * numVoxelsPerAxis;
+            int maxTriangleCount = numVoxels * 5;
+
+            _barycentricSurfacePointsFinder = new BarycentricSurfacePointsFinder(pointsFinderShader,
+                pointsGeneratorMono.pointsGenerator.MaxPoints(), maxTriangleCount);
+
 
             for (int i = 0; i < _resourceGeneratorConfigs.Length; i++)
             {
@@ -78,10 +85,10 @@ namespace Generation.Resource
         {
             Random.State state = Random.state;
             Random.InitState(chunk.ChunkSeed());
-            _resourceObjects[chunk.chunkGridPosition] = new List<ResourceObject>[_resourceGeneratorConfigs.Length];
+            _resourceObjects[chunk.chunkGridPosition] = new List<ResourceData>[_resourceGeneratorConfigs.Length];
             
             List<Vector3> pointsWithIndex = new List<Vector3>();
-            List<ResourceObject>[] resourceObjects = _resourceObjects[chunk.chunkGridPosition];
+            List<ResourceData>[] resourceObjects = _resourceObjects[chunk.chunkGridPosition];
 
             for (int i = 0; i < points.Length; i++)
             {
@@ -97,7 +104,7 @@ namespace Generation.Resource
 
             for (int i = 0; i < points.Length; i++)
             {
-                resourceObjects[i] = new List<ResourceObject>();
+                resourceObjects[i] = new List<ResourceData>();
                 _resourceObjects[chunk.chunkGridPosition][i] = resourceObjects[i];
             }
            
@@ -134,16 +141,17 @@ namespace Generation.Resource
                 }
                         
                 int activeIndex = Random.Range(0, settings.prefab.transform.childCount);
+                Vector3 point = surfacePoint + hit.normal * settings.offset;
                         
-                ResourceObject resourceObject = new ResourceObject()
+                ResourceData resourceData = new ResourceData()
                 {
-                    position = surfacePoint,
+                    position = point,
                     rotation = 
                         (settings.alignToSurface ? Quaternion.FromToRotation(Vector3.up, hit.normal) : Quaternion.identity) *
                         Quaternion.Euler(0, Random.value * 360, 0),
                     activeIndex = activeIndex
                 };
-                resourceObjects[i].Add(resourceObject);
+                resourceObjects[i].Add(resourceData);
             }
 
             Random.state = state;
@@ -176,7 +184,7 @@ namespace Generation.Resource
 
             for (int i = 0; i < _resourceGeneratorConfigs.Length; i++)
             {
-                List<ResourceObject> resourceObjects = _resourceObjects[chunkGridPosition][i];
+                List<ResourceData> resourceObjects = _resourceObjects[chunkGridPosition][i];
                 IObjectPool<GameObject> objectPool = _objectPools[i];
                 _activeResourceObjects[chunkGridPosition][i] = new List<GameObject>();
 
