@@ -109,6 +109,8 @@ namespace Generation.Resource
 
                             droppedObject.transform.GetChild(resource.resourceData.activeIndex).gameObject
                                 .AddComponent<Rigidbody>();
+                            DestroySelf destroySelf = droppedObject.AddComponent<DestroySelf>();
+                            destroySelf.SetTimer(30f);
                         }
                     }
                 }

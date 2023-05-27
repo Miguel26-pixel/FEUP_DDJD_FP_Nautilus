@@ -73,23 +73,21 @@ namespace Inventory
             return item;
         }
 
-        public override void AddItem(Item item)
+        public override bool AddItem(Item item)
         {
             if (Locked)
             {
-                // TODO: drop item, might need to be handled by the caller not sure yet
+                return false;
             }
             
-            try
-            {
-                base.AddItem(item);
-            }
-            catch (ItemDoesNotFitException)
-            {
-                // TODO: drop item, might need to be handled by the caller not sure yet
-            }
+            bool added = base.AddItem(item);
 
-            NotifySubscribersOnInventoryChanged();
+            if (added)
+            {
+                NotifySubscribersOnInventoryChanged();
+            }
+            
+            return added;
         }
 
 

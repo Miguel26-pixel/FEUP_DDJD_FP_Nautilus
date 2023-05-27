@@ -146,6 +146,11 @@ namespace UI.Crafting
             _isCraftingMenuOpen = !_isCraftingMenuOpen;
         }
 
+        public bool IsOpen()
+        {
+            return _isCraftingMenuOpen;
+        }
+
         [Serializable]
         public class TypeSprite
         {

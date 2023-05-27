@@ -89,6 +89,11 @@ namespace UI.Inventory
             _inventoryViewerRight.Update();
         }
 
+        public bool IsOpen()
+        {
+            return _isTransferOpen;
+        }
+
         public void Rotate(int direction)
         {
             _inventoryViewerLeft?.Rotate(direction);

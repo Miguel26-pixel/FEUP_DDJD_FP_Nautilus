@@ -117,11 +117,20 @@ namespace Inventory
             return _items.Values.ToList();
         }
 
-        public virtual void AddItem(Item item)
+        public virtual bool AddItem(Item item)
         {
-            Vector2Int position = FindEmptyPosition(item, 0);
+            try
+            {
+                Vector2Int position = FindEmptyPosition(item, 0);
 
-            AddItem(item, position, 0);
+                AddItem(item, position, 0);
+            }
+            catch (ItemDoesNotFitException)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public virtual Item RemoveItem(int itemHash)
@@ -259,7 +268,7 @@ namespace Inventory
         public virtual void AddItem(Item item, Vector2Int position, int rotation)
         {
             (bool[,] itemGrid, BoundsInt bounds) = CheckFitAndGetBounds(item, position, rotation);
-
+            
             AddItemInternal(item, position, rotation, itemGrid, bounds);
         }
 

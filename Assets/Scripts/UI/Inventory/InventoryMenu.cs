@@ -31,6 +31,11 @@ namespace UI.Inventory
         {
             _inventoryViewer?.Rotate(direction);
         }
+        
+        public bool IsOpen()
+        {
+            return _isInventoryMenuOpen;
+        }
 
         private void Open()
         {

@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using Crafting;
 using DataManager;
+using Generation.Resource;
 using Inventory;
+using Items;
 using UI.Inventory;
 using UI.Inventory.Builders;
 using Unity.Collections;
@@ -33,6 +35,7 @@ namespace Player
         private float _horizontalRotation = 0f;
         private Vector3 _currentMovement;
         private Rigidbody _rigidbody;
+        private bool _movementLocked = false;
 
         public PlayerInventory playerInventory = new("Inventory", new[,]
         {
@@ -56,7 +59,8 @@ namespace Player
             Debug.Log(SystemInfo.supportsAsyncCompute);
             Debug.Log(SystemInfo.supportsAsyncGPUReadback);
             Debug.Log(SystemInfo.supportsComputeShaders);
-
+            Cursor.lockState = CursorLockMode.Locked;
+            
             StartCoroutine(GiveItems());
         }
 
@@ -78,8 +82,13 @@ namespace Player
 
         private void Update()
         {
-            Vector2 mouseDelta = Mouse.current.delta.ReadValue();
+            if (_movementLocked)
+            {
+                return;
+            }
             
+            Vector2 mouseDelta = Mouse.current.delta.ReadValue();
+
             transform.Rotate(Vector3.up * (mouseDelta.x * 0.1f), Space.World);
             
             _verticalRotation -= mouseDelta.y * 0.1f;
@@ -87,6 +96,8 @@ namespace Player
             _horizontalRotation += mouseDelta.x * 0.1f;
             
             _camera.transform.localRotation = Quaternion.Euler(_verticalRotation, 0, 0f);
+            terraformController.vacuumArea.transform.localRotation = Quaternion.Euler(_verticalRotation, 0, 0f);
+            terraformController.vacuumCollection.transform.localRotation = Quaternion.Euler(_verticalRotation, 0, 0f);
             
             if (_currentMovement != Vector3.zero)
             {
@@ -187,6 +198,16 @@ namespace Player
             }
         }
 
+        public override void LockMovement()
+        {
+            _movementLocked = true;
+        }
+        
+        public override void UnlockMovement()
+        {
+            _movementLocked = false;
+        }
+
         private IEnumerator GiveItems()
         {
             if (!_itemRegistry.Initialized)
@@ -204,12 +225,12 @@ namespace Player
             playerInventory.AddItem(_itemRegistry.Get(0xDEC31753).CreateInstance());
             playerInventory.AddItem(_itemRegistry.Get(0x5BFE8AE3).CreateInstance());
             playerInventory.AddItem(_itemRegistry.Get(0xFE3EC9B0).CreateInstance());
-            playerInventory.AddItem(_itemRegistry.Get(0x5C5C52AF).CreateInstance());
+            // playerInventory.AddItem(_itemRegistry.Get(0x5C5C52AF).CreateInstance());
 
 
             Debug.Log("Gave items");
         }
-
+        
         public override PlayerInventory GetInventory()
         {
             return playerInventory;
@@ -223,6 +244,19 @@ namespace Player
         public override IInventoryNotifier GetInventoryNotifier()
         {
             return playerInventory;
+        }
+
+        public override bool CollectResource(Resource resource)
+        {
+            Item item = _itemRegistry.Get(resource.itemID).CreateInstance();
+            bool added = playerInventory.AddItem(item);
+
+            if (added)
+            {
+                Destroy(resource.gameObject);
+            }
+
+            return added;
         }
     }
 }
