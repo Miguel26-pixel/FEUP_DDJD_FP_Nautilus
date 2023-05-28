@@ -708,9 +708,9 @@ MonoBehaviour:
     m_Bits: 8
   radius: 8
   power: 6
-  succtionForce: 100
+  suctionForce: 100
   maxDistance: 20
-  dropImpulse: 80
+  dropImpulse: 70
   canTerraform: 0
   terraformCursorPrefab: {fileID: 7922233391476220167, guid: 326cef111a0578c1ab6a3044eacd35a6, type: 3}
   vacuumArea: {fileID: 1056075491}

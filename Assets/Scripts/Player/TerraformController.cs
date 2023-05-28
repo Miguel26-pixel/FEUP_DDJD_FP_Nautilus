@@ -10,7 +10,7 @@ namespace Player
         public LayerMask layerMask;
         public float radius;
         public float power;
-        public float succtionForce;
+        public float suctionForce;
         public float maxDistance;
         public float dropImpulse = 200;
         public bool canTerraform = true;
@@ -20,9 +20,9 @@ namespace Player
 
         private Transform _camera;
         private MeshGenerator _meshGenerator;
-        private GameObject terraformCursor;
+        private GameObject _terraformCursor;
         private TerraformType _terraformType = TerraformType.Raise;
-        private List<GameObject> _resourcesInRange = new List<GameObject>();
+        private readonly List<GameObject> _resourcesInRange = new List<GameObject>();
         private Player _player;
 
         private void Start()
@@ -33,8 +33,8 @@ namespace Player
                 _camera = Camera.main.transform;
             }
             
-            terraformCursor = Instantiate(terraformCursorPrefab, Vector3.zero, Quaternion.identity);
-            terraformCursor.SetActive(false);
+            _terraformCursor = Instantiate(terraformCursorPrefab, Vector3.zero, Quaternion.identity);
+            _terraformCursor.SetActive(false);
             _player = transform.parent.GetComponent<Player>();
         }
 
@@ -45,19 +45,16 @@ namespace Player
                 return;
             }
 
-            RaycastHit hit;
-            HashSet<Vector3Int> alteredChunks = new HashSet<Vector3Int>();
-
-            int numIterations = 5;
+            const int numIterations = 5;
 
             if (_terraformType == TerraformType.Lower)
             {
                 foreach (var resource in _resourcesInRange)
                 {
                     Vector3 direction = (vacuumCollection.transform.position - resource.transform.position);
-                    float dst = Mathf.Max(direction.sqrMagnitude, 1f);
-                    dst = Mathf.Lerp(0.9f, maxDistance, dst / (maxDistance * maxDistance));
-                    float force = succtionForce / (dst);
+                    float dst = direction.sqrMagnitude;
+                    dst = Mathf.Lerp(1f, 13f, dst / (maxDistance * maxDistance));
+                    float force = suctionForce / (dst);
 
                     if (!resource.TryGetComponent(out Rigidbody rb))
                     {
@@ -74,11 +71,12 @@ namespace Player
             {
                 float rayRadius = Mathf.Lerp(0.01f, 1f, i / (numIterations - 1f));
 
-                if (Physics.SphereCast(_camera.position, rayRadius, _camera.forward, out hit, 200, layerMask))
+                HashSet<Vector3Int> alteredChunks;
+                if (Physics.SphereCast(_camera.position, rayRadius, _camera.forward, out RaycastHit hit, 200, layerMask))
                 {
-                    terraformCursor.SetActive(true);
-                    terraformCursor.transform.position = hit.point;
-                    terraformCursor.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
+                    _terraformCursor.SetActive(true);
+                    _terraformCursor.transform.position = hit.point;
+                    _terraformCursor.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
 
                     float distance = Vector3.Distance(_camera.position, hit.point);
 
@@ -92,7 +90,7 @@ namespace Player
                 }
                 else
                 {
-                    terraformCursor.SetActive(false);
+                    _terraformCursor.SetActive(false);
                     continue;
                 }
 
@@ -142,7 +140,7 @@ namespace Player
         private void DeactivateTerraform()
         {
             canTerraform = false;
-            terraformCursor.SetActive(false);
+            _terraformCursor.SetActive(false);
         }
 
         public void OnPartTriggerEnter(GameObject child, GameObject other)
