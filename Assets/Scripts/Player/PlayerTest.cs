@@ -248,6 +248,11 @@ namespace Player
 
         public override bool CollectResource(Resource resource)
         {
+            if (string.IsNullOrEmpty(resource.itemHash))
+            {
+                return false;
+            }
+            
             Item item = _itemRegistry.Get(resource.itemID).CreateInstance();
             bool added = playerInventory.AddItem(item);
 

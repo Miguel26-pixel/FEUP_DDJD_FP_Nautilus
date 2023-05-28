@@ -5,9 +5,36 @@ using UnityEngine;
 
 namespace Inventory
 {
+    public class IntermediateResource
+    {
+        private readonly int _neededCollectionCount;
+        private int _count;
+        
+        public IntermediateResource(Item item)
+        {
+            _neededCollectionCount = item.GetComponent<ResourceComponent>().NeededCollectionCount - 1;
+            _count = 0;
+        }
+        
+        public bool IsFull()
+        {
+            return _count == _neededCollectionCount;
+        }
+        
+        public void Increment()
+        {
+            if (!IsFull())
+            {
+                _count++;
+            }
+        }
+    }
+    
     public class PlayerInventory : InventoryGrid, IInventoryNotifier
     {
         private readonly List<IInventorySubscriber> _subscribers = new();
+        private readonly Dictionary<int, IntermediateResource> _intermediateResources = new();
+
         private bool _notify = true;
         
         public bool Locked { get; set; }
@@ -73,21 +100,53 @@ namespace Inventory
             return item;
         }
 
+        private bool AddInternal(Item item)
+        {
+            if (Locked)
+            {
+                return false;
+            }
+
+            if (!base.AddItem(item))
+            {
+                return false;
+            }
+
+            NotifySubscribersOnInventoryChanged();
+            return true;
+        }
+        
+        private bool AddResource(Item item)
+        {
+            if (!_intermediateResources.TryGetValue(item.IDHash, out IntermediateResource intermediateResource))
+            {
+                intermediateResource = new IntermediateResource(item);
+                _intermediateResources.Add(item.IDHash, intermediateResource);
+            }
+            
+            if (!intermediateResource.IsFull())
+            {
+                intermediateResource.Increment();
+                return true;
+            }
+
+            if (!AddInternal(item))
+            {
+                return false;
+            }
+
+            _intermediateResources.Remove(item.IDHash);
+            return true;
+        }
+
         public override bool AddItem(Item item)
         {
             if (Locked)
             {
                 return false;
             }
-            
-            bool added = base.AddItem(item);
 
-            if (added)
-            {
-                NotifySubscribersOnInventoryChanged();
-            }
-            
-            return added;
+            return item.HasComponent<ResourceComponent>() ? AddResource(item) : AddInternal(item);
         }
 
 

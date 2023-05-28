@@ -12,7 +12,10 @@ namespace Generation.Resource
         
         public void Awake()
         {
-            itemID = int.Parse(itemHash, NumberStyles.HexNumber);
+            if (!string.IsNullOrEmpty(itemHash))
+            {
+                itemID = int.Parse(itemHash, NumberStyles.HexNumber);
+            }
         }
     }
 }

@@ -60,27 +60,48 @@ namespace DataManager
             ItemData fiber = _itemRegistry.CreateItem("Fiber", "Tangled treasures from island grass.",
                 ItemType.Resource,
                 "ItemIcons/test");
+            ResourceComponentData resourceComponentData = new ResourceComponentData(8);
+            fiber.AddComponent(resourceComponentData);
+            
             ItemData wood = _itemRegistry.CreateItem("Wood",
                 "Sun-kissed timber harvested from majestic palm trees." +
                 " Ideal for crafting and roasting marshmallows (if you can find any).",
                 ItemType.Resource, "ItemIcons/test");
+            ResourceComponentData woodResourceComponentData = new ResourceComponentData(1);
+            wood.AddComponent(woodResourceComponentData);
+            
             ItemData seaweed = _itemRegistry.CreateItem("Seaweed Fiber", "Seashore secret for crafting needs.",
                 ItemType.Resource,
                 "ItemIcons/test");
+            ResourceComponentData seaweedResourceComponentData = new ResourceComponentData(8);
+            seaweed.AddComponent(seaweedResourceComponentData);
+            
             ItemData calcium = _itemRegistry.CreateItem("Seashell Calcium", "Calcium-rich treasures from seashells.",
                 ItemType.Resource,
                 "ItemIcons/test");
+            ResourceComponentData calciumResourceComponentData = new ResourceComponentData(3);
+            calcium.AddComponent(calciumResourceComponentData);
+            
             ItemData scales = _itemRegistry.CreateItem("Fish Scales", "Gleaming scales from the planet’s fishes.",
                 ItemType.CreatureDrop,
                 "ItemIcons/test");
             ItemData coralium = _itemRegistry.CreateItem("Coralium", "Vibrant oceanic resource harvested from corals.",
                 ItemType.Resource,
                 "ItemIcons/test");
+            ResourceComponentData coraliumResourceComponentData = new ResourceComponentData(6);
+            coralium.AddComponent(coraliumResourceComponentData);
+
             ItemData abyssallite = _itemRegistry.CreateItem("Abyssallite",
                 "Deep-sea gem, hidden in the depths. A rare find for adventurous divers.", ItemType.Resource,
                 "ItemIcons/test");
+            ResourceComponentData abyssalliteResourceComponentData = new ResourceComponentData(5);
+            abyssallite.AddComponent(abyssalliteResourceComponentData);
+
             ItemData kelp = _itemRegistry.CreateItem("Kelp Iron", "Iron with a touch of kelp magic.", ItemType.Resource,
                 "ItemIcons/test");
+            ResourceComponentData kelpResourceComponentData = new ResourceComponentData(5);
+            kelp.AddComponent(kelpResourceComponentData);
+
             ItemData spines = _itemRegistry.CreateItem("Sea Urchin Spines", "Prickly prizes from deep-sea urchins.",
                 ItemType.CreatureDrop,
                 "ItemIcons/test");
@@ -97,9 +118,15 @@ namespace DataManager
             ItemData lumini = _itemRegistry.CreateItem("Luminitite", "Glowing mineral illuminating the caves.",
                 ItemType.Resource,
                 "ItemIcons/test");
+            ResourceComponentData luminiResourceComponentData = new ResourceComponentData(5);
+            lumini.AddComponent(luminiResourceComponentData);
+
             ItemData doomstone = _itemRegistry.CreateItem("Doomstone",
                 "Foreboding stone found in the depths of the island's caves.",
                 ItemType.Resource, "ItemIcons/test");
+            ResourceComponentData doomstoneResourceComponentData = new ResourceComponentData(5);
+            doomstone.AddComponent(doomstoneResourceComponentData);
+
             ItemData eye = _itemRegistry.CreateItem("Dreadworm Eye",
                 "Eerie eye, snatched from the fearsome Dreadworm. Peer into its unsettling gaze.",
                 ItemType.CreatureDrop, "ItemIcons/test");
@@ -107,6 +134,9 @@ namespace DataManager
                 "From the depths of the cave comes this mysterious artifact." +
                 " Is it a remnant of an ancient civilization or something else?",
                 ItemType.Resource, "ItemIcons/test");
+            ResourceComponentData artifactResourceComponentData = new ResourceComponentData(1);
+            artifact.AddComponent(artifactResourceComponentData);
+
             _itemRegistry.CreateItem("Tritonite",
                 "A rare and precious gemstone found by vanquishing the formidable Krakolith." +
                 " This gem holds the power to unlock new realms of knowledge." +

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Items;
 using UnityEngine;
 using UnityEngine.Pool;
 using Random = UnityEngine.Random;
@@ -88,16 +89,23 @@ namespace Generation.Resource
         public void CheckGrounded(Vector3Int chunkPosition)
         {
             List<ActiveObject>[] activeObjects = _activeResourceObjects[chunkPosition];
-            
+            List<ResourceData>[] resourceObjects = _resourceObjects[chunkPosition];
+
             for (int i = 0; i < activeObjects.Length; i++)
             {
                 float offset = _resourceGeneratorConfigs[i].offset;
                 IObjectPool<GameObject> objectPool = _objectPools[i];
                 List<ActiveObject> activeObjectList = new List<ActiveObject>(activeObjects[i]);
+                List<ResourceData> resourceDataList = resourceObjects[i];
 
                 foreach (var resource in activeObjectList)
                 {
                     var resourceObject = resource.gameObject;
+                    if (resourceObject == null)
+                    {
+                        _activeResourceObjects[chunkPosition][i].Remove(resource);
+                        continue;
+                    }
                     if (resourceObject.activeSelf)
                     {
                         if (!Physics.BoxCast(resourceObject.transform.position + resourceObject.transform.up.normalized * (-offset + 0.5f) , new Vector3(0.1f,0.4f,0.1f), -resourceObject.transform.up.normalized, out _, resourceObject.transform.rotation,  -offset + 0.2f, layerMask))
@@ -106,6 +114,7 @@ namespace Generation.Resource
                             
                             objectPool.Release(resourceObject.gameObject);
                             _activeResourceObjects[chunkPosition][i].Remove(resource);
+                            resourceDataList.Remove(resource.resourceData);
 
                             droppedObject.transform.GetChild(resource.resourceData.activeIndex).gameObject
                                 .AddComponent<Rigidbody>();

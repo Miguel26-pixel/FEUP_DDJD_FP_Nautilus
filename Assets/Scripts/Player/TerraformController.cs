@@ -12,6 +12,7 @@ namespace Player
         public float power;
         public float succtionForce;
         public float maxDistance;
+        public float dropImpulse = 200;
         public bool canTerraform = true;
         public GameObject terraformCursorPrefab;
         public GameObject vacuumArea;
@@ -63,8 +64,8 @@ namespace Player
                         continue;
                     }
                     
-                    rb.AddForce(direction.normalized * force);
-                    rb.AddForce(-Physics.gravity);
+                    rb.AddForce(direction.normalized * (force * Time.deltaTime * 60));
+                    rb.AddForce(-Physics.gravity * Time.deltaTime, ForceMode.Impulse);
                 }
             }
 
@@ -160,6 +161,11 @@ namespace Player
                     if (added)
                     {
                         _resourcesInRange.Remove(other);
+                    }
+                    else
+                    {
+                        Rigidbody rb = other.GetComponent<Rigidbody>();
+                        rb.AddForce(vacuumCollection.transform.forward * dropImpulse, ForceMode.Impulse);
                     }
                 }
             }
