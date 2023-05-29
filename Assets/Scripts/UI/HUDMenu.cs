@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using Items;
 using UI.Inventory;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Object = UnityEngine.Object;
 
 namespace UI
 {
@@ -30,11 +32,13 @@ namespace UI
     {
         public float maxProgress;
         public float progress;
+        public readonly Item item;
 
-        public ProgressData(string title, Sprite icon, float progress, float maxProgress) : base(title, icon)
+        public ProgressData(string title, Sprite icon, float progress, float maxProgress, Item item) : base(title, icon)
         {
             this.maxProgress = maxProgress;
             this.progress = progress;
+            this.item = item;
         }
     }
 
@@ -297,7 +301,7 @@ namespace UI
         {
             foreach (ProgressStateData progressStateData in _progressStateData)
             {
-                if (progressStateData.progressData.title != progressData.title || progressStateData.Completed)
+                if (progressStateData.progressData.title != progressData.title || !ReferenceEquals(progressStateData.progressData.item, progressData.item))
                 {
                     continue;
                 }
@@ -314,7 +318,7 @@ namespace UI
                     continue;
                 }
 
-                if (progress.progress >= progress.maxProgress)
+                if (!ReferenceEquals(progressData.item, progress.item))
                 {
                     continue;
                 }

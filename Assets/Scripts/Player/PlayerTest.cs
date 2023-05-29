@@ -265,7 +265,7 @@ namespace Player
             if (soilResource != null)
             {
                 onProgress.Invoke(new ProgressData(_soilData.Name, _soilData.Icon, soilResource.Count,
-                    soilResource.MaxCount));
+                    soilResource.MaxCount, soilResource.Item));
             }
 
             return true;
@@ -282,16 +282,9 @@ namespace Player
             {
                 return;
             }
-
-            if (soilResource == null)
-            {
-                onProgress.Invoke(new ProgressData(_soilData.Name, _soilData.Icon, 1, 1));
-            }
-            else
-            {
-                onProgress.Invoke(new ProgressData(_soilData.Name, _soilData.Icon, soilResource.Count,
-                    soilResource.MaxCount));
-            }
+            
+            onProgress.Invoke(new ProgressData(_soilData.Name, _soilData.Icon, soilResource.Count,
+                soilResource.MaxCount, soilResource.Item));
         }
 
         public override bool CollectResource(Resource resource)
@@ -308,17 +301,9 @@ namespace Player
             if (added)
             {
                 Destroy(resource.gameObject);
-
-                if (intermediateResource == null)
-                {
-                    onProgress.Invoke(new ProgressData(item.Name, item.Icon, 1,
-                        1));
-
-                    return true;
-                }
-
+                
                 onProgress.Invoke(new ProgressData(item.Name, item.Icon, intermediateResource.Count,
-                    intermediateResource.NeededCollectionCount));
+                    intermediateResource.NeededCollectionCount, intermediateResource.Item));
             }
             else
             {

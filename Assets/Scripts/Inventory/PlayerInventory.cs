@@ -7,18 +7,20 @@ namespace Inventory
 {
     public class IntermediateResource
     {
-        public IntermediateResource(ItemData item)
+        public IntermediateResource(Item item)
         {
-            NeededCollectionCount = item.GetComponent<ResourceComponentData>().NeededCollectionCount;
+            NeededCollectionCount = item.GetComponent<ResourceComponent>().NeededCollectionCount;
             Count = 0;
+            Item = item;
         }
 
         public int NeededCollectionCount { get; }
         public int Count { get; private set; }
+        public Item Item { get; private set; }
 
         public bool IsFull()
         {
-            return Count == NeededCollectionCount - 1;
+            return Count >= NeededCollectionCount;
         }
 
         public void Increment()
@@ -32,14 +34,16 @@ namespace Inventory
 
     public class SoilResource
     {
-        public SoilResource(int maxCount)
+        public SoilResource(Item item, int maxCount)
         {
             MaxCount = maxCount;
             Count = 0;
+            Item = item;
         }
 
         public int MaxCount { get; }
         public float Count { get; private set; }
+        public Item Item { get; private set; }
         
         public bool IsFull()
         {
@@ -48,14 +52,17 @@ namespace Inventory
         
         public void Increment(float amount)
         {
-            if (!IsFull())
+            if (amount + Count > MaxCount)
             {
-                Count += amount;
+                Count = MaxCount;
             }
-            
-            if (Count < 0)
+            else if (amount + Count < 0)
             {
                 Count = 0;
+            }
+            else
+            {
+                Count += amount;
             }
         }
 
@@ -83,6 +90,7 @@ namespace Inventory
     {
         private readonly Dictionary<int, IntermediateResource> _intermediateResources = new();
         private SoilResource _soil = null;
+        private readonly Stack<SoilResource> _previousSoil = new();
 
         private readonly List<IInventorySubscriber> _subscribers = new();
 
@@ -193,56 +201,54 @@ namespace Inventory
                 return false;
             }
             
+            Item lastSoil = null;
+            Item lastRecordedSoil = null;
             for (int i = 0; i < neededSoil; i++)
             {
-                RemoveItem(soilData.IDHash);
+                lastSoil = RemoveItem(soilData.IDHash);
+                lastRecordedSoil = _previousSoil.Count > 0 ? _previousSoil.Pop().Item : null;
             }
 
-            _soil ??= new SoilResource(maxSoil);
-            _soil.SetValue(remainingAmount);
+            if (lastRecordedSoil != null)
+            {
+                _soil = new SoilResource(lastRecordedSoil, maxSoil);
+                _soil.Increment(remainingAmount);
+            }
+            else if (lastSoil != null)
+            {
+                _soil = new SoilResource(lastSoil, maxSoil);
+                _soil.Increment(remainingAmount);
+            }
+            _soil?.SetValue(remainingAmount);
             return true;
         }
 
         public bool AddSoil(ItemData soilData, float amount)
         {
-            _soil ??= new SoilResource(soilData.GetComponent<ResourceComponentData>().NeededCollectionCount);
+            if (_soil == null || _soil.IsFull())
+            {
+                if (_soil != null)
+                {
+                    _previousSoil.Push(_soil);
+                }
+                
+                _soil = new SoilResource(soilData.CreateInstance(), soilData.GetComponent<ResourceComponentData>().NeededCollectionCount);
+            }
             _soil.Increment(amount);
 
-            if (!_soil.IsFull())
-            {
-                return true;
-            }
-
-            if (!AddInternal(soilData.CreateInstance()))
-            {
-                return false;
-            }
-
-            _soil = null;
-            return true;
+            return !_soil.IsFull() || AddInternal(_soil.Item);
         }
 
         public bool AddResource(ItemData item)
         {
-            if (!_intermediateResources.TryGetValue(item.IDHash, out IntermediateResource intermediateResource))
+            if (!_intermediateResources.TryGetValue(item.IDHash, out IntermediateResource intermediateResource) || intermediateResource.IsFull())
             {
-                intermediateResource = new IntermediateResource(item);
-                _intermediateResources.Add(item.IDHash, intermediateResource);
+                intermediateResource = new IntermediateResource(item.CreateInstance());
+                _intermediateResources[item.IDHash] = intermediateResource;
             }
+            intermediateResource.Increment();
 
-            if (!intermediateResource.IsFull())
-            {
-                intermediateResource.Increment();
-                return true;
-            }
-
-            if (!AddInternal(item.CreateInstance()))
-            {
-                return false;
-            }
-
-            _intermediateResources.Remove(item.IDHash);
-            return true;
+            return !intermediateResource.IsFull() || AddInternal(intermediateResource.Item);
         }
 
         public override bool AddItem(Item item)
