@@ -27,6 +27,7 @@ namespace Player
         private Camera _camera;
         private Vector3 _currentMovement;
         private float _horizontalRotation;
+        private ItemData _soilData;
 
         private ItemRegistry _itemRegistry;
 
@@ -215,7 +216,6 @@ namespace Player
             {
                 yield return new WaitUntil(() => _itemRegistry.Initialized);
             }
-
             playerInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
             playerInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
             playerInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
@@ -247,11 +247,35 @@ namespace Player
             return playerInventory;
         }
         
+        public override bool RemoveSoil(float amount)
+        {
+            _soilData ??= _itemRegistry.Get(0x6F9576E5);
+
+            bool removed = playerInventory.RemoveSoil(_soilData, amount);
+
+            if (!removed)
+            {
+                onPopup.Invoke(new PopupData("Not enough soil", IconRepository.IconType.Error));
+                return false;
+            }
+            
+            SoilResource soilResource = playerInventory.GetSoilResource();
+
+            // This should never be null, but just in case
+            if (soilResource != null)
+            {
+                onProgress.Invoke(new ProgressData(_soilData.Name, _soilData.Icon, soilResource.Count,
+                    soilResource.MaxCount));
+            }
+
+            return true;
+        }
+
         public override void CollectSoil(float amount)
         {
-            ItemData soilData = _itemRegistry.Get(0x6F9576E5);
+            _soilData ??= _itemRegistry.Get(0x6F9576E5);
             
-            bool added = playerInventory.AddSoil(soilData, amount);
+            bool added = playerInventory.AddSoil(_soilData, amount);
             SoilResource soilResource = playerInventory.GetSoilResource();
 
             if (!added)
@@ -261,11 +285,11 @@ namespace Player
 
             if (soilResource == null)
             {
-                onProgress.Invoke(new ProgressData(soilData.Name, soilData.Icon, 1, 1));
+                onProgress.Invoke(new ProgressData(_soilData.Name, _soilData.Icon, 1, 1));
             }
             else
             {
-                onProgress.Invoke(new ProgressData(soilData.Name, soilData.Icon, soilResource.Count,
+                onProgress.Invoke(new ProgressData(_soilData.Name, _soilData.Icon, soilResource.Count,
                     soilResource.MaxCount));
             }
         }

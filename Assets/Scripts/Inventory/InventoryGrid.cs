@@ -150,6 +150,17 @@ namespace Inventory
             return item;
         }
 
+        public int ItemCount(int itemID)
+        {
+            int count = 0;
+            foreach (KeyValuePair<uint, Item> pair in _items)
+            {
+                if (pair.Value.IDHash == itemID) count++;
+            }
+
+            return count;
+        }
+
         public string GetInventoryName()
         {
             return _name;

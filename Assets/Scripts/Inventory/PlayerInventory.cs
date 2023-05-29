@@ -52,6 +52,25 @@ namespace Inventory
             {
                 Count += amount;
             }
+            
+            if (Count < 0)
+            {
+                Count = 0;
+            }
+        }
+
+        public void SetValue(float value)
+        {
+            if (value < 0)
+            {
+                value = 0;
+            }
+            else if (value > MaxCount)
+            {
+                value = MaxCount;
+            }
+            
+            Count = value;
         }
 
         public void Reset()
@@ -156,6 +175,31 @@ namespace Inventory
             }
 
             NotifySubscribersOnInventoryChanged();
+            return true;
+        }
+        
+        public bool RemoveSoil(ItemData soilData, float amount)
+        {
+            int maxSoil = soilData.GetComponent<ResourceComponentData>().NeededCollectionCount;
+            
+            float curAmount = _soil?.Count ?? 0;
+            float neededAmount = Mathf.Max(0, amount - curAmount);
+
+            int neededSoil = Mathf.CeilToInt(neededAmount / maxSoil);
+            float remainingAmount = (curAmount + neededSoil * maxSoil) - amount;
+            
+            if (neededSoil > ItemCount(soilData.IDHash))
+            {
+                return false;
+            }
+            
+            for (int i = 0; i < neededSoil; i++)
+            {
+                RemoveItem(soilData.IDHash);
+            }
+
+            _soil ??= new SoilResource(maxSoil);
+            _soil.SetValue(remainingAmount);
             return true;
         }
 

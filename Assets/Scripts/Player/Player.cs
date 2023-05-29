@@ -11,6 +11,7 @@ namespace Player
         public abstract IInventoryNotifier GetInventoryNotifier();
         public abstract bool CollectResource(Resource resource);
         public abstract void CollectSoil(float amount);
+        public abstract bool RemoveSoil(float amount);
         public abstract void LockMovement();
         public abstract void UnlockMovement();
     }

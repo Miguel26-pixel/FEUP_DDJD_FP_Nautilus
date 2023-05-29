@@ -20,6 +20,7 @@ namespace Inventory
         public List<Item> GetItems();
         public bool AddItem(Item item);
         public Item RemoveItem(int itemID);
+        public int ItemCount(int itemID);
         public string GetInventoryName();
     }
 

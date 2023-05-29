@@ -128,7 +128,9 @@ namespace Player
                     _player.CollectSoil(radius * power / 4 * Time.deltaTime);
                     return altered;
                 case TerraformType.Raise:
-                    return _meshGenerator.Terraform(position, power, radius);
+                    var removed = _player.RemoveSoil(radius * power / 4 * Time.deltaTime);
+                    
+                    return removed ? _meshGenerator.Terraform(position, power, radius) : new HashSet<Vector3Int>();
                 case TerraformType.None:
                     break;
                 default:
