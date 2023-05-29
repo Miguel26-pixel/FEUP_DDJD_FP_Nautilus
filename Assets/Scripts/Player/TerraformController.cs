@@ -124,7 +124,9 @@ namespace Player
             switch (_terraformType)
             {
                 case TerraformType.Lower:
-                    return _meshGenerator.Terraform(position, -power, radius);
+                    var altered = _meshGenerator.Terraform(position, -power, radius);
+                    _player.CollectSoil(radius * power / 4 * Time.deltaTime);
+                    return altered;
                 case TerraformType.Raise:
                     return _meshGenerator.Terraform(position, power, radius);
                 case TerraformType.None:

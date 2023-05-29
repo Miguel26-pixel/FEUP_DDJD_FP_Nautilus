@@ -246,6 +246,29 @@ namespace Player
         {
             return playerInventory;
         }
+        
+        public override void CollectSoil(float amount)
+        {
+            ItemData soilData = _itemRegistry.Get(0x6F9576E5);
+            
+            bool added = playerInventory.AddSoil(soilData, amount);
+            SoilResource soilResource = playerInventory.GetSoilResource();
+
+            if (!added)
+            {
+                return;
+            }
+
+            if (soilResource == null)
+            {
+                onProgress.Invoke(new ProgressData(soilData.Name, soilData.Icon, 1, 1));
+            }
+            else
+            {
+                onProgress.Invoke(new ProgressData(soilData.Name, soilData.Icon, soilResource.Count,
+                    soilResource.MaxCount));
+            }
+        }
 
         public override bool CollectResource(Resource resource)
         {

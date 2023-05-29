@@ -30,11 +30,42 @@ namespace Inventory
         }
     }
 
+    public class SoilResource
+    {
+        public SoilResource(int maxCount)
+        {
+            MaxCount = maxCount;
+            Count = 0;
+        }
+
+        public int MaxCount { get; }
+        public float Count { get; private set; }
+        
+        public bool IsFull()
+        {
+            return Count >= MaxCount;
+        }
+        
+        public void Increment(float amount)
+        {
+            if (!IsFull())
+            {
+                Count += amount;
+            }
+        }
+
+        public void Reset()
+        {
+            Count = 0;
+        }
+    }
+
     public class PlayerInventory : InventoryGrid, IInventoryNotifier
     {
         private readonly Dictionary<int, IntermediateResource> _intermediateResources = new();
-        private readonly List<IInventorySubscriber> _subscribers = new();
+        private SoilResource _soil = null;
 
+        private readonly List<IInventorySubscriber> _subscribers = new();
 
         private bool _notify = true;
 
@@ -76,6 +107,11 @@ namespace Inventory
             return _intermediateResources.TryGetValue(itemID, out IntermediateResource intermediateResource)
                 ? intermediateResource
                 : null;
+        }
+        
+        public SoilResource GetSoilResource()
+        {
+            return _soil;
         }
 
         public void RemoveSubscriber(IInventorySubscriber subscriber)
@@ -120,6 +156,25 @@ namespace Inventory
             }
 
             NotifySubscribersOnInventoryChanged();
+            return true;
+        }
+
+        public bool AddSoil(ItemData soilData, float amount)
+        {
+            _soil ??= new SoilResource(soilData.GetComponent<ResourceComponentData>().NeededCollectionCount);
+            _soil.Increment(amount);
+
+            if (!_soil.IsFull())
+            {
+                return true;
+            }
+
+            if (!AddInternal(soilData.CreateInstance()))
+            {
+                return false;
+            }
+
+            _soil = null;
             return true;
         }
 

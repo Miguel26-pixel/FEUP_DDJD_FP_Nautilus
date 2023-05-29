@@ -174,6 +174,8 @@ namespace DataManager
                 ItemType.Resource, "ItemIcons/test");
             ItemData soil = _itemRegistry.CreateItem("Soil", "A pile of dirt. It's not much, but it's all you've got.",
                 ItemType.Resource, "ItemIcons/test");
+            ResourceComponentData soilResourceComponentData = new(100);
+            soil.AddComponent(soilResourceComponentData);
 
             // Fabricator Items
 
