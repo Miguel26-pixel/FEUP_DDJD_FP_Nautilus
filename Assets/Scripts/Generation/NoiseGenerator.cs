@@ -4,35 +4,34 @@ using UnityEngine;
 
 public class NoiseGenerator : MonoBehaviour, IDisposable
 {
+    public List<ProcessingStep> processingSteps;
     private ComputeBuffer pointsBuffer;
 
-    public List<ProcessingStep> processingSteps;
+    private void OnDestroy()
+    {
+        Dispose();
+    }
+
+    public void Dispose()
+    {
+        foreach (ProcessingStep step in processingSteps)
+        {
+            step.Dispose();
+        }
+    }
 
     public ProcessingResult Generate(Vector3 centre, float boundsSize, int numPointsPerAxis, int seed)
     {
         pointsBuffer = new ComputeBuffer(numPointsPerAxis * numPointsPerAxis * numPointsPerAxis, sizeof(float) * 4);
-        ProcessingResult result = new ProcessingResult();
-        
-        foreach (var step in processingSteps)
+        ProcessingResult result = new();
+
+        foreach (ProcessingStep step in processingSteps)
         {
             step.Process(pointsBuffer, numPointsPerAxis, seed, boundsSize, centre, result);
         }
 
         result.pointsBuffer = pointsBuffer;
         return result;
-    }
-
-    public void Dispose()
-    {
-        foreach (var step in processingSteps)
-        {
-            step.Dispose();
-        }
-    }
-
-    private void OnDestroy()
-    {
-        Dispose();
     }
 }
 

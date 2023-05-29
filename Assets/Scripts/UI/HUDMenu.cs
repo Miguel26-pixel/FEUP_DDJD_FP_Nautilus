@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Codice.Client.BaseCommands;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -8,21 +7,21 @@ namespace UI
 {
     public record PopupData
     {
-        public readonly string title;
         public readonly Sprite icon;
-        
+        public readonly string title;
+
         public PopupData(string title, Sprite icon)
         {
             this.title = title;
             this.icon = icon;
         }
     }
-    
+
     public record ProgressData : PopupData
     {
-        public float progress;
         public float maxProgress;
-        
+        public float progress;
+
         public ProgressData(string title, Sprite icon, float progress, float maxProgress) : base(title, icon)
         {
             this.maxProgress = maxProgress;
@@ -32,25 +31,25 @@ namespace UI
 
     public abstract class StateData
     {
-        public readonly VisualElement popup;
         private readonly float _popupDuration;
         private readonly float _popupFadeDuration;
-        
+        public readonly VisualElement popup;
+
         private PopupState _state;
         private float _time;
-        
+
         protected StateData(VisualElement popup, float popupDuration, float popupFadeDuration)
         {
             this.popup = popup;
             _popupDuration = popupDuration;
             _popupFadeDuration = popupFadeDuration;
-            
+
             _state = PopupState.Open;
             _time = 0f;
-           
+
             popup.AddToClassList("open");
         }
-        
+
         public PopupState Update(float deltaTime)
         {
             _time += deltaTime;
@@ -58,28 +57,30 @@ namespace UI
             switch (_state)
             {
                 case PopupState.Open:
-                    if(_time >= _popupDuration)
+                    if (_time >= _popupDuration)
                     {
                         _state = PopupState.Fading;
                         _time = 0f;
-                        
+
                         Fade();
                     }
+
                     break;
                 case PopupState.Fading:
                     if (_time >= _popupFadeDuration)
                     {
                         _state = PopupState.Closed;
-                        
+
                         Close();
                     }
+
                     break;
                 case PopupState.Closed:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            
+
             return _state;
         }
 
@@ -100,7 +101,7 @@ namespace UI
             popup.RemoveFromHierarchy();
         }
     }
-    
+
     public class PopupStateData : StateData
     {
         public readonly PopupData popupData;
@@ -117,28 +118,29 @@ namespace UI
             popupLabel.text = this.popupData.title;
         }
     }
-    
+
     public class ProgressStateData : StateData
     {
-        public readonly ProgressData progressData;
         private readonly ProgressBar _progressBar;
+        public readonly ProgressData progressData;
 
-        public bool Completed => _progressBar.value >= _progressBar.highValue;
-        
-        public ProgressStateData(ProgressData progressData, VisualElement progress, float popupDuration, float popupFadeDuration) :
+        public ProgressStateData(ProgressData progressData, VisualElement progress, float popupDuration,
+            float popupFadeDuration) :
             base(progress, popupDuration, popupFadeDuration)
         {
             this.progressData = progressData;
-            
+
             VisualElement progressIcon = progress.Q<VisualElement>("Icon");
             Label progressLabel = progress.Q<Label>("CounterLabel");
             _progressBar = progress.Q<ProgressBar>("ItemCounterProgress");
-            
+
             progressIcon.style.backgroundImage = new StyleBackground(this.progressData.icon);
             progressLabel.text = this.progressData.title;
             _progressBar.highValue = this.progressData.maxProgress;
             _progressBar.value = this.progressData.progress;
         }
+
+        public bool Completed => _progressBar.value >= _progressBar.highValue;
 
         public void UpdateProgress(float value, float highValue)
         {
@@ -146,39 +148,39 @@ namespace UI
             _progressBar.highValue = highValue;
         }
     }
-    
+
     public enum PopupState
     {
         Open,
         Fading,
         Closed
     }
-    
+
     public class HUDMenu : MonoBehaviour
     {
         public float popupDuration = 3f;
         public float popupFadeDuration = 0.5f;
-        
+
         public int maxPopupCount = 5;
-        
+
         public VisualTreeAsset popupVisualTreeAsset;
         public VisualTreeAsset progressVisualTreeAsset;
 
-        private int _popupCount = 0;
+        private readonly Queue<PopupData> _popupQueue = new();
 
-        private readonly Queue<PopupData> _popupQueue = new Queue<PopupData>();
-        
-        private readonly LinkedList<PopupStateData> _popupStateData = new LinkedList<PopupStateData>();
-        private readonly LinkedList<ProgressStateData> _progressStateData = new LinkedList<ProgressStateData>();
+        private readonly LinkedList<PopupStateData> _popupStateData = new();
+        private readonly LinkedList<ProgressStateData> _progressStateData = new();
+        private VisualElement _popupContainer;
+
+        private int _popupCount;
 
         private VisualElement _root;
-        private VisualElement _popupContainer;
 
 
         private void Start()
         {
             _root = GetComponent<UIDocument>().rootVisualElement;
-            
+
             _popupContainer = _root.Q<VisualElement>("PopupContainer");
         }
 
@@ -188,15 +190,15 @@ namespace UI
             {
                 DequeuePopup();
             }
-            
+
             if (_popupCount == 0)
             {
                 return;
             }
-            
+
             float deltaTime = Time.deltaTime;
 
-            foreach (var popupStateData in _popupStateData)
+            foreach (PopupStateData popupStateData in _popupStateData)
             {
                 PopupState state = popupStateData.Update(deltaTime);
 
@@ -208,7 +210,7 @@ namespace UI
                 }
             }
 
-            foreach (var progressStateData in _progressStateData)
+            foreach (ProgressStateData progressStateData in _progressStateData)
             {
                 PopupState state = progressStateData.Update(deltaTime);
 
@@ -232,25 +234,27 @@ namespace UI
 
             if (popupData is ProgressData progressData)
             {
-                ProgressStateData progressStateData = new ProgressStateData(progressData, progressVisualTreeAsset.CloneTree(), popupDuration, popupFadeDuration);
-                    
+                ProgressStateData progressStateData = new(progressData, progressVisualTreeAsset.CloneTree(),
+                    popupDuration, popupFadeDuration);
+
                 _progressStateData.AddLast(progressStateData);
                 _popupContainer.Add(progressStateData.popup);
             }
             else
             {
-                PopupStateData popupStateData = new PopupStateData(popupData, popupVisualTreeAsset.CloneTree(), popupDuration, popupFadeDuration);
-                
+                PopupStateData popupStateData = new(popupData, popupVisualTreeAsset.CloneTree(), popupDuration,
+                    popupFadeDuration);
+
                 _popupStateData.AddLast(popupStateData);
                 _popupContainer.Add(popupStateData.popup);
             }
-                
+
             _popupCount++;
         }
 
         public void QueuePopup(PopupData popupData)
         {
-            foreach (var popupStateData in _popupStateData)
+            foreach (PopupStateData popupStateData in _popupStateData)
             {
                 if (popupStateData.popupData.title != popupData.title)
                 {
@@ -260,8 +264,8 @@ namespace UI
                 popupStateData.Unfade();
                 return;
             }
-            
-            foreach (var data in _popupQueue)
+
+            foreach (PopupData data in _popupQueue)
             {
                 if (data is not ProgressData && data.title == popupData.title)
                 {
@@ -274,7 +278,7 @@ namespace UI
 
         public void ShowProgress(ProgressData progressData)
         {
-            foreach (var progressStateData in _progressStateData)
+            foreach (ProgressStateData progressStateData in _progressStateData)
             {
                 if (progressStateData.progressData.title != progressData.title || progressStateData.Completed)
                 {
@@ -285,8 +289,8 @@ namespace UI
                 progressStateData.Unfade();
                 return;
             }
-            
-            foreach (var data in _popupQueue)
+
+            foreach (PopupData data in _popupQueue)
             {
                 if (data is not ProgressData progress || data.title != progressData.title)
                 {
@@ -300,10 +304,10 @@ namespace UI
 
                 progress.progress = progressData.progress;
                 progress.maxProgress = progressData.maxProgress;
-                        
+
                 return;
             }
-            
+
             _popupQueue.Enqueue(progressData);
         }
     }

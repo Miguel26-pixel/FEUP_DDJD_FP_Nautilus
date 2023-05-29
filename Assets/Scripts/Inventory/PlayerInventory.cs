@@ -7,20 +7,20 @@ namespace Inventory
 {
     public class IntermediateResource
     {
-        public int NeededCollectionCount { get; }
-        public int Count { get; private set; }
-
         public IntermediateResource(ItemData item)
         {
             NeededCollectionCount = item.GetComponent<ResourceComponentData>().NeededCollectionCount;
             Count = 0;
         }
-        
+
+        public int NeededCollectionCount { get; }
+        public int Count { get; private set; }
+
         public bool IsFull()
         {
             return Count == NeededCollectionCount - 1;
         }
-        
+
         public void Increment()
         {
             if (!IsFull())
@@ -29,16 +29,14 @@ namespace Inventory
             }
         }
     }
-    
+
     public class PlayerInventory : InventoryGrid, IInventoryNotifier
     {
-        private readonly List<IInventorySubscriber> _subscribers = new();
         private readonly Dictionary<int, IntermediateResource> _intermediateResources = new();
-        
+        private readonly List<IInventorySubscriber> _subscribers = new();
+
 
         private bool _notify = true;
-        
-        public bool Locked { get; set; }
 
         public PlayerInventory(string inventoryName, bool[,] gridShape) : base(gridShape, inventoryName)
         {
@@ -51,15 +49,9 @@ namespace Inventory
 
         public PlayerInventory(InventoryGrid inventory) : base(inventory)
         {
-            
         }
 
-        public IntermediateResource GetIntermediateResource(int itemID)
-        {
-            return _intermediateResources.TryGetValue(itemID, out IntermediateResource intermediateResource)
-                ? intermediateResource
-                : null;
-        }
+        public bool Locked { get; set; }
 
         public void AddSubscriber(IInventorySubscriber subscriber)
         {
@@ -72,11 +64,18 @@ namespace Inventory
             {
                 return;
             }
-            
+
             foreach (IInventorySubscriber subscriber in _subscribers)
             {
                 subscriber.OnInventoryChanged();
             }
+        }
+
+        public IntermediateResource GetIntermediateResource(int itemID)
+        {
+            return _intermediateResources.TryGetValue(itemID, out IntermediateResource intermediateResource)
+                ? intermediateResource
+                : null;
         }
 
         public void RemoveSubscriber(IInventorySubscriber subscriber)
@@ -90,7 +89,7 @@ namespace Inventory
             {
                 throw new InvalidOperationException("Player inventory is locked");
             }
-            
+
             Item item = base.RemoveItem(itemHash);
             NotifySubscribersOnInventoryChanged();
             return item;
@@ -102,7 +101,7 @@ namespace Inventory
             {
                 throw new InvalidOperationException("Player inventory is locked");
             }
-            
+
             Item item = base.RemoveAt(position);
             NotifySubscribersOnInventoryChanged();
             return item;
@@ -123,7 +122,7 @@ namespace Inventory
             NotifySubscribersOnInventoryChanged();
             return true;
         }
-        
+
         public bool AddResource(ItemData item)
         {
             if (!_intermediateResources.TryGetValue(item.IDHash, out IntermediateResource intermediateResource))
@@ -131,7 +130,7 @@ namespace Inventory
                 intermediateResource = new IntermediateResource(item);
                 _intermediateResources.Add(item.IDHash, intermediateResource);
             }
-            
+
             if (!intermediateResource.IsFull())
             {
                 intermediateResource.Increment();
@@ -159,8 +158,8 @@ namespace Inventory
             {
                 return;
             }
-            
-            
+
+
             base.AddItem(item, position, rotation);
             NotifySubscribersOnInventoryChanged();
         }

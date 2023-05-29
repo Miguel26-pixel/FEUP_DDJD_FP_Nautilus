@@ -1,16 +1,11 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using Crafting;
 using DataManager;
 using Generation.Resource;
 using Inventory;
 using Items;
 using UI;
-using UI.Inventory;
-using UI.Inventory.Builders;
-using Unity.Collections;
-using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -26,19 +21,19 @@ namespace Player
         public UnityEvent<int> onRotate = new();
         public UnityEvent<PopupData> onPopup = new();
         public UnityEvent<ProgressData> onProgress = new();
-        
-        private ItemRegistry _itemRegistry;
         public TransferDirection transferDirection;
         public TerraformController terraformController;
-        
-        private ItemRegistryObject _itemRegistryObject;
-        private PlayerActions _playerActions;
         private Camera _camera;
-        private float _verticalRotation = 0f;
-        private float _horizontalRotation = 0f;
         private Vector3 _currentMovement;
+        private float _horizontalRotation;
+
+        private ItemRegistry _itemRegistry;
+
+        private ItemRegistryObject _itemRegistryObject;
+        private bool _movementLocked;
+        private PlayerActions _playerActions;
         private Rigidbody _rigidbody;
-        private bool _movementLocked = false;
+        private float _verticalRotation;
 
         public PlayerInventory playerInventory = new("Inventory", new[,]
         {
@@ -63,8 +58,41 @@ namespace Player
             Debug.Log(SystemInfo.supportsAsyncGPUReadback);
             Debug.Log(SystemInfo.supportsComputeShaders);
             Cursor.lockState = CursorLockMode.Locked;
-            
+
             StartCoroutine(GiveItems());
+        }
+
+        private void Update()
+        {
+            if (_movementLocked)
+            {
+                return;
+            }
+
+            Vector2 mouseDelta = Mouse.current.delta.ReadValue();
+
+            transform.Rotate(Vector3.up * (mouseDelta.x * 0.1f), Space.World);
+
+            _verticalRotation -= mouseDelta.y * 0.1f;
+            _verticalRotation = Mathf.Clamp(_verticalRotation, -90f, 90f);
+            _horizontalRotation += mouseDelta.x * 0.1f;
+
+            _camera.transform.localRotation = Quaternion.Euler(_verticalRotation, 0, 0f);
+            terraformController.vacuumArea.transform.localRotation = Quaternion.Euler(_verticalRotation, 0, 0f);
+            terraformController.vacuumCollection.transform.localRotation = Quaternion.Euler(_verticalRotation, 0, 0f);
+
+            if (_currentMovement != Vector3.zero)
+            {
+                Vector3 forward = _camera.transform.forward;
+                forward.Normalize();
+
+                // transform.position += forward * (_currentMovement.x * 0.5f);
+                _rigidbody.velocity = forward * (_currentMovement.x * 20f);
+            }
+            else
+            {
+                _rigidbody.velocity = Vector3.zero;
+            }
         }
 
         public void OnEnable()
@@ -81,39 +109,6 @@ namespace Player
         public void OnDisable()
         {
             _playerActions.CraftingTest.Disable();
-        }
-
-        private void Update()
-        {
-            if (_movementLocked)
-            {
-                return;
-            }
-            
-            Vector2 mouseDelta = Mouse.current.delta.ReadValue();
-
-            transform.Rotate(Vector3.up * (mouseDelta.x * 0.1f), Space.World);
-            
-            _verticalRotation -= mouseDelta.y * 0.1f;
-            _verticalRotation = Mathf.Clamp(_verticalRotation, -90f, 90f);
-            _horizontalRotation += mouseDelta.x * 0.1f;
-            
-            _camera.transform.localRotation = Quaternion.Euler(_verticalRotation, 0, 0f);
-            terraformController.vacuumArea.transform.localRotation = Quaternion.Euler(_verticalRotation, 0, 0f);
-            terraformController.vacuumCollection.transform.localRotation = Quaternion.Euler(_verticalRotation, 0, 0f);
-            
-            if (_currentMovement != Vector3.zero)
-            {
-                Vector3 forward = _camera.transform.forward;
-                forward.Normalize();
-                
-                // transform.position += forward * (_currentMovement.x * 0.5f);
-                _rigidbody.velocity = forward * (_currentMovement.x * 20f);
-            }
-            else
-            {
-                _rigidbody.velocity = Vector3.zero;
-            }
         }
 
 
@@ -133,7 +128,7 @@ namespace Player
             {
                 return;
             }
-            
+
             onInventoryEvent.Invoke();
         }
 
@@ -161,21 +156,21 @@ namespace Player
         {
             if (context.performed)
             {
-
                 terraformController.SetTerraformType(TerraformType.Lower);
-            } 
+            }
             else if (context.canceled)
             {
                 terraformController.SetTerraformType(TerraformType.None);
             }
         }
-        
+
         public void OnUseRightTool(InputAction.CallbackContext context)
         {
             if (context.performed)
             {
                 terraformController.SetTerraformType(TerraformType.Raise);
-            } else if (context.canceled)
+            }
+            else if (context.canceled)
             {
                 terraformController.SetTerraformType(TerraformType.None);
             }
@@ -195,7 +190,8 @@ namespace Player
             if (context.performed)
             {
                 _currentMovement = new Vector3(1, 1, 1);
-            } else if (context.canceled)
+            }
+            else if (context.canceled)
             {
                 _currentMovement = Vector3.zero;
             }
@@ -204,8 +200,10 @@ namespace Player
         public override void LockMovement()
         {
             _movementLocked = true;
+            
+            _currentMovement = Vector3.zero;
         }
-        
+
         public override void UnlockMovement()
         {
             _movementLocked = false;
@@ -233,7 +231,7 @@ namespace Player
 
             Debug.Log("Gave items");
         }
-        
+
         public override PlayerInventory GetInventory()
         {
             return playerInventory;
@@ -263,15 +261,15 @@ namespace Player
             if (added)
             {
                 Destroy(resource.gameObject);
-                
+
                 if (intermediateResource == null)
                 {
                     onProgress.Invoke(new ProgressData(item.Name, item.Icon, 1,
                         1));
-                    
+
                     return true;
                 }
-                
+
                 onProgress.Invoke(new ProgressData(item.Name, item.Icon, intermediateResource.Count,
                     intermediateResource.NeededCollectionCount));
             }

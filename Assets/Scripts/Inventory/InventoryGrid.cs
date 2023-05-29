@@ -104,7 +104,7 @@ namespace Inventory
                 uint itemID = pair.Key;
                 Item item = pair.Value;
                 ItemPosition itemPosition = other._itemPositions[itemID];
-                
+
                 bool[,] itemGrid = ItemGrid<bool>.RotateMultiple(item.Grid, itemPosition.rotation);
                 BoundsInt bounds = ItemGrid<bool>.GetBounds(itemGrid, true);
 
@@ -268,7 +268,7 @@ namespace Inventory
         public virtual void AddItem(Item item, Vector2Int position, int rotation)
         {
             (bool[,] itemGrid, BoundsInt bounds) = CheckFitAndGetBounds(item, position, rotation);
-            
+
             AddItemInternal(item, position, rotation, itemGrid, bounds);
         }
 

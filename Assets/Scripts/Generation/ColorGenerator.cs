@@ -1,8 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
+using Random = System.Random;
 
 [Serializable]
 public struct SectionColor
@@ -32,11 +31,12 @@ internal class ReverseSectionComparer : IComparer<ColorHeightSection>
     }
 }
 
-public class ColorGenerator : MonoBehaviour {
+public class ColorGenerator : MonoBehaviour
+{
     public List<BiomeColorSections> biomes;
-    private List<Vector4> sectionBuffer;
     public BiomeProcessingStep biomeProcessingStep;
-    
+    private List<Vector4> sectionBuffer;
+
     public void UpdateColors(int seed, Material mat)
     {
         // sections.Sort(new ReverseSectionComparer());
@@ -54,28 +54,31 @@ public class ColorGenerator : MonoBehaviour {
 
         float offsetRange = 1000;
 
-        var prng = new System.Random(seed);
-        Vector3 biomeOffset = new Vector3 ((float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1) * offsetRange;;
-        
+        Random prng = new Random(seed);
+        Vector3 biomeOffset = new Vector3((float)prng.NextDouble() * 2 - 1, (float)prng.NextDouble() * 2 - 1,
+            (float)prng.NextDouble() * 2 - 1) * offsetRange;
+        ;
+
         mat.SetVector("biome_offset", biomeOffset);
     }
 
     private List<Vector4> SerializeSection()
     {
-        List<Vector4> buffer = new List<Vector4>();
+        List<Vector4> buffer = new();
 
-        foreach (var biome in biomes)
+        foreach (BiomeColorSections biome in biomes)
         {
-            List<Vector4> temp = new List<Vector4>();
-            foreach (var section in biome.sections)
+            List<Vector4> temp = new();
+            foreach (ColorHeightSection section in biome.sections)
             {
                 temp.Add(new Vector4(section.minHeight, section.colors.Count));
 
-                foreach (var color in section.colors)
+                foreach (SectionColor color in section.colors)
                 {
                     temp.Add(new Vector4(color.color.r, color.color.g, color.color.b, color.minNoise));
                 }
             }
+
             buffer.Add(new Vector4(temp.Count, 0));
             buffer.AddRange(temp);
         }

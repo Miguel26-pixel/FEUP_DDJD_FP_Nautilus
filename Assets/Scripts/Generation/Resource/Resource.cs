@@ -7,9 +7,9 @@ namespace Generation.Resource
     public class Resource : MonoBehaviour
     {
         public string itemHash;
-        [NonSerialized] public int itemID;
         [NonSerialized] public bool dropped;
-        
+        [NonSerialized] public int itemID;
+
         public void Awake()
         {
             if (!string.IsNullOrEmpty(itemHash))

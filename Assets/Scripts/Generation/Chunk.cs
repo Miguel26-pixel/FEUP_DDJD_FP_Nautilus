@@ -1,40 +1,50 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
-using UnityEngine.Serialization;
 
 public class Chunk : MonoBehaviour, IDisposable
 {
     public Vector3Int chunkGridPosition;
     public ComputeShader shader;
+    private float _boundsSize;
 
-    [NonSerialized]
-    private ComputeBuffer _modifiedNoise;
+    private bool _initialized;
+    private float _isoLevel;
+    private MeshCollider _meshCollider;
+
+    private MeshFilter _meshFilter;
+    private MeshRenderer _meshRenderer;
+
+    [NonSerialized] private ComputeBuffer _modifiedNoise;
+
+    private int _numPointsPerAxis;
+
     // TODO: CHECK if can be just computeBuffer
     private ComputeBuffer _points;
-    
-    private MeshFilter _meshFilter;
-    private MeshCollider _meshCollider;
-    private MeshRenderer _meshRenderer;
-    
-    private ComputeBuffer _triangleBuffer;
-    private ComputeBuffer _triCountBuffer;
-    private int _triangleCount;
-    
-    private int _numPointsPerAxis;
-    private float _boundsSize;
     private int _seed;
-    private float _isoLevel;
-    
-    private bool _initialized = false;
+
+    private ComputeBuffer _triangleBuffer;
+    private int _triangleCount;
+    private ComputeBuffer _triCountBuffer;
 
     private void Awake()
     {
         _meshFilter = GetComponent<MeshFilter>();
         _meshCollider = GetComponent<MeshCollider>();
         _meshRenderer = GetComponent<MeshRenderer>();
+    }
+
+    private void OnDestroy()
+    {
+        Dispose();
+    }
+
+    public void Dispose()
+    {
+        _modifiedNoise?.Release();
+        _points?.Release();
+        _triangleBuffer?.Release();
+        _triCountBuffer?.Release();
     }
 
     private void InitializeBuffers()
@@ -47,17 +57,17 @@ public class Chunk : MonoBehaviour, IDisposable
         int numVoxelsPerAxis = _numPointsPerAxis - 1;
         int numVoxels = numVoxelsPerAxis * numVoxelsPerAxis * numVoxelsPerAxis;
         int maxTriangleCount = numVoxels * 5;
-        
-        _triangleBuffer = new ComputeBuffer (maxTriangleCount, sizeof (float) * 9, ComputeBufferType.Append);
-        _triCountBuffer = new ComputeBuffer (1, sizeof (int), ComputeBufferType.Raw);
+
+        _triangleBuffer = new ComputeBuffer(maxTriangleCount, sizeof(float) * 9, ComputeBufferType.Append);
+        _triCountBuffer = new ComputeBuffer(1, sizeof(int), ComputeBufferType.Raw);
 
         shader.SetInt("numPointsPerAxis", _numPointsPerAxis);
         shader.SetFloat("isoLevel", _isoLevel);
         shader.SetBuffer(0, "triangles", _triangleBuffer);
-        
+
         _initialized = true;
     }
-    
+
     private void GenerateCollider()
     {
         _meshCollider.sharedMesh = _meshFilter.sharedMesh;
@@ -71,7 +81,7 @@ public class Chunk : MonoBehaviour, IDisposable
     private void DispatchMarchingCubes(float isoLevel, ComputeBuffer pointsBuffer, ComputeBuffer modifiedNoiseBuffer)
     {
         int numVoxelsPerAxis = _numPointsPerAxis - 1;
-        
+
         InitializeBuffers();
         _triangleBuffer.SetCounterValue(0);
 
@@ -79,13 +89,13 @@ public class Chunk : MonoBehaviour, IDisposable
         shader.SetBuffer(0, "triangles", _triangleBuffer);
         shader.SetBuffer(0, "modifiedNoise", modifiedNoiseBuffer);
 
-        int numThreadsPerAxis = Mathf.CeilToInt (numVoxelsPerAxis / 8f);
+        int numThreadsPerAxis = Mathf.CeilToInt(numVoxelsPerAxis / 8f);
         shader.Dispatch(0, numThreadsPerAxis, numThreadsPerAxis, numThreadsPerAxis);
-        
+
         _points = pointsBuffer;
         _modifiedNoise = modifiedNoiseBuffer;
     }
-    
+
     private Triangle[] GenerateTriangles()
     {
         ComputeBuffer.CopyCount(_triangleBuffer, _triCountBuffer, 0);
@@ -113,12 +123,14 @@ public class Chunk : MonoBehaviour, IDisposable
         mesh.Clear();
         mesh.indexFormat = IndexFormat.UInt32;
         _meshFilter.sharedMesh = mesh;
-        
+
         Vector3[] vertices = new Vector3[triangles.Length * 3];
         int[] meshTriangles = new int[triangles.Length * 3];
 
-        for (int i = 0; i < triangles.Length; i++) {
-            for (int j = 0; j < 3; j++) {
+        for (int i = 0; i < triangles.Length; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
                 meshTriangles[i * 3 + j] = i * 3 + j;
                 vertices[i * 3 + j] = triangles[i][j];
             }
@@ -143,16 +155,17 @@ public class Chunk : MonoBehaviour, IDisposable
         GenerateCollider();
     }
 
-    private ProcessingResult DispatchShaders(float isoLevel, float chunkSize, int numPointsPerAxis, NoiseGenerator noiseGenerator, int seed)
+    private ProcessingResult DispatchShaders(float isoLevel, float chunkSize, int numPointsPerAxis,
+        NoiseGenerator noiseGenerator, int seed)
     {
         _numPointsPerAxis = numPointsPerAxis;
         _seed = seed;
         _boundsSize = chunkSize;
         _isoLevel = isoLevel;
-        
+
         ProcessingResult result = GenerateNoise(chunkSize, noiseGenerator, seed);
         ComputeBuffer modifiedNoiseBuffer =
-            new ComputeBuffer(
+            new(
                 numPointsPerAxis * numPointsPerAxis * numPointsPerAxis,
                 sizeof(float));
 
@@ -161,59 +174,60 @@ public class Chunk : MonoBehaviour, IDisposable
         return result;
     }
 
-    public ProcessingResult Generate(float isoLevel, float chunkSize, int numPointsPerAxis, NoiseGenerator noiseGenerator, int seed)
+    public ProcessingResult Generate(float isoLevel, float chunkSize, int numPointsPerAxis,
+        NoiseGenerator noiseGenerator, int seed)
     {
         ProcessingResult result = DispatchShaders(isoLevel, chunkSize, numPointsPerAxis, noiseGenerator, seed);
         RenderMesh();
 
         return result;
     }
-    
+
     public int GetFloatDistance(float distance)
     {
         float cellSize = _boundsSize / (_numPointsPerAxis - 1);
         int cellDistance = Mathf.RoundToInt(distance / cellSize);
-        
+
         return cellDistance;
     }
 
     public Vector2Int GetPointPosition(Vector3 position)
     {
         Vector3 local = transform.InverseTransformPoint(position);
-        
+
         float y = local.z;
         float x = local.x;
-            
+
         float cellSize = _boundsSize / (_numPointsPerAxis - 1);
-            
+
         int yIndex = Mathf.RoundToInt((y - chunkGridPosition.z * _boundsSize + _boundsSize / 2) / cellSize);
         int xIndex = Mathf.RoundToInt((x - chunkGridPosition.x * _boundsSize + _boundsSize / 2) / cellSize);
-        
+
         return new Vector2Int(xIndex, yIndex);
     }
-    
+
     public Vector3Int GetVectorPosition(Vector3 position)
     {
         Vector3 local = transform.InverseTransformPoint(position);
-        
+
         float z = local.z;
         float y = local.y;
         float x = local.x;
-            
+
         float cellSize = _boundsSize / (_numPointsPerAxis - 1);
-            
+
         int zIndex = Mathf.RoundToInt((z - chunkGridPosition.z * _boundsSize + _boundsSize / 2) / cellSize);
         int yIndex = Mathf.RoundToInt((y - chunkGridPosition.y * _boundsSize + _boundsSize / 2) / cellSize);
         int xIndex = Mathf.RoundToInt((x - chunkGridPosition.x * _boundsSize + _boundsSize / 2) / cellSize);
-        
+
         return new Vector3Int(xIndex, yIndex, zIndex);
     }
-    
+
     public ComputeBuffer GetModifiedNoiseBuffer()
     {
         return _modifiedNoise;
     }
-    
+
     public MeshRenderer GetMeshRenderer()
     {
         return _meshRenderer;
@@ -223,22 +237,9 @@ public class Chunk : MonoBehaviour, IDisposable
     {
         return new Tuple<ComputeBuffer, int>(_triangleBuffer, _triangleCount);
     }
-    
+
     public int ChunkSeed()
     {
         return (_seed + chunkGridPosition.x + chunkGridPosition.y + chunkGridPosition.z) * 31;
-    }
-
-    public void Dispose()
-    {
-        _modifiedNoise?.Release();
-        _points?.Release();
-        _triangleBuffer?.Release();
-        _triCountBuffer?.Release();
-    }
-
-    private void OnDestroy()
-    {
-        Dispose();
     }
 }

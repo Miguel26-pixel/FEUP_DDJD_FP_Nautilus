@@ -60,49 +60,49 @@ namespace DataManager
             ItemData fiber = _itemRegistry.CreateItem("Fiber", "Tangled treasures from island grass.",
                 ItemType.Resource,
                 "ItemIcons/test");
-            ResourceComponentData resourceComponentData = new ResourceComponentData(8);
+            ResourceComponentData resourceComponentData = new(8);
             fiber.AddComponent(resourceComponentData);
-            
+
             ItemData wood = _itemRegistry.CreateItem("Wood",
                 "Sun-kissed timber harvested from majestic palm trees." +
                 " Ideal for crafting and roasting marshmallows (if you can find any).",
-                ItemType.Resource, "ItemIcons/test", new [,]
+                ItemType.Resource, "ItemIcons/test", new[,]
                 {
-                    {true, true}
+                    { true, true }
                 });
-            ResourceComponentData woodResourceComponentData = new ResourceComponentData(1);
+            ResourceComponentData woodResourceComponentData = new(1);
             wood.AddComponent(woodResourceComponentData);
-            
+
             ItemData seaweed = _itemRegistry.CreateItem("Seaweed Fiber", "Seashore secret for crafting needs.",
                 ItemType.Resource,
                 "ItemIcons/test");
-            ResourceComponentData seaweedResourceComponentData = new ResourceComponentData(8);
+            ResourceComponentData seaweedResourceComponentData = new(8);
             seaweed.AddComponent(seaweedResourceComponentData);
-            
+
             ItemData calcium = _itemRegistry.CreateItem("Seashell Calcium", "Calcium-rich treasures from seashells.",
                 ItemType.Resource,
                 "ItemIcons/test");
-            ResourceComponentData calciumResourceComponentData = new ResourceComponentData(3);
+            ResourceComponentData calciumResourceComponentData = new(3);
             calcium.AddComponent(calciumResourceComponentData);
-            
+
             ItemData scales = _itemRegistry.CreateItem("Fish Scales", "Gleaming scales from the planet’s fishes.",
                 ItemType.CreatureDrop,
                 "ItemIcons/test");
             ItemData coralium = _itemRegistry.CreateItem("Coralium", "Vibrant oceanic resource harvested from corals.",
                 ItemType.Resource,
                 "ItemIcons/test");
-            ResourceComponentData coraliumResourceComponentData = new ResourceComponentData(6);
+            ResourceComponentData coraliumResourceComponentData = new(6);
             coralium.AddComponent(coraliumResourceComponentData);
 
             ItemData abyssallite = _itemRegistry.CreateItem("Abyssallite",
                 "Deep-sea gem, hidden in the depths. A rare find for adventurous divers.", ItemType.Resource,
                 "ItemIcons/test");
-            ResourceComponentData abyssalliteResourceComponentData = new ResourceComponentData(5);
+            ResourceComponentData abyssalliteResourceComponentData = new(5);
             abyssallite.AddComponent(abyssalliteResourceComponentData);
 
             ItemData kelp = _itemRegistry.CreateItem("Kelp Iron", "Iron with a touch of kelp magic.", ItemType.Resource,
                 "ItemIcons/test");
-            ResourceComponentData kelpResourceComponentData = new ResourceComponentData(5);
+            ResourceComponentData kelpResourceComponentData = new(5);
             kelp.AddComponent(kelpResourceComponentData);
 
             ItemData spines = _itemRegistry.CreateItem("Sea Urchin Spines", "Prickly prizes from deep-sea urchins.",
@@ -121,13 +121,13 @@ namespace DataManager
             ItemData lumini = _itemRegistry.CreateItem("Luminitite", "Glowing mineral illuminating the caves.",
                 ItemType.Resource,
                 "ItemIcons/test");
-            ResourceComponentData luminiResourceComponentData = new ResourceComponentData(5);
+            ResourceComponentData luminiResourceComponentData = new(5);
             lumini.AddComponent(luminiResourceComponentData);
 
             ItemData doomstone = _itemRegistry.CreateItem("Doomstone",
                 "Foreboding stone found in the depths of the island's caves.",
                 ItemType.Resource, "ItemIcons/test");
-            ResourceComponentData doomstoneResourceComponentData = new ResourceComponentData(5);
+            ResourceComponentData doomstoneResourceComponentData = new(5);
             doomstone.AddComponent(doomstoneResourceComponentData);
 
             ItemData eye = _itemRegistry.CreateItem("Dreadworm Eye",
@@ -137,7 +137,7 @@ namespace DataManager
                 "From the depths of the cave comes this mysterious artifact." +
                 " Is it a remnant of an ancient civilization or something else?",
                 ItemType.Resource, "ItemIcons/test");
-            ResourceComponentData artifactResourceComponentData = new ResourceComponentData(1);
+            ResourceComponentData artifactResourceComponentData = new(1);
             artifact.AddComponent(artifactResourceComponentData);
 
             _itemRegistry.CreateItem("Tritonite",
@@ -182,9 +182,9 @@ namespace DataManager
                 ItemType.Resource, "ItemIcons/test");
             ItemData plank = _itemRegistry.CreateItem("Wood Plank",
                 "A staple of shipbuilding. They're strong and lightweight, making them ideal for a variety of construction projects.",
-                ItemType.Resource, "ItemIcons/test", new [,]
+                ItemType.Resource, "ItemIcons/test", new[,]
                 {
-                    {true, true}
+                    { true, true }
                 });
             ItemData plasma = _itemRegistry.CreateItem("Laser Gun Plasma",
                 "This high-tech material is a key component in laser weaponry. Its properties allow for highly concentrated and precise beams of energy.",

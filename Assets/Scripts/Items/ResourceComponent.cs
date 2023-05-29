@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Items
@@ -13,8 +12,9 @@ namespace Items
         }
 
         // This is the number of times the resource has to be collected before it is added to the inventory.
-        [JsonProperty("neededCollectionCount")] public int NeededCollectionCount { get;}
-        
+        [JsonProperty("neededCollectionCount")]
+        public int NeededCollectionCount { get; }
+
         public override ItemComponent CreateInstance()
         {
             return new ResourceComponent(this);
@@ -27,7 +27,7 @@ namespace Items
         public ResourceComponent(ResourceComponentData itemComponentData) : base(itemComponentData)
         {
         }
-        
-        public int NeededCollectionCount => ((ResourceComponentData) itemComponentData).NeededCollectionCount;
+
+        public int NeededCollectionCount => ((ResourceComponentData)itemComponentData).NeededCollectionCount;
     }
 }

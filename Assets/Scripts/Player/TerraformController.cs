@@ -17,13 +17,13 @@ namespace Player
         public GameObject terraformCursorPrefab;
         public GameObject vacuumArea;
         public GameObject vacuumCollection;
+        private readonly List<GameObject> _resourcesInRange = new();
 
         private Transform _camera;
         private MeshGenerator _meshGenerator;
+        private Player _player;
         private GameObject _terraformCursor;
         private TerraformType _terraformType = TerraformType.Raise;
-        private readonly List<GameObject> _resourcesInRange = new List<GameObject>();
-        private Player _player;
 
         private void Start()
         {
@@ -32,7 +32,7 @@ namespace Player
                 _meshGenerator = GameObject.Find("GenerationManager").GetComponent<MeshGenerator>();
                 _camera = Camera.main.transform;
             }
-            
+
             _terraformCursor = Instantiate(terraformCursorPrefab, Vector3.zero, Quaternion.identity);
             _terraformCursor.SetActive(false);
             _player = transform.parent.GetComponent<Player>();
@@ -46,36 +46,36 @@ namespace Player
             }
 
             const int numIterations = 5;
-            
+
 
             if (_terraformType == TerraformType.Lower)
             {
-                List<GameObject> destroyedResources = new List<GameObject>();
+                List<GameObject> destroyedResources = new();
 
-                foreach (var resource in _resourcesInRange)
+                foreach (GameObject resource in _resourcesInRange)
                 {
                     if (resource == null)
                     {
                         destroyedResources.Add(resource);
                         continue;
                     }
-                    
-                    Vector3 direction = (vacuumCollection.transform.position - resource.transform.position);
+
+                    Vector3 direction = vacuumCollection.transform.position - resource.transform.position;
                     float dst = direction.sqrMagnitude;
                     dst = Mathf.Lerp(1f, 5f, dst / (maxDistance * maxDistance));
-                    float force = suctionForce / (dst);
+                    float force = suctionForce / dst;
 
                     if (!resource.TryGetComponent(out Rigidbody rb))
                     {
                         continue;
                     }
-                    
-                    
+
+
                     rb.AddForce(direction.normalized * (force * Time.deltaTime * 60));
                     rb.AddForce(-Physics.gravity * Time.deltaTime, ForceMode.Impulse);
                 }
-                
-                foreach (var destroyedResource in destroyedResources)
+
+                foreach (GameObject destroyedResource in destroyedResources)
                 {
                     _resourcesInRange.Remove(destroyedResource);
                 }
@@ -87,7 +87,8 @@ namespace Player
                 float rayRadius = Mathf.Lerp(0.01f, 1f, i / (numIterations - 1f));
 
                 HashSet<Vector3Int> alteredChunks;
-                if (Physics.SphereCast(_camera.position, rayRadius, _camera.forward, out RaycastHit hit, 200, layerMask))
+                if (Physics.SphereCast(_camera.position, rayRadius, _camera.forward, out RaycastHit hit, 200,
+                        layerMask))
                 {
                     _terraformCursor.SetActive(true);
                     _terraformCursor.transform.position = hit.point;
@@ -109,10 +110,11 @@ namespace Player
                     continue;
                 }
 
-                foreach (var alteredChunk in alteredChunks)
+                foreach (Vector3Int alteredChunk in alteredChunks)
                 {
                     _meshGenerator.RegenerateChunk(alteredChunk);
                 }
+
                 break;
             }
         }
@@ -133,7 +135,7 @@ namespace Player
 
             return new HashSet<Vector3Int>();
         }
-        
+
         public void SetTerraformType(TerraformType terraformType)
         {
             _terraformType = terraformType;
@@ -141,8 +143,14 @@ namespace Player
 
         public void ToggleTerraform()
         {
-            if(canTerraform) DeactivateTerraform();
-            else ActivateTerraform();
+            if (canTerraform)
+            {
+                DeactivateTerraform();
+            }
+            else
+            {
+                ActivateTerraform();
+            }
         }
 
 
@@ -167,10 +175,11 @@ namespace Player
                     _resourcesInRange.Add(other);
                 }
             }
-            
+
             if (child == vacuumCollection)
             {
-                if (_terraformType == TerraformType.Lower && other.transform.parent.TryGetComponent(out Resource resource) && resource.dropped)
+                if (_terraformType == TerraformType.Lower &&
+                    other.transform.parent.TryGetComponent(out Resource resource) && resource.dropped)
                 {
                     bool added = _player.CollectResource(resource);
 
@@ -186,7 +195,7 @@ namespace Player
                 }
             }
         }
-        
+
         public void OnPartTriggerExit(GameObject child, GameObject other)
         {
             if (child == vacuumArea)

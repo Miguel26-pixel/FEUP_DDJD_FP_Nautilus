@@ -9,7 +9,7 @@ namespace Generation.Resource
         public Vector4 position;
         public Vector3 normal;
     }
-    
+
     public class BarycentricSurfacePointsFinder : IDisposable
     {
         private readonly ComputeShader _shader;
@@ -20,26 +20,34 @@ namespace Generation.Resource
         public BarycentricSurfacePointsFinder(ComputeShader shader, int maxPoints, int maxTriangles)
         {
             _shader = shader;
-            
+
             InitializeBuffers(maxPoints, maxTriangles);
+        }
+
+        public void Dispose()
+        {
+            _hitBuffer?.Release();
+            _hitCountBuffer?.Release();
+            _pointBuffer?.Release();
         }
 
         private void InitializeBuffers(int maxPoints, int maxTriangles)
         {
             _pointBuffer = new ComputeBuffer(maxPoints, sizeof(float) * 3);
             _hitBuffer = new ComputeBuffer(maxPoints * maxTriangles, sizeof(float) * 7, ComputeBufferType.Append);
-            _hitCountBuffer = new ComputeBuffer (1, sizeof (int), ComputeBufferType.Raw);
-            
+            _hitCountBuffer = new ComputeBuffer(1, sizeof(int), ComputeBufferType.Raw);
+
             _shader.SetBuffer(0, "points", _pointBuffer);
         }
 
-        public HitInformation[] FindUpwardSurfacePoints(ComputeBuffer triangleBuffer, int triangleCount, List<Vector3> points)
+        public HitInformation[] FindUpwardSurfacePoints(ComputeBuffer triangleBuffer, int triangleCount,
+            List<Vector3> points)
         {
             if (triangleCount == 0 || points.Count == 0)
             {
                 return Array.Empty<HitInformation>();
             }
-            
+
             _pointBuffer.SetData(points.ToArray());
             _hitBuffer.SetCounterValue(0);
 
@@ -47,11 +55,11 @@ namespace Generation.Resource
             _shader.SetInt("num_triangles", triangleCount);
             _shader.SetInt("num_points", points.Count);
             _shader.SetBuffer(0, "hit_information_buffer", _hitBuffer);
-            
-            int numThreadsPerTriangles = Mathf.CeilToInt (triangleCount / 32f);
-            int numThreadsPerPoints = Mathf.CeilToInt (points.Count / 32f);
+
+            int numThreadsPerTriangles = Mathf.CeilToInt(triangleCount / 32f);
+            int numThreadsPerPoints = Mathf.CeilToInt(points.Count / 32f);
             _shader.Dispatch(0, numThreadsPerTriangles, numThreadsPerPoints, 1);
-            
+
             ComputeBuffer.CopyCount(_hitBuffer, _hitCountBuffer, 0);
             int[] hitCountArray = { 0 };
             _hitCountBuffer.GetData(hitCountArray);
@@ -62,13 +70,6 @@ namespace Generation.Resource
             _hitBuffer.GetData(hits);
 
             return hits;
-        }
-
-        public void Dispose()
-        {
-            _hitBuffer?.Release();
-            _hitCountBuffer?.Release();
-            _pointBuffer?.Release();
         }
     }
 }

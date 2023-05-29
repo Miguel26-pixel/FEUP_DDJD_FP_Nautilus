@@ -12,6 +12,5 @@ namespace Player
         public abstract bool CollectResource(Resource resource);
         public abstract void LockMovement();
         public abstract void UnlockMovement();
-
     }
 }
