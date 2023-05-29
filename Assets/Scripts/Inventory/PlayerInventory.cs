@@ -223,32 +223,51 @@ namespace Inventory
             return true;
         }
 
-        public bool AddSoil(ItemData soilData, float amount)
+        public SoilResource AddSoil(ItemData soilData, float amount)
         {
-            if (_soil == null || _soil.IsFull())
-            {
-                if (_soil != null)
-                {
-                    _previousSoil.Push(_soil);
-                }
-                
-                _soil = new SoilResource(soilData.CreateInstance(), soilData.GetComponent<ResourceComponentData>().NeededCollectionCount);
-            }
+            _soil ??= new SoilResource(soilData.CreateInstance(),
+                soilData.GetComponent<ResourceComponentData>().NeededCollectionCount);
             _soil.Increment(amount);
 
-            return !_soil.IsFull() || AddInternal(_soil.Item);
+            if (!_soil.IsFull())
+            {
+                return _soil;
+            }
+            
+            SoilResource result = _soil;
+            if (!AddInternal(_soil.Item))
+            {
+                return null;
+            }
+            
+            _previousSoil.Push(_soil);
+            _soil = null;
+            return result;
         }
 
-        public bool AddResource(ItemData item)
+        public IntermediateResource AddResource(ItemData item)
         {
-            if (!_intermediateResources.TryGetValue(item.IDHash, out IntermediateResource intermediateResource) || intermediateResource.IsFull())
+            if (!_intermediateResources.TryGetValue(item.IDHash, out IntermediateResource intermediateResource))
             {
                 intermediateResource = new IntermediateResource(item.CreateInstance());
                 _intermediateResources[item.IDHash] = intermediateResource;
             }
             intermediateResource.Increment();
 
-            return !intermediateResource.IsFull() || AddInternal(intermediateResource.Item);
+            if (!intermediateResource.IsFull())
+            {
+                return intermediateResource;
+            }
+            
+            if (!AddInternal(intermediateResource.Item))
+            {
+                return null;
+            }
+            
+            IntermediateResource result = intermediateResource;
+
+            _intermediateResources.Remove(item.IDHash);
+            return result;
         }
 
         public override bool AddItem(Item item)

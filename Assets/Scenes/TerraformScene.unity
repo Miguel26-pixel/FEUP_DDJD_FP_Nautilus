@@ -983,7 +983,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: feb6090dee185e3ee8bd73754a3dbd4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chunkDistanceRadius: 3
+  chunkDistanceRadius: 4
   sqrCheckDistanceInterval: 10
 --- !u!114 &1298936911
 MonoBehaviour:

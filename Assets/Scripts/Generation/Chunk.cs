@@ -6,6 +6,9 @@ public class Chunk : MonoBehaviour, IDisposable
 {
     public Vector3Int chunkGridPosition;
     public ComputeShader shader;
+    
+    public bool Generated { get; private set; }
+    
     private float _boundsSize;
 
     private bool _initialized;
@@ -179,6 +182,7 @@ public class Chunk : MonoBehaviour, IDisposable
     {
         ProcessingResult result = DispatchShaders(isoLevel, chunkSize, numPointsPerAxis, noiseGenerator, seed);
         RenderMesh();
+        Generated = true;
 
         return result;
     }

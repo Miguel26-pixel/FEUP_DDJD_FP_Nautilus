@@ -275,10 +275,9 @@ namespace Player
         {
             _soilData ??= _itemRegistry.Get(0x6F9576E5);
             
-            bool added = playerInventory.AddSoil(_soilData, amount);
-            SoilResource soilResource = playerInventory.GetSoilResource();
+            SoilResource soilResource  = playerInventory.AddSoil(_soilData, amount);
 
-            if (!added)
+            if (soilResource == null)
             {
                 return;
             }
@@ -295,10 +294,9 @@ namespace Player
             }
 
             ItemData item = _itemRegistry.Get(resource.itemID);
-            bool added = playerInventory.AddResource(item);
-            IntermediateResource intermediateResource = playerInventory.GetIntermediateResource(item.IDHash);
+            IntermediateResource intermediateResource = playerInventory.AddResource(item);
 
-            if (added)
+            if (intermediateResource != null)
             {
                 Destroy(resource.gameObject);
                 
@@ -307,13 +305,10 @@ namespace Player
             }
             else
             {
-                if (intermediateResource != null)
-                {
-                    onPopup.Invoke(new PopupData("Inventory full", IconRepository.IconType.Error));
-                }
+                onPopup.Invoke(new PopupData("Inventory full", IconRepository.IconType.Error));
             }
 
-            return added;
+            return intermediateResource != null;
         }
     }
 }
