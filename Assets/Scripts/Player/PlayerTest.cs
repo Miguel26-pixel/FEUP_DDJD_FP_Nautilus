@@ -255,8 +255,8 @@ namespace Player
             {
                 return false;
             }
-            
-            Item item = _itemRegistry.Get(resource.itemID).CreateInstance();
+
+            ItemData item = _itemRegistry.Get(resource.itemID);
             bool added = playerInventory.AddResource(item);
             IntermediateResource intermediateResource = playerInventory.GetIntermediateResource(item.IDHash);
 

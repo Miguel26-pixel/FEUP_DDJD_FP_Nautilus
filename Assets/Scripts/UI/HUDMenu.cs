@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Codice.Client.BaseCommands;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -17,19 +18,132 @@ namespace UI
         }
     }
     
-    public record ProgressData
+    public record ProgressData : PopupData
     {
-        public readonly string title;
-        public readonly Sprite icon;
-        public readonly float progress;
-        public readonly float maxProgress;
+        public float progress;
+        public float maxProgress;
         
-        public ProgressData(string title,  Sprite icon, float progress, float maxProgress)
+        public ProgressData(string title, Sprite icon, float progress, float maxProgress) : base(title, icon)
         {
-            this.title = title;
-            this.icon = icon;
             this.maxProgress = maxProgress;
             this.progress = progress;
+        }
+    }
+
+    public abstract class StateData
+    {
+        public readonly VisualElement popup;
+        private readonly float _popupDuration;
+        private readonly float _popupFadeDuration;
+        
+        private PopupState _state;
+        private float _time;
+        
+        protected StateData(VisualElement popup, float popupDuration, float popupFadeDuration)
+        {
+            this.popup = popup;
+            _popupDuration = popupDuration;
+            _popupFadeDuration = popupFadeDuration;
+            
+            _state = PopupState.Open;
+            _time = 0f;
+           
+            popup.AddToClassList("open");
+        }
+        
+        public PopupState Update(float deltaTime)
+        {
+            _time += deltaTime;
+
+            switch (_state)
+            {
+                case PopupState.Open:
+                    if(_time >= _popupDuration)
+                    {
+                        _state = PopupState.Fading;
+                        _time = 0f;
+                        
+                        Fade();
+                    }
+                    break;
+                case PopupState.Fading:
+                    if (_time >= _popupFadeDuration)
+                    {
+                        _state = PopupState.Closed;
+                        
+                        Close();
+                    }
+                    break;
+                case PopupState.Closed:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            
+            return _state;
+        }
+
+        public void Unfade()
+        {
+            popup.AddToClassList("open");
+            _state = PopupState.Open;
+            _time = 0f;
+        }
+
+        private void Fade()
+        {
+            popup.RemoveFromClassList("open");
+        }
+
+        private void Close()
+        {
+            popup.RemoveFromHierarchy();
+        }
+    }
+    
+    public class PopupStateData : StateData
+    {
+        public readonly PopupData popupData;
+
+        public PopupStateData(PopupData popupData, VisualElement popup, float popupDuration, float popupFadeDuration) :
+            base(popup, popupDuration, popupFadeDuration)
+        {
+            this.popupData = popupData;
+
+            VisualElement popupIcon = popup.Q<VisualElement>("Icon");
+            Label popupLabel = popup.Q<Label>("PopupLabel");
+
+            popupIcon.style.backgroundImage = new StyleBackground(this.popupData.icon);
+            popupLabel.text = this.popupData.title;
+        }
+    }
+    
+    public class ProgressStateData : StateData
+    {
+        public readonly ProgressData progressData;
+        private readonly ProgressBar _progressBar;
+
+        public bool Completed => _progressBar.value >= _progressBar.highValue;
+        
+        public ProgressStateData(ProgressData progressData, VisualElement progress, float popupDuration, float popupFadeDuration) :
+            base(progress, popupDuration, popupFadeDuration)
+        {
+            this.progressData = progressData;
+            
+            VisualElement progressIcon = progress.Q<VisualElement>("Icon");
+            Label progressLabel = progress.Q<Label>("CounterLabel");
+            _progressBar = progress.Q<ProgressBar>("ItemCounterProgress");
+            
+            progressIcon.style.backgroundImage = new StyleBackground(this.progressData.icon);
+            progressLabel.text = this.progressData.title;
+            _progressBar.highValue = this.progressData.maxProgress;
+            _progressBar.value = this.progressData.progress;
+        }
+
+        public void UpdateProgress(float value, float highValue)
+        {
+            _progressBar.value = value;
+            _progressBar.highValue = highValue;
         }
     }
     
@@ -44,232 +158,153 @@ namespace UI
     {
         public float popupDuration = 3f;
         public float popupFadeDuration = 0.5f;
+        
+        public int maxPopupCount = 5;
+        
+        public VisualTreeAsset popupVisualTreeAsset;
+        public VisualTreeAsset progressVisualTreeAsset;
 
-        private bool _isPopupOpen;
-        private bool _isProgressOpen;
-        private readonly Queue<PopupData> _popupQueue = new();
-        private ProgressData _nextProgress;
-        private PopupData _currentPopup;
-        private ProgressData _currentProgress;
-        private float _popupTimer;
-        private float _progressTimer;
-        private PopupState _popupState = PopupState.Closed;
-        private PopupState _progressState = PopupState.Closed;
+        private int _popupCount = 0;
+
+        private readonly Queue<PopupData> _popupQueue = new Queue<PopupData>();
+        
+        private readonly LinkedList<PopupStateData> _popupStateData = new LinkedList<PopupStateData>();
+        private readonly LinkedList<ProgressStateData> _progressStateData = new LinkedList<ProgressStateData>();
 
         private VisualElement _root;
-        
-        private VisualElement _popup;
-        private VisualElement _popupIcon;
-        private Label _popupLabel;
+        private VisualElement _popupContainer;
 
-        private VisualElement _progress;
-        private VisualElement _progressIcon;
-        private Label _progressLabel;
-        private ProgressBar _progressBar;
 
         private void Start()
         {
             _root = GetComponent<UIDocument>().rootVisualElement;
-            _popup = _root.Q<VisualElement>("Popup");
-            _popupIcon = _popup.Q<VisualElement>("Icon");
-            _popupLabel = _popup.Q<Label>("PopupLabel");
             
-            _progress = _root.Q<VisualElement>("ItemCounter");
-            _progressIcon = _progress.Q<VisualElement>("Icon");
-            _progressLabel = _progress.Q<Label>("CounterLabel");
-            _progressBar = _progress.Q<ProgressBar>("ItemCounterProgress");
-            
-            _popupTimer = popupDuration;
-            _progressTimer = popupDuration;
+            _popupContainer = _root.Q<VisualElement>("PopupContainer");
         }
 
         private void Update()
         {
-            _popupTimer += Time.deltaTime;
-            _progressTimer += Time.deltaTime;
-
-            switch (_popupState)
+            while (_popupCount < maxPopupCount && _popupQueue.Count > 0)
             {
-                case PopupState.Open:
-                    if(_popupTimer >= popupDuration)
-                    {
-                        _popupState = PopupState.Fading;
-                        _popupTimer = 0f;
-                        
-                        FadePopup();
-                    }
+                DequeuePopup();
+            }
+            
+            if (_popupCount == 0)
+            {
+                return;
+            }
+            
+            float deltaTime = Time.deltaTime;
+
+            foreach (var popupStateData in _popupStateData)
+            {
+                PopupState state = popupStateData.Update(deltaTime);
+
+                if (state == PopupState.Closed)
+                {
+                    _popupCount--;
+                    _popupStateData.Remove(popupStateData);
                     break;
-                case PopupState.Fading:
-                    if (_popupTimer >= popupFadeDuration)
-                    {
-                        bool opened = CheckAndOpenPopup();
-                        if (opened)
-                        {
-                            _popupState = PopupState.Open;
-                            _popupTimer = 0f;
-                        }
-                        else
-                        {
-                            _popupState = PopupState.Closed;
-                            
-                            ClosePopup();
-                        }
-                    }
+                }
+            }
+
+            foreach (var progressStateData in _progressStateData)
+            {
+                PopupState state = progressStateData.Update(deltaTime);
+
+                if (state == PopupState.Closed)
+                {
+                    _popupCount--;
+                    _progressStateData.Remove(progressStateData);
                     break;
-                case PopupState.Closed:
-                    bool closedOpened = CheckAndOpenPopup();
+                }
+            }
+        }
+
+        private void DequeuePopup()
+        {
+            if (_popupQueue.Count <= 0)
+            {
+                return;
+            }
+
+            PopupData popupData = _popupQueue.Dequeue();
+
+            if (popupData is ProgressData progressData)
+            {
+                ProgressStateData progressStateData = new ProgressStateData(progressData, progressVisualTreeAsset.CloneTree(), popupDuration, popupFadeDuration);
                     
-                    if (closedOpened)
-                    {
-                        _popupState = PopupState.Open;
-                        _popupTimer = 0f;
-                    }
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                _progressStateData.AddLast(progressStateData);
+                _popupContainer.Add(progressStateData.popup);
             }
-            
-            bool progressOpened = CheckAndOpenProgress();
-            if (progressOpened)
+            else
             {
-                _progressState = PopupState.Open;
-                _progressTimer = 0f;
+                PopupStateData popupStateData = new PopupStateData(popupData, popupVisualTreeAsset.CloneTree(), popupDuration, popupFadeDuration);
+                
+                _popupStateData.AddLast(popupStateData);
+                _popupContainer.Add(popupStateData.popup);
             }
-
-            switch (_progressState)
-            {
-                case PopupState.Open:
-                    if(_progressTimer >= popupDuration) 
-                    {
-                        _progressState = PopupState.Fading;
-                        _progressTimer = 0f;
-                        
-                        FadeProgress();
-                    }
-                    break;
-                case PopupState.Fading:
-                    if (_progressTimer >= popupFadeDuration)
-                    {
-                        _progressTimer = 0f;
-                        _progressState = PopupState.Closed;
-                        
-                        CloseProgress();
-                    }
-                    break;
-                case PopupState.Closed:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                
+            _popupCount++;
         }
 
-        private bool CheckAndOpenPopup()
-        {
-            if (_popupQueue.Count == 0)
-            {
-                return false;
-            }
-            
-            _currentPopup = _popupQueue.Dequeue();
-
-            _popupIcon.style.backgroundImage = new StyleBackground(_currentPopup.icon);
-            _popupLabel.text = _currentPopup.title;
-            _popup.AddToClassList("open");
-            _isPopupOpen = true;
-            
-            return true;
-        }
-
-        private bool CheckAndOpenProgress()
-        {
-            if (_nextProgress == null)
-            {
-                return false;
-            }
-            
-            _currentProgress = _nextProgress;
-            _nextProgress = null;
-            
-            _progressIcon.style.backgroundImage = new StyleBackground(_currentProgress.icon);
-            _progressLabel.text = _currentProgress.title;
-            _progressBar.highValue = _currentProgress.maxProgress;
-            _progressBar.value = _currentProgress.progress;
-            _progress.AddToClassList("open");
-            _isProgressOpen = true;
-            
-            return true;
-        }
-
-        private void FadePopup()
-        {
-            _popup.RemoveFromClassList("open");
-        }
-        
-        private void FadeProgress()
-        {
-            _progress.RemoveFromClassList("open");
-        }
-
-        private void UnfadePopup()
-        {
-            _popup.AddToClassList("open");
-            _popupState = PopupState.Open;
-            _popupTimer = 0f;
-        }
-
-        private void UnfadeProgress()
-        {
-            _progress.AddToClassList("open");
-            _progressState = PopupState.Open;
-            _progressTimer = 0f;
-        }
-        
-        private void ClosePopup()
-        {
-            if (!_isPopupOpen)
-            {
-                return;
-            }
-
-            _isPopupOpen = false;
-            _popup.RemoveFromClassList("open");
-            _currentPopup = null;
-        }
-
-        private void CloseProgress()
-        {
-            if (!_isProgressOpen)
-            {
-                return;
-            }
-            
-            _progress.RemoveFromClassList("open");
-            _isProgressOpen = false;
-            _currentProgress = null;
-        }
-        
         public void QueuePopup(PopupData popupData)
         {
-            if (popupData.title == _currentPopup?.title)
+            foreach (var popupStateData in _popupStateData)
             {
-                UnfadePopup();
+                if (popupStateData.popupData.title != popupData.title)
+                {
+                    continue;
+                }
+
+                popupStateData.Unfade();
                 return;
             }
             
+            foreach (var data in _popupQueue)
+            {
+                if (data is not ProgressData && data.title == popupData.title)
+                {
+                    return;
+                }
+            }
+
             _popupQueue.Enqueue(popupData);
         }
 
         public void ShowProgress(ProgressData progressData)
         {
-            if (progressData.title == _currentProgress?.title)
+            foreach (var progressStateData in _progressStateData)
             {
-                _progressBar.value = progressData.progress;
-                _progressBar.highValue = progressData.maxProgress;
-                UnfadeProgress();
+                if (progressStateData.progressData.title != progressData.title || progressStateData.Completed)
+                {
+                    continue;
+                }
+
+                progressStateData.UpdateProgress(progressData.progress, progressData.maxProgress);
+                progressStateData.Unfade();
                 return;
             }
             
-            _nextProgress = progressData;
+            foreach (var data in _popupQueue)
+            {
+                if (data is not ProgressData progress || data.title != progressData.title)
+                {
+                    continue;
+                }
+
+                if (progress.progress >= progress.maxProgress)
+                {
+                    continue;
+                }
+
+                progress.progress = progressData.progress;
+                progress.maxProgress = progressData.maxProgress;
+                        
+                return;
+            }
+            
+            _popupQueue.Enqueue(progressData);
         }
     }
 }

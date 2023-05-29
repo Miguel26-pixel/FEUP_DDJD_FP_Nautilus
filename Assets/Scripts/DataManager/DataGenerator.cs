@@ -66,7 +66,10 @@ namespace DataManager
             ItemData wood = _itemRegistry.CreateItem("Wood",
                 "Sun-kissed timber harvested from majestic palm trees." +
                 " Ideal for crafting and roasting marshmallows (if you can find any).",
-                ItemType.Resource, "ItemIcons/test");
+                ItemType.Resource, "ItemIcons/test", new [,]
+                {
+                    {true, true}
+                });
             ResourceComponentData woodResourceComponentData = new ResourceComponentData(1);
             wood.AddComponent(woodResourceComponentData);
             
@@ -179,7 +182,10 @@ namespace DataManager
                 ItemType.Resource, "ItemIcons/test");
             ItemData plank = _itemRegistry.CreateItem("Wood Plank",
                 "A staple of shipbuilding. They're strong and lightweight, making them ideal for a variety of construction projects.",
-                ItemType.Resource, "ItemIcons/test");
+                ItemType.Resource, "ItemIcons/test", new [,]
+                {
+                    {true, true}
+                });
             ItemData plasma = _itemRegistry.CreateItem("Laser Gun Plasma",
                 "This high-tech material is a key component in laser weaponry. Its properties allow for highly concentrated and precise beams of energy.",
                 ItemType.Weapon, "ItemIcons/test");

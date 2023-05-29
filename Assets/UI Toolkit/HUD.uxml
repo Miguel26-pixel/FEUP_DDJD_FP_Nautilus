@@ -1,36 +1,4 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI%20Toolkit/Theme.uss?fileID=7433441132597879392&amp;guid=b674df751d5a19162b7bfb6da9f4cfd4&amp;type=3#Theme" />
-    <ui:VisualElement picking-mode="Ignore" style="position: absolute; top: 65%; left: 65%;">
-        <ui:VisualElement name="Popup" picking-mode="Ignore" class="item-drag popup" style="position: relative; width: auto; max-width: 300px; margin-bottom: 20px; min-width: 300px;">
-            <ui:VisualElement name="Background" picking-mode="Ignore" class="background" style="width: 100%; height: 100%; position: absolute; background-color: rgb(27, 50, 67);" />
-            <ui:VisualElement name="TopFlair" picking-mode="Ignore" style="position: absolute; width: 100%; height: 4px; margin-right: 0; padding-right: 0; top: -2px; background-color: rgb(95, 116, 131); border-top-left-radius: 2px; border-bottom-left-radius: 0; border-top-right-radius: 2px; border-bottom-right-radius: 0;" />
-            <ui:VisualElement name="Content" picking-mode="Ignore" style="padding-left: 10px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px; flex-direction: row;">
-                <ui:VisualElement picking-mode="Ignore" style="align-items: stretch; flex-direction: row; justify-content: flex-start;">
-                    <ui:VisualElement style="justify-content: center; margin-right: 10px; flex-shrink: 0;">
-                        <ui:VisualElement name="Icon" class="icon" style="width: 32px; height: 32px; flex-shrink: 0; margin-top: 5px; margin-left: 0; background-image: url(&apos;project://database/Assets/Sprites/category-icons.png?fileID=1009693943&amp;guid=5fb67ad0c979d2dfcb84d9732888b58b&amp;type=3#category-icons_0&apos;);" />
-                    </ui:VisualElement>
-                    <ui:VisualElement>
-                        <ui:Label text="Inventory Full" display-tooltip-when-elided="true" name="PopupLabel" picking-mode="Ignore" class="text" style="margin-bottom: 0; font-size: 22px; padding-top: 0; padding-bottom: 0; -unity-font-style: normal; flex-wrap: wrap; white-space: normal; margin-top: 8px; flex-direction: row;" />
-                    </ui:VisualElement>
-                </ui:VisualElement>
-            </ui:VisualElement>
-        </ui:VisualElement>
-        <ui:VisualElement name="ItemCounter" picking-mode="Ignore" class="item-drag popup" style="position: relative; width: auto; max-width: 300px; min-width: 300px;">
-            <ui:VisualElement name="Background" picking-mode="Ignore" class="background" style="width: 100%; height: 100%; position: absolute; background-color: rgb(27, 50, 67);" />
-            <ui:VisualElement name="TopFlair" picking-mode="Ignore" style="position: absolute; width: 100%; height: 4px; margin-right: 0; padding-right: 0; top: -2px; background-color: rgb(95, 116, 131); border-top-left-radius: 2px; border-bottom-left-radius: 0; border-top-right-radius: 2px; border-bottom-right-radius: 0;" />
-            <ui:VisualElement name="Content" picking-mode="Ignore" style="padding-left: 10px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px;">
-                <ui:VisualElement picking-mode="Ignore" style="align-items: stretch; flex-direction: row; justify-content: flex-start;">
-                    <ui:VisualElement style="flex-shrink: 0;">
-                        <ui:VisualElement name="Icon" class="icon" style="width: 32px; height: 32px; flex-shrink: 0; margin-top: 5px; margin-left: 0; margin-right: 10px; background-image: url(&apos;project://database/Assets/Sprites/category-icons.png?fileID=1009693943&amp;guid=5fb67ad0c979d2dfcb84d9732888b58b&amp;type=3#category-icons_0&apos;);" />
-                    </ui:VisualElement>
-                    <ui:VisualElement>
-                        <ui:Label text="Fiber" display-tooltip-when-elided="true" name="CounterLabel" picking-mode="Ignore" class="text" style="margin-bottom: 0; font-size: 22px; padding-top: 0; padding-bottom: 0; -unity-font-style: normal; flex-wrap: wrap; white-space: normal; margin-top: 8px;" />
-                    </ui:VisualElement>
-                </ui:VisualElement>
-                <ui:VisualElement style="margin-top: 10px;">
-                    <ui:ProgressBar value="5" high-value="8" name="ItemCounterProgress" />
-                </ui:VisualElement>
-            </ui:VisualElement>
-        </ui:VisualElement>
-    </ui:VisualElement>
+    <ui:VisualElement picking-mode="Ignore" name="PopupContainer" style="position: absolute; left: 65%; bottom: 30px; flex-direction: column-reverse;" />
 </ui:UXML>

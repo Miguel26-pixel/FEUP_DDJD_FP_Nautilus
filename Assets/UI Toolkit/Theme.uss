@@ -391,9 +391,12 @@
     opacity: 0;
     transition-property: opacity;
     transition-duration: 0.7s;
+    max-width: 200px;
+    min-width: 200px;
+    margin-top: 15px;
 }
 
-.popup.open {
+.open .popup {
     opacity: 1;
 }
 
@@ -403,10 +406,10 @@
     border-right-color: rgba(0, 0, 0, 0);
     border-top-color: rgba(0, 0, 0, 0);
     border-bottom-color: rgba(0, 0, 0, 0);
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
     border-left-width: 0;
     border-right-width: 0;
     border-top-width: 0;
@@ -424,14 +427,23 @@
     margin-right: 0;
     margin-top: 0;
     margin-bottom: 0;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
 }
 
 #unity-progress-bar {
-    max-height: 12px;
-    min-height: 12px;
+    max-height: 9px;
+    min-height: 9px;
     overflow: hidden;
+}
+
+.popup .text {
+    font-size: 16px;
+}
+
+.popup .icon {
+    width: 24px;
+    height: 24px;
 }

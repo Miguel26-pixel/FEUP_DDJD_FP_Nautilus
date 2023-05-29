@@ -10,9 +10,9 @@ namespace Inventory
         public int NeededCollectionCount { get; }
         public int Count { get; private set; }
 
-        public IntermediateResource(Item item)
+        public IntermediateResource(ItemData item)
         {
-            NeededCollectionCount = item.GetComponent<ResourceComponent>().NeededCollectionCount;
+            NeededCollectionCount = item.GetComponent<ResourceComponentData>().NeededCollectionCount;
             Count = 0;
         }
         
@@ -34,6 +34,7 @@ namespace Inventory
     {
         private readonly List<IInventorySubscriber> _subscribers = new();
         private readonly Dictionary<int, IntermediateResource> _intermediateResources = new();
+        
 
         private bool _notify = true;
         
@@ -123,7 +124,7 @@ namespace Inventory
             return true;
         }
         
-        public bool AddResource(Item item)
+        public bool AddResource(ItemData item)
         {
             if (!_intermediateResources.TryGetValue(item.IDHash, out IntermediateResource intermediateResource))
             {
@@ -137,7 +138,7 @@ namespace Inventory
                 return true;
             }
 
-            if (!AddInternal(item))
+            if (!AddInternal(item.CreateInstance()))
             {
                 return false;
             }
@@ -156,7 +157,7 @@ namespace Inventory
         {
             if (Locked)
             {
-                // TODO: drop item, might need to be handled by the caller not sure yet
+                return;
             }
             
             
