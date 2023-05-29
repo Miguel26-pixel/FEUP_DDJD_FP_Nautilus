@@ -6,6 +6,7 @@ using Generation.Resource;
 using Inventory;
 using Items;
 using UI;
+using UI.Inventory;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -86,7 +87,6 @@ namespace Player
                 Vector3 forward = _camera.transform.forward;
                 forward.Normalize();
 
-                // transform.position += forward * (_currentMovement.x * 0.5f);
                 _rigidbody.velocity = forward * (_currentMovement.x * 20f);
             }
             else
@@ -277,7 +277,7 @@ namespace Player
             {
                 if (intermediateResource != null)
                 {
-                    onPopup.Invoke(new PopupData("Inventory full", null));
+                    onPopup.Invoke(new PopupData("Inventory full", IconRepository.IconType.Error));
                 }
             }
 

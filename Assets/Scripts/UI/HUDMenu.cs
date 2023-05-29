@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UI.Inventory;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -7,13 +8,21 @@ namespace UI
 {
     public record PopupData
     {
-        public readonly Sprite icon;
+        public Sprite icon;
+        public readonly IconRepository.IconType iconType;
         public readonly string title;
 
         public PopupData(string title, Sprite icon)
         {
             this.title = title;
             this.icon = icon;
+        }
+
+        public PopupData(string title, IconRepository.IconType iconType)
+        {
+            this.title = title;
+            icon = null;
+            this.iconType = iconType;
         }
     }
 
@@ -166,6 +175,8 @@ namespace UI
         public VisualTreeAsset popupVisualTreeAsset;
         public VisualTreeAsset progressVisualTreeAsset;
 
+        private IconRepository _iconRepository;
+
         private readonly Queue<PopupData> _popupQueue = new();
 
         private readonly LinkedList<PopupStateData> _popupStateData = new();
@@ -182,6 +193,7 @@ namespace UI
             _root = GetComponent<UIDocument>().rootVisualElement;
 
             _popupContainer = _root.Q<VisualElement>("PopupContainer");
+            _iconRepository = GameObject.Find("IconRepository").GetComponent<IconRepository>();
         }
 
         private void Update()
@@ -271,6 +283,11 @@ namespace UI
                 {
                     return;
                 }
+            }
+            
+            if (popupData.icon == null)
+            {
+                popupData.icon = _iconRepository.GetIcon(popupData.iconType);
             }
 
             _popupQueue.Enqueue(popupData);
