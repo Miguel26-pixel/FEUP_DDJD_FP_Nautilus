@@ -6,6 +6,7 @@ using DataManager;
 using Generation.Resource;
 using Inventory;
 using Items;
+using UI;
 using UI.Inventory;
 using UI.Inventory.Builders;
 using Unity.Collections;
@@ -23,11 +24,13 @@ namespace Player
         public UnityEvent<MachineType> OnCraftEvent = new();
         public UnityEvent onInventoryEvent = new();
         public UnityEvent<int> onRotate = new();
+        public UnityEvent<PopupData> onPopup = new();
+        public UnityEvent<ProgressData> onProgress = new();
+        
         private ItemRegistry _itemRegistry;
         public TransferDirection transferDirection;
         public TerraformController terraformController;
         
-
         private ItemRegistryObject _itemRegistryObject;
         private PlayerActions _playerActions;
         private Camera _camera;
@@ -254,11 +257,30 @@ namespace Player
             }
             
             Item item = _itemRegistry.Get(resource.itemID).CreateInstance();
-            bool added = playerInventory.AddItem(item);
+            bool added = playerInventory.AddResource(item);
+            IntermediateResource intermediateResource = playerInventory.GetIntermediateResource(item.IDHash);
 
             if (added)
             {
                 Destroy(resource.gameObject);
+                
+                if (intermediateResource == null)
+                {
+                    onProgress.Invoke(new ProgressData(item.Name, item.Icon, 1,
+                        1));
+                    
+                    return true;
+                }
+                
+                onProgress.Invoke(new ProgressData(item.Name, item.Icon, intermediateResource.Count,
+                    intermediateResource.NeededCollectionCount));
+            }
+            else
+            {
+                if (intermediateResource != null)
+                {
+                    onPopup.Invoke(new PopupData("Inventory full", null));
+                }
             }
 
             return added;

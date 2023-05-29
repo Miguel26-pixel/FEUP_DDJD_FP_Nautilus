@@ -7,25 +7,25 @@ namespace Inventory
 {
     public class IntermediateResource
     {
-        private readonly int _neededCollectionCount;
-        private int _count;
-        
+        public int NeededCollectionCount { get; }
+        public int Count { get; private set; }
+
         public IntermediateResource(Item item)
         {
-            _neededCollectionCount = item.GetComponent<ResourceComponent>().NeededCollectionCount - 1;
-            _count = 0;
+            NeededCollectionCount = item.GetComponent<ResourceComponent>().NeededCollectionCount;
+            Count = 0;
         }
         
         public bool IsFull()
         {
-            return _count == _neededCollectionCount;
+            return Count == NeededCollectionCount - 1;
         }
         
         public void Increment()
         {
             if (!IsFull())
             {
-                _count++;
+                Count++;
             }
         }
     }
@@ -51,6 +51,13 @@ namespace Inventory
         public PlayerInventory(InventoryGrid inventory) : base(inventory)
         {
             
+        }
+
+        public IntermediateResource GetIntermediateResource(int itemID)
+        {
+            return _intermediateResources.TryGetValue(itemID, out IntermediateResource intermediateResource)
+                ? intermediateResource
+                : null;
         }
 
         public void AddSubscriber(IInventorySubscriber subscriber)
@@ -116,7 +123,7 @@ namespace Inventory
             return true;
         }
         
-        private bool AddResource(Item item)
+        public bool AddResource(Item item)
         {
             if (!_intermediateResources.TryGetValue(item.IDHash, out IntermediateResource intermediateResource))
             {
@@ -141,12 +148,7 @@ namespace Inventory
 
         public override bool AddItem(Item item)
         {
-            if (Locked)
-            {
-                return false;
-            }
-
-            return item.HasComponent<ResourceComponent>() ? AddResource(item) : AddInternal(item);
+            return AddInternal(item);
         }
 
 

@@ -390,7 +390,7 @@
 .popup {
     opacity: 0;
     transition-property: opacity;
-    transition-duration: 1s;
+    transition-duration: 0.7s;
 }
 
 .popup.open {
@@ -398,7 +398,7 @@
 }
 
 .unity-progress-bar__background {
-    background-color: rgba(66, 89, 106, 255);
+    background-color: rgb(66, 89, 106);
     border-left-color: rgba(0, 0, 0, 0);
     border-right-color: rgba(0, 0, 0, 0);
     border-top-color: rgba(0, 0, 0, 0);
@@ -419,7 +419,7 @@
 }
 
 .unity-progress-bar__progress {
-    background-color: rgba(204, 178, 145, 255);
+    background-color: rgb(204, 178, 145);
     margin-left: 0;
     margin-right: 0;
     margin-top: 0;

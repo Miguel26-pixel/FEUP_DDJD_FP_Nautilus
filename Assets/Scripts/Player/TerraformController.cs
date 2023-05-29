@@ -46,14 +46,23 @@ namespace Player
             }
 
             const int numIterations = 5;
+            
 
             if (_terraformType == TerraformType.Lower)
             {
+                List<GameObject> destroyedResources = new List<GameObject>();
+
                 foreach (var resource in _resourcesInRange)
                 {
+                    if (resource == null)
+                    {
+                        destroyedResources.Add(resource);
+                        continue;
+                    }
+                    
                     Vector3 direction = (vacuumCollection.transform.position - resource.transform.position);
                     float dst = direction.sqrMagnitude;
-                    dst = Mathf.Lerp(1f, 13f, dst / (maxDistance * maxDistance));
+                    dst = Mathf.Lerp(1f, 5f, dst / (maxDistance * maxDistance));
                     float force = suctionForce / (dst);
 
                     if (!resource.TryGetComponent(out Rigidbody rb))
@@ -61,8 +70,14 @@ namespace Player
                         continue;
                     }
                     
+                    
                     rb.AddForce(direction.normalized * (force * Time.deltaTime * 60));
                     rb.AddForce(-Physics.gravity * Time.deltaTime, ForceMode.Impulse);
+                }
+                
+                foreach (var destroyedResource in destroyedResources)
+                {
+                    _resourcesInRange.Remove(destroyedResource);
                 }
             }
 
@@ -147,12 +162,15 @@ namespace Player
         {
             if (child == vacuumArea)
             {
-                _resourcesInRange.Add(other);
+                if (other.transform.parent.TryGetComponent(out Resource resource) && resource.dropped)
+                {
+                    _resourcesInRange.Add(other);
+                }
             }
             
             if (child == vacuumCollection)
             {
-                if (_terraformType == TerraformType.Lower && other.transform.parent.TryGetComponent(out Resource resource))
+                if (_terraformType == TerraformType.Lower && other.transform.parent.TryGetComponent(out Resource resource) && resource.dropped)
                 {
                     bool added = _player.CollectResource(resource);
 
