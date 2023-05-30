@@ -79,11 +79,6 @@ namespace PlayerControls
             _characterController = GetComponent<CharacterController>();
             _animator = GetComponent<Animator>();
             _player = GetComponent<Player>();
-            _mainCamera = Camera.main;
-            if (_mainCamera != null)
-            {
-                _cameraTransform = _mainCamera.transform;
-            }
 
             _readyToThrow = true;
 
@@ -96,6 +91,12 @@ namespace PlayerControls
         {
             ItemRegistryObject itemRegistryObject = GameObject.Find("DataManager").GetComponent<ItemRegistryObject>();
             _itemRegistry = itemRegistryObject.itemRegistry;
+            
+            _mainCamera = Camera.main;
+            if (_mainCamera != null)
+            {
+                _cameraTransform = _mainCamera.transform;
+            }
 
             StartCoroutine(GiveItems());
         }
@@ -217,11 +218,16 @@ namespace PlayerControls
 
             Quaternion currentRotation = transform.rotation;
 
-            if (_isMovementPressed)
+            if (!_isMovementPressed)
             {
-                Quaternion targetRotation = Quaternion.LookRotation(positionToLookAt);
-                transform.rotation = Quaternion.Slerp(currentRotation, targetRotation, rotationFactorPerFrame * Time.deltaTime);
+                return;
             }
+
+            Quaternion targetRotation = Quaternion.LookRotation(positionToLookAt);
+
+            transform.rotation = 1 - Mathf.Abs(Quaternion.Dot(currentRotation, targetRotation)) < 0.05f
+                ? targetRotation
+                : Quaternion.Slerp(currentRotation, targetRotation, rotationFactorPerFrame * Time.deltaTime);
         }
 
         private void HandleGravity()
