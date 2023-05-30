@@ -36,11 +36,14 @@ public class MeshGenerator : MonoBehaviour, IDisposable
     private readonly Dictionary<Vector3Int, Chunk> _chunks = new();
     private ColorGenerator _colorGenerator;
     private NoiseGenerator _noiseGenerator;
+    
+    private bool _isInitialized;
 
     private void Start()
     {
         _noiseGenerator = GetComponent<NoiseGenerator>();
         _colorGenerator = GetComponent<ColorGenerator>();
+        _isInitialized = false;
     }
 
     private void Update()
@@ -70,16 +73,10 @@ public class MeshGenerator : MonoBehaviour, IDisposable
 
         _noiseGenerator.Dispose();
     }
-    
-    private void GenerateChunks()
+
+    private void GenerateChunk(Chunk currentChunk)
     {
-        if (_toGenerateChunks.Count <= 0)
-        {
-            return;
-        }
-        
-        Chunk currentChunk = _toGenerateChunks.Dequeue();
-        
+          
         ProcessingResult result = currentChunk.Generate(isoLevel, boundsSize, numPointsPerAxis,
             _noiseGenerator, seed);
 
@@ -112,6 +109,18 @@ public class MeshGenerator : MonoBehaviour, IDisposable
                 currentChunk.chunkGridPosition.z));
 
         resourceGenerator.GenerateResources(currentChunk, biomePoints, points);
+    }
+    
+    private void GenerateChunks()
+    {
+        if (_toGenerateChunks.Count <= 0)
+        {
+            return;
+        }
+        
+        Chunk currentChunk = _toGenerateChunks.Dequeue();
+        GenerateChunk(currentChunk);
+      
         HashSet<Vector3Int> generatedChunks = new HashSet<Vector3Int>();
 
         foreach (var chunk in _activeChunks)
@@ -231,8 +240,16 @@ public class MeshGenerator : MonoBehaviour, IDisposable
                         chunkObject.name = $"Chunk {x} {y} {z}";
                         currentChunk = chunkObject.GetComponent<Chunk>();
                         currentChunk.chunkGridPosition = new Vector3Int(x, y, z);
-                        
-                        _toGenerateChunks.Enqueue(currentChunk);
+
+                        if (_isInitialized)
+                        {
+                            _toGenerateChunks.Enqueue(currentChunk);
+                        }
+                        else
+                        {
+                            GenerateChunk(currentChunk);
+                            activeChunkPositions.Add(chunkPosition);
+                        }
                     }
 
                     _activeChunks.Add(currentChunk);
@@ -240,6 +257,7 @@ public class MeshGenerator : MonoBehaviour, IDisposable
             }
         }
 
+        _isInitialized = true;
         resourceGenerator.UpdateResources(activeChunkPositions);
     }
 
