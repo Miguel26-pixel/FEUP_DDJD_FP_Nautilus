@@ -11,6 +11,9 @@ namespace CameraControls
         public float cameraHorizontalRotationFactor = 0.3f;
         public float cameraVerticalRotationFactor = 0.1f;
         public float cameraRotationInterpolation = 0.1f;
+        public float maxVerticalAngle = 70f;
+        public float minVerticalAngle = -70f;
+        public LayerMask layerMask;
         
         private Camera _camera;
         private Transform _cameraTransform;
@@ -35,12 +38,14 @@ namespace CameraControls
             Vector2 mouseDelta = Mouse.current.delta.ReadValue();
             _remainingAngle += DeltaToDegrees(mouseDelta);
 
-            _remainingAngle.y = (_remainingAngle.y + _currentVerticalAngle) switch
+            if ((_remainingAngle.y + _currentVerticalAngle) > maxVerticalAngle)
             {
-                > 90f => 90f - _currentVerticalAngle,
-                < -90f => -90f - _currentVerticalAngle,
-                _ => _remainingAngle.y
-            };
+                _remainingAngle.y = maxVerticalAngle - _currentVerticalAngle;
+            }
+            else if ((_remainingAngle.y + _currentVerticalAngle) < minVerticalAngle)
+            {
+                _remainingAngle.y = minVerticalAngle - _currentVerticalAngle;
+            }
 
             float angle = _remainingAngle.x * cameraRotationInterpolation;
             _remainingAngle.x -= angle;
@@ -53,8 +58,14 @@ namespace CameraControls
             _currentVerticalAngle += yAngle;
             _remainingAngle.y = _remainingAngle.y is < 0.01f and > -0.01f ? 0f : _remainingAngle.y;
             _cameraTransform.RotateAround(position + _cameraTransform.rotation * cameraOffset, _cameraTransform.right, yAngle);
-
+            
             _cameraTransform.position = position + _cameraTransform.rotation * cameraOffset;
+            
+            // Check for collision
+            if (Physics.Linecast(position + new Vector3(cameraOffset.x, cameraOffset.y, 0), _cameraTransform.position, out var hit, layerMask))
+            {
+                _cameraTransform.position = hit.point + hit.normal * 0.1f;
+            }
         }
         
         public Transform GetHorizontalTransform()
