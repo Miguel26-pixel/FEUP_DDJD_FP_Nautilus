@@ -42,6 +42,7 @@ namespace PlayerControls
         // Camera
         private Camera _mainCamera;
         private Transform _cameraTransform;
+        private Transform _cameraParentTransform;
 
         private const float rotationFactorPerFrame = 15.0f;
         private Vector3 _cameraRelativeMovement;
@@ -96,9 +97,12 @@ namespace PlayerControls
             if (_mainCamera != null)
             {
                 _cameraTransform = _mainCamera.transform;
+                _cameraParentTransform = _cameraTransform.parent;
             }
 
             StartCoroutine(GiveItems());
+            // TODO: Remove this
+            Cursor.lockState = CursorLockMode.Locked;
         }
 
         public void OnEnable()
@@ -258,8 +262,8 @@ namespace PlayerControls
         private Vector3 ConvertToCameraSpace(Vector3 vectorToRotate)
         {
             float currentY = vectorToRotate.y;
-            Vector3 cameraForward = _cameraTransform.forward.normalized;
-            Vector3 cameraRight = _cameraTransform.right.normalized;
+            Vector3 cameraForward = _cameraParentTransform.forward.normalized;
+            Vector3 cameraRight = _cameraParentTransform.right.normalized;
 
             cameraForward.y = 0;
             cameraRight.y = 0;
