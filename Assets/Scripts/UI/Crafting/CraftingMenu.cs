@@ -4,6 +4,7 @@ using Crafting;
 using DataManager;
 using Inventory;
 using Items;
+using PlayerControls;
 using UI.Inventory;
 using UnityEngine;
 using UnityEngine.UIElements;

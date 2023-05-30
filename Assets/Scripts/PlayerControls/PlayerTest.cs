@@ -1,11 +1,8 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using Crafting;
 using DataManager;
 using Inventory;
-using UI.Inventory;
-using UI.Inventory.Builders;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -13,10 +10,10 @@ using UnityEngine.InputSystem;
 namespace PlayerControls
 {
     [Serializable]
-    public class PlayerTest : Player, PlayerActions.ICraftingTestActions
+    public class PlayerTest : AbstractPlayer, PlayerActions.IHUDActions
     {
         public MachineType machineType;
-        public UnityEvent<MachineType> OnCraftEvent = new();
+        public UnityEvent<MachineType> onCraftEvent = new();
         public UnityEvent onInventoryEvent = new();
         public UnityEvent<int> onRotate = new();
         private ItemRegistry _itemRegistry;
@@ -51,15 +48,15 @@ namespace PlayerControls
             if (_playerActions == null)
             {
                 _playerActions = new PlayerActions();
-                _playerActions.CraftingTest.SetCallbacks(this);
+                _playerActions.HUD.SetCallbacks(this);
             }
 
-            _playerActions.CraftingTest.Enable();
+            _playerActions.HUD.Enable();
         }
 
         public void OnDisable()
         {
-            _playerActions.CraftingTest.Disable();
+            _playerActions.HUD.Disable();
         }
 
 
@@ -70,7 +67,7 @@ namespace PlayerControls
                 return;
             }
 
-            OnCraftEvent.Invoke(machineType);
+            onCraftEvent.Invoke(machineType);
         }
 
         public void OnInventory(InputAction.CallbackContext context)

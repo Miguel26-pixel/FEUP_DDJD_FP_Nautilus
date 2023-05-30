@@ -1,3 +1,4 @@
+using PlayerControls;
 using UI.Inventory.Components;
 using UnityEngine;
 using UnityEngine.UIElements;
