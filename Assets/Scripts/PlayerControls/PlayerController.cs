@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Crafting;
 using DataManager;
@@ -22,12 +23,23 @@ namespace PlayerControls
 
         // Movement
         [Header("Movement")]
-        public float speed = 6.0f;
+        public float walkingSpeed = 6.0f;
+        public float runningSpeed = 12.0f;
+        [Range(0, 2f)] 
+        public float distanceToGround = 0.1f;
+
+        public float legDistance = 33.76f;
+        public float colliderCenterY = 0.14f;
+        [SerializeField] private LayerMask groundLayer;
+
+        private float _speed = 0.0f;
+        private float _targetSpeed = 0.0f;
+        private bool _isRunning;
 
         private Vector2 _currentMovementInput;
         private Vector3 _currentMovement;
+        private Vector3 _startingBodyPosition;
         private bool _isMovementPressed;
-        private int _direction;
 
         // Jumping
         [Header("Jumping")]
@@ -49,10 +61,12 @@ namespace PlayerControls
 
         // Gravity
         private float _gravity = Physics.gravity.y;
-        private const float GroundGravity = -.05f;
+        private const float GroundGravity = -.5f;
 
         [Header("References")]
         public Transform attackPoint;
+        public Transform leftFoot;
+        public Transform rightFoot;
         public GameObject weapon;
 
         [Header("Attacking")]
@@ -74,7 +88,11 @@ namespace PlayerControls
         private static readonly int Attack = Animator.StringToHash("Attack");
         private static readonly int Run = Animator.StringToHash("Run");
         private static readonly int Walk = Animator.StringToHash("Walk");
-    
+        private static readonly int Speed = Animator.StringToHash("Speed");
+        private static readonly int IKLeftFootWeight = Animator.StringToHash("IKLeftFootWeight");
+        private static readonly int IKRightFootWeight = Animator.StringToHash("IKRightFootWeight");
+        private static readonly int LegFlex = Animator.StringToHash("LegFlex");
+
         private void Awake()
         {
             _characterController = GetComponent<CharacterController>();
@@ -99,6 +117,8 @@ namespace PlayerControls
                 _cameraTransform = _mainCamera.transform;
                 _cameraParentTransform = _cameraTransform.parent;
             }
+
+            _startingBodyPosition = _animator.bodyPosition;
 
             StartCoroutine(GiveItems());
             // TODO: Remove this
@@ -130,15 +150,29 @@ namespace PlayerControls
             {
                 return;
             }
+            
+            if (_isMovementPressed)
+            {
+                _targetSpeed = _isRunning ? runningSpeed : walkingSpeed;
+            }
+            else
+            {
+                _targetSpeed = 0.0f;
+            }
+
+            _speed = Math.Abs(_speed - _targetSpeed) > 0.01f
+                ? Mathf.Lerp(_speed, _targetSpeed, Time.deltaTime * 10.0f)
+                : _targetSpeed;
 
             _cameraRelativeMovement = ConvertToCameraSpace(_currentMovement);
             HandleRotation();
             HandleAnimation();
-            _characterController.Move(_cameraRelativeMovement * (Time.deltaTime * speed) + _jumpVelocity * Time.deltaTime);
+            _characterController.Move(_cameraRelativeMovement * (Time.deltaTime * _speed) + _jumpVelocity * Time.deltaTime);
             HandleGravity();
             HandleJump();
         }
-    
+
+
         public void TakeDamage(int amount)
         {
             _animator.SetTrigger("Damage1");
@@ -157,20 +191,17 @@ namespace PlayerControls
             _currentMovement.x = _currentMovementInput.x;
             _currentMovement.z = _currentMovementInput.y;
             _isMovementPressed = _currentMovementInput.x != 0 || _currentMovementInput.y != 0;
-            _direction = _currentMovementInput.x > 0 || _currentMovementInput.y > 0 ? 1 : -1;
         }
 
         public void OnRun(InputAction.CallbackContext context)
         {
             if (context.performed)
-            {
-                _animator.SetTrigger(Run);
-                speed = 8.0f;
+            { 
+                _isRunning = true;
             }
             else if(context.canceled)
             {
-                _animator.SetTrigger(Walk);
-                speed = 6.0f;
+                _isRunning = false;
             }
         }
 
@@ -197,19 +228,17 @@ namespace PlayerControls
 
         private void HandleAnimation()
         {
-            bool isWalking = _animator.GetBool("isWalking");
-
-            if (_isMovementPressed && !isWalking)
+            float animSpeed;
+            if (_speed <= walkingSpeed)
             {
-                _animator.SetBool("isWalking", true);
-                _animator.SetInteger("Direction", _direction);
+                animSpeed = _speed / walkingSpeed;
             }
-
-            else if (!_isMovementPressed && isWalking)
+            else
             {
-                _animator.SetInteger("Direction", 0);
-                _animator.SetBool("isWalking", false);
+                animSpeed = (_speed - walkingSpeed) / (runningSpeed - walkingSpeed) + 1;
             }
+            
+            _animator.SetFloat(Speed, animSpeed);
         }
 
         private void HandleRotation()
@@ -303,8 +332,9 @@ namespace PlayerControls
             {
                 return;
             }
+            Time.timeScale = 0.05f;
 
-            onCraftEvent.Invoke(machineType);
+            // onCraftEvent.Invoke(machineType);
         }
 
         public void OnInventory(InputAction.CallbackContext context)
@@ -313,8 +343,9 @@ namespace PlayerControls
             {
                 return;
             }
-        
-            onInventoryEvent.Invoke();
+            Time.timeScale = 1f;
+
+            // onInventoryEvent.Invoke();
         }
 
         public void OnRotateClockwise(InputAction.CallbackContext context)
@@ -360,6 +391,76 @@ namespace PlayerControls
 
 
             Debug.Log("Gave items");
+        }
+
+        private void OnAnimatorIK(int layerIndex)
+        {
+            // if (_jumpVelocity.y > 0 || !_characterController.isGrounded)
+            // {
+            //     return;
+            // }
+            const float maxDistance = 1.5f;
+            LowerBody(maxDistance);
+            
+            _animator.SetIKPositionWeight(AvatarIKGoal.LeftFoot, _animator.GetFloat(IKLeftFootWeight));
+            _animator.SetIKRotationWeight(AvatarIKGoal.LeftFoot, _animator.GetFloat(IKLeftFootWeight));
+            
+            Ray ray = new Ray(_animator.GetIKPosition(AvatarIKGoal.LeftFoot) + Vector3.up, Vector3.down);
+            if (Physics.Raycast(ray, out RaycastHit hit, distanceToGround + 1f + maxDistance, groundLayer))
+            {
+                Vector3 leftFootPosition = hit.point;
+                leftFootPosition.y += distanceToGround;
+            
+                _animator.SetIKPosition(AvatarIKGoal.LeftFoot, leftFootPosition);
+                
+                Vector3 forward = Vector3.ProjectOnPlane(transform.forward, hit.normal);
+                _animator.SetIKRotation(AvatarIKGoal.LeftFoot, Quaternion.LookRotation(forward, hit.normal));
+            }
+            
+            
+            _animator.SetIKPositionWeight(AvatarIKGoal.RightFoot, _animator.GetFloat(IKRightFootWeight));
+            _animator.SetIKRotationWeight(AvatarIKGoal.RightFoot, _animator.GetFloat(IKRightFootWeight));
+            
+            ray = new Ray(_animator.GetIKPosition(AvatarIKGoal.RightFoot) + Vector3.up, Vector3.down);
+            if (Physics.Raycast(ray, out RaycastHit rightHit, distanceToGround + 1f + maxDistance, groundLayer))
+            {
+                Vector3 rightFootPosition = rightHit.point;
+                rightFootPosition.y += distanceToGround;
+                
+                _animator.SetIKPosition(AvatarIKGoal.RightFoot, rightFootPosition);
+                
+                Vector3 forward = Vector3.ProjectOnPlane(transform.forward, hit.normal);
+                _animator.SetIKRotation(AvatarIKGoal.RightFoot, Quaternion.LookRotation(forward, hit.normal));
+            }
+        }
+
+        private void LowerBody(float maxDistance)
+        {
+            Vector3 leftFootPosition = _animator.GetIKPosition(AvatarIKGoal.LeftFoot);
+            Vector3 rightFootPosition = _animator.GetIKPosition(AvatarIKGoal.RightFoot);
+
+            Ray leftFootRay = new Ray(leftFootPosition + Vector3.up, Vector3.down);
+            bool leftHasHit = Physics.Raycast(leftFootRay, out var leftHit, maxDistance + 1 + distanceToGround, groundLayer);
+            
+            Ray rightFootRay = new Ray(rightFootPosition + Vector3.up, Vector3.down);
+            bool rightHasHit = Physics.Raycast(rightFootRay, out var rightHit, maxDistance + 1 + distanceToGround, groundLayer);
+
+            Debug.DrawRay(leftFootRay.origin, leftFootRay.direction * (maxDistance + 1), Color.red);
+            Debug.DrawRay(rightFootRay.origin, rightFootRay.direction * (maxDistance + 1), Color.red);
+            
+            Vector3 leftFootGroundPosition = leftHasHit ? leftHit.point : leftFootPosition;
+            Vector3 rightFootGroundPosition = rightHasHit ? rightHit.point : rightFootPosition;
+
+            var position = _animator.bodyPosition;
+            float leftFootDistance = position.y - legDistance - leftFootGroundPosition.y ;
+            float rightFootDistance = position.y - legDistance - rightFootGroundPosition.y;
+
+            float rightWeight = Mathf.Clamp01(_animator.GetFloat(LegFlex));
+            float leftWeight = 1 - rightWeight;
+            float bodyOffset = (leftFootDistance * leftWeight + rightFootDistance * rightWeight);
+
+            position = new Vector3(position.x, position.y - bodyOffset + distanceToGround, position.z);
+            _animator.bodyPosition = position;
         }
     }
 }
