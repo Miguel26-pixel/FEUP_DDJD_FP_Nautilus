@@ -29,7 +29,6 @@ namespace PlayerControls
         public float distanceToGround = 0.1f;
 
         public float legDistance = 33.76f;
-        public float colliderCenterY = 0.14f;
         [SerializeField] private LayerMask groundLayer;
 
         private float _speed = 0.0f;
@@ -38,7 +37,6 @@ namespace PlayerControls
 
         private Vector2 _currentMovementInput;
         private Vector3 _currentMovement;
-        private Vector3 _startingBodyPosition;
         private bool _isMovementPressed;
 
         // Jumping
@@ -65,8 +63,6 @@ namespace PlayerControls
 
         [Header("References")]
         public Transform attackPoint;
-        public Transform leftFoot;
-        public Transform rightFoot;
         public GameObject weapon;
 
         [Header("Attacking")]
@@ -89,10 +85,6 @@ namespace PlayerControls
         private static readonly int Run = Animator.StringToHash("Run");
         private static readonly int Walk = Animator.StringToHash("Walk");
         private static readonly int Speed = Animator.StringToHash("Speed");
-        private static readonly int IKLeftFootWeight = Animator.StringToHash("IKLeftFootWeight");
-        private static readonly int IKRightFootWeight = Animator.StringToHash("IKRightFootWeight");
-        private static readonly int LegFlex = Animator.StringToHash("LegFlex");
-
         private void Awake()
         {
             _characterController = GetComponent<CharacterController>();
@@ -117,8 +109,6 @@ namespace PlayerControls
                 _cameraTransform = _mainCamera.transform;
                 _cameraParentTransform = _cameraTransform.parent;
             }
-
-            _startingBodyPosition = _animator.bodyPosition;
 
             StartCoroutine(GiveItems());
             // TODO: Remove this
@@ -399,76 +389,53 @@ namespace PlayerControls
             // {
             //     return;
             // }
-            const float maxDistance = 2f;
-            LowerBody(maxDistance);
+            const float maxDistance = 2.4f;
+
+            var leftTransform = GetFootTransform(maxDistance, AvatarIKGoal.LeftFoot);
+            var rightTransform = GetFootTransform(maxDistance, AvatarIKGoal.RightFoot);
             
-            _animator.SetIKPositionWeight(AvatarIKGoal.LeftFoot, 1);
-            _animator.SetIKRotationWeight(AvatarIKGoal.LeftFoot, _animator.GetFloat(IKLeftFootWeight));
-            
-            Ray ray = new Ray(_animator.GetIKPosition(AvatarIKGoal.LeftFoot) + Vector3.up, Vector3.down);
-            if (Physics.Raycast(ray, out RaycastHit hit, distanceToGround + 1f + maxDistance, groundLayer))
-            {
-                float footDistanceToAnimationPlane = _animator.GetIKPosition(AvatarIKGoal.LeftFoot).y - _animator.rootPosition.y;
-                Vector3 leftFootPosition = hit.point;
-                leftFootPosition.y += distanceToGround + footDistanceToAnimationPlane;
-            
-                _animator.SetIKPosition(AvatarIKGoal.LeftFoot, leftFootPosition);
-                
-                Vector3 forward = Vector3.ProjectOnPlane(transform.forward, hit.normal);
-                _animator.SetIKRotation(AvatarIKGoal.LeftFoot, Quaternion.LookRotation(forward, hit.normal));
-            }
-            
-            
-            _animator.SetIKPositionWeight(AvatarIKGoal.RightFoot, 1);
-            _animator.SetIKRotationWeight(AvatarIKGoal.RightFoot, _animator.GetFloat(IKRightFootWeight));
-            
-            ray = new Ray(_animator.GetIKPosition(AvatarIKGoal.RightFoot) + Vector3.up, Vector3.down);
-            if (Physics.Raycast(ray, out RaycastHit rightHit, distanceToGround + 1f + maxDistance, groundLayer))
-            {
-                float footDistanceToAnimationPlane =
-                    _animator.GetIKPosition(AvatarIKGoal.RightFoot).y - _animator.rootPosition.y;
-                Vector3 rightFootPosition = rightHit.point;
-                rightFootPosition.y += distanceToGround + footDistanceToAnimationPlane;
-                
-                _animator.SetIKPosition(AvatarIKGoal.RightFoot, rightFootPosition);
-                
-                Vector3 forward = Vector3.ProjectOnPlane(transform.forward, hit.normal);
-                _animator.SetIKRotation(AvatarIKGoal.RightFoot, Quaternion.LookRotation(forward, hit.normal));
-            }
+            LowerBody(leftTransform.Item1, rightTransform.Item1);
+
+            SetFootTransform(AvatarIKGoal.LeftFoot, leftTransform.Item1, leftTransform.Item2);
+            SetFootTransform(AvatarIKGoal.RightFoot, rightTransform.Item1, rightTransform.Item2);
         }
 
-        private void LowerBody(float maxDistance)
+        private Tuple<Vector3, Quaternion> GetFootTransform(float maxDistance, AvatarIKGoal goal)
         {
-            Vector3 leftFootPosition = _animator.GetIKPosition(AvatarIKGoal.LeftFoot);
-            Vector3 rightFootPosition = _animator.GetIKPosition(AvatarIKGoal.RightFoot);
+            Ray ray = new(_animator.GetIKPosition(goal) + Vector3.up, Vector3.down);
+            if (!Physics.Raycast(ray, out RaycastHit hit, distanceToGround + 1f + maxDistance, groundLayer))
+            {
+                return new Tuple<Vector3, Quaternion>(_animator.GetIKPosition(goal), _animator.GetIKRotation(goal));
+            }
 
-            Ray leftFootRay = new Ray(leftFootPosition + Vector3.up, Vector3.down);
-            bool leftHasHit = Physics.Raycast(leftFootRay, out var leftHit, maxDistance + 1 + distanceToGround, groundLayer);
+            float footDistanceToAnimationPlane = _animator.GetIKPosition(goal).y - _animator.rootPosition.y;
+            Vector3 footPosition = hit.point;
+            footPosition.y += footDistanceToAnimationPlane - 0.1f;
             
-            Ray rightFootRay = new Ray(rightFootPosition + Vector3.up, Vector3.down);
-            bool rightHasHit = Physics.Raycast(rightFootRay, out var rightHit, maxDistance + 1 + distanceToGround, groundLayer);
+            _animator.SetIKPositionWeight(goal, 1);
+            _animator.SetIKRotationWeight(goal, 1 - Mathf.Clamp01((footDistanceToAnimationPlane - (distanceToGround)) / (distanceToGround / 1.5f)));
+                
+            Vector3 forward = Vector3.ProjectOnPlane(transform.forward, hit.normal);
+            return new Tuple<Vector3, Quaternion>(footPosition, Quaternion.LookRotation(forward, hit.normal));
+        }
 
-            Debug.DrawRay(leftFootRay.origin, leftFootRay.direction * (maxDistance + 1), Color.red);
-            Debug.DrawRay(rightFootRay.origin, rightFootRay.direction * (maxDistance + 1), Color.red);
+        private void SetFootTransform(AvatarIKGoal goal, Vector3 position, Quaternion rotation)
+        {
+            _animator.SetIKPosition(goal, position);
+            _animator.SetIKRotation(goal, rotation);
+        }
+        
+        private void LowerBody(Vector3 leftFoot, Vector3 rightFoot)
+        {
+            Vector3 lowestFoot = leftFoot.y < rightFoot.y ? leftFoot : rightFoot;
+            var bodyPosition = _animator.bodyPosition;
             
-            Vector3 leftFootGroundPosition = leftHasHit ? leftHit.point : leftFootPosition;
-            Vector3 rightFootGroundPosition = rightHasHit ? rightHit.point : rightFootPosition;
-
-            var position = _animator.bodyPosition;
-            float leftFootDistance = position.y - legDistance - leftFootGroundPosition.y ;
-            float rightFootDistance = position.y - legDistance - rightFootGroundPosition.y;
-
-            float rightWeight = Mathf.Clamp01(_animator.GetFloat(LegFlex));
-            float leftWeight = 1 - rightWeight;
+            Vector3 direction = (bodyPosition - lowestFoot).normalized;
+            float yProjection = Vector3.Dot(direction * legDistance, Vector3.up);
             
-            float frontFootOffset = rightWeight * rightFootDistance + leftWeight * leftFootDistance;
-            // float backFootOffset = rightWeight > leftWeight ? leftFootDistance : rightFootDistance;
-            float backFootOffset = Mathf.Lerp(leftFootDistance, rightFootDistance, (leftWeight - 0.4f) / 0.2f);
-
-            float bodyOffset = frontFootOffset > backFootOffset ? frontFootOffset : backFootOffset;
-
-            position = new Vector3(position.x, position.y - bodyOffset + distanceToGround, position.z);
-            _animator.bodyPosition = position;
+            bodyPosition = new Vector3(bodyPosition.x, Mathf.Min(lowestFoot.y + yProjection, bodyPosition.y), bodyPosition.z);
+            
+            _animator.bodyPosition = bodyPosition;
         }
     }
 }

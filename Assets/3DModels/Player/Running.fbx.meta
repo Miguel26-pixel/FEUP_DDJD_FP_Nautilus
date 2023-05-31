@@ -55,7 +55,68 @@ ModelImporter:
       heightFromFeet: 0
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
+      curves:
+      - name: LegFlex
+        curve:
+          serializedVersion: 2
+          curve:
+          - serializedVersion: 3
+            time: 0.0040863752
+            value: 0.9691345
+            inSlope: 0.35438544
+            outSlope: 0.35438544
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0.19919676
+          - serializedVersion: 3
+            time: 0.21851686
+            value: 1.0008781
+            inSlope: 0.025834767
+            outSlope: 0.025834767
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0.33333334
+            outWeight: 0.30368745
+          - serializedVersion: 3
+            time: 0.39146647
+            value: 0.94992673
+            inSlope: -0.011240066
+            outSlope: -0.011240066
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0.33333334
+            outWeight: 0.18941925
+          - serializedVersion: 3
+            time: 0.7587385
+            value: 0.9997569
+            inSlope: 0.07383214
+            outSlope: 0.07383214
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0.4956466
+            outWeight: 0.46578664
+          - serializedVersion: 3
+            time: 0.9077789
+            value: 0.94995725
+            inSlope: -0.00690849
+            outSlope: -0.00690849
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0.33333334
+            outWeight: 0.7323563
+          - serializedVersion: 3
+            time: 1.0038147
+            value: 0.97211206
+            inSlope: 0.12138879
+            outSlope: 0.12138879
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0.5674186
+            outWeight: 0
+          preInfinity: 3
+          postInfinity: 3
+          rotationOrder: 4
       events: []
       transformMask: []
       maskType: 3
