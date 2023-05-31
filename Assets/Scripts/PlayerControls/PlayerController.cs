@@ -457,7 +457,11 @@ namespace PlayerControls
 
             float rightWeight = Mathf.Clamp01(_animator.GetFloat(LegFlex));
             float leftWeight = 1 - rightWeight;
-            float bodyOffset = (leftFootDistance * leftWeight + rightFootDistance * rightWeight);
+            
+            float frontFootOffset = rightWeight * rightFootDistance + leftWeight * leftFootDistance;
+            float backFootOffset = rightWeight > leftWeight ? leftFootDistance : rightFootDistance;
+
+            float bodyOffset = frontFootOffset > backFootOffset ? frontFootOffset : backFootOffset;
 
             position = new Vector3(position.x, position.y - bodyOffset + distanceToGround, position.z);
             _animator.bodyPosition = position;
