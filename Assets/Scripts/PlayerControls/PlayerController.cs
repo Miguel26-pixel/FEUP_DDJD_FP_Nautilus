@@ -25,7 +25,7 @@ namespace PlayerControls
         [Header("Movement")]
         public float walkingSpeed = 6.0f;
         public float runningSpeed = 12.0f;
-        [Range(0, 2f)] 
+        [Range(-1f, 2f)] 
         public float distanceToGround = 0.1f;
 
         public float legDistance = 33.76f;
@@ -258,7 +258,7 @@ namespace PlayerControls
 
             Quaternion targetRotation = Quaternion.LookRotation(positionToLookAt);
 
-            transform.rotation = 1 - Mathf.Abs(Quaternion.Dot(currentRotation, targetRotation)) < 0.05f
+            transform.rotation = 1 - Mathf.Abs(Quaternion.Dot(currentRotation, targetRotation)) < 0.01f
                 ? targetRotation
                 : Quaternion.Slerp(currentRotation, targetRotation, rotationFactorPerFrame * Time.deltaTime);
         }
@@ -399,17 +399,18 @@ namespace PlayerControls
             // {
             //     return;
             // }
-            const float maxDistance = 1.5f;
+            const float maxDistance = 2f;
             LowerBody(maxDistance);
             
-            _animator.SetIKPositionWeight(AvatarIKGoal.LeftFoot, _animator.GetFloat(IKLeftFootWeight));
+            _animator.SetIKPositionWeight(AvatarIKGoal.LeftFoot, 1);
             _animator.SetIKRotationWeight(AvatarIKGoal.LeftFoot, _animator.GetFloat(IKLeftFootWeight));
             
             Ray ray = new Ray(_animator.GetIKPosition(AvatarIKGoal.LeftFoot) + Vector3.up, Vector3.down);
             if (Physics.Raycast(ray, out RaycastHit hit, distanceToGround + 1f + maxDistance, groundLayer))
             {
+                float footDistanceToAnimationPlane = _animator.GetIKPosition(AvatarIKGoal.LeftFoot).y - _animator.rootPosition.y;
                 Vector3 leftFootPosition = hit.point;
-                leftFootPosition.y += distanceToGround;
+                leftFootPosition.y += distanceToGround + footDistanceToAnimationPlane;
             
                 _animator.SetIKPosition(AvatarIKGoal.LeftFoot, leftFootPosition);
                 
@@ -418,14 +419,16 @@ namespace PlayerControls
             }
             
             
-            _animator.SetIKPositionWeight(AvatarIKGoal.RightFoot, _animator.GetFloat(IKRightFootWeight));
+            _animator.SetIKPositionWeight(AvatarIKGoal.RightFoot, 1);
             _animator.SetIKRotationWeight(AvatarIKGoal.RightFoot, _animator.GetFloat(IKRightFootWeight));
             
             ray = new Ray(_animator.GetIKPosition(AvatarIKGoal.RightFoot) + Vector3.up, Vector3.down);
             if (Physics.Raycast(ray, out RaycastHit rightHit, distanceToGround + 1f + maxDistance, groundLayer))
             {
+                float footDistanceToAnimationPlane =
+                    _animator.GetIKPosition(AvatarIKGoal.RightFoot).y - _animator.rootPosition.y;
                 Vector3 rightFootPosition = rightHit.point;
-                rightFootPosition.y += distanceToGround;
+                rightFootPosition.y += distanceToGround + footDistanceToAnimationPlane;
                 
                 _animator.SetIKPosition(AvatarIKGoal.RightFoot, rightFootPosition);
                 
@@ -459,7 +462,8 @@ namespace PlayerControls
             float leftWeight = 1 - rightWeight;
             
             float frontFootOffset = rightWeight * rightFootDistance + leftWeight * leftFootDistance;
-            float backFootOffset = rightWeight > leftWeight ? leftFootDistance : rightFootDistance;
+            // float backFootOffset = rightWeight > leftWeight ? leftFootDistance : rightFootDistance;
+            float backFootOffset = Mathf.Lerp(leftFootDistance, rightFootDistance, (leftWeight - 0.4f) / 0.2f);
 
             float bodyOffset = frontFootOffset > backFootOffset ? frontFootOffset : backFootOffset;
 

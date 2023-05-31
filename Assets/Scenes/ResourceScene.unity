@@ -1970,8 +1970,8 @@ MonoBehaviour:
   healthBar: {fileID: 710278996}
   walkingSpeed: 6
   runningSpeed: 12
-  distanceToGround: 0.31
-  legDistance: 2.4
+  distanceToGround: -0.1
+  legDistance: 2.94
   colliderCenterY: 0.1
   groundLayer:
     serializedVersion: 2
@@ -2566,7 +2566,7 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: 935289651c87fedf3989ca698f4a74b8, type: 2}
     - target: {fileID: 5866666021909216657, guid: fc8b148eca244dd4a87cbcd82430aa86, type: 3}
       propertyPath: m_ApplyRootMotion
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fc8b148eca244dd4a87cbcd82430aa86, type: 3}
