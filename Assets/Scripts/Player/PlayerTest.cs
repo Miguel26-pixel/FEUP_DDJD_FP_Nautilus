@@ -22,6 +22,7 @@ namespace Player
         public UnityEvent onPlacePosition = new();
         private ItemRegistry _itemRegistry;
         public TransferDirection transferDirection;
+        // oninvontoryclose 
 
         private ItemRegistryObject _itemRegistryObject;
         private PlayerActions _playerActions;
@@ -63,6 +64,7 @@ namespace Player
             _playerActions.CraftingTest.Disable();
         }
 
+        // update 
 
         public void OnCraft(InputAction.CallbackContext context)
         {
@@ -151,5 +153,7 @@ namespace Player
         {
             return playerInventory;
         }
+
+        
     }
 }

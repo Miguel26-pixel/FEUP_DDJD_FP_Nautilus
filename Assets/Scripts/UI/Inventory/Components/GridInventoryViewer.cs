@@ -263,6 +263,14 @@ namespace UI.Inventory.Components
 
         private void ProcessMouseUpRightCell(EventBase evt, Item item, uint itemID)
         {
+
+            Player.Player player = GameObject.FindWithTag("Player").GetComponent<Player.Player>();
+
+            if (player == null)
+            {
+                return;
+            }
+
             if (_isDragging)
             {
                 return;
@@ -278,7 +286,7 @@ namespace UI.Inventory.Components
 
             Vector2 position = _currentMousePosition;
             CloseItemInfo();
-            _contextMenuViewer.Open(item, itemID, position);
+            _contextMenuViewer.Open(item, itemID, position, player);
         }
 
         private void CloseContext()

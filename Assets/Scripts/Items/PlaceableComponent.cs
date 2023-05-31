@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+// takes player
 namespace Items
 {
     [Serializable]
@@ -16,21 +17,23 @@ namespace Items
 
         [JsonProperty("placedGameObject")] public SerializableGameObject PlacedGameObject { get; }
 
-        private void Place()
+
+        // player.place()
+        private void Place(Player.Player player)
         {
+            player.Place();
+            //Vector3 mousePosition = Mouse.current.position.ReadValue();
+            //Debug.Log("Mouse Position: " + mousePosition);
 
-            Vector3 mousePosition = Mouse.current.position.ReadValue();
-            Debug.Log("Mouse Position: " + mousePosition);
-
-            GameObject placing = GameObject.Instantiate(PlacedGameObject.LoadedObject);
+            //GameObject placing = GameObject.Instantiate(PlacedGameObject.LoadedObject);
             
-            Ray ray = Camera.main.ScreenPointToRay(mousePosition);
+            //Ray ray = Camera.main.ScreenPointToRay(mousePosition);
 
-            if (Physics.Raycast(ray, out RaycastHit hitInfo))
-            {
-                Debug.Log(hitInfo.ToString());
-                placing.transform.position = hitInfo.point;
-            }
+            //if (Physics.Raycast(ray, out RaycastHit hitInfo))
+            //{
+            //    Debug.Log(hitInfo.ToString());
+            //    placing.transform.position = hitInfo.point;
+            //}
         }
 
         public override ItemComponent CreateInstance()

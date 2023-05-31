@@ -24,8 +24,8 @@ namespace Items
 
         [JsonProperty("durability")] public int Durability { get; }
 
-        public abstract void OnEquip();
-        public abstract void OnUnequip();
+        public abstract void OnEquip(Player.Player player);
+        public abstract void OnUnequip(Player.Player player);
     }
 
     [Serializable]

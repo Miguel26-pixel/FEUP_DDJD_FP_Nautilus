@@ -44,7 +44,7 @@ namespace UI.Inventory.Components
         public bool IsOpen { get; private set; }
         public uint ItemInfoID { get; private set; }
 
-        public void Open(Item item, uint itemID, Vector2 position)
+        public void Open(Item item, uint itemID, Vector2 position, Player.Player player)
         {
             IsOpen = true;
             ItemInfoID = itemID;
@@ -94,6 +94,12 @@ namespace UI.Inventory.Components
 
         private void ProcessMouseUpAction(IMouseEvent evt, ContextMenuAction action)
         {
+            Player.Player player = GameObject.FindWithTag("Player").GetComponent<Player.Player>();
+
+            if (player == null) {
+                return;
+            }
+
             if (evt.button != 0)
             {
                 return;
@@ -101,7 +107,7 @@ namespace UI.Inventory.Components
 
             try
             {
-                action.Action();
+                action.Action(player);
             }
             catch (NotImplementedException)
             {

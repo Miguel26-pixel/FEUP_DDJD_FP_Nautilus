@@ -42,6 +42,8 @@ namespace UI.Inventory
             _inventoryViewer = inventoryViewer;
         }
 
+        //close
+
         public void ToggleMenu()
         {
             if (!_isInventoryMenuOpen)

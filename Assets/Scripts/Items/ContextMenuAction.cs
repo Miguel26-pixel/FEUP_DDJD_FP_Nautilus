@@ -2,7 +2,7 @@ namespace Items
 {
     public class ContextMenuAction
     {
-        public delegate void ContextAction();
+        public delegate void ContextAction(Player.Player player);
 
         public ContextMenuAction(string name, ContextAction action)
         {

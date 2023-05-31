@@ -13,12 +13,12 @@ namespace Items
 
         [JsonProperty("tool")] public string Tool { get; }
 
-        public override void OnEquip()
+        public override void OnEquip(Player.Player player)
         {
             throw new NotImplementedException();
         }
 
-        public override void OnUnequip()
+        public override void OnUnequip(Player.Player player)
         {
             throw new NotImplementedException();
         }
