@@ -210,7 +210,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 31601783}
   m_LocalRotation: {x: -0.00000008940697, y: -4.656613e-10, z: 3.4924597e-10, w: 1}
-  m_LocalPosition: {x: 0, y: 0.02, z: -0.00889}
+  m_LocalPosition: {x: 0, y: 0.0326, z: -0.0031}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -486,7 +486,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 511393790}
   m_LocalRotation: {x: -0.00000005960463, y: -0.0000000013969835, z: 5.820765e-10, w: 1}
-  m_LocalPosition: {x: 0, y: 0.02, z: -0.00889}
+  m_LocalPosition: {x: 0, y: 0.0326, z: -0.0031}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1970,17 +1970,14 @@ MonoBehaviour:
   healthBar: {fileID: 710278996}
   walkingSpeed: 6
   runningSpeed: 12
-  distanceToGround: -0.1
-  legDistance: 2.94
-  colliderCenterY: 0.1
+  distanceToGround: 0.46
+  legDistance: 2.5
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
   maxJumpHeight: 1
   maxJumpTime: 0.5
   attackPoint: {fileID: 2091516726}
-  leftFoot: {fileID: 511393791}
-  rightFoot: {fileID: 31601784}
   weapon: {fileID: 4847438051681446427}
   throwForce: 10
   throwUpwardForce: 10
