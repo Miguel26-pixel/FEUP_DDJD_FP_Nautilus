@@ -47,6 +47,7 @@ namespace PlayerControls
         private float _initialJumpVelocity;
         private Vector3 _jumpVelocity;
         private bool _isJumpPressed;
+        private bool _isJumpStarted;
         private bool _isJumping;
 
         // Camera
@@ -82,9 +83,13 @@ namespace PlayerControls
         private PlayerActions _playerActions;
 
         private static readonly int Attack = Animator.StringToHash("Attack");
-        private static readonly int Run = Animator.StringToHash("Run");
-        private static readonly int Walk = Animator.StringToHash("Walk");
         private static readonly int Speed = Animator.StringToHash("Speed");
+        private static readonly int Jump = Animator.StringToHash("Jump");
+        private static readonly int Grounded = Animator.StringToHash("Grounded");
+        
+        private int _jumpAdditiveLayer;
+        private int _jumpOverrideLayer;
+
         private void Awake()
         {
             _characterController = GetComponent<CharacterController>();
@@ -93,9 +98,12 @@ namespace PlayerControls
 
             _readyToThrow = true;
 
-            float timeToApex = maxJumpTime / 2;
-            _gravity = (-2 * maxJumpHeight) / Mathf.Pow(timeToApex, 2);
-            _initialJumpVelocity = (2 * maxJumpHeight) / timeToApex;
+            float timeToApex = maxJumpTime;
+            // _gravity = (-2 * maxJumpHeight) / Mathf.Pow(timeToApex, 2);
+            _initialJumpVelocity = Mathf.Sqrt(2f * _gravity * timeToApex);
+            
+            _jumpAdditiveLayer = _animator.GetLayerIndex("Jump");
+            _jumpOverrideLayer = _animator.GetLayerIndex("Jump Override");
         }
 
         public void Start()
@@ -197,6 +205,11 @@ namespace PlayerControls
 
         public void OnJump(InputAction.CallbackContext context)
         {
+            if (_isJumpStarted)
+            {
+                return;
+            }
+            
             _isJumpPressed = context.ReadValueAsButton();
         }
 
@@ -229,6 +242,7 @@ namespace PlayerControls
             }
             
             _animator.SetFloat(Speed, animSpeed);
+            _animator.SetBool(Grounded, _characterController.isGrounded);
         }
 
         private void HandleRotation()
@@ -267,14 +281,49 @@ namespace PlayerControls
 
         private void HandleJump()
         {
-            if (!_isJumping && _characterController.isGrounded && _isJumpPressed)
+            if (!_isJumpStarted && _characterController.isGrounded && _isJumpPressed)
             {
-                _animator.SetTrigger("Jump");
-                _jumpVelocity.y = _initialJumpVelocity;
+                _animator.SetTrigger(Jump);
+                _isJumpPressed = false;
+                _isJumpStarted = true;
+                _animator.SetLayerWeight(_jumpAdditiveLayer, 0.5f);
+                _animator.SetLayerWeight(_jumpOverrideLayer, 0f);
             }
-            else if (!_isJumpPressed && _isJumping && _characterController.isGrounded)
+            else if (_isJumping && _characterController.isGrounded)
             {
                 _isJumping = false;
+                _isJumpStarted = false;
+            }
+        }
+
+        public void LiftJump()
+        {
+            _isJumping = true;
+            _jumpVelocity.y = _initialJumpVelocity;
+            
+            StartCoroutine(BlendJumpLayers());
+        }
+
+        private IEnumerator BlendJumpLayers()
+        {
+            float startBlend = 0.5f;
+            float endBlend = 0.9f;
+            
+            float currentBlendAdditive = startBlend;
+            float currentBlendOverride = 0f;
+            
+            float t = 0f;
+            
+            while (t < 1f)
+            {
+                t += Time.deltaTime * 3f;
+                currentBlendAdditive = Mathf.Lerp(startBlend, 0f, t);
+                currentBlendOverride = Mathf.Lerp(0f, endBlend, t);
+                
+                _animator.SetLayerWeight(_jumpAdditiveLayer, currentBlendAdditive);
+                _animator.SetLayerWeight(_jumpOverrideLayer, currentBlendOverride);
+                
+                yield return null;
             }
         }
     
@@ -385,17 +434,17 @@ namespace PlayerControls
 
         private void OnAnimatorIK(int layerIndex)
         {
-            // if (_jumpVelocity.y > 0 || !_characterController.isGrounded)
-            // {
-            //     return;
-            // }
+            if (_isJumping)
+            {
+                return;
+            }
             const float maxDistance = 2.4f;
-
+            
             var leftTransform = GetFootTransform(maxDistance, AvatarIKGoal.LeftFoot);
             var rightTransform = GetFootTransform(maxDistance, AvatarIKGoal.RightFoot);
             
             LowerBody(leftTransform.Item1, rightTransform.Item1);
-
+            
             SetFootTransform(AvatarIKGoal.LeftFoot, leftTransform.Item1, leftTransform.Item2);
             SetFootTransform(AvatarIKGoal.RightFoot, rightTransform.Item1, rightTransform.Item2);
         }

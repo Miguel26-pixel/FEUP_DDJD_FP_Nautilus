@@ -1975,8 +1975,8 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  maxJumpHeight: 1
-  maxJumpTime: 0.5
+  maxJumpHeight: 3
+  maxJumpTime: 3
   attackPoint: {fileID: 2091516726}
   weapon: {fileID: 4847438051681446427}
   throwForce: 10
@@ -2087,6 +2087,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 43944a33dae658cc4956ea279d0f35d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1529412842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 382316989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2eb35eb3ba950103782da31392e7bc97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1558761510
