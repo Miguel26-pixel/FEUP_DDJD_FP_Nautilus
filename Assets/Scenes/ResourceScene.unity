@@ -1975,8 +1975,8 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  maxJumpHeight: 3
-  maxJumpTime: 3
+  maxJumpHeight: 1.7
+  maxJumpTime: 0.4
   attackPoint: {fileID: 2091516726}
   weapon: {fileID: 4847438051681446427}
   throwForce: 10
@@ -2575,7 +2575,7 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: 935289651c87fedf3989ca698f4a74b8, type: 2}
     - target: {fileID: 5866666021909216657, guid: fc8b148eca244dd4a87cbcd82430aa86, type: 3}
       propertyPath: m_ApplyRootMotion
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fc8b148eca244dd4a87cbcd82430aa86, type: 3}

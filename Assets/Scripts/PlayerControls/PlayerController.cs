@@ -89,6 +89,7 @@ namespace PlayerControls
         
         private int _jumpAdditiveLayer;
         private int _jumpOverrideLayer;
+        private static readonly int JumpTime = Animator.StringToHash("JumpTime");
 
         private void Awake()
         {
@@ -98,12 +99,25 @@ namespace PlayerControls
 
             _readyToThrow = true;
 
+            // _initialJumpVelocity = Mathf.Sqrt(-2f * _gravity * maxJumpHeight);
+
             float timeToApex = maxJumpTime;
-            // _gravity = (-2 * maxJumpHeight) / Mathf.Pow(timeToApex, 2);
-            _initialJumpVelocity = Mathf.Sqrt(2f * _gravity * timeToApex);
+            _gravity = (-2 * maxJumpHeight) / Mathf.Pow(timeToApex, 2);
+            _initialJumpVelocity = (2 * maxJumpHeight) / timeToApex;
             
             _jumpAdditiveLayer = _animator.GetLayerIndex("Jump");
             _jumpOverrideLayer = _animator.GetLayerIndex("Jump Override");
+
+            RuntimeAnimatorController ac = _animator.runtimeAnimatorController;
+            
+            foreach (AnimationClip t in ac.animationClips)
+            {
+                if (t.name == "Jump")
+                {
+                    float jumpStart = t.events[0].time;
+                    _animator.SetFloat(JumpTime, (t.length - jumpStart) / timeToApex);
+                }
+            }
         }
 
         public void Start()
@@ -329,7 +343,6 @@ namespace PlayerControls
     
         private Vector3 ConvertToCameraSpace(Vector3 vectorToRotate)
         {
-            float currentY = vectorToRotate.y;
             Vector3 cameraForward = _cameraParentTransform.forward.normalized;
             Vector3 cameraRight = _cameraParentTransform.right.normalized;
 
@@ -340,8 +353,7 @@ namespace PlayerControls
             Vector3 cameraForwardXProduct = vectorToRotate.x * cameraRight;
 
             Vector3 result = cameraForwardXProduct + cameraForwardZProduct;
-            result.y = currentY;
-            return result;
+            return new Vector3(result.x, 0, result.z);
         }
 
         private void Throw()
@@ -462,7 +474,7 @@ namespace PlayerControls
             footPosition.y += footDistanceToAnimationPlane - 0.1f;
             
             _animator.SetIKPositionWeight(goal, 1);
-            _animator.SetIKRotationWeight(goal, 1 - Mathf.Clamp01((footDistanceToAnimationPlane - (distanceToGround)) / (distanceToGround / 1.5f)));
+            _animator.SetIKRotationWeight(goal, 1 - Mathf.Clamp01((footDistanceToAnimationPlane - (distanceToGround)) / (distanceToGround / 2.5f)));
                 
             Vector3 forward = Vector3.ProjectOnPlane(transform.forward, hit.normal);
             return new Tuple<Vector3, Quaternion>(footPosition, Quaternion.LookRotation(forward, hit.normal));
