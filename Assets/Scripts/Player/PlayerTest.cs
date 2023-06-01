@@ -18,7 +18,7 @@ namespace Player
         public MachineType machineType;
         public UnityEvent<MachineType> OnCraftEvent = new();
         public UnityEvent onInventoryEvent = new();
-        public UnityEvent<bool> onPlacingStateChanged = new();
+        public UnityEvent onPlacingStateChanged = new();
         public UnityEvent<int> onRotate = new();
         private ItemRegistry _itemRegistry;
         public TransferDirection transferDirection; 
@@ -73,7 +73,7 @@ namespace Player
                 if (Mouse.current.leftButton.wasPressedThisFrame)
                 {
                     _isPlacing = false;
-                    OnPlacingStateChanged(false);
+                    OnPlacingStateChanged();
                 }
                 else
                 {
@@ -155,9 +155,9 @@ namespace Player
             onRotate.Invoke(1);
         }
 
-        public void OnPlacingStateChanged(bool isPlacing)
+        public void OnPlacingStateChanged()
         {
-            onPlacingStateChanged.Invoke(isPlacing);
+            onPlacingStateChanged.Invoke();
         }
 
         private IEnumerator GiveItems()

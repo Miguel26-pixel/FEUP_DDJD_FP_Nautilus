@@ -23,7 +23,7 @@ namespace Items
             PlayerTest playerTest = player.GetComponent<PlayerTest>();
             if (playerTest != null)
             {
-                playerTest.OnPlacingStateChanged(true);
+                playerTest.OnPlacingStateChanged();
             }
         }
 

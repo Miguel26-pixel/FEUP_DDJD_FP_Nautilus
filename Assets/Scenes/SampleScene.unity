@@ -1493,6 +1493,21 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  onPlacingStateChanged:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1449632365}
+        m_TargetAssemblyTypeName: UI.Inventory.InventoryMenu, NautilusAssembly
+        m_MethodName: ToggleMenu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onRotate:
     m_PersistentCalls:
       m_Calls:
@@ -1520,9 +1535,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  onPlacePosition:
-    m_PersistentCalls:
-      m_Calls: []
   transferDirection: 2
 --- !u!1 &1697702099
 GameObject:
