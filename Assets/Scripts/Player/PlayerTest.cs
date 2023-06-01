@@ -18,14 +18,16 @@ namespace Player
         public MachineType machineType;
         public UnityEvent<MachineType> OnCraftEvent = new();
         public UnityEvent onInventoryEvent = new();
+        public UnityEvent<bool> onPlacingStateChanged = new();
         public UnityEvent<int> onRotate = new();
-        public UnityEvent onPlacePosition = new();
         private ItemRegistry _itemRegistry;
-        public TransferDirection transferDirection;
-        // oninvontoryclose 
+        public TransferDirection transferDirection; 
 
         private ItemRegistryObject _itemRegistryObject;
         private PlayerActions _playerActions;
+
+        private bool _isPlacing = false;
+        private GameObject _placingObject = null;
 
         public PlayerInventory playerInventory = new("Inventory", new[,]
         {
@@ -64,7 +66,54 @@ namespace Player
             _playerActions.CraftingTest.Disable();
         }
 
-        // update 
+        private void Update()
+        {
+            if (_isPlacing)
+            {
+                if (Mouse.current.leftButton.wasPressedThisFrame)
+                {
+                    _isPlacing = false;
+                    OnPlacingStateChanged(false);
+                }
+                else
+                {
+                    Vector3 mousePosition = Mouse.current.position.ReadValue();
+                    Ray ray = Camera.main.ScreenPointToRay(mousePosition);
+
+                    if (Physics.Raycast(ray))
+                    {
+                        Vector3 closestPointOnFloor = FindPlacingPoint(mousePosition);
+                        if (closestPointOnFloor != Vector3.zero)
+                        {
+                            _placingObject.transform.position = closestPointOnFloor;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        private Vector3 FindPlacingPoint(Vector3 mousePosition)
+        {
+            Ray ray = Camera.main.ScreenPointToRay(mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                Collider collider = hit.collider;
+                if (collider != null && collider != _placingObject.GetComponent<Collider>())
+                {
+                    Vector3 contactPoint = hit.point;
+                    Vector3 placementPosition = contactPoint + Vector3.up * (_placingObject.transform.localScale.y * 0.5f + 0.05f);
+
+                    return placementPosition;
+                }
+            }
+
+            return Vector3.zero;
+        }
+
+
 
         public void OnCraft(InputAction.CallbackContext context)
         {
@@ -106,14 +155,9 @@ namespace Player
             onRotate.Invoke(1);
         }
 
-        public void OnPlacePosition(InputAction.CallbackContext context)
+        public void OnPlacingStateChanged(bool isPlacing)
         {
-            if (!context.performed)
-            {
-                return;
-            }
-
-            onPlacePosition.Invoke();
+            onPlacingStateChanged.Invoke(isPlacing);
         }
 
         private IEnumerator GiveItems()
@@ -154,6 +198,10 @@ namespace Player
             return playerInventory;
         }
 
-        
+        public override void Place(GameObject instance)
+        {
+            _placingObject = instance;
+            _isPlacing = true;
+        }
     }
 }

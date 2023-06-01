@@ -9,11 +9,6 @@ namespace Player
         public abstract PlayerInventory GetInventory();
         public abstract void SetInventory(PlayerInventory inventory);
         public abstract IInventoryNotifier GetInventoryNotifier();
-
-        internal void Place()
-        {
-            Debug.Log("Reached player's placing");
-            throw new NotImplementedException();
-        }
+        public abstract void Place(GameObject instance);
     }
 }

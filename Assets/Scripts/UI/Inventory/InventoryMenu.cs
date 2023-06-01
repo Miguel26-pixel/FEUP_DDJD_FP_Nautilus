@@ -42,7 +42,12 @@ namespace UI.Inventory
             _inventoryViewer = inventoryViewer;
         }
 
-        //close
+        private void Close()
+        {
+            _root.style.display = DisplayStyle.None;
+            _isInventoryMenuOpen = false;
+            _inventoryViewer.Close();
+        }
 
         public void ToggleMenu()
         {
@@ -52,9 +57,7 @@ namespace UI.Inventory
             }
             else
             {
-                _root.style.display = DisplayStyle.None;
-                _isInventoryMenuOpen = false;
-                _inventoryViewer.Close();
+                Close();
             }
         }
     }
