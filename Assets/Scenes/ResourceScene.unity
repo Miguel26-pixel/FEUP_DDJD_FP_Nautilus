@@ -1971,12 +1971,13 @@ MonoBehaviour:
   walkingSpeed: 6
   runningSpeed: 12
   distanceToGround: 0.5
+  animationToGround: 0.1
   legDistance: 2.5
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  maxJumpHeight: 1.7
-  maxJumpTime: 0.4
+  maxJumpHeight: 1.9
+  maxJumpTime: 0.5
   attackPoint: {fileID: 2091516726}
   weapon: {fileID: 4847438051681446427}
   throwForce: 10

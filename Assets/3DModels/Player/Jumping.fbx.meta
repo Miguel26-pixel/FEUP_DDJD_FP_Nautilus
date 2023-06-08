@@ -57,7 +57,7 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.62777036
+      - time: 0.5807618
         functionName: Jump
         data: 
         objectReferenceParameter: {instanceID: 0}

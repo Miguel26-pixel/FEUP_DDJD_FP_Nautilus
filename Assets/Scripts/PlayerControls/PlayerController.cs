@@ -96,7 +96,6 @@ namespace PlayerControls
         private static readonly int Jump = Animator.StringToHash("Jump");
         private static readonly int Grounded = Animator.StringToHash("Grounded");
         
-        private int _jumpAdditiveLayer;
         private int _jumpOverrideLayer;
         private float _ikWeight = 1;
         private float _landTime;
@@ -114,10 +113,9 @@ namespace PlayerControls
 
             float timeToApex = maxJumpTime;
             _gravity = (-2 * maxJumpHeight) / Mathf.Pow(timeToApex, 2);
-            _initialJumpVelocity = Mathf.Sqrt(-2 * _gravity * maxJumpHeight);
+            _initialJumpVelocity = -_gravity * timeToApex;
                 
-            _jumpAdditiveLayer = _animator.GetLayerIndex("Jump");
-            _jumpOverrideLayer = _animator.GetLayerIndex("Jump Override");
+            _jumpOverrideLayer = _animator.GetLayerIndex("Jump");
 
             RuntimeAnimatorController ac = _animator.runtimeAnimatorController;
             
@@ -305,11 +303,10 @@ namespace PlayerControls
             if (_characterController.isGrounded)
             {
                 _jumpVelocity.y = GroundGravity;
-            } 
-            else
-            {
-                _jumpVelocity.y += _gravity * Time.deltaTime;
+                return;
             }
+            
+            _jumpVelocity.y += _gravity * Time.deltaTime;
         }
 
         private void HandleJump()
@@ -320,8 +317,7 @@ namespace PlayerControls
                     if (_characterController.isGrounded && _isJumpPressed)
                     {
                         _animator.SetTrigger(Jump);
-                        _animator.SetLayerWeight(_jumpAdditiveLayer, 0.6f);
-                        _animator.SetLayerWeight(_jumpOverrideLayer, 0f);
+                        _animator.SetLayerWeight(_jumpOverrideLayer, 0.35f);
                         
                         _isJumpPressed = false;
                         _jumpState = JumpState.Start;
@@ -341,15 +337,17 @@ namespace PlayerControls
                     if (Physics.Raycast(transform.position, Vector3.down, out var hit, 10f, groundLayer))
                     {
                         float distance = transform.position.y - hit.point.y;
-                        float timeToGround = Mathf.Sqrt(-2 * distance / _gravity);
+                        float velocity = -_jumpVelocity.y;
+                        float gravity = -_gravity;
+                        float timeToGround = (Mathf.Sqrt(2 * gravity * distance + velocity * velocity) - velocity) / gravity;
 
                         if (timeToGround < _landTime)
                         {
                             float startTime = _landTime - timeToGround;
                             // start landing animation
-                            _animator.CrossFadeInFixedTime("Land", 0.1f, _jumpAdditiveLayer, startTime);
+                            _animator.CrossFadeInFixedTime("Land", 0.1f, _jumpOverrideLayer, startTime);
                             _jumpState = JumpState.Landing;
-                            StartCoroutine(BlendJumpLayers(0f, 0.7f, JumpState.Landing));
+                            StartCoroutine(BlendJumpLayers(0.35f, JumpState.Landing));
                         }
                     }
                     
@@ -358,7 +356,6 @@ namespace PlayerControls
                     if ( _characterController.isGrounded)
                     {
                         _jumpState = JumpState.End;
-                        _ikWeight = 1f;
                     }
 
                     break;
@@ -377,7 +374,7 @@ namespace PlayerControls
             _jumpState = JumpState.Jumping;
             _jumpVelocity.y = _initialJumpVelocity;
             
-            StartCoroutine(BlendJumpLayers(0f, 0.9f, JumpState.Jumping));
+            StartCoroutine(BlendJumpLayers(1f, JumpState.Jumping));
         }
         
         public void ApexJump()
@@ -390,22 +387,20 @@ namespace PlayerControls
             _jumpState = JumpState.Apex;
         }
 
-        private IEnumerator BlendJumpLayers(float endAdditive, float endOverride, JumpState state)
+        private IEnumerator BlendJumpLayers(float endOverride, JumpState state)
         {
-            float startAdditive = _animator.GetLayerWeight(_jumpAdditiveLayer);
             float startOverride = _animator.GetLayerWeight(_jumpOverrideLayer);
-            float startIK = _ikWeight;
-
+            
             float t = 0f;
             
             while (t < 1f && _jumpState == state)
             {
                 t += Time.deltaTime * 9f;
-                float currentBlendAdditive = Mathf.Lerp(startAdditive, endAdditive, t);
                 float currentBlendOverride = Mathf.Lerp(startOverride, endOverride, t);
                 
-                _animator.SetLayerWeight(_jumpAdditiveLayer, currentBlendAdditive);
                 _animator.SetLayerWeight(_jumpOverrideLayer, currentBlendOverride);
+                Debug.Log("test");
+                
                 
                 yield return null;
             }
@@ -524,7 +519,8 @@ namespace PlayerControls
             Ray ray = new(_animator.bodyPosition, Vector3.down);
             if (Physics.Raycast(ray, out RaycastHit hit, 10f, groundLayer))
             {
-                _ikWeight = Mathf.Lerp(1f, 0f, (hit.distance - legDistance - distanceToGround) / (distanceToGround / 1.5f));
+                _ikWeight = Mathf.Lerp(1f, 0f,
+                    (hit.distance - legDistance - distanceToGround) / (distanceToGround / 1.5f));
             }
             else
             {
