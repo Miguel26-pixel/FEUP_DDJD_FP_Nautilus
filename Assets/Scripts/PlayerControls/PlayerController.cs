@@ -10,6 +10,15 @@ using UnityEngine.UI;
 
 namespace PlayerControls
 {
+    public enum JumpState
+    {
+        Start,
+        Jumping,
+        Apex,
+        Landing,
+        End
+    }
+
     [RequireComponent(typeof(Animator))]
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(Player))]
@@ -27,12 +36,13 @@ namespace PlayerControls
         public float runningSpeed = 12.0f;
         [Range(-1f, 2f)] 
         public float distanceToGround = 0.1f;
+        public float animationToGround = 0.1f;
 
         public float legDistance = 33.76f;
         [SerializeField] private LayerMask groundLayer;
 
-        private float _speed = 0.0f;
-        private float _targetSpeed = 0.0f;
+        private float _speed;
+        private float _targetSpeed;
         private bool _isRunning;
 
         private Vector2 _currentMovementInput;
@@ -46,9 +56,8 @@ namespace PlayerControls
 
         private float _initialJumpVelocity;
         private Vector3 _jumpVelocity;
+        private JumpState _jumpState = JumpState.End;
         private bool _isJumpPressed;
-        private bool _isJumpStarted;
-        private bool _isJumping;
 
         // Camera
         private Camera _mainCamera;
@@ -89,6 +98,8 @@ namespace PlayerControls
         
         private int _jumpAdditiveLayer;
         private int _jumpOverrideLayer;
+        private float _ikWeight = 1;
+        private float _landTime;
         private static readonly int JumpTime = Animator.StringToHash("JumpTime");
 
         private void Awake()
@@ -103,8 +114,8 @@ namespace PlayerControls
 
             float timeToApex = maxJumpTime;
             _gravity = (-2 * maxJumpHeight) / Mathf.Pow(timeToApex, 2);
-            _initialJumpVelocity = (2 * maxJumpHeight) / timeToApex;
-            
+            _initialJumpVelocity = Mathf.Sqrt(-2 * _gravity * maxJumpHeight);
+                
             _jumpAdditiveLayer = _animator.GetLayerIndex("Jump");
             _jumpOverrideLayer = _animator.GetLayerIndex("Jump Override");
 
@@ -112,10 +123,18 @@ namespace PlayerControls
             
             foreach (AnimationClip t in ac.animationClips)
             {
-                if (t.name == "Jump")
+                switch (t.name)
                 {
-                    float jumpStart = t.events[0].time;
-                    _animator.SetFloat(JumpTime, (t.length - jumpStart) / timeToApex);
+                    case "Jump":
+                    {
+                        float jumpStart = t.events[0].time;
+                        _animator.SetFloat(JumpTime, timeToApex / (t.length - jumpStart));
+                        break;
+                    }
+                    case "Land":
+                        float landStart = t.events[0].time;
+                        _landTime = landStart;
+                        break;
                 }
             }
         }
@@ -219,7 +238,7 @@ namespace PlayerControls
 
         public void OnJump(InputAction.CallbackContext context)
         {
-            if (_isJumpStarted)
+            if (_jumpState != JumpState.End)
             {
                 return;
             }
@@ -295,44 +314,95 @@ namespace PlayerControls
 
         private void HandleJump()
         {
-            if (!_isJumpStarted && _characterController.isGrounded && _isJumpPressed)
+            switch (_jumpState)
             {
-                _animator.SetTrigger(Jump);
-                _isJumpPressed = false;
-                _isJumpStarted = true;
-                _animator.SetLayerWeight(_jumpAdditiveLayer, 0.5f);
-                _animator.SetLayerWeight(_jumpOverrideLayer, 0f);
-            }
-            else if (_isJumping && _characterController.isGrounded)
-            {
-                _isJumping = false;
-                _isJumpStarted = false;
+                case JumpState.End:
+                    if (_characterController.isGrounded && _isJumpPressed)
+                    {
+                        _animator.SetTrigger(Jump);
+                        _animator.SetLayerWeight(_jumpAdditiveLayer, 0.6f);
+                        _animator.SetLayerWeight(_jumpOverrideLayer, 0f);
+                        
+                        _isJumpPressed = false;
+                        _jumpState = JumpState.Start;
+                    }
+                    break;
+                case JumpState.Start:
+                    break;
+                case JumpState.Jumping:
+                    break;
+                case JumpState.Apex:
+                    if ( _characterController.isGrounded)
+                    {
+                        _jumpState = JumpState.End;
+                        _ikWeight = 1f;
+                    }
+
+                    if (Physics.Raycast(transform.position, Vector3.down, out var hit, 10f, groundLayer))
+                    {
+                        float distance = transform.position.y - hit.point.y;
+                        float timeToGround = Mathf.Sqrt(-2 * distance / _gravity);
+
+                        if (timeToGround < _landTime)
+                        {
+                            float startTime = _landTime - timeToGround;
+                            // start landing animation
+                            _animator.CrossFadeInFixedTime("Land", 0.1f, _jumpAdditiveLayer, startTime);
+                            _jumpState = JumpState.Landing;
+                            StartCoroutine(BlendJumpLayers(0f, 0.7f, JumpState.Landing));
+                        }
+                    }
+                    
+                    break;
+                case JumpState.Landing:
+                    if ( _characterController.isGrounded)
+                    {
+                        _jumpState = JumpState.End;
+                        _ikWeight = 1f;
+                    }
+
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
         public void LiftJump()
         {
-            _isJumping = true;
+            if(_jumpState != JumpState.Start)
+            {
+                return;
+            }
+            
+            _jumpState = JumpState.Jumping;
             _jumpVelocity.y = _initialJumpVelocity;
             
-            StartCoroutine(BlendJumpLayers());
+            StartCoroutine(BlendJumpLayers(0f, 0.9f, JumpState.Jumping));
+        }
+        
+        public void ApexJump()
+        {
+            if (_jumpState != JumpState.Jumping)
+            {
+                return;
+            }
+            
+            _jumpState = JumpState.Apex;
         }
 
-        private IEnumerator BlendJumpLayers()
+        private IEnumerator BlendJumpLayers(float endAdditive, float endOverride, JumpState state)
         {
-            float startBlend = 0.5f;
-            float endBlend = 0.9f;
-            
-            float currentBlendAdditive = startBlend;
-            float currentBlendOverride = 0f;
-            
+            float startAdditive = _animator.GetLayerWeight(_jumpAdditiveLayer);
+            float startOverride = _animator.GetLayerWeight(_jumpOverrideLayer);
+            float startIK = _ikWeight;
+
             float t = 0f;
             
-            while (t < 1f)
+            while (t < 1f && _jumpState == state)
             {
-                t += Time.deltaTime * 3f;
-                currentBlendAdditive = Mathf.Lerp(startBlend, 0f, t);
-                currentBlendOverride = Mathf.Lerp(0f, endBlend, t);
+                t += Time.deltaTime * 9f;
+                float currentBlendAdditive = Mathf.Lerp(startAdditive, endAdditive, t);
+                float currentBlendOverride = Mathf.Lerp(startOverride, endOverride, t);
                 
                 _animator.SetLayerWeight(_jumpAdditiveLayer, currentBlendAdditive);
                 _animator.SetLayerWeight(_jumpOverrideLayer, currentBlendOverride);
@@ -446,15 +516,21 @@ namespace PlayerControls
 
         private void OnAnimatorIK(int layerIndex)
         {
-            if (_isJumping)
-            {
-                return;
-            }
             const float maxDistance = 2.4f;
             
             var leftTransform = GetFootTransform(maxDistance, AvatarIKGoal.LeftFoot);
             var rightTransform = GetFootTransform(maxDistance, AvatarIKGoal.RightFoot);
             
+            Ray ray = new(_animator.bodyPosition, Vector3.down);
+            if (Physics.Raycast(ray, out RaycastHit hit, 10f, groundLayer))
+            {
+                _ikWeight = Mathf.Lerp(1f, 0f, (hit.distance - legDistance - distanceToGround) / (distanceToGround / 1.5f));
+            }
+            else
+            {
+                _ikWeight = 0f;
+            }
+
             LowerBody(leftTransform.Item1, rightTransform.Item1);
             
             SetFootTransform(AvatarIKGoal.LeftFoot, leftTransform.Item1, leftTransform.Item2);
@@ -469,11 +545,12 @@ namespace PlayerControls
                 return new Tuple<Vector3, Quaternion>(_animator.GetIKPosition(goal), _animator.GetIKRotation(goal));
             }
 
-            float footDistanceToAnimationPlane = _animator.GetIKPosition(goal).y - _animator.rootPosition.y;
+            float footDistanceToAnimationPlane = _animator.GetIKPosition(goal).y - _animator.rootPosition.y ;
+
             Vector3 footPosition = hit.point;
-            footPosition.y += footDistanceToAnimationPlane - 0.1f;
+            footPosition.y += footDistanceToAnimationPlane - animationToGround;
             
-            _animator.SetIKPositionWeight(goal, 1);
+            _animator.SetIKPositionWeight(goal, _ikWeight);
             _animator.SetIKRotationWeight(goal, 1 - Mathf.Clamp01((footDistanceToAnimationPlane - (distanceToGround)) / (distanceToGround / 2.5f)));
                 
             Vector3 forward = Vector3.ProjectOnPlane(transform.forward, hit.normal);
@@ -494,7 +571,7 @@ namespace PlayerControls
             Vector3 direction = (bodyPosition - lowestFoot).normalized;
             float yProjection = Vector3.Dot(direction * legDistance, Vector3.up);
             
-            bodyPosition = new Vector3(bodyPosition.x, Mathf.Min(lowestFoot.y + yProjection, bodyPosition.y), bodyPosition.z);
+            bodyPosition = new Vector3(bodyPosition.x, Mathf.Lerp(bodyPosition.y, Mathf.Min(lowestFoot.y + yProjection, bodyPosition.y), _ikWeight), bodyPosition.z);
             
             _animator.bodyPosition = bodyPosition;
         }

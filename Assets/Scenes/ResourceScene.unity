@@ -1970,7 +1970,7 @@ MonoBehaviour:
   healthBar: {fileID: 710278996}
   walkingSpeed: 6
   runningSpeed: 12
-  distanceToGround: 0.46
+  distanceToGround: 0.5
   legDistance: 2.5
   groundLayer:
     serializedVersion: 2
@@ -2057,7 +2057,7 @@ CharacterController:
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0.1340905, z: 0}
+  m_Center: {x: 0, y: 0.123, z: 0}
 --- !u!4 &1529412837 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: fc8b148eca244dd4a87cbcd82430aa86, type: 3}
@@ -2575,7 +2575,7 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: 935289651c87fedf3989ca698f4a74b8, type: 2}
     - target: {fileID: 5866666021909216657, guid: fc8b148eca244dd4a87cbcd82430aa86, type: 3}
       propertyPath: m_ApplyRootMotion
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fc8b148eca244dd4a87cbcd82430aa86, type: 3}

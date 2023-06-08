@@ -16,13 +16,15 @@ public class PlayerAnimationEvents : MonoBehaviour
 
     private void Jump()
     {
-        Debug.Log("jump");
         _playerController.LiftJump();
     }
 
     private void Apex()
     {
-        Debug.Log("apex");
-
+        _playerController.ApexJump();
+    }
+    
+    private void Land()
+    {
     }
 }
