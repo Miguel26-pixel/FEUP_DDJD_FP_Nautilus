@@ -40,6 +40,7 @@ namespace PlayerControls
 
         public float legDistance = 33.76f;
         [SerializeField] private LayerMask groundLayer;
+        [SerializeField] private LayerMask waterLayer;
 
         private float _speed;
         private float _targetSpeed;
@@ -100,6 +101,9 @@ namespace PlayerControls
         private float _ikWeight = 1;
         private float _landTime;
         private static readonly int JumpTime = Animator.StringToHash("JumpTime");
+
+        [Header("Swim Event")]
+        public float waterDistance = 1;
 
         private void Awake()
         {
@@ -193,7 +197,10 @@ namespace PlayerControls
                 ? Mathf.Lerp(_speed, _targetSpeed, Time.deltaTime * 10.0f)
                 : _targetSpeed;
 
+            
+
             _cameraRelativeMovement = ConvertToCameraSpace(_currentMovement);
+            HandleWater();
             HandleRotation();
             HandleAnimation();
             _characterController.Move(_cameraRelativeMovement * (Time.deltaTime * _speed) + _jumpVelocity * Time.deltaTime);
@@ -258,6 +265,19 @@ namespace PlayerControls
         
             Throw();
             _animator.SetTrigger(Attack);
+        }
+
+        private void HandleWater()
+        {
+            if (Physics.Raycast(transform.position, Vector3.up, out var hit, 10f, waterLayer))
+            {
+                float distance = Mathf.Clamp01((transform.position.y - hit.point.y)/waterDistance);
+                 _animator.SetFloat("WaterDistance", distance);
+            }
+            else {
+                _animator.SetFloat("WaterDistance", 0);
+
+            }
         }
 
         private void HandleAnimation()
@@ -399,7 +419,6 @@ namespace PlayerControls
                 float currentBlendOverride = Mathf.Lerp(startOverride, endOverride, t);
                 
                 _animator.SetLayerWeight(_jumpOverrideLayer, currentBlendOverride);
-                Debug.Log("test");
                 
                 
                 yield return null;
