@@ -2852,7 +2852,7 @@ MonoBehaviour:
     clusterMaxCount: 10
     clusterRadius: 10
     clusterChance: 1
-  - radius: 22
+  - radius: 29
     numSamplesBeforeRejection: 10
     minBiomeValue: 0.2
     maxBiomeValue: 0.86
@@ -2865,7 +2865,23 @@ MonoBehaviour:
     chanceOfGenerating: 1
     prefab: {fileID: 1641273471284524950, guid: b4eb658961a68fc7797d76d5b6abfd4c, type: 3}
     isClustered: 1
-    clusterMaxCount: 16
+    clusterMaxCount: 20
+    clusterRadius: 10
+    clusterChance: 1
+  - radius: 30
+    numSamplesBeforeRejection: 10
+    minBiomeValue: 0.2
+    maxBiomeValue: 0.8
+    minHeight: -100
+    maxHeight: 23.7
+    minSlope: 0.4
+    maxSlope: 1
+    offset: -0.2
+    alignToSurface: 0
+    chanceOfGenerating: 1
+    prefab: {fileID: 7148089789362757468, guid: 421b3641effff73f6bf07a97c65cb60c, type: 3}
+    isClustered: 1
+    clusterMaxCount: 20
     clusterRadius: 10
     clusterChance: 1
   chunksParent: {fileID: 175995}

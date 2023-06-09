@@ -117,14 +117,14 @@ namespace Generation.Resource
                         _activeResourceObjects[chunkPosition][i].Remove(resource);
                         continue;
                     }
-
+                    
                     if (resourceObject.activeSelf)
                     {
                         if (!Physics.BoxCast(
                                 resourceObject.transform.position +
-                                resourceObject.transform.up.normalized * (-offset + 0.5f),
-                                new Vector3(0.1f, 0.4f, 0.1f), -resourceObject.transform.up.normalized, out _,
-                                resourceObject.transform.rotation, -offset + 0.2f, layerMask))
+                                resourceObject.transform.up.normalized * (offset * -5),
+                                new Vector3(0.1f, 0.1f, 0.1f), -resourceObject.transform.up.normalized, out _,
+                                resourceObject.transform.rotation, -5 * offset, layerMask))
                         {
                             GameObject droppedObject = Instantiate(resourceObject, resourceObject.transform.position,
                                 resourceObject.transform.rotation);

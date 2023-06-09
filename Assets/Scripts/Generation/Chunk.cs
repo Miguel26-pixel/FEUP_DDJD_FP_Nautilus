@@ -143,6 +143,7 @@ public class Chunk : MonoBehaviour, IDisposable
         mesh.triangles = meshTriangles;
 
         mesh.RecalculateNormals();
+        _meshRenderer.shadowCastingMode = ShadowCastingMode.TwoSided;
     }
 
     public void Regenerate(float isoLevel)
