@@ -94,7 +94,7 @@ namespace PlayerControls
                 float rayRadius = Mathf.Lerp(0.01f, 1f, i / (numIterations - 1f));
 
                 HashSet<Vector3Int> alteredChunks;
-                if (Physics.SphereCast(_camera.position, rayRadius, _camera.forward, out RaycastHit hit, 40,
+                if (Physics.SphereCast(vacuumCollection.transform.position, rayRadius, _camera.forward, out RaycastHit hit, 40,
                         layerMask))
                 {
                     _terraformCursor.SetActive(true);
