@@ -38,6 +38,14 @@ namespace PlayerControls
             _player = transform.parent.GetComponent<Player>();
         }
 
+        private void LateUpdate()
+        {
+            var rotation = _camera.rotation;
+            var playerRotation = _player.transform.rotation;
+            vacuumArea.transform.localRotation = Quaternion.Euler(rotation.eulerAngles.x, rotation.eulerAngles.y - playerRotation.eulerAngles.y, 0);
+            vacuumCollection.transform.localRotation = Quaternion.Euler(rotation.eulerAngles.x, rotation.eulerAngles.y - playerRotation.eulerAngles.y, 0);
+        }
+
         private void Update()
         {
             if (!canTerraform)
@@ -46,7 +54,6 @@ namespace PlayerControls
             }
 
             const int numIterations = 5;
-
 
             if (_terraformType == TerraformType.Lower)
             {
@@ -87,7 +94,7 @@ namespace PlayerControls
                 float rayRadius = Mathf.Lerp(0.01f, 1f, i / (numIterations - 1f));
 
                 HashSet<Vector3Int> alteredChunks;
-                if (Physics.SphereCast(_camera.position, rayRadius, _camera.forward, out RaycastHit hit, 200,
+                if (Physics.SphereCast(_camera.position, rayRadius, _camera.forward, out RaycastHit hit, 40,
                         layerMask))
                 {
                     _terraformCursor.SetActive(true);

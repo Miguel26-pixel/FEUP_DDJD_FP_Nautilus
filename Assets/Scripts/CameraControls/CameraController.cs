@@ -83,6 +83,11 @@ namespace CameraControls
             return new Vector2(delta.x * cameraHorizontalRotationFactor, -delta.y * cameraVerticalRotationFactor);
         }
         
+        public float GetYRotation()
+        {
+            return _cameraParentTransform.rotation.eulerAngles.y;
+        }
+        
         public void Lock()
         {
             _isLocked = true;
