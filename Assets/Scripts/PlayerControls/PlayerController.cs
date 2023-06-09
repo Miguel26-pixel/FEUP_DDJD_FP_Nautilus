@@ -269,14 +269,16 @@ namespace PlayerControls
 
         private void HandleWater()
         {
-            if (Physics.Raycast(transform.position, Vector3.up, out var hit, 10f, waterLayer))
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, Vector3.down, out hit, 10f, waterLayer))
             {
-                float distance = Mathf.Clamp01((transform.position.y - hit.point.y)/waterDistance);
-                 _animator.SetFloat("WaterDistance", distance);
+                float distance = Mathf.Clamp01((transform.position.y - hit.point.y) / waterDistance);
+                Debug.Log(distance);
+                _animator.SetFloat("WaterDistance", distance);
             }
-            else {
-                _animator.SetFloat("WaterDistance", 0);
-
+            else
+            {
+                _animator.SetFloat("WaterDistance", 0f);
             }
         }
 
