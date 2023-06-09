@@ -1,3 +1,4 @@
+using PlayerControls;
 using UI.Crafting;
 using UI.Inventory;
 using UnityEngine;
@@ -8,7 +9,8 @@ namespace UI
     {
         private CraftingMenu _craftingMenu;
         private InventoryMenu _inventoryMenu;
-        private Player.Player _player;
+        private Player _player;
+        private PlayerController _playerController;
         private TransferInventoryMenu _transferInventoryMenu;
 
         private void Start()
@@ -17,7 +19,8 @@ namespace UI
             _transferInventoryMenu = GetComponentInChildren<TransferInventoryMenu>();
             _craftingMenu = GetComponentInChildren<CraftingMenu>();
 
-            _player = GameObject.FindWithTag("Player").GetComponent<Player.Player>();
+            _player = GameObject.FindWithTag("Player").GetComponent<Player>();
+            _playerController = _player.GetComponent<PlayerController>();
         }
 
         public void Update()
@@ -26,12 +29,12 @@ namespace UI
 
             if (anyOpen)
             {
-                _player.LockMovement();
+                _playerController.LockMovement();
                 Cursor.lockState = CursorLockMode.None;
             }
             else
             {
-                _player.UnlockMovement();
+                _playerController.UnlockMovement();
                 Cursor.lockState = CursorLockMode.Locked;
             }
         }

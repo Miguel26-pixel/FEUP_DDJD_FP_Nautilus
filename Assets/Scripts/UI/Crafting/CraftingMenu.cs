@@ -4,6 +4,7 @@ using Crafting;
 using DataManager;
 using Inventory;
 using Items;
+using PlayerControls;
 using UI.Inventory;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -20,7 +21,7 @@ namespace UI.Crafting
         [SerializeField] public VisualTreeAsset ingredientRecipe;
         [SerializeField] private CraftingRecipeRegistryObject recipeRegistryObject;
         [SerializeField] private ItemRegistryObject itemRegistryObject;
-        [SerializeField] public Player.Player player;
+        [NonSerialized] public Player player;
         private readonly List<CraftingInterface> _interfaces = new();
         public readonly Dictionary<ItemType, Sprite> _itemTypeIcons = new();
 
@@ -55,7 +56,7 @@ namespace UI.Crafting
             {
                 _itemTypeIcons.Add(typeSprite.type, typeSprite.sprite);
             }
-
+            player = GameObject.FindWithTag("Player").GetComponent<Player>();
             player.GetInventoryNotifier().AddSubscriber(this);
 
             recipeRegistry = recipeRegistryObject.craftingRecipeRegistry;

@@ -11,7 +11,7 @@ public class MeshGenerator : MonoBehaviour, IDisposable
     public float boundsSize = 1;
     public int numPointsPerAxis = 16;
     public int seed;
-    public Transform player;
+    private Transform _player;
 
     public GameObject chunkPrefab;
     public GenerationConfigs generationConfigs;
@@ -44,18 +44,19 @@ public class MeshGenerator : MonoBehaviour, IDisposable
         _noiseGenerator = GetComponent<NoiseGenerator>();
         _colorGenerator = GetComponent<ColorGenerator>();
         _isInitialized = false;
+        _player = GameObject.FindWithTag("Player").transform;
     }
 
     private void Update()
     {
         GenerateChunks();
         
-        if ((lastPosition - player.position).sqrMagnitude < generationConfigs.sqrCheckDistanceInterval)
+        if ((lastPosition - _player.position).sqrMagnitude < generationConfigs.sqrCheckDistanceInterval)
         {
             return;
         }
 
-        lastPosition = player.position;
+        lastPosition = _player.position;
         UpdateTerrain();
     }
 
@@ -184,7 +185,7 @@ public class MeshGenerator : MonoBehaviour, IDisposable
 
     private void UpdateTerrain()
     {
-        Vector3Int playerChunkPosition = ChunkPosition(player.transform.position);
+        Vector3Int playerChunkPosition = ChunkPosition(_player.transform.position);
 
         if (playerChunkPosition.Equals(lastChunkPosition))
         {
