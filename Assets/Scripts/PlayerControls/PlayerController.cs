@@ -166,8 +166,6 @@ namespace PlayerControls
         public void LockMovement()
         {
             _movementLocked = true;
-            
-            _currentMovement = Vector3.zero;
         }
 
         public void UnlockMovement()
@@ -182,7 +180,7 @@ namespace PlayerControls
                 return;
             }
             
-            if (_isMovementPressed)
+            if (_isMovementPressed && !_movementLocked)
             {
                 _targetSpeed = _isRunning ? runningSpeed : walkingSpeed;
             }

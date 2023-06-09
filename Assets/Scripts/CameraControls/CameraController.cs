@@ -18,16 +18,17 @@ namespace CameraControls
         private Camera _camera;
         private Transform _cameraTransform;
         private Transform _cameraParentTransform;
-        private PlayerControls.Player _player;
+        private Player _player;
         
         private Vector2 _remainingAngle;
         private float _currentVerticalAngle;
+        private bool _isLocked;
 
         private void Start()
         {
             _camera = GetComponent<Camera>();
             _cameraTransform = _camera.transform;
-            _player = GameObject.FindWithTag("Player").GetComponent<PlayerControls.Player>();
+            _player = GameObject.FindWithTag("Player").GetComponent<Player>();
             
             _cameraTransform.position = _player.transform.position + cameraOffset;
             _cameraParentTransform = _cameraTransform.parent;
@@ -36,6 +37,10 @@ namespace CameraControls
         private void LateUpdate()
         {
             Vector2 mouseDelta = Mouse.current.delta.ReadValue();
+            if (_isLocked)
+            {
+                mouseDelta = Vector2.zero;
+            }
             _remainingAngle += DeltaToDegrees(mouseDelta);
 
             if ((_remainingAngle.y + _currentVerticalAngle) > maxVerticalAngle)
@@ -67,7 +72,7 @@ namespace CameraControls
                 _cameraTransform.position = hit.point + hit.normal * 0.1f;
             }
         }
-        
+
         public Transform GetHorizontalTransform()
         {
             return _cameraParentTransform;
@@ -76,6 +81,16 @@ namespace CameraControls
         private Vector2 DeltaToDegrees(Vector2 delta)
         {
             return new Vector2(delta.x * cameraHorizontalRotationFactor, -delta.y * cameraVerticalRotationFactor);
+        }
+        
+        public void Lock()
+        {
+            _isLocked = true;
+        }
+        
+        public void Unlock()
+        {
+            _isLocked = false;
         }
     }
 }

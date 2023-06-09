@@ -1,3 +1,4 @@
+using CameraControls;
 using PlayerControls;
 using UI.Crafting;
 using UI.Inventory;
@@ -11,6 +12,7 @@ namespace UI
         private InventoryMenu _inventoryMenu;
         private Player _player;
         private PlayerController _playerController;
+        private CameraController _cameraController;
         private TransferInventoryMenu _transferInventoryMenu;
 
         private void Start()
@@ -21,6 +23,10 @@ namespace UI
 
             _player = GameObject.FindWithTag("Player").GetComponent<Player>();
             _playerController = _player.GetComponent<PlayerController>();
+            if (Camera.main != null)
+            {
+                _cameraController = Camera.main.GetComponent<CameraController>();
+            }
         }
 
         public void Update()
@@ -30,11 +36,15 @@ namespace UI
             if (anyOpen)
             {
                 _playerController.LockMovement();
+                _cameraController.Lock();
+                _player.LockTool();
                 Cursor.lockState = CursorLockMode.None;
             }
             else
             {
                 _playerController.UnlockMovement();
+                _cameraController.Unlock();
+                _player.UnlockTool();
                 Cursor.lockState = CursorLockMode.Locked;
             }
         }

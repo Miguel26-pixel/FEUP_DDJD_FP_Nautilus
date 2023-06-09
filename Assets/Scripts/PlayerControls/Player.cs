@@ -36,6 +36,8 @@ namespace PlayerControls
         private ItemRegistryObject _itemRegistryObject;
         private PlayerActions _playerActions;
         
+        private bool _lockTool;
+        
         private PlayerInventory _playerInventory = new("Inventory", new[,]
         {
             { false, false, false, false, false, false },
@@ -109,6 +111,17 @@ namespace PlayerControls
             return _playerInventory;
         }
         
+        public void LockTool()
+        {
+            _lockTool = true;
+            terraformController.DeactivateTerraform();
+        }
+        
+        public void UnlockTool()
+        {
+            _lockTool = false;
+        }
+        
         public void OnCraft(InputAction.CallbackContext context)
         {
             if (!context.performed)
@@ -177,6 +190,11 @@ namespace PlayerControls
 
         public void OnEquipTool(InputAction.CallbackContext context)
         {
+            if (_lockTool)
+            {
+                return;
+            }
+            
             if (context.performed)
             {
                 terraformController.ToggleTerraform();
@@ -258,13 +276,13 @@ namespace PlayerControls
             _playerInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
             _playerInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
             _playerInventory.AddItem(_itemRegistry.Get(0x238E2A2D).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0x2E79821C).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0x755CFE42).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0xE3847C27).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0xDEC31753).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0x5BFE8AE3).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0xFE3EC9B0).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0x5C5C52AF).CreateInstance());
+            // _playerInventory.AddItem(_itemRegistry.Get(0x2E79821C).CreateInstance());
+            // _playerInventory.AddItem(_itemRegistry.Get(0x755CFE42).CreateInstance());
+            // _playerInventory.AddItem(_itemRegistry.Get(0xE3847C27).CreateInstance());
+            // _playerInventory.AddItem(_itemRegistry.Get(0xDEC31753).CreateInstance());
+            // _playerInventory.AddItem(_itemRegistry.Get(0x5BFE8AE3).CreateInstance());
+            // _playerInventory.AddItem(_itemRegistry.Get(0xFE3EC9B0).CreateInstance());
+            // _playerInventory.AddItem(_itemRegistry.Get(0x5C5C52AF).CreateInstance());
 
 
             Debug.Log("Gave items");

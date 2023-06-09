@@ -157,14 +157,13 @@ namespace PlayerControls
             }
         }
 
-
         private void ActivateTerraform()
         {
             canTerraform = true;
             _terraformType = TerraformType.None;
         }
 
-        private void DeactivateTerraform()
+        public void DeactivateTerraform()
         {
             canTerraform = false;
             _terraformCursor.SetActive(false);
