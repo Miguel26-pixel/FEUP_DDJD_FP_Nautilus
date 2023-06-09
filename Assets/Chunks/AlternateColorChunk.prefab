@@ -64,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e1574613227a3a509b610b546e6b1ddb, type: 2}
+  - {fileID: 2100000, guid: 64b13627077d11a2ba1cf9c01fe45c27, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -113,7 +113,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chunkGridPosition: {x: 0, y: 0, z: 0}
-  colorGenerator: {fileID: 0}
   shader: {fileID: 7200000, guid: 728a80c570a390ef2b6cd044370914d8, type: 3}
 --- !u!114 &4969987593713701929
 MonoBehaviour:
@@ -127,7 +126,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f9686916627dd581877df760acd8160, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meshRenderer: {fileID: 5382608540069460156}
   biomes:
   - sections:
     - minHeight: 24
