@@ -21,12 +21,13 @@ namespace Player
         public UnityEvent onPlacingStateChanged = new();
         public UnityEvent<int> onRotate = new();
         private ItemRegistry _itemRegistry;
-        public TransferDirection transferDirection; 
+        public TransferDirection transferDirection;
 
         private ItemRegistryObject _itemRegistryObject;
         private PlayerActions _playerActions;
 
         private bool _isPlacing = false;
+        private bool _canPlaceObject = true;
         private GameObject _placingObject = null;
 
         public PlayerInventory playerInventory = new("Inventory", new[,]
@@ -70,44 +71,35 @@ namespace Player
         {
             if (_isPlacing)
             {
-                if (Mouse.current.leftButton.wasPressedThisFrame)
+                Vector3 mousePosition = Mouse.current.position.ReadValue();
+                RaycastHit hit;
+                bool raycast = Physics.Raycast(Camera.main.ScreenPointToRay(mousePosition), out hit);
+
+                if (Mouse.current.leftButton.wasPressedThisFrame && raycast && _canPlaceObject)
                 {
                     _isPlacing = false;
                     OnPlacingStateChanged();
                 }
-                else
+                else if (raycast)
                 {
-                    Vector3 mousePosition = Mouse.current.position.ReadValue();
-                    Ray ray = Camera.main.ScreenPointToRay(mousePosition);
-
-                    if (Physics.Raycast(ray))
+                    Vector3 closestPointOnFloor = FindPlacingPoint(hit);
+                    if (closestPointOnFloor != Vector3.zero)
                     {
-                        Vector3 closestPointOnFloor = FindPlacingPoint(mousePosition);
-                        if (closestPointOnFloor != Vector3.zero)
-                        {
-                            _placingObject.transform.position = closestPointOnFloor;
-                        }
+                        _placingObject.transform.position = closestPointOnFloor;
                     }
                 }
             }
         }
 
-
-        private Vector3 FindPlacingPoint(Vector3 mousePosition)
+        private Vector3 FindPlacingPoint(RaycastHit hit)
         {
-            Ray ray = Camera.main.ScreenPointToRay(mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit))
-            {
-                Collider collider = hit.collider;
-                if (collider != null && collider != _placingObject.GetComponent<Collider>())
-                {
-                    Vector3 contactPoint = hit.point;
-                    Vector3 placementPosition = contactPoint + Vector3.up * (_placingObject.transform.localScale.y * 0.5f + 0.05f);
-
-                    return placementPosition;
-                }
+            Collider collider = hit.collider;
+            if (collider != null && collider != _placingObject.GetComponent<Collider>())
+            { 
+                _canPlaceObject = collider.gameObject.layer != LayerMask.NameToLayer("Water");
+                Vector3 contactPoint = hit.point;
+                Vector3 placementPosition = contactPoint + Vector3.up * (_placingObject.transform.localScale.y * 0.5f + 0.05f);
+                return placementPosition;
             }
 
             return Vector3.zero;
@@ -131,7 +123,7 @@ namespace Player
             {
                 return;
             }
-            
+
             onInventoryEvent.Invoke();
         }
 
