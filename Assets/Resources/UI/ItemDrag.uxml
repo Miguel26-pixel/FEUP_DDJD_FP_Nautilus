@@ -1,0 +1,13 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/Theme.uss?fileID=7433441132597879392&amp;guid=b674df751d5a19162b7bfb6da9f4cfd4&amp;type=3#Theme" />
+    <ui:VisualElement name="ItemDrag" picking-mode="Ignore" class="item-drag" style="opacity: 0.7;">
+        <ui:VisualElement name="Row" class="row">
+            <ui:VisualElement name="Cell" picking-mode="Ignore" class="item-square">
+                <ui:VisualElement picking-mode="Ignore" class="icon" />
+            </ui:VisualElement>
+            <ui:VisualElement name="Cell" class="item-square disabled">
+                <ui:VisualElement class="icon" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
