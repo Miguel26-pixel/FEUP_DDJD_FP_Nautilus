@@ -1,7 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+<<<<<<< HEAD
+=======
 using Generation.Resource;
+>>>>>>> main
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -14,7 +17,10 @@ public class MeshGenerator : MonoBehaviour
 
     public GameObject chunkPrefab;
     public GenerationConfigs generationConfigs;
+<<<<<<< HEAD
+=======
     public ResourceGeneratorSettings[] resourceGeneratorConfigs;
+>>>>>>> main
 
     public GameObject chunksParent;
     
@@ -23,12 +29,17 @@ public class MeshGenerator : MonoBehaviour
     public int numChunksZ = 1;
 
     private readonly Dictionary<Vector3Int, Chunk> _chunks = new();
+<<<<<<< HEAD
+=======
     private readonly Dictionary<Vector2Int, float[,]> _biomeNoise = new();
+>>>>>>> main
     private readonly List<Chunk> _activeChunks = new();
 
     public Vector3 lastPosition = Vector3.positiveInfinity;
     public Vector3Int lastChunkPosition = new (Int32.MaxValue, Int32.MaxValue, Int32.MaxValue);
     
+<<<<<<< HEAD
+=======
     public PointsGeneratorMono pointsGeneratorMono;
     public ResourceGenerator resourceGenerator;
 
@@ -60,6 +71,7 @@ public class MeshGenerator : MonoBehaviour
         return chunks.ToArray();
     }
     
+>>>>>>> main
     private void Update()
     {
         if ((lastPosition - player.position).sqrMagnitude < generationConfigs.sqrCheckDistanceInterval) return;
@@ -70,18 +82,32 @@ public class MeshGenerator : MonoBehaviour
 
     private void UpdateTerrain()
     {
+<<<<<<< HEAD
+        Vector3Int playerChunkPosition = ChunkPosition();
+=======
         Vector3Int playerChunkPosition = ChunkPosition(player.transform.position);
+>>>>>>> main
 
         if (playerChunkPosition.Equals(lastChunkPosition)) return;
         lastChunkPosition = playerChunkPosition;
 
         UpdateChunks(playerChunkPosition);
+<<<<<<< HEAD
+        
+        
+    }
+
+    private Vector3Int ChunkPosition()
+    {
+        var position = player.transform.position;
+=======
     }
 
     private Vector3Int ChunkPosition(Vector3 position)
     {
         position = chunksParent.transform.InverseTransformPoint(position);
         
+>>>>>>> main
         return new Vector3Int(
             Mathf.RoundToInt(position.x / boundsSize),
             Mathf.RoundToInt(position.y / boundsSize),
@@ -113,6 +139,11 @@ public class MeshGenerator : MonoBehaviour
                         chunkObject.name = $"Chunk {x} {y} {z}";
                         currentChunk = chunkObject.GetComponent<Chunk>();
                         currentChunk.chunkGridPosition = new Vector3Int(x, y, z);
+<<<<<<< HEAD
+                        currentChunk.Generate(isoLevel, boundsSize, seed);
+                        _chunks[chunkPosition] = currentChunk;
+                        currentChunk.colorGenerator.UpdateColors(seed);
+=======
                         ProcessingResult result = currentChunk.Generate(isoLevel, boundsSize, seed);
 
                         if (!_biomeNoise.ContainsKey(new Vector2Int(x, z)))
@@ -125,14 +156,18 @@ public class MeshGenerator : MonoBehaviour
                         LinkedList<Vector2>[] points = pointsGeneratorMono.pointsGenerator.GeneratePoints(new Vector2Int(x, z));
                         
                         resourceGenerator.GenerateResources(currentChunk, result.biomeNoise, points);
+>>>>>>> main
                     }
 
                     _activeChunks.Add(currentChunk);
                 }
             }
         }
+<<<<<<< HEAD
+=======
         
         resourceGenerator.UpdateResources(_activeChunks);
+>>>>>>> main
     }
     
     private void GenerateFixedChunks()

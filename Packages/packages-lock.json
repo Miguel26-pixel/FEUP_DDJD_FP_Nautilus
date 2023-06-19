@@ -1,5 +1,7 @@
 {
   "dependencies": {
+<<<<<<< HEAD
+=======
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,
@@ -16,6 +18,7 @@
       },
       "url": "https://packages.unity.com"
     },
+>>>>>>> main
     "com.unity.burst": {
       "version": "1.8.2",
       "depth": 1,
@@ -96,6 +99,8 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+<<<<<<< HEAD
+=======
     "com.unity.memoryprofiler": {
       "version": "0.7.1-preview.1",
       "depth": 0,
@@ -112,6 +117,7 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+>>>>>>> main
     "com.unity.render-pipelines.core": {
       "version": "12.1.10",
       "depth": 1,
@@ -149,6 +155,8 @@
         "com.unity.searcher": "4.9.1"
       }
     },
+<<<<<<< HEAD
+=======
     "com.unity.sysroot": {
       "version": "2.0.6",
       "depth": 1,
@@ -165,6 +173,7 @@
       },
       "url": "https://packages.unity.com"
     },
+>>>>>>> main
     "com.unity.test-framework": {
       "version": "1.1.31",
       "depth": 0,

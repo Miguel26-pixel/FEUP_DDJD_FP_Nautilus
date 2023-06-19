@@ -64,7 +64,11 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
+<<<<<<< HEAD
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+=======
   - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+>>>>>>> main
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -99,7 +103,43 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   numPointsPerAxis: 16
+<<<<<<< HEAD
+  biomeParameters:
+  - numOctaves: 6
+    lacunarity: 2.4
+    persistence: 0.34
+    noiseScale: 0.45
+    noiseWeight: 59
+    floorOffset: 75
+    weightMultiplier: 2.3
+    hardFloor: -4
+    hardFloorWeight: 0
+    hardCeil: 0
+    hardCeilWeight: 0
+    warpEffect: 0
+    warpFrequency: 0.009
+    offset: {x: 0, y: 0, z: 0}
+    shaderParams: {x: 1, y: 0, z: 0, w: 0}
+    shader: {fileID: 7200000, guid: c6851149be19f7320adfb6906f638288, type: 3}
+  - numOctaves: 8
+    lacunarity: 1.3
+    persistence: 1.1
+    noiseScale: 0.19
+    noiseWeight: 40
+    floorOffset: 240
+    weightMultiplier: 2
+    hardFloor: -50
+    hardFloorWeight: 0
+    hardCeil: -80
+    hardCeilWeight: 140
+    warpEffect: 0
+    warpFrequency: 0
+    offset: {x: 0, y: 0, z: 0}
+    shaderParams: {x: 1, y: 1, z: 0, w: 0}
+    shader: {fileID: 7200000, guid: 5cd0550b57254a98b544eb3b9bf5feaf, type: 3}
+=======
   processingSteps: []
+>>>>>>> main
 --- !u!114 &5382608540069460152
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113,7 +153,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chunkGridPosition: {x: 0, y: 0, z: 0}
+<<<<<<< HEAD
+=======
   colorGenerator: {fileID: 0}
+>>>>>>> main
   shader: {fileID: 7200000, guid: 728a80c570a390ef2b6cd044370914d8, type: 3}
 --- !u!64 &1117030778486291149
 MeshCollider:

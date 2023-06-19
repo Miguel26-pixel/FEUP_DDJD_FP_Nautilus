@@ -5,6 +5,9 @@ using UnityEngine;
 public abstract class ProcessingStep : MonoBehaviour
 {
     public abstract void Process(ComputeBuffer pointsBuffer, int numPointsPerAxis, int seed, float boundsSize,
+<<<<<<< HEAD
+        Vector3 centre);
+=======
         Vector3 centre, ProcessingResult result);
 }
 
@@ -17,4 +20,5 @@ public record ProcessingResult
     {
         this.biomeNoise = biomeNoise;
     }
+>>>>>>> main
 }
