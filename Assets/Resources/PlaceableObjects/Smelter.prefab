@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6250012868377028342}
   - component: {fileID: 5259535291281651667}
   - component: {fileID: 178930655262390996}
+  - component: {fileID: 1400204974735525022}
   m_Layer: 0
   m_Name: Smelter
   m_TagString: Untagged
@@ -97,3 +98,16 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1400204974735525022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2815367038306988470}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94461d03748ddee43a12d2ed28e5fa76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _machineType: 4
