@@ -1,3 +1,4 @@
+using PlayerControls;
 using UI.Inventory.Components;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -6,7 +7,7 @@ namespace UI.Inventory
 {
     public class InventoryMenu : MonoBehaviour
     {
-        [SerializeField] private Player.Player player;
+        [SerializeField] private Player player;
         private VisualElement _inventoryContainer;
         private GridInventoryViewer _inventoryViewer;
         private bool _isInventoryMenuOpen;
