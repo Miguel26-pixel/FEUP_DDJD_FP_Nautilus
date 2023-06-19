@@ -80,13 +80,14 @@ namespace UI.Crafting
                 return;
             }
 
-            PlayerInventory inventoryCopy = new PlayerInventory(_craftingMenu.Inventory);
+            PlayerInventory inventoryCopy = new(_craftingMenu.Inventory);
             bool hasSpace = HasSpace(recipe, inventoryCopy);
             Item resultItem = resultData.CreateInstance();
 
             if (hasSpace)
             {
-                _craftingMenu.isCrafting = true; // This is to prevent the crafting menu from updating while we're crafting
+                _craftingMenu.isCrafting =
+                    true; // This is to prevent the crafting menu from updating while we're crafting
                 foreach (KeyValuePair<int, int> ingredient in recipe.Ingredients)
                 {
                     for (int i = 0; i < ingredient.Value; i++)
@@ -94,6 +95,7 @@ namespace UI.Crafting
                         _craftingMenu.Inventory.RemoveItem(ingredient.Key);
                     }
                 }
+
                 _craftingMenu.isCrafting = false;
 
                 _craftingMenu.Inventory.AddItem(resultItem);
@@ -101,49 +103,49 @@ namespace UI.Crafting
             else
             {
                 _craftingMenu.Inventory.Locked = true;
-                
+
                 CraftingInventory craftingInventory = CraftingInventory.CreateCraftingInventory();
                 craftingInventory.AddItem(resultItem);
-                
-                GridInventoryViewerBuilder playerInventoryViewerBuilder = new(inventoryCopy, canOpenContextMenu: false, refreshAfterMove: true);
+
+                GridInventoryViewerBuilder playerInventoryViewerBuilder =
+                    new(inventoryCopy, canOpenContextMenu: false, refreshAfterMove: true);
                 GridInventoryViewerBuilder craftingBuilder = new(craftingInventory, canOpenContextMenu: false);
-                
+
                 _craftingMenu.transferInventoryMenu.Open(
                     playerInventoryViewerBuilder,
                     craftingBuilder,
                     TransferDirection.DestinationToSource,
-                    new List<TransferAction>()
+                    new List<TransferAction>
                     {
-                        new TransferAction(
-                            new List<string> {"red-tint"}, 
-                            _craftingMenu.crossIcon, 
+                        new(
+                            new List<string> { "red-tint" },
+                            _craftingMenu.crossIcon,
                             () =>
-                        {
-                            _craftingMenu.Inventory.Locked = false;
-                            _craftingMenu.transferInventoryMenu.Close();
-                        })
+                            {
+                                _craftingMenu.Inventory.Locked = false;
+                                _craftingMenu.transferInventoryMenu.Close();
+                            })
                     },
-                    ((_, right) => right.GetItems().Count == 0),
-                    ((grid, _) =>
+                    (_, right) => right.GetItems().Count == 0,
+                    (grid, _) =>
                     {
                         _craftingMenu.player.SetInventory(new PlayerInventory(grid));
                         _craftingMenu.UpdateInventory();
-                    }));
+                    });
             }
         }
 
         private bool HasSpace(CraftingRecipe recipe)
         {
-            PlayerInventory inventoryCopy = new PlayerInventory(_craftingMenu.Inventory);
+            PlayerInventory inventoryCopy = new(_craftingMenu.Inventory);
             return HasSpace(recipe, inventoryCopy);
         }
-        
-        
+
+
         private bool HasSpace(CraftingRecipe recipe, InventoryGrid inventoryCopy)
         {
-
             Item resultItem = _itemRegistry.Get(recipe.Result).CreateInstance();
-            
+
             foreach (KeyValuePair<int, int> ingredient in recipe.Ingredients)
             {
                 for (int i = 0; i < ingredient.Value; i++)
@@ -209,12 +211,13 @@ namespace UI.Crafting
             {
                 _recipeCreateButton.UnregisterCallback(_createCallback);
             }
+
             _recipeCreateButton.RemoveFromClassList("warning");
 
             if (canCraft)
             {
                 bool hasSpace = HasSpace(_recipe);
-                
+
                 _recipeCreateButton.RemoveFromClassList("disabled");
                 _recipeCreateButton.RemoveFromClassList("incomplete");
 
@@ -227,7 +230,7 @@ namespace UI.Crafting
                 {
                     _recipeCreateButton.RemoveFromClassList("warning");
                 }
-                
+
                 _createCallback = _ => { CraftItem(_recipe, _resultItem); };
                 _recipeCreateButton.RegisterCallback(_createCallback);
             }

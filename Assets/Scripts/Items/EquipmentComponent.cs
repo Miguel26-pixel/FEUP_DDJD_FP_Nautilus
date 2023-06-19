@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using PlayerControls;
 
 namespace Items
 {
@@ -23,12 +24,12 @@ namespace Items
 
         [JsonIgnore] public List<Tuple<string, int>> Enhancements => new(_enhancements);
 
-        public override void OnEquip(Player.Player player)
+        public override void OnEquip(Player player)
         {
             throw new NotImplementedException();
         }
 
-        public override void OnUnequip(Player.Player player)
+        public override void OnUnequip(Player player)
         {
             throw new NotImplementedException();
         }

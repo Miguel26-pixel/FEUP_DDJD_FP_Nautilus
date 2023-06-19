@@ -1,6 +1,6 @@
 using System;
 using Newtonsoft.Json;
-using Player;
+using PlayerControls;
 using UnityEngine;
 
 namespace Items
@@ -16,14 +16,14 @@ namespace Items
 
         [JsonProperty("placedGameObject")] public SerializableGameObject PlacedGameObject { get; }
 
-        private void Place(Player.Player player)
+        private void Place(Player player)
         {
             GameObject placingInstance = UnityEngine.Object.Instantiate(PlacedGameObject.LoadedObject);
             player.Place(placingInstance);
-            PlayerTest playerTest = player.GetComponent<PlayerTest>();
-            if (playerTest != null)
+            Player playerComponent = player.GetComponent<Player>();
+            if (playerComponent != null)
             {
-                playerTest.OnPlacingStateChanged();
+                playerComponent.OnPlacingStateChanged();
             }
         }
 

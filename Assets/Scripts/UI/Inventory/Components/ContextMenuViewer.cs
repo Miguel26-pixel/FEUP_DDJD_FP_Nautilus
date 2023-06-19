@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Items;
 using UnityEngine;
 using UnityEngine.UIElements;
+using PlayerControls;
 
 namespace UI.Inventory.Components
 {
@@ -20,14 +21,14 @@ namespace UI.Inventory.Components
         public ContextMenuViewer(VisualElement root)
         {
             _root = root;
-            
+
             _itemContext = root.Q<VisualElement>("ItemContext");
             if (_itemContext == null)
             {
                 Resources.Load<VisualTreeAsset>("UI/ItemContext").CloneTree(root);
                 _itemContext = root.Q<VisualElement>("ItemContext");
             }
-            
+
             _contextActions = _itemContext.Q<VisualElement>("ContextActions");
 
             _textButtonTemplate = Resources.Load<VisualTreeAsset>("UI/TextButton");
@@ -44,7 +45,7 @@ namespace UI.Inventory.Components
         public bool IsOpen { get; private set; }
         public uint ItemInfoID { get; private set; }
 
-        public void Open(Item item, uint itemID, Vector2 position, Player.Player player)
+        public void Open(Item item, uint itemID, Vector2 position, Player player)
         {
             IsOpen = true;
             ItemInfoID = itemID;
@@ -94,7 +95,7 @@ namespace UI.Inventory.Components
 
         private void ProcessMouseUpAction(IMouseEvent evt, ContextMenuAction action)
         {
-            Player.Player player = GameObject.FindWithTag("Player").GetComponent<Player.Player>();
+            Player player = GameObject.FindWithTag("Player").GetComponent<Player>();
 
             if (player == null) {
                 return;

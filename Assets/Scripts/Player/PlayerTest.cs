@@ -10,6 +10,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
+/*
 namespace Player
 {
     [Serializable]
@@ -208,4 +209,4 @@ namespace Player
             _isPlacing = true;
         }
     }
-}
+}*/

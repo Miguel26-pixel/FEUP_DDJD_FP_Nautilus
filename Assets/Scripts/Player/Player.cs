@@ -2,7 +2,7 @@ using Inventory;
 using System;
 using UnityEngine;
 
-namespace Player
+/*namespace Player
 {
     public abstract class Player : MonoBehaviour
     {
@@ -11,4 +11,4 @@ namespace Player
         public abstract IInventoryNotifier GetInventoryNotifier();
         public abstract void Place(GameObject instance);
     }
-}
+}*/

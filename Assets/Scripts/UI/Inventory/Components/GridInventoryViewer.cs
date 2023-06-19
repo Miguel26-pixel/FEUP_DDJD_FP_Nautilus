@@ -4,6 +4,7 @@ using Items;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
+using PlayerControls;
 
 namespace UI.Inventory.Components
 {
@@ -61,13 +62,14 @@ namespace UI.Inventory.Components
         {
             _inventory = inventory;
             _inventoryBounds = _inventory.GetBounds();
-            
+
             _draggedItem = root.Q<VisualElement>("ItemDrag");
             if (_draggedItem == null)
             {
                 Resources.Load<VisualTreeAsset>("UI/ItemDrag").CloneTree(root);
                 _draggedItem = root.Q<VisualElement>("ItemDrag");
             }
+
             _draggedItem.style.display = DisplayStyle.None;
 
             _infoBoxViewer = new InfoBoxViewer(root);
@@ -264,7 +266,7 @@ namespace UI.Inventory.Components
         private void ProcessMouseUpRightCell(EventBase evt, Item item, uint itemID)
         {
 
-            Player.Player player = GameObject.FindWithTag("Player").GetComponent<Player.Player>();
+            Player player = GameObject.FindWithTag("Player").GetComponent<Player>();
 
             if (player == null)
             {

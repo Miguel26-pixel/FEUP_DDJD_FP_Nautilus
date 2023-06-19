@@ -1,5 +1,6 @@
 using System;
 using Newtonsoft.Json;
+using PlayerControls;
 
 namespace Items
 {
@@ -13,12 +14,12 @@ namespace Items
 
         [JsonProperty("tool")] public string Tool { get; }
 
-        public override void OnEquip(Player.Player player)
+        public override void OnEquip(Player player)
         {
             throw new NotImplementedException();
         }
 
-        public override void OnUnequip(Player.Player player)
+        public override void OnUnequip(Player player)
         {
             throw new NotImplementedException();
         }

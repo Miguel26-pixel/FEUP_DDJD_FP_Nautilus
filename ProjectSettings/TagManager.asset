@@ -11,10 +11,10 @@ TagManager:
   - Terrain
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
+  - Resource
+  - OpaqueResource
+  - Player
+  - Vacuum
   - 
   - 
   - 
