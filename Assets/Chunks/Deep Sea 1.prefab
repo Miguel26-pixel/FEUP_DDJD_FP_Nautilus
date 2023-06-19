@@ -65,11 +65,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-<<<<<<< HEAD
   - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
-=======
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
->>>>>>> main
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -119,10 +115,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chunkGridPosition: {x: 0, y: 0, z: 0}
-<<<<<<< HEAD
-=======
-  colorGenerator: {fileID: 0}
->>>>>>> main
   shader: {fileID: 7200000, guid: 728a80c570a390ef2b6cd044370914d8, type: 3}
 --- !u!64 &1117030778486291149
 MeshCollider:
@@ -151,12 +143,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   biomeParameters:
-<<<<<<< HEAD
   - numOctaves: 0
     lacunarity: 0
-=======
-  - lacunarity: 0
->>>>>>> main
     persistence: 0
     noiseScale: 0
     noiseWeight: 0
@@ -171,13 +159,6 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     shaderParams: {x: 0, y: 0, z: 0, w: 0}
   biomesValues: []
-<<<<<<< HEAD
   numBiomes: 0
   biomeScale: 0
-=======
-  biomeScale: 0
-  initPos: {x: 0, y: 0, z: 0}
-  islandRadius: 10
-  islandFalloff: 10
->>>>>>> main
   shader: {fileID: 0}

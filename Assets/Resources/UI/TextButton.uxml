@@ -1,9 +1,0 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <Style src="project://database/Assets/UI%20Toolkit/Theme.uss?fileID=7433441132597879392&amp;guid=b674df751d5a19162b7bfb6da9f4cfd4&amp;type=3#Theme" />
-    <ui:VisualElement class="button" style="margin-top: 10px; height: auto; min-height: auto;">
-        <ui:VisualElement>
-            <ui:Label text="Equip" display-tooltip-when-elided="true" name="Label" class="text" style="-unity-text-align: upper-center; border-bottom-width: 2px; color: rgb(242, 211, 172);" />
-        </ui:VisualElement>
-        <ui:VisualElement class="overlay" />
-    </ui:VisualElement>
-</ui:UXML>

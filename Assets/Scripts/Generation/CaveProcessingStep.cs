@@ -11,11 +11,7 @@ public class CaveProcessingStep : ProcessingStep
 
     public ComputeShader shader;
 
-<<<<<<< HEAD
     public override void Process(ComputeBuffer pointsBuffer, int numPointsPerAxis, int seed, float boundsSize, Vector3 centre)
-=======
-    public override void Process(ComputeBuffer pointsBuffer, int numPointsPerAxis, int seed, float boundsSize, Vector3 centre, ProcessingResult result)
->>>>>>> main
     {
         shader.SetInt("octaves", 6);
         shader.SetFloat("lacunarity", caveParameters.lacunarity);
