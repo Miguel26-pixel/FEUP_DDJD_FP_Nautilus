@@ -25,7 +25,6 @@ namespace Player
 
         private ItemRegistryObject _itemRegistryObject;
         private PlayerActions _playerActions;
-
         private bool _isPlacing = false;
         private bool _canPlaceObject = true;
         private GameObject _placingObject = null;
@@ -47,7 +46,6 @@ namespace Player
         {
             _itemRegistryObject = GameObject.Find("DataManager").GetComponent<ItemRegistryObject>();
             _itemRegistry = _itemRegistryObject.itemRegistry;
-
             StartCoroutine(GiveItems());
         }
 
@@ -69,12 +67,12 @@ namespace Player
 
         private void Update()
         {
+
+            Vector3 mousePosition = Mouse.current.position.ReadValue();
+            bool raycast = Physics.Raycast(Camera.main.ScreenPointToRay(mousePosition), out RaycastHit hit);
+
             if (_isPlacing)
             {
-                Vector3 mousePosition = Mouse.current.position.ReadValue();
-                RaycastHit hit;
-                bool raycast = Physics.Raycast(Camera.main.ScreenPointToRay(mousePosition), out hit);
-
                 if (Mouse.current.leftButton.wasPressedThisFrame && raycast && _canPlaceObject)
                 {
                     _isPlacing = false;
@@ -89,13 +87,28 @@ namespace Player
                     }
                 }
             }
+            else
+            {
+                if (raycast)
+                {
+                    if (hit.collider.gameObject.TryGetComponent<MachineComponent>(out var machine))
+                    {
+                        machineType = machine.GetMachineType();
+                    } 
+                    else 
+                    {
+                        machineType = (MachineType)(-1);
+                    }
+                }
+
+            }
         }
 
         private Vector3 FindPlacingPoint(RaycastHit hit)
         {
             Collider collider = hit.collider;
             if (collider != null && collider != _placingObject.GetComponent<Collider>())
-            { 
+            {
                 _canPlaceObject = collider.gameObject.layer != LayerMask.NameToLayer("Water");
                 Vector3 contactPoint = hit.point;
                 Vector3 placementPosition = contactPoint + Vector3.up * (_placingObject.transform.localScale.y * 0.5f + 0.05f);
@@ -113,7 +126,6 @@ namespace Player
             {
                 return;
             }
-
             OnCraftEvent.Invoke(machineType);
         }
 

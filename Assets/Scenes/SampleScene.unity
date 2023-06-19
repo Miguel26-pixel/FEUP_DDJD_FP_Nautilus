@@ -232,7 +232,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 69603288}
   m_LocalRotation: {x: 0.275433, y: -0, z: -0, w: 0.9613203}
-  m_LocalPosition: {x: 99.5, y: 285.3, z: -240.9}
+  m_LocalPosition: {x: 3.2, y: 140.7, z: -163.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1536,9 +1536,6 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   transferDirection: 2
-  waterLayer:
-    serializedVersion: 2
-    m_Bits: 16
 --- !u!1 &1697702099
 GameObject:
   m_ObjectHideFlags: 0
