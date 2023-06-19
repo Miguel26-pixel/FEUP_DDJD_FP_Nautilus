@@ -40,7 +40,11 @@ QualitySettings:
     asyncUploadBufferSize: 16
     asyncUploadPersistentBuffer: 1
     resolutionScalingFixedDPIFactor: 1
+<<<<<<< HEAD
     customRenderPipeline: {fileID: 0}
+=======
+    customRenderPipeline: {fileID: 11400000, guid: 2bc6759dcd0546663b04ad1af2426ca5, type: 2}
+>>>>>>> main
     excludedTargetPlatforms: []
   - serializedVersion: 2
     name: Low
@@ -76,7 +80,11 @@ QualitySettings:
     asyncUploadBufferSize: 16
     asyncUploadPersistentBuffer: 1
     resolutionScalingFixedDPIFactor: 1
+<<<<<<< HEAD
     customRenderPipeline: {fileID: 0}
+=======
+    customRenderPipeline: {fileID: 11400000, guid: 663332a3431ddd591bea28d3604bb6ca, type: 2}
+>>>>>>> main
     excludedTargetPlatforms: []
   - serializedVersion: 2
     name: Medium
@@ -112,7 +120,11 @@ QualitySettings:
     asyncUploadBufferSize: 16
     asyncUploadPersistentBuffer: 1
     resolutionScalingFixedDPIFactor: 1
+<<<<<<< HEAD
     customRenderPipeline: {fileID: 0}
+=======
+    customRenderPipeline: {fileID: 11400000, guid: c0468a27373d0afa5bae77993826649c, type: 2}
+>>>>>>> main
     excludedTargetPlatforms: []
   - serializedVersion: 2
     name: High
@@ -148,7 +160,11 @@ QualitySettings:
     asyncUploadBufferSize: 16
     asyncUploadPersistentBuffer: 1
     resolutionScalingFixedDPIFactor: 1
+<<<<<<< HEAD
     customRenderPipeline: {fileID: 0}
+=======
+    customRenderPipeline: {fileID: 11400000, guid: 4fd84c6e10c097e538d1642b5ee85b19, type: 2}
+>>>>>>> main
     excludedTargetPlatforms: []
   - serializedVersion: 2
     name: Very High
@@ -184,7 +200,11 @@ QualitySettings:
     asyncUploadBufferSize: 16
     asyncUploadPersistentBuffer: 1
     resolutionScalingFixedDPIFactor: 1
+<<<<<<< HEAD
     customRenderPipeline: {fileID: 0}
+=======
+    customRenderPipeline: {fileID: 11400000, guid: 7b6abbc7f3b1a6e348f62f8cbdc74e2a, type: 2}
+>>>>>>> main
     excludedTargetPlatforms: []
   - serializedVersion: 2
     name: Ultra
@@ -220,7 +240,11 @@ QualitySettings:
     asyncUploadBufferSize: 16
     asyncUploadPersistentBuffer: 1
     resolutionScalingFixedDPIFactor: 1
+<<<<<<< HEAD
     customRenderPipeline: {fileID: 11400000, guid: 67b3ba81bb980b04eaf11e93a3e9dcbd, type: 2}
+=======
+    customRenderPipeline: {fileID: 11400000, guid: 090d22c2dcaeddb70b1946e3da6624cf, type: 2}
+>>>>>>> main
     excludedTargetPlatforms: []
   m_PerPlatformDefaultQuality:
     Android: 2

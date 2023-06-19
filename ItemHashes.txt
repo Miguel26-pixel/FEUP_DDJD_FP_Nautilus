@@ -1,0 +1,64 @@
+Fiber: 755CFE42
+Wood: E3847C27
+Seaweed Fiber: 4DA469D2
+Seashell Calcium: 2E79821C
+Fish Scales: 238E2A2D
+Coralium: 55518A64
+Abyssallite: 53235718
+Kelp Iron: 1B63CA9C
+Sea Urchin Spines: 49FED091
+Leviathan Skin: 6F856625
+Leviathan Tooth: B87B2C63
+Crystalline Tear: A7AD143A
+Deep Tentacle: FD20396D
+Luminitite: 5145B7CB
+Doomstone: A4ED98BD
+Dreadworm Eye: 3200B8A7
+Alien Artifact: 7B97ED03
+Tritonite: 712700D7
+Seashell Plate: 8E579B46
+Sea Glass: 271AF14B
+Silicon: 4695529
+Abyssal Crystal: 61DCAB61
+Mermaid Metal: AFF05822
+Coral Steel: 32FD5245
+Calcified Abyssallite: C3A812C5
+Twilight Glow: 3894FAED
+Soil: 6F9576E5
+Cloth: 4CF2F5A1
+Wood Plank: 48407FD2
+Laser Gun Plasma: D534F0CA
+Circuit Board: 8AFC89BA
+Hook: EDC91F30
+Metal Rod: 150E05A2
+Deep Sea Infused Plate: 477976FD
+Torpedo: 9D17AD2B
+Thornmelons: E9D12876
+Quarkberries: 40781A5E
+Sea Meat: 7E133A88
+Thornmelon Jam: CD341561
+Fish Stew: ADB2AF84
+Questionable Seafood: AB655EDC
+Leviathan Schnitzel: CB676F3C
+Crunchy Delight: FE3EC9B0
+Ointment: 7D313F84
+Cooking Pot: 5C5C52AF
+Fabricator: FA0A52EE
+Smelter: E2042BBB
+Assembler: 7452B41F
+Fish Net: AEED84BD
+Sticky Glow Pods: FE4B73D5
+Boat: 4A6DC633
+Anchor Line: D06E07F2
+Sonar: A72C0955
+Reaper’s Call: 67D0A6CA
+Flippers: 5BFE8AE3
+Oxygen Tank: 9B53F18
+Pressure Suit: DF1ED541
+Abyssal Tank: BCFDBC37
+Armored Pressure Suit: DEC31753
+Suction Drill: C213F24B
+Spear: F1A34A96
+Laser Gun: 795821CB
+Trident: 528DE84E
+Torpedo Launcher: 78D19593
