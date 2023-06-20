@@ -159,7 +159,7 @@ namespace PlayerControls
             else
             {
                 MachineComponent nearestMachine = FindClosestInteractibleMachine();
-                machineType = nearestMachine != null ? nearestMachine.GetMachineType() : (MachineType)(-1);
+                machineType = nearestMachine != null ? nearestMachine.GetMachineType() : MachineType.PocketFabricator;
 
             }
         }
@@ -228,8 +228,6 @@ namespace PlayerControls
             {
                 return;
             }
-            // Time.timeScale = 0.05f;
-
             onCraftEvent.Invoke(machineType);
         }
 
