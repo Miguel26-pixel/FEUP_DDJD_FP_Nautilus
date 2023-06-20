@@ -121,18 +121,6 @@ public class MeshGenerator : MonoBehaviour, IDisposable
         
         Chunk currentChunk = _toGenerateChunks.Dequeue();
         GenerateChunk(currentChunk);
-      
-        HashSet<Vector3Int> generatedChunks = new HashSet<Vector3Int>();
-
-        foreach (var chunk in _activeChunks)
-        {
-            if (chunk.Generated)
-            {
-                generatedChunks.Add(chunk.chunkGridPosition);
-            }
-        }
-
-        resourceGenerator.UpdateResources(generatedChunks);
     }
 
     public HashSet<Vector3Int> Terraform(Vector3 position, float weight, float radius)
@@ -212,7 +200,6 @@ public class MeshGenerator : MonoBehaviour, IDisposable
     {
         _activeChunks.ForEach(c => c.gameObject.SetActive(false));
         _activeChunks.Clear();
-        HashSet<Vector3Int> activeChunkPositions = new();
 
         for (int x = position.x - generationConfigs.chunkDistanceRadius;
              x < position.x + generationConfigs.chunkDistanceRadius;
@@ -232,7 +219,6 @@ public class MeshGenerator : MonoBehaviour, IDisposable
                     {
                         currentChunk = chunk;
                         currentChunk.gameObject.SetActive(true);
-                        activeChunkPositions.Add(chunkPosition);
                     }
                     else
                     {
@@ -249,11 +235,33 @@ public class MeshGenerator : MonoBehaviour, IDisposable
                         else
                         {
                             GenerateChunk(currentChunk);
-                            activeChunkPositions.Add(chunkPosition);
                         }
                     }
 
                     _activeChunks.Add(currentChunk);
+                }
+            }
+        }
+        HashSet<Vector3Int> activeChunkPositions = new();
+
+        
+        for (int x = position.x - generationConfigs.resourceDistanceRadius;
+             x < position.x + generationConfigs.resourceDistanceRadius;
+             x++)
+        {
+            for (int y = position.y - generationConfigs.resourceDistanceRadius;
+                 y < position.y + generationConfigs.resourceDistanceRadius;
+                 y++)
+            {
+                for (int z = position.z - generationConfigs.resourceDistanceRadius;
+                     z < position.z + generationConfigs.resourceDistanceRadius;
+                     z++)
+                {
+                    Vector3Int chunkPosition = new(x, y, z);
+                    if (_chunks.ContainsKey(chunkPosition))
+                    {
+                        activeChunkPositions.Add(chunkPosition);
+                    }
                 }
             }
         }
