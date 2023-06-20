@@ -171,24 +171,26 @@ namespace PlayerControls
             {
                 _canPlaceObject = collider.gameObject.layer != LayerMask.NameToLayer("Water");
                 Vector3 contactPoint = hit.point;
-                Vector3 placementPosition = contactPoint + Vector3.up * (_placingObject.transform.localScale.y * 0.5f + 0.05f);
 
-                float currentDistance = Vector3.Distance(transform.position, placementPosition);
+                Quaternion rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
+                _placingObject.transform.rotation = rotation;
+
+                float currentDistance = Vector3.Distance(transform.position, contactPoint);
 
                 if (currentDistance <= _placementDistance)
                 {
-                    return placementPosition;
+                    return contactPoint;
                 }
                 else
                 {
-                    Vector3 playerToPlacement = (placementPosition - transform.position).normalized;
+                    Vector3 playerToPlacement = (contactPoint - transform.position).normalized;
                     Vector3 closestPosition = transform.position + playerToPlacement * _placementDistance;
                     return closestPosition;
                 }
             }
-
             return Vector3.zero;
         }
+
         private MachineComponent FindClosestInteractibleMachine()
         {
             Collider[] colliders = Physics.OverlapSphere(transform.position, _interactionDistance);
