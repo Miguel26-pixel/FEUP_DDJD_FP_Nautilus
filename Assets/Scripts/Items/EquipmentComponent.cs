@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using PlayerControls;
+using UnityEngine;
 
 namespace Items
 {
@@ -26,12 +27,12 @@ namespace Items
 
         public override void OnEquip(Player player, Item item)
         {
-            throw new NotImplementedException();
+            player.EquipEquipment(item);
         }
 
         public override void OnUnequip(Player player, Item item)
         {
-            throw new NotImplementedException();
+            player.UnequipEquipment(item);
         }
 
         public override ItemComponent CreateInstance()

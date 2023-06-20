@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using Crafting;
 using DataManager;
 using Generation.Resource;
@@ -29,6 +31,14 @@ namespace PlayerControls
         public UnityEvent<ProgressData> onProgress = new();
         public UnityEvent onPlacingStateChanged = new();
 
+        [Header("Equipment")]
+        public GameObject leftFlipperObject;
+        public GameObject rightFlipperObject;
+        
+        public GameObject oxygenTankObject;
+        public GameObject abismalOxygenTankObject;
+        public GameObject oxygenMaskObject;
+        
         [Header("References")]
         public TerraformController terraformController;
         private ItemData _soilData;
@@ -378,6 +388,17 @@ namespace PlayerControls
             _playerInventory.AddItem(_itemRegistry.Get(0x5BFE8AE3).CreateInstance());
             _playerInventory.AddItem(_itemRegistry.Get(0xFE3EC9B0).CreateInstance());
             _playerInventory.AddItem(_itemRegistry.Get(0x5C5C52AF).CreateInstance());
+            _playerInventory.AddItem(_itemRegistry.Get(0x5BFE8AE3).CreateInstance());
+            _playerInventory.AddItem(_itemRegistry.Get(0x9B53F18).CreateInstance());
+            _playerInventory.AddItem(_itemRegistry.Get(0xBCFDBC37).CreateInstance());
+
+            // _playerInventory.AddItem(_itemRegistry.Get(0x2E79821C).CreateInstance());
+            // _playerInventory.AddItem(_itemRegistry.Get(0x755CFE42).CreateInstance());
+            // _playerInventory.AddItem(_itemRegistry.Get(0xE3847C27).CreateInstance());
+            // _playerInventory.AddItem(_itemRegistry.Get(0xDEC31753).CreateInstance());
+            // _playerInventory.AddItem(_itemRegistry.Get(0x5BFE8AE3).CreateInstance());
+            // _playerInventory.AddItem(_itemRegistry.Get(0xFE3EC9B0).CreateInstance());
+            // _playerInventory.AddItem(_itemRegistry.Get(0x5C5C52AF).CreateInstance());
 
 
             Debug.Log("Gave items");
@@ -388,6 +409,80 @@ namespace PlayerControls
             _placingObject = instance;
             _isPlacing = true;
             _itemIDHash = item.IDHash;
+        }
+
+        private void EquipFlippers()
+        {
+            leftFlipperObject.SetActive(true);
+            rightFlipperObject.SetActive(true);
+        }
+
+        private void UnequipFlippers()
+        {
+            leftFlipperObject.SetActive(false);
+            rightFlipperObject.SetActive(false);
+        }
+        
+        private void EquipOxygenTank()
+        {
+            oxygenTankObject.SetActive(true);
+            oxygenMaskObject.SetActive(true);
+        }
+
+        private void UnequipOxygenTank()
+        {
+            oxygenTankObject.SetActive(false);
+            oxygenMaskObject.SetActive(abismalOxygenTankObject.activeSelf);
+        }
+
+        private void EquipAbismalOxygenTank()
+        {
+            abismalOxygenTankObject.SetActive(true);
+            oxygenMaskObject.SetActive(true);
+        }
+
+        private void UnequipAbismalOxygenTank()
+        {
+            abismalOxygenTankObject.SetActive(false);
+            oxygenMaskObject.SetActive(oxygenTankObject.activeSelf);
+        }
+        
+        public void EquipEquipment(Item item)
+        {
+            switch (item.Name)
+            {
+                case "Flippers":
+                    EquipFlippers();
+                    break;
+                case "Oxygen Tank":
+                    EquipOxygenTank();
+                    break;
+                case "Abyssal Tank":
+                    EquipAbismalOxygenTank();
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+            // _playerInventory.RemoveItem(item.IDHash);
+        }
+
+        public void UnequipEquipment(Item item)
+        {
+            switch (item.Name)
+            {
+                case "Flippers":
+                    UnequipFlippers();
+                    break;
+                case "Oxygen Tank":
+                    UnequipOxygenTank();
+                    break;
+                case "Abyssal Tank":
+                    UnequipAbismalOxygenTank();
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+            // _playerInventory.AddItem(item);
         }
     }
 }
