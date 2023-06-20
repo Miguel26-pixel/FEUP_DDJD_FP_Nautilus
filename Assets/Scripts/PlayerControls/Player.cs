@@ -44,6 +44,9 @@ namespace PlayerControls
         private GameObject _placingObject = null;
         private int _itemIDHash = 0;
 
+        [SerializeField]
+        private float _interactionDistance = 3f;
+
         private PlayerInventory _playerInventory = new("Inventory", new[,]
         {
             { false, false, false, false, false, false },
@@ -153,16 +156,31 @@ namespace PlayerControls
             }
             else
             {
-                if (raycast)
+                Collider[] colliders = Physics.OverlapSphere(transform.position, _interactionDistance);
+
+                MachineComponent nearestMachine = null;
+                float nearestDistance = float.MaxValue;
+
+                foreach (Collider collider in colliders)
                 {
-                    if (hit.collider.gameObject.TryGetComponent<MachineComponent>(out var machine))
+                    if (collider.TryGetComponent<MachineComponent>(out var machine))
                     {
-                        machineType = machine.GetMachineType();
+                        float distance = Vector3.Distance(transform.position, machine.transform.position);
+                        if (distance < nearestDistance)
+                        {
+                            nearestDistance = distance;
+                            nearestMachine = machine;
+                        }
                     }
-                    else
-                    {
-                        machineType = (MachineType)(-1);
-                    }
+                }
+
+                if (nearestMachine != null)
+                {
+                    machineType = nearestMachine.GetMachineType();
+                }
+                else
+                {
+                    machineType = (MachineType)(-1);
                 }
 
             }
