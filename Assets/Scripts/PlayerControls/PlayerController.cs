@@ -201,15 +201,7 @@ namespace PlayerControls
 
             
             HandleWater();
-            // Debug.Log("_currentMovement: ");
-            // Debug.Log(_currentMovement);
             _cameraRelativeMovement = ConvertToCameraSpace(_currentMovement);
-            // // Debug.Log("camera: ");
-            // // Debug.Log(_cameraRelativeMovement);
-            // if(underWater)
-            // {
-            //     _cameraRelativeMovement.y = _currentMovement.y;
-            // }
             if(underWater && (_cameraTransform.rotation.x < 0) && 19.5f > transform.position.y)
             {
                 _cameraRelativeMovement.y = 1f;
@@ -463,20 +455,13 @@ namespace PlayerControls
             Vector3 cameraForward = _cameraParentTransform.forward.normalized;
             Vector3 cameraRight = _cameraParentTransform.right.normalized;
 
-            if(!underWater) {
-                cameraForward.y = 0;
-                cameraRight.y = 0;
-            }
+            cameraForward.y = 0;
+            cameraRight.y = 0;
 
             Vector3 cameraForwardZProduct = vectorToRotate.z * cameraForward;
             Vector3 cameraForwardXProduct = vectorToRotate.x * cameraRight;
-            float cameraForwardYProduct = vectorToRotate.y * cameraForward.y;
 
             Vector3 result = cameraForwardXProduct + cameraForwardZProduct;
-
-       
-            if(underWater)
-                return new Vector3(result.x, cameraForwardYProduct, result.z);
 
             return new Vector3(result.x, 0, result.z);
         }
