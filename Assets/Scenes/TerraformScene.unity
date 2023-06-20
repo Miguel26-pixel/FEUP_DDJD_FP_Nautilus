@@ -2388,6 +2388,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chunkDistanceRadius: 4
+  resourceDistanceRadius: 3
   sqrCheckDistanceInterval: 10
 --- !u!114 &1298936911
 MonoBehaviour:
@@ -2472,7 +2473,7 @@ MonoBehaviour:
     clusterMaxCount: 0
     clusterRadius: 10
     clusterChance: 1
-  - radius: 30
+  - radius: 45
     numSamplesBeforeRejection: 10
     minBiomeValue: 0.2
     maxBiomeValue: 0.8
@@ -2485,8 +2486,8 @@ MonoBehaviour:
     chanceOfGenerating: 1
     prefab: {fileID: 7148089789362757468, guid: 421b3641effff73f6bf07a97c65cb60c, type: 3}
     isClustered: 1
-    clusterMaxCount: 0
-    clusterRadius: 10
+    clusterMaxCount: 25
+    clusterRadius: 13
     clusterChance: 1
   chunksParent: {fileID: 175995}
   numChunksX: 16

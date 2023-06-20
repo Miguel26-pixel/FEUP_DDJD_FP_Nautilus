@@ -98,6 +98,8 @@ namespace PlayerControls
 
         [Header("Swim Event")]
         public float waterDistance = 1;
+        public bool underWater = false;
+        public float swimmSpeed = 0.0f;
 
         private void Awake()
         {
@@ -194,13 +196,19 @@ namespace PlayerControls
                 : _targetSpeed;
 
             
-
-            _cameraRelativeMovement = ConvertToCameraSpace(_currentMovement);
             HandleWater();
+            _cameraRelativeMovement = ConvertToCameraSpace(_currentMovement);
+            if(underWater && (_cameraTransform.rotation.x < 0) && 19.5f > transform.position.y)
+            {
+                _cameraRelativeMovement.y = 1f;
+            }else if (underWater && (_cameraTransform.rotation.x > 0))
+            {
+                _cameraRelativeMovement.y = -1f;
+            }
             HandleRotation();
             HandleAnimation();
-            _characterController.Move(_cameraRelativeMovement * (Time.deltaTime * _speed) + _jumpVelocity * Time.deltaTime);
             HandleGravity();
+            _characterController.Move(_cameraRelativeMovement * (Time.deltaTime * _speed) + _jumpVelocity * Time.deltaTime);
             HandleJump();
         }
 
@@ -265,14 +273,18 @@ namespace PlayerControls
 
         private void HandleWater()
         {
-            if (Physics.Raycast(transform.position, Vector3.up, out var hit, 10f, waterLayer))
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, Vector3.down, out hit, 10f, waterLayer))
             {
-                float distance = Mathf.Clamp01((transform.position.y - hit.point.y)/waterDistance);
-                 _animator.SetFloat("WaterDistance", distance);
+                float distance = Mathf.Clamp01((transform.position.y - hit.point.y) / waterDistance);
+                if(distance <= 0.6f){
+                    underWater = !underWater;
+                }
+                _animator.SetFloat("WaterDistance", distance);
             }
-            else {
-                _animator.SetFloat("WaterDistance", 0);
-
+            else
+            {
+                _animator.SetFloat("WaterDistance", 0f);
             }
         }
 
@@ -303,6 +315,12 @@ namespace PlayerControls
 
             positionToLookAt.x = _cameraRelativeMovement.x;
             positionToLookAt.y = 0.0f;
+            if(underWater && (_cameraTransform.rotation.x < 0)){
+                positionToLookAt.y = 0.5f;
+            }else if(underWater && (_cameraTransform.rotation.x > 0))
+            {
+                positionToLookAt.y = -0.5f;
+            }
             positionToLookAt.z = _cameraRelativeMovement.z;
 
             Quaternion currentRotation = transform.rotation;
@@ -321,13 +339,20 @@ namespace PlayerControls
 
         private void HandleGravity()
         {
-            if (_characterController.isGrounded)
+            if (_characterController.isGrounded && !underWater)
             {
                 _jumpVelocity.y = GroundGravity;
                 return;
             }
-            
+
+            if(underWater)
+            {
+                _jumpVelocity.y = 0.0f;
+                _gravity = 0.0f;
+                return;
+            }
             _jumpVelocity.y += _gravity * Time.deltaTime;
+
         }
 
         private void HandleJump()
@@ -443,6 +468,7 @@ namespace PlayerControls
             Vector3 cameraForwardXProduct = vectorToRotate.x * cameraRight;
 
             Vector3 result = cameraForwardXProduct + cameraForwardZProduct;
+
             return new Vector3(result.x, 0, result.z);
         }
 
