@@ -24,12 +24,12 @@ namespace Items
 
         [JsonIgnore] public List<Tuple<string, int>> Enhancements => new(_enhancements);
 
-        public override void OnEquip(Player player)
+        public override void OnEquip(Player player, Item item)
         {
             throw new NotImplementedException();
         }
 
-        public override void OnUnequip(Player player)
+        public override void OnUnequip(Player player, Item item)
         {
             throw new NotImplementedException();
         }

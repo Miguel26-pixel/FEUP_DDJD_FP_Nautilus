@@ -42,6 +42,7 @@ namespace PlayerControls
         private bool _isPlacing = false;
         private bool _canPlaceObject = true;
         private GameObject _placingObject = null;
+        private int _itemIDHash = 0;
 
         private PlayerInventory _playerInventory = new("Inventory", new[,]
         {
@@ -137,6 +138,7 @@ namespace PlayerControls
             {
                 if (Mouse.current.leftButton.wasPressedThisFrame && raycast && _canPlaceObject)
                 {
+                    _playerInventory.RemoveItem(_itemIDHash);
                     _isPlacing = false;
                     OnPlacingStateChanged();
                 }
@@ -351,10 +353,11 @@ namespace PlayerControls
             Debug.Log("Gave items");
         }
 
-        public override void Place(GameObject instance)
+        public override void Place(GameObject instance, Item item)
         {
             _placingObject = instance;
             _isPlacing = true;
+            _itemIDHash = item.IDHash;
         }
     }
 }

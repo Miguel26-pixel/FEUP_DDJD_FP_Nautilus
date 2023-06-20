@@ -3,7 +3,7 @@ namespace Items
 {
     public class ContextMenuAction
     {
-        public delegate void ContextAction(Player player);
+        public delegate void ContextAction(Player player, Item item);
 
         public ContextMenuAction(string name, ContextAction action)
         {

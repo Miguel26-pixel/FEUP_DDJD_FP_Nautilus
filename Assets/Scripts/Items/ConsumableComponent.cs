@@ -23,7 +23,7 @@ namespace Items
 
         [JsonProperty("hunger")] public int Hunger { get; }
 
-        private void Consume(Player player)
+        private void Consume(Player player, Item i)
         {
             throw new NotImplementedException();
         }

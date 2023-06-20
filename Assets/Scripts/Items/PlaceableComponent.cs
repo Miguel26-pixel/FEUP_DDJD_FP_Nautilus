@@ -16,10 +16,10 @@ namespace Items
 
         [JsonProperty("placedGameObject")] public SerializableGameObject PlacedGameObject { get; }
 
-        private void Place(Player player)
+        private void Place(Player player, Item item)
         {
             GameObject placingInstance = UnityEngine.Object.Instantiate(PlacedGameObject.LoadedObject);
-            player.Place(placingInstance);
+            player.Place(placingInstance, item);
             Player playerComponent = player.GetComponent<Player>();
             if (playerComponent != null)
             {

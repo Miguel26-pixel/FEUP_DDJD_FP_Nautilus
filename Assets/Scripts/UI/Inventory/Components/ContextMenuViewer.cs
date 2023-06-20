@@ -17,6 +17,7 @@ namespace UI.Inventory.Components
         private readonly VisualElement _root;
 
         private readonly VisualTreeAsset _textButtonTemplate;
+        private Item _item;
 
         public ContextMenuViewer(VisualElement root)
         {
@@ -49,6 +50,7 @@ namespace UI.Inventory.Components
         {
             IsOpen = true;
             ItemInfoID = itemID;
+            _item = item;
 
             _contextTitle.text = item.Name;
 
@@ -108,7 +110,7 @@ namespace UI.Inventory.Components
 
             try
             {
-                action.Action(player);
+                action.Action(player, _item);
             }
             catch (NotImplementedException)
             {
