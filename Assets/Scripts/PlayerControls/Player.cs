@@ -167,28 +167,36 @@ namespace PlayerControls
         private Vector3 FindPlacingPoint(RaycastHit hit)
         {
             Collider collider = hit.collider;
-            if (collider != null && collider != _placingObject.GetComponent<Collider>())
+
+            if (collider == null)
             {
-                _canPlaceObject = collider.gameObject.layer != LayerMask.NameToLayer("Water");
-                Vector3 contactPoint = hit.point;
-
-                Quaternion rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
-                _placingObject.transform.rotation = rotation;
-
-                float currentDistance = Vector3.Distance(transform.position, contactPoint);
-
-                if (currentDistance <= _placementDistance)
-                {
-                    return contactPoint;
-                }
-                else
-                {
-                    Vector3 playerToPlacement = (contactPoint - transform.position).normalized;
-                    Vector3 closestPosition = transform.position + playerToPlacement * _placementDistance;
-                    return closestPosition;
-                }
+                return Vector3.zero;
             }
-            return Vector3.zero;
+
+            if (collider.gameObject.layer == LayerMask.NameToLayer("Vacuum") || collider == _placingObject.GetComponent<Collider>())
+            {
+                return Vector3.zero;
+            }
+
+            _canPlaceObject = collider.gameObject.layer != LayerMask.NameToLayer("Water");
+            Vector3 contactPoint = hit.point;
+
+            Quaternion rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
+            _placingObject.transform.rotation = rotation;
+
+            float currentDistance = Vector3.Distance(transform.position, contactPoint);
+
+            if (currentDistance <= _placementDistance)
+            {
+                return contactPoint;
+            }
+            else
+            {
+                Vector3 playerToPlacement = (contactPoint - transform.position).normalized;
+                Vector3 closestPosition = transform.position + playerToPlacement * _placementDistance;
+                return closestPosition;
+            }
+
         }
 
         private MachineComponent FindClosestInteractibleMachine()
