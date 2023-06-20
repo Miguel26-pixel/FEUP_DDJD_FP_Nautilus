@@ -17,7 +17,7 @@ namespace PlayerControls
         [Header("Stats")]
         public int health = 1000;
         public int maxHealth = 1000;
-        
+
         [Header("HUD Events")]
         public MachineType machineType;
         public TransferDirection transferDirection;
@@ -36,7 +36,7 @@ namespace PlayerControls
 
         private ItemRegistryObject _itemRegistryObject;
         private PlayerActions _playerActions;
-        
+
         private bool _lockTool;
 
         private bool _isPlacing = false;
@@ -59,7 +59,7 @@ namespace PlayerControls
             { false, true, true, true, true, false },
             { false, false, false, false, false, false }
         });
-        
+
         public void Start()
         {
             _itemRegistryObject = GameObject.Find("DataManager").GetComponent<ItemRegistryObject>();
@@ -71,8 +71,8 @@ namespace PlayerControls
 
             StartCoroutine(GiveItems());
         }
-        
-        
+
+
         public void OnEnable()
         {
             if (_playerActions == null)
@@ -85,17 +85,17 @@ namespace PlayerControls
             _playerActions.HUD.Enable();
             _playerActions.Tool.Enable();
         }
-    
+
         private void OnDisable()
         {
             _playerActions.HUD.Disable();
             _playerActions.Tool.Disable();
         }
 
-        
+
         public bool IsDead => health == 0;
-        public float HealthPercentage => health / (float) maxHealth;
-        
+        public float HealthPercentage => health / (float)maxHealth;
+
         public void RemoveHealth(int amount)
         {
             health -= amount;
@@ -116,16 +116,16 @@ namespace PlayerControls
         }
 
         public override IInventoryNotifier GetInventoryNotifier()
-        { 
+        {
             return _playerInventory;
         }
-        
+
         public void LockTool()
         {
             _lockTool = true;
             terraformController.DeactivateTerraform();
         }
-        
+
         public void UnlockTool()
         {
             _lockTool = false;
@@ -156,32 +156,8 @@ namespace PlayerControls
             }
             else
             {
-                Collider[] colliders = Physics.OverlapSphere(transform.position, _interactionDistance);
-
-                MachineComponent nearestMachine = null;
-                float nearestDistance = float.MaxValue;
-
-                foreach (Collider collider in colliders)
-                {
-                    if (collider.TryGetComponent<MachineComponent>(out var machine))
-                    {
-                        float distance = Vector3.Distance(transform.position, machine.transform.position);
-                        if (distance < nearestDistance)
-                        {
-                            nearestDistance = distance;
-                            nearestMachine = machine;
-                        }
-                    }
-                }
-
-                if (nearestMachine != null)
-                {
-                    machineType = nearestMachine.GetMachineType();
-                }
-                else
-                {
-                    machineType = (MachineType)(-1);
-                }
+                MachineComponent nearestMachine = FindClosestInteractibleMachine();
+                machineType = nearestMachine != null ? nearestMachine.GetMachineType() : (MachineType)(-1);
 
             }
         }
@@ -198,6 +174,29 @@ namespace PlayerControls
             }
 
             return Vector3.zero;
+        }
+
+        private MachineComponent FindClosestInteractibleMachine()
+        {
+            Collider[] colliders = Physics.OverlapSphere(transform.position, _interactionDistance);
+
+            MachineComponent nearestMachine = null;
+            float nearestDistance = float.MaxValue;
+
+            foreach (Collider collider in colliders)
+            {
+                if (collider.TryGetComponent<MachineComponent>(out var machine))
+                {
+                    float distance = Vector3.Distance(transform.position, machine.transform.position);
+                    if (distance < nearestDistance)
+                    {
+                        nearestDistance = distance;
+                        nearestMachine = machine;
+                    }
+                }
+            }
+
+            return nearestMachine;
         }
 
         public void OnCraft(InputAction.CallbackContext context)
@@ -241,7 +240,7 @@ namespace PlayerControls
 
             onRotate.Invoke(1);
         }
-        
+
         public void OnUseTool(InputAction.CallbackContext context)
         {
             if (context.performed)
@@ -272,7 +271,7 @@ namespace PlayerControls
             {
                 return;
             }
-            
+
             if (context.performed)
             {
                 terraformController.ToggleTerraform();
@@ -295,7 +294,7 @@ namespace PlayerControls
                 onPopup.Invoke(new PopupData("Not enough soil", IconRepository.IconType.Error));
                 return false;
             }
-            
+
             SoilResource soilResource = _playerInventory.GetSoilResource();
 
             // This should never be null, but just in case
@@ -311,14 +310,14 @@ namespace PlayerControls
         public override void CollectSoil(float amount)
         {
             _soilData ??= _itemRegistry.Get(0x6F9576E5);
-            
-            SoilResource soilResource  = _playerInventory.AddSoil(_soilData, amount);
+
+            SoilResource soilResource = _playerInventory.AddSoil(_soilData, amount);
 
             if (soilResource == null)
             {
                 return;
             }
-            
+
             onProgress.Invoke(new ProgressData(_soilData.Name, _soilData.Icon, soilResource.Count,
                 soilResource.MaxCount, soilResource.Item));
         }
@@ -336,7 +335,7 @@ namespace PlayerControls
             if (intermediateResource != null)
             {
                 Destroy(resource.gameObject);
-                
+
                 onProgress.Invoke(new ProgressData(item.Name, item.Icon, intermediateResource.Count,
                     intermediateResource.NeededCollectionCount, intermediateResource.Item));
             }
@@ -347,7 +346,7 @@ namespace PlayerControls
 
             return intermediateResource != null;
         }
-    
+
         private IEnumerator GiveItems()
         {
             if (!_itemRegistry.Initialized)
