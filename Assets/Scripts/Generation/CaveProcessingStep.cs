@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Random = System.Random;
 
 public class CaveProcessingStep : ProcessingStep
 {
@@ -11,8 +10,16 @@ public class CaveProcessingStep : ProcessingStep
 
     public ComputeShader shader;
 
-    public override void Process(ComputeBuffer pointsBuffer, int numPointsPerAxis, int seed, float boundsSize, Vector3 centre, ProcessingResult result)
+    private bool _initialized;
+    private ComputeBuffer _offsetsBuffer;
+
+    private void InitializeBuffers(float boundsSize, int numPointsPerAxis, int seed)
     {
+        if (_initialized)
+        {
+            return;
+        }
+
         shader.SetInt("octaves", 6);
         shader.SetFloat("lacunarity", caveParameters.lacunarity);
         shader.SetFloat("persistence", caveParameters.persistence);
@@ -24,39 +31,53 @@ public class CaveProcessingStep : ProcessingStep
         shader.SetFloat("hardFloorWeight", caveParameters.hardFloorWeight);
         shader.SetFloat("hardCeil", caveParameters.hardCeil);
         shader.SetFloat("hardCeilWeight", caveParameters.hardCeilWeight);
-        shader.SetVector("offset", new Vector4(caveParameters.offset.x,caveParameters.offset.y,caveParameters.offset.z, 0));
+        shader.SetVector("offset",
+            new Vector4(caveParameters.offset.x, caveParameters.offset.y, caveParameters.offset.z, 0));
         shader.SetVector("params", caveParameters.shaderParams);
         shader.SetFloat("biomeScale", biomeScale);
         shader.SetFloat("boundsSize", boundsSize);
-        shader.SetVector("centre", centre * boundsSize);
         shader.SetFloat("spacing", boundsSize / (numPointsPerAxis - 1));
-        shader.SetInt("numPointsPerAxis", numPointsPerAxis);
         shader.SetFloat("mixA", mixA);
         shader.SetFloat("mixB", mixB);
-        
-        
-        var prng = new System.Random(seed);
+        shader.SetInt("numPointsPerAxis", numPointsPerAxis);
 
-        var offsets = new Vector3[6];
+        Random prng = new Random(seed);
+
+        Vector3[] offsets = new Vector3[6];
         float offsetRange = 1000;
-        for (int i = 0; i < 6; i++) {
-            offsets[i] = new Vector3 ((float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1) * offsetRange;
+        for (int i = 0; i < 6; i++)
+        {
+            offsets[i] = new Vector3((float)prng.NextDouble() * 2 - 1, (float)prng.NextDouble() * 2 - 1,
+                (float)prng.NextDouble() * 2 - 1) * offsetRange;
         }
-        
-        prng = new System.Random(seed);
-        Vector3 biomeOffset = new Vector3 ((float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1) * offsetRange;
-        shader.SetVector("biomeOffset", biomeOffset);
-        
-        ComputeBuffer offsetsBuffer = new ComputeBuffer (offsets.Length, sizeof (float) * 3);
-        offsetsBuffer.SetData (offsets);
 
-        shader.SetBuffer(0, "offsets", offsetsBuffer);
+        prng = new Random(seed);
+        Vector3 biomeOffset = new Vector3((float)prng.NextDouble() * 2 - 1, (float)prng.NextDouble() * 2 - 1,
+            (float)prng.NextDouble() * 2 - 1) * offsetRange;
+        shader.SetVector("biomeOffset", biomeOffset);
+
+        _offsetsBuffer = new ComputeBuffer(offsets.Length, sizeof(float) * 3);
+        _offsetsBuffer.SetData(offsets);
+
+        shader.SetBuffer(0, "offsets", _offsetsBuffer);
+        _initialized = true;
+    }
+
+    public override void Process(ComputeBuffer pointsBuffer, int numPointsPerAxis, int seed, float boundsSize,
+        Vector3 centre, ProcessingResult result)
+    {
+        InitializeBuffers(boundsSize, numPointsPerAxis, seed);
+
+        shader.SetVector("centre", centre * boundsSize);
         shader.SetBuffer(0, "points", pointsBuffer);
 
-        var numThreads = Mathf.CeilToInt(numPointsPerAxis / 8f);
+        int numThreads = Mathf.CeilToInt(numPointsPerAxis / 8f);
 
         shader.Dispatch(0, numThreads, numThreads, numThreads);
+    }
 
-        offsetsBuffer.Release();
+    public override void Dispose()
+    {
+        _offsetsBuffer?.Release();
     }
 }

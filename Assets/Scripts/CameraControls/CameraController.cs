@@ -22,6 +22,7 @@ namespace CameraControls
         
         private Vector2 _remainingAngle;
         private float _currentVerticalAngle;
+        private bool _isLocked;
 
         private void Start()
         {
@@ -36,6 +37,10 @@ namespace CameraControls
         private void LateUpdate()
         {
             Vector2 mouseDelta = Mouse.current.delta.ReadValue();
+            if (_isLocked)
+            {
+                mouseDelta = Vector2.zero;
+            }
             _remainingAngle += DeltaToDegrees(mouseDelta);
 
             if ((_remainingAngle.y + _currentVerticalAngle) > maxVerticalAngle)
@@ -67,7 +72,7 @@ namespace CameraControls
                 _cameraTransform.position = hit.point + hit.normal * 0.1f;
             }
         }
-        
+
         public Transform GetHorizontalTransform()
         {
             return _cameraParentTransform;
@@ -76,6 +81,21 @@ namespace CameraControls
         private Vector2 DeltaToDegrees(Vector2 delta)
         {
             return new Vector2(delta.x * cameraHorizontalRotationFactor, -delta.y * cameraVerticalRotationFactor);
+        }
+        
+        public float GetYRotation()
+        {
+            return _cameraParentTransform.rotation.eulerAngles.y;
+        }
+        
+        public void Lock()
+        {
+            _isLocked = true;
+        }
+        
+        public void Unlock()
+        {
+            _isLocked = false;
         }
     }
 }

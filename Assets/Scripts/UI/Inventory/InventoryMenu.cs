@@ -7,7 +7,7 @@ namespace UI.Inventory
 {
     public class InventoryMenu : MonoBehaviour
     {
-        [SerializeField] private Player player;
+        private Player _player;
         private VisualElement _inventoryContainer;
         private GridInventoryViewer _inventoryViewer;
         private bool _isInventoryMenuOpen;
@@ -18,6 +18,7 @@ namespace UI.Inventory
             _root = GetComponent<UIDocument>().rootVisualElement;
             _root.style.display = DisplayStyle.None;
             _inventoryContainer = _root.Q<VisualElement>("Grid");
+            _player = GameObject.FindWithTag("Player").GetComponent<Player>();
         }
 
         public void Update()
@@ -33,10 +34,15 @@ namespace UI.Inventory
             _inventoryViewer?.Rotate(direction);
         }
 
+        public bool IsOpen()
+        {
+            return _isInventoryMenuOpen;
+        }
+
         private void Open()
         {
             PlayerInventoryViewer inventoryViewer =
-                new(_root, _inventoryContainer, player.GetInventory());
+                new(_root, _inventoryContainer, _player.GetInventory());
             inventoryViewer.Show();
             _root.style.display = DisplayStyle.Flex;
             _isInventoryMenuOpen = true;

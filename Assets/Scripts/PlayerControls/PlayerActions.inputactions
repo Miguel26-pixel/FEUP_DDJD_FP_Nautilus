@@ -231,6 +231,74 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Tool",
+            "id": "5ee0ce1e-9e3b-4a42-9024-28cf7a73e077",
+            "actions": [
+                {
+                    "name": "Equip Tool",
+                    "type": "Button",
+                    "id": "1f1de201-4a85-4b2a-9298-4916201eb2d3",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Use Right Tool",
+                    "type": "Button",
+                    "id": "4f188089-938f-42db-a220-46cf13e5373b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Use Tool",
+                    "type": "Button",
+                    "id": "73c79390-0a99-4ed8-b8fb-537b31463c87",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "6849c435-cc7f-49be-9b6f-f4264738f02f",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Use Tool",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "626e75dd-5d83-4071-a6e0-87c614a9a9b0",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Use Right Tool",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9f0a1b84-e29c-441d-bfac-8fc9044b744d",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Equip Tool",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [

@@ -253,6 +253,74 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Tool"",
+            ""id"": ""5ee0ce1e-9e3b-4a42-9024-28cf7a73e077"",
+            ""actions"": [
+                {
+                    ""name"": ""Equip Tool"",
+                    ""type"": ""Button"",
+                    ""id"": ""1f1de201-4a85-4b2a-9298-4916201eb2d3"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Use Right Tool"",
+                    ""type"": ""Button"",
+                    ""id"": ""4f188089-938f-42db-a220-46cf13e5373b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Use Tool"",
+                    ""type"": ""Button"",
+                    ""id"": ""73c79390-0a99-4ed8-b8fb-537b31463c87"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""6849c435-cc7f-49be-9b6f-f4264738f02f"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Use Tool"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""626e75dd-5d83-4071-a6e0-87c614a9a9b0"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Use Right Tool"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9f0a1b84-e29c-441d-bfac-8fc9044b744d"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Equip Tool"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -275,6 +343,11 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
         m_Movement_Run = m_Movement.FindAction("Run", throwIfNotFound: true);
         m_Movement_Jump = m_Movement.FindAction("Jump", throwIfNotFound: true);
         m_Movement_Move = m_Movement.FindAction("Move", throwIfNotFound: true);
+        // Tool
+        m_Tool = asset.FindActionMap("Tool", throwIfNotFound: true);
+        m_Tool_EquipTool = m_Tool.FindAction("Equip Tool", throwIfNotFound: true);
+        m_Tool_UseRightTool = m_Tool.FindAction("Use Right Tool", throwIfNotFound: true);
+        m_Tool_UseTool = m_Tool.FindAction("Use Tool", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -444,6 +517,55 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
         }
     }
     public MovementActions @Movement => new MovementActions(this);
+
+    // Tool
+    private readonly InputActionMap m_Tool;
+    private IToolActions m_ToolActionsCallbackInterface;
+    private readonly InputAction m_Tool_EquipTool;
+    private readonly InputAction m_Tool_UseRightTool;
+    private readonly InputAction m_Tool_UseTool;
+    public struct ToolActions
+    {
+        private @PlayerActions m_Wrapper;
+        public ToolActions(@PlayerActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @EquipTool => m_Wrapper.m_Tool_EquipTool;
+        public InputAction @UseRightTool => m_Wrapper.m_Tool_UseRightTool;
+        public InputAction @UseTool => m_Wrapper.m_Tool_UseTool;
+        public InputActionMap Get() { return m_Wrapper.m_Tool; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(ToolActions set) { return set.Get(); }
+        public void SetCallbacks(IToolActions instance)
+        {
+            if (m_Wrapper.m_ToolActionsCallbackInterface != null)
+            {
+                @EquipTool.started -= m_Wrapper.m_ToolActionsCallbackInterface.OnEquipTool;
+                @EquipTool.performed -= m_Wrapper.m_ToolActionsCallbackInterface.OnEquipTool;
+                @EquipTool.canceled -= m_Wrapper.m_ToolActionsCallbackInterface.OnEquipTool;
+                @UseRightTool.started -= m_Wrapper.m_ToolActionsCallbackInterface.OnUseRightTool;
+                @UseRightTool.performed -= m_Wrapper.m_ToolActionsCallbackInterface.OnUseRightTool;
+                @UseRightTool.canceled -= m_Wrapper.m_ToolActionsCallbackInterface.OnUseRightTool;
+                @UseTool.started -= m_Wrapper.m_ToolActionsCallbackInterface.OnUseTool;
+                @UseTool.performed -= m_Wrapper.m_ToolActionsCallbackInterface.OnUseTool;
+                @UseTool.canceled -= m_Wrapper.m_ToolActionsCallbackInterface.OnUseTool;
+            }
+            m_Wrapper.m_ToolActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @EquipTool.started += instance.OnEquipTool;
+                @EquipTool.performed += instance.OnEquipTool;
+                @EquipTool.canceled += instance.OnEquipTool;
+                @UseRightTool.started += instance.OnUseRightTool;
+                @UseRightTool.performed += instance.OnUseRightTool;
+                @UseRightTool.canceled += instance.OnUseRightTool;
+                @UseTool.started += instance.OnUseTool;
+                @UseTool.performed += instance.OnUseTool;
+                @UseTool.canceled += instance.OnUseTool;
+            }
+        }
+    }
+    public ToolActions @Tool => new ToolActions(this);
     private int m_TestSchemeIndex = -1;
     public InputControlScheme TestScheme
     {
@@ -466,5 +588,11 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
         void OnRun(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnMove(InputAction.CallbackContext context);
+    }
+    public interface IToolActions
+    {
+        void OnEquipTool(InputAction.CallbackContext context);
+        void OnUseRightTool(InputAction.CallbackContext context);
+        void OnUseTool(InputAction.CallbackContext context);
     }
 }

@@ -20,14 +20,14 @@ namespace UI.Inventory.Components
         public ContextMenuViewer(VisualElement root)
         {
             _root = root;
-            
+
             _itemContext = root.Q<VisualElement>("ItemContext");
             if (_itemContext == null)
             {
                 Resources.Load<VisualTreeAsset>("UI/ItemContext").CloneTree(root);
                 _itemContext = root.Q<VisualElement>("ItemContext");
             }
-            
+
             _contextActions = _itemContext.Q<VisualElement>("ContextActions");
 
             _textButtonTemplate = Resources.Load<VisualTreeAsset>("UI/TextButton");

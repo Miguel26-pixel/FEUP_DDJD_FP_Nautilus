@@ -11,9 +11,11 @@ struct Triangle {
 
 AppendStructuredBuffer<Triangle> triangles;
 RWStructuredBuffer<float4> points;
+RWStructuredBuffer<float> modifiedNoise;
 
 int numPointsPerAxis;
 float isoLevel;
+bool useModifiedNoise;
 
 float3 interpolateVerts(float4 v1, float4 v2) {
     float t = (isoLevel - v1.w) / (v2.w - v1.w);
@@ -33,14 +35,14 @@ void March (int3 id : SV_DispatchThreadID)
 
     // 8 corners of the current cube
     float4 cubeCorners[8] = {
-        points[indexFromCoord(id.x, id.y, id.z)],
-        points[indexFromCoord(id.x + 1, id.y, id.z)],
-        points[indexFromCoord(id.x + 1, id.y, id.z + 1)],
-        points[indexFromCoord(id.x, id.y, id.z + 1)],
-        points[indexFromCoord(id.x, id.y + 1, id.z)],
-        points[indexFromCoord(id.x + 1, id.y + 1, id.z)],
-        points[indexFromCoord(id.x + 1, id.y + 1, id.z + 1)],
-        points[indexFromCoord(id.x, id.y + 1, id.z + 1)]
+        points[indexFromCoord(id.x, id.y, id.z)] + float4(0, 0, 0, (useModifiedNoise) * modifiedNoise[indexFromCoord(id.x, id.y, id.z)]),
+        points[indexFromCoord(id.x + 1, id.y, id.z)] + float4(0, 0, 0, (useModifiedNoise) * modifiedNoise[indexFromCoord(id.x + 1, id.y, id.z)]),
+        points[indexFromCoord(id.x + 1, id.y, id.z + 1)] + float4(0, 0, 0, (useModifiedNoise) * modifiedNoise[indexFromCoord(id.x + 1, id.y, id.z + 1)]),
+        points[indexFromCoord(id.x, id.y, id.z + 1)] + float4(0, 0, 0, (useModifiedNoise) * modifiedNoise[indexFromCoord(id.x, id.y, id.z + 1)]),
+        points[indexFromCoord(id.x, id.y + 1, id.z)] + float4(0, 0, 0, (useModifiedNoise) * modifiedNoise[indexFromCoord(id.x, id.y + 1, id.z)]),
+        points[indexFromCoord(id.x + 1, id.y + 1, id.z)] + float4(0, 0, 0, (useModifiedNoise) * modifiedNoise[indexFromCoord(id.x + 1, id.y + 1, id.z)]),
+        points[indexFromCoord(id.x + 1, id.y + 1, id.z + 1)] + float4(0, 0, 0, (useModifiedNoise) * modifiedNoise[indexFromCoord(id.x + 1, id.y + 1, id.z + 1)]),
+        points[indexFromCoord(id.x, id.y + 1, id.z + 1)] + float4(0, 0, 0, (useModifiedNoise) * modifiedNoise[indexFromCoord(id.x, id.y + 1, id.z + 1)])
     };
 
 

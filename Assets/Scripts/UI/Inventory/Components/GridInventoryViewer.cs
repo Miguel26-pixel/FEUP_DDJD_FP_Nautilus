@@ -61,13 +61,14 @@ namespace UI.Inventory.Components
         {
             _inventory = inventory;
             _inventoryBounds = _inventory.GetBounds();
-            
+
             _draggedItem = root.Q<VisualElement>("ItemDrag");
             if (_draggedItem == null)
             {
                 Resources.Load<VisualTreeAsset>("UI/ItemDrag").CloneTree(root);
                 _draggedItem = root.Q<VisualElement>("ItemDrag");
             }
+
             _draggedItem.style.display = DisplayStyle.None;
 
             _infoBoxViewer = new InfoBoxViewer(root);

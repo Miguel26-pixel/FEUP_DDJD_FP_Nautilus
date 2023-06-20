@@ -43,10 +43,6 @@ void Density (int3 id : SV_DispatchThreadID)
     
     float multBiomeB = smoothstep(a, b, biomeNoise);
     float multBiomeA = 1 - multBiomeB;
-
-    hardFloor = hardCeil * multBiomeB + hardFloor * multBiomeA;
-    hardFloorWeight = 50 * weightMultiplier * noiseWeight * multBiomeB + hardFloorWeight * multBiomeA;
-    hardCeilWeight = 50 * weightMultiplier * noiseWeight * multBiomeB + hardCeilWeight * multBiomeA;
     
     int index = indexFromCoord(id.x,id.y,id.z);
 
@@ -71,5 +67,8 @@ void Density (int3 id : SV_DispatchThreadID)
     finalVal += hardFloorWeight * (pos.y < hardFloor);
     finalVal += hardCeilWeight * (pos.y > hardCeil);
 
+    finalVal = lerp(finalVal, 24, multBiomeB);
+
+    finalVal = clamp(finalVal, 5, 25);
     points[index] = float4(pos, finalVal);
 }
