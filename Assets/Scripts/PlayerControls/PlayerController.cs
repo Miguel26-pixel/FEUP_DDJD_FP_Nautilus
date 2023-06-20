@@ -282,7 +282,7 @@ namespace PlayerControls
             {
                 float distance = Mathf.Clamp01((transform.position.y - hit.point.y) / waterDistance);
                 if(distance <= 0.6f){
-                    underWater = true;
+                    underWater = !underWater;
                 }
                 _animator.SetFloat("WaterDistance", distance);
             }
