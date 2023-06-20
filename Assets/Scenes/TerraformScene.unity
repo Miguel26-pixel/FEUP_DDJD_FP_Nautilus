@@ -2784,7 +2784,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chunkDistanceRadius: 4
-  resourceDistanceRadius: 2
+  resourceDistanceRadius: 3
   sqrCheckDistanceInterval: 10
 --- !u!114 &1298936911
 MonoBehaviour:
