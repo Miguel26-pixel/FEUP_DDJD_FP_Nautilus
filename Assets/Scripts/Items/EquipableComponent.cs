@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using PlayerControls;
 
 namespace Items
 {
@@ -24,8 +25,8 @@ namespace Items
 
         [JsonProperty("durability")] public int Durability { get; }
 
-        public abstract void OnEquip();
-        public abstract void OnUnequip();
+        public abstract void OnEquip(Player player, Item i);
+        public abstract void OnUnequip(Player player, Item i);
     }
 
     [Serializable]
