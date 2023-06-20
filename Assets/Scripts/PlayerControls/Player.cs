@@ -9,6 +9,7 @@ using UI.Inventory;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 namespace PlayerControls
 {
@@ -46,6 +47,7 @@ namespace PlayerControls
 
         [SerializeField]
         private float _interactionDistance = 3f;
+        private float _placementDistance = 10f;
 
         private PlayerInventory _playerInventory = new("Inventory", new[,]
         {
@@ -170,12 +172,23 @@ namespace PlayerControls
                 _canPlaceObject = collider.gameObject.layer != LayerMask.NameToLayer("Water");
                 Vector3 contactPoint = hit.point;
                 Vector3 placementPosition = contactPoint + Vector3.up * (_placingObject.transform.localScale.y * 0.5f + 0.05f);
-                return placementPosition;
+
+                float currentDistance = Vector3.Distance(transform.position, placementPosition);
+
+                if (currentDistance <= _placementDistance)
+                {
+                    return placementPosition;
+                }
+                else
+                {
+                    Vector3 playerToPlacement = (placementPosition - transform.position).normalized;
+                    Vector3 closestPosition = transform.position + playerToPlacement * _placementDistance;
+                    return closestPosition;
+                }
             }
 
             return Vector3.zero;
         }
-
         private MachineComponent FindClosestInteractibleMachine()
         {
             Collider[] colliders = Physics.OverlapSphere(transform.position, _interactionDistance);
@@ -358,13 +371,13 @@ namespace PlayerControls
             _playerInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
             _playerInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
             _playerInventory.AddItem(_itemRegistry.Get(0x238E2A2D).CreateInstance());
-            // _playerInventory.AddItem(_itemRegistry.Get(0x2E79821C).CreateInstance());
-            // _playerInventory.AddItem(_itemRegistry.Get(0x755CFE42).CreateInstance());
-            // _playerInventory.AddItem(_itemRegistry.Get(0xE3847C27).CreateInstance());
-            // _playerInventory.AddItem(_itemRegistry.Get(0xDEC31753).CreateInstance());
-            // _playerInventory.AddItem(_itemRegistry.Get(0x5BFE8AE3).CreateInstance());
-            // _playerInventory.AddItem(_itemRegistry.Get(0xFE3EC9B0).CreateInstance());
-            // _playerInventory.AddItem(_itemRegistry.Get(0x5C5C52AF).CreateInstance());
+            _playerInventory.AddItem(_itemRegistry.Get(0x2E79821C).CreateInstance());
+            _playerInventory.AddItem(_itemRegistry.Get(0x755CFE42).CreateInstance());
+            _playerInventory.AddItem(_itemRegistry.Get(0xE3847C27).CreateInstance());
+            _playerInventory.AddItem(_itemRegistry.Get(0xDEC31753).CreateInstance());
+            _playerInventory.AddItem(_itemRegistry.Get(0x5BFE8AE3).CreateInstance());
+            _playerInventory.AddItem(_itemRegistry.Get(0xFE3EC9B0).CreateInstance());
+            _playerInventory.AddItem(_itemRegistry.Get(0x5C5C52AF).CreateInstance());
 
 
             Debug.Log("Gave items");
