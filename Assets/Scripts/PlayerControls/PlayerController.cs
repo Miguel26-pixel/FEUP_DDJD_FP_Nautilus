@@ -34,13 +34,16 @@ namespace PlayerControls
         [Header("Movement")]
         public float walkingSpeed = 6.0f;
         public float runningSpeed = 12.0f;
-        [Range(-1f, 2f)] 
+        [Range(-1f, 2f)]
         public float distanceToGround = 0.1f;
         public float animationToGround = 0.1f;
 
         public float legDistance = 33.76f;
         [SerializeField] private LayerMask groundLayer;
         [SerializeField] private LayerMask waterLayer;
+
+        private float _walkingBoost = 0;
+        private float _swimmingBoost = 0;
 
         private float _speed;
         private float _targetSpeed;
@@ -177,6 +180,7 @@ namespace PlayerControls
         
         private void Update()
         {
+            Debug.Log(underWater);
             if (_player.IsDead)
             {
                 return;
@@ -198,13 +202,12 @@ namespace PlayerControls
             
             HandleWater();
             _cameraRelativeMovement = ConvertToCameraSpace(_currentMovement);
-            if(underWater && (_cameraTransform.rotation.x < 0) && 19.5f > transform.position.y)
+
+            if (underWater && 19.5f > transform.position.y)
             {
-                _cameraRelativeMovement.y = 1f;
-            }else if (underWater && (_cameraTransform.rotation.x > 0))
-            {
-                _cameraRelativeMovement.y = -1f;
+                _cameraRelativeMovement.y = -((0.3f + Mathf.Clamp(_cameraTransform.localRotation.x, -0.3f, 0.3f)) / 0.6f * 3f - 1.5f);
             }
+
             HandleRotation();
             HandleAnimation();
             HandleGravity();
@@ -273,17 +276,16 @@ namespace PlayerControls
 
         private void HandleWater()
         {
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, Vector3.down, out hit, 10f, waterLayer))
+            if (Physics.Raycast(transform.position, Vector3.up, out var hit, 1000f, waterLayer))
             {
-                float distance = Mathf.Clamp01((transform.position.y - hit.point.y) / waterDistance);
-                if(distance <= 0.6f){
-                    underWater = !underWater;
-                }
+                float distance = Mathf.Clamp01((hit.point.y - transform.position.y) / waterDistance);
+                underWater = true;
+
                 _animator.SetFloat("WaterDistance", distance);
             }
             else
             {
+                underWater = false;
                 _animator.SetFloat("WaterDistance", 0f);
             }
         }
@@ -299,7 +301,7 @@ namespace PlayerControls
             {
                 animSpeed = (_speed - walkingSpeed) / (runningSpeed - walkingSpeed) + 1;
             }
-            
+
             _animator.SetFloat(Speed, animSpeed);
             _animator.SetBool(Grounded, _characterController.isGrounded);
         }
@@ -315,12 +317,11 @@ namespace PlayerControls
 
             positionToLookAt.x = _cameraRelativeMovement.x;
             positionToLookAt.y = 0.0f;
-            if(underWater && (_cameraTransform.rotation.x < 0)){
-                positionToLookAt.y = 0.5f;
-            }else if(underWater && (_cameraTransform.rotation.x > 0))
+            if (underWater)
             {
-                positionToLookAt.y = -0.5f;
+                positionToLookAt.y = -((0.3f + Mathf.Clamp(_cameraTransform.localRotation.x, -0.3f, 0.3f)) / 0.6f * 2f - 1f);
             }
+
             positionToLookAt.z = _cameraRelativeMovement.z;
 
             Quaternion currentRotation = transform.rotation;
@@ -436,17 +437,16 @@ namespace PlayerControls
         private IEnumerator BlendJumpLayers(float endOverride, JumpState state)
         {
             float startOverride = _animator.GetLayerWeight(_jumpOverrideLayer);
-            
+
             float t = 0f;
-            
+
             while (t < 1f && _jumpState == state)
             {
                 t += Time.deltaTime * 9f;
                 float currentBlendOverride = Mathf.Lerp(startOverride, endOverride, t);
-                
+
                 _animator.SetLayerWeight(_jumpOverrideLayer, currentBlendOverride);
-                
-                
+
                 yield return null;
             }
         }
