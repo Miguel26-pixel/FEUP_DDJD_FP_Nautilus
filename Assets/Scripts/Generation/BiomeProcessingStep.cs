@@ -1,8 +1,9 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = System.Random;
 
-public class BiomeProcessingStep : ProcessingStep
+public class BiomeProcessingStep : ProcessingStep, IDisposable
 {
     public List<BiomeParameters> biomeParameters;
     public List<float> biomesValues;
@@ -13,71 +14,84 @@ public class BiomeProcessingStep : ProcessingStep
     public float islandFalloff = 10;
 
     public ComputeShader shader;
+    private ComputeBuffer _biomeNoiseBuffer;
 
-    public override void Process(ComputeBuffer pointsBuffer, int numPointsPerAxis, int seed, float boundsSize, Vector3 centre, ProcessingResult result)
+    private ComputeBuffer _biomeParametersBuffer;
+    private ComputeBuffer _biomeValuesBuffer;
+
+    private bool _initialized;
+    private ComputeBuffer _offsetsBuffer;
+
+    public override void Dispose()
     {
-        Vector3[] biomeNoise = new Vector3[numPointsPerAxis * numPointsPerAxis];
-        
-        var size = 19 * sizeof(float);
-        ComputeBuffer biomeParametersBuffer = new ComputeBuffer(biomeParameters.Count, size);
-        biomeParametersBuffer.SetData(biomeParameters);
-        ComputeBuffer biomeValuesBuffer = new ComputeBuffer(biomesValues.Count, sizeof(float));
-        biomeValuesBuffer.SetData(biomesValues);
-        ComputeBuffer biomeNoiseBuffer = new ComputeBuffer(biomeNoise.Length, sizeof(float) * 3);
+        _biomeParametersBuffer?.Release();
+        _biomeValuesBuffer?.Release();
+        _biomeNoiseBuffer?.Release();
+        _offsetsBuffer?.Release();
+    }
 
-        shader.SetBuffer(0, "biomes", biomeParametersBuffer);
-        shader.SetBuffer(0, "biomesValues", biomeValuesBuffer);
-        shader.SetBuffer(0, "biomeNoiseB", biomeNoiseBuffer);
+    private void InitializeBuffers(int seed, float boundsSize, int numPointsPerAxis)
+    {
+        if (_initialized)
+        {
+            return;
+        }
+
+        const int size = 19 * sizeof(float);
+        _biomeParametersBuffer = new ComputeBuffer(biomeParameters.Count, size);
+        _biomeParametersBuffer.SetData(biomeParameters);
+        _biomeValuesBuffer = new ComputeBuffer(biomesValues.Count, sizeof(float));
+        _biomeValuesBuffer.SetData(biomesValues);
+        _biomeNoiseBuffer = new ComputeBuffer(numPointsPerAxis * numPointsPerAxis, sizeof(float) * 3);
+
+        shader.SetBuffer(0, "biomeNoiseB", _biomeNoiseBuffer);
+        shader.SetBuffer(0, "biomes", _biomeParametersBuffer);
+        shader.SetBuffer(0, "biomesValues", _biomeValuesBuffer);
+
+        Random prng = new Random(seed);
+
+        Vector3[] offsets = new Vector3[8];
+        float offsetRange = 1000;
+        for (int i = 0; i < 8; i++)
+        {
+            offsets[i] = new Vector3((float)prng.NextDouble() * 2 - 1, (float)prng.NextDouble() * 2 - 1,
+                (float)prng.NextDouble() * 2 - 1) * offsetRange;
+        }
+
+        prng = new Random(seed);
+        Vector3 biomeOffset = new Vector3((float)prng.NextDouble() * 2 - 1, (float)prng.NextDouble() * 2 - 1,
+            (float)prng.NextDouble() * 2 - 1) * offsetRange;
+        shader.SetVector("biomeOffset", biomeOffset);
+
+        _offsetsBuffer = new ComputeBuffer(offsets.Length, sizeof(float) * 3);
+        _offsetsBuffer.SetData(offsets);
+
+        shader.SetBuffer(0, "offsets", _offsetsBuffer);
+
         shader.SetInt("numBiomes", biomeParameters.Count);
         shader.SetFloat("biomeScale", biomeScale);
         shader.SetFloat("boundsSize", boundsSize);
-        shader.SetVector("centre", centre * boundsSize);
-        shader.SetFloat("spacing", boundsSize / (numPointsPerAxis - 1));
         shader.SetInt("numPointsPerAxis", numPointsPerAxis);
+        shader.SetFloat("spacing", boundsSize / (numPointsPerAxis - 1));
+
         shader.SetFloat("falloff", islandFalloff);
         shader.SetFloat("radius", islandRadius);
         shader.SetVector("initPos", initPos);
-        
-        var prng = new System.Random(seed);
 
-        var offsets = new Vector3[8];
-        float offsetRange = 1000;
-        for (int i = 0; i < 8; i++) {
-            offsets[i] = new Vector3 ((float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1) * offsetRange;
-        }
-        
-        prng = new System.Random(seed);
-        Vector3 biomeOffset = new Vector3 ((float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1, (float) prng.NextDouble () * 2 - 1) * offsetRange;
-        shader.SetVector("biomeOffset", biomeOffset);
+        _initialized = true;
+    }
 
-        ComputeBuffer offsetsBuffer = new ComputeBuffer (offsets.Length, sizeof (float) * 3);
-        offsetsBuffer.SetData (offsets);
+    public override void Process(ComputeBuffer pointsBuffer, int numPointsPerAxis, int seed, float boundsSize,
+        Vector3 centre, ProcessingResult result)
+    {
+        InitializeBuffers(seed, boundsSize, numPointsPerAxis);
 
-        shader.SetBuffer(0, "offsets", offsetsBuffer);
+        shader.SetVector("centre", centre * boundsSize);
         shader.SetBuffer(0, "points", pointsBuffer);
 
-        var numThreads = Mathf.CeilToInt(numPointsPerAxis / 8f);
+        int numThreads = Mathf.CeilToInt(numPointsPerAxis / 8f);
 
         shader.Dispatch(0, numThreads, numThreads, numThreads);
-
-        biomeNoiseBuffer.GetData(biomeNoise);
-        
-        for (int i = 0; i < biomeNoise.Length; i++)
-        {
-            float y = biomeNoise[i].y;
-            float x = biomeNoise[i].x;
-            float biome = biomeNoise[i].z;
-            
-            float cellSize = boundsSize / (numPointsPerAxis - 1);
-            
-            int yIndex = Mathf.FloorToInt((y - centre.z * boundsSize + boundsSize / 2) / cellSize);
-            int xIndex = Mathf.FloorToInt((x - centre.x * boundsSize + boundsSize / 2) / cellSize);
-            result.biomeNoise[yIndex, xIndex] = biome;
-        }
-
-        offsetsBuffer.Release();
-        biomeParametersBuffer.Release();
-        biomeValuesBuffer.Release();
-        biomeNoiseBuffer.Release();
+        result.biomeBuffer = _biomeNoiseBuffer;
     }
 }

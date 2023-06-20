@@ -120,6 +120,7 @@ void Density (int3 id : SV_DispatchThreadID)
     float finalVal = -(pos.y + floorOffset) + noise * noiseWeight + (pos.y%params.x) * params.y;
     finalVal += hardFloorWeight * (pos.y < hardFloor);
     finalVal += hardCeilWeight * (pos.y > hardCeil);
+    finalVal = clamp(finalVal, 5, 25);
     
     int index = indexFromCoord(id.x,id.y,id.z);
     points[index] = float4(pos, finalVal);

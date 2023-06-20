@@ -10,10 +10,10 @@ namespace UI.Inventory
 {
     public record TransferAction
     {
+        public Action action;
         public List<string> classNames;
         public Sprite sprite;
-        public Action action;
-        
+
         public TransferAction(List<string> classNames, Sprite sprite, Action action)
         {
             this.classNames = classNames;
@@ -21,47 +21,36 @@ namespace UI.Inventory
             this.action = action;
         }
     }
-    
+
     public class TransferInventoryMenu : MonoBehaviour
     {
-        [Serializable]
-        public class DirectionSprite
-        {
-            public TransferDirection direction;
-            public Sprite sprite;
-        }
-        
+        public delegate bool TransferCondition(InventoryGrid inventoryGridLeft, InventoryGrid inventoryGridRight);
+
         public DirectionSprite[] transferDirectionArrows;
         public Sprite checkmark;
-        
-        private readonly Dictionary<TransferDirection, Sprite> _transferDirectionArrows =
-            new Dictionary<TransferDirection, Sprite>();
 
-        private VisualElement _root;
-        private VisualElement _inventoryContainerLeft;
-        private VisualElement _inventoryContainerRight;
+        private readonly Dictionary<TransferDirection, Sprite> _transferDirectionArrows = new();
+
         private VisualElement _directionArrow;
-        private VisualElement _topActions;
 
         private Label _inventory1Label;
         private Label _inventory2Label;
-        
+        private VisualElement _inventoryContainerLeft;
+        private VisualElement _inventoryContainerRight;
+
         private InventoryViewer<InventoryGrid> _inventoryViewerLeft;
         private InventoryViewer<InventoryGrid> _inventoryViewerRight;
-        
-        private bool _isTransferOpen;
-        public delegate bool TransferCondition(InventoryGrid inventoryGridLeft, InventoryGrid inventoryGridRight);
 
-        public bool DefaultTransferCondition(InventoryGrid inventoryGridLeft, InventoryGrid inventoryGridRight)
-        {
-            return true;
-        }
-        
+        private bool _isTransferOpen;
+
+        private VisualElement _root;
+        private VisualElement _topActions;
+
         private void Start()
         {
             _root = GetComponent<UIDocument>().rootVisualElement;
             _root.style.display = DisplayStyle.None;
-            
+
             _inventoryContainerLeft = _root.Q<VisualElement>("GridLeft");
             _inventoryContainerRight = _root.Q<VisualElement>("GridRight");
             _directionArrow = _root.Q<VisualElement>("DirectionArrow");
@@ -69,9 +58,8 @@ namespace UI.Inventory
 
             _inventory1Label = _root.Q<Label>("Inventory1Label");
             _inventory2Label = _root.Q<Label>("Inventory2Label");
-            
-            
-            
+
+
             foreach (DirectionSprite directionSprite in transferDirectionArrows)
             {
                 _transferDirectionArrows.Add(directionSprite.direction, directionSprite.sprite);
@@ -89,6 +77,16 @@ namespace UI.Inventory
             _inventoryViewerRight.Update();
         }
 
+        public bool DefaultTransferCondition(InventoryGrid inventoryGridLeft, InventoryGrid inventoryGridRight)
+        {
+            return true;
+        }
+
+        public bool IsOpen()
+        {
+            return _isTransferOpen;
+        }
+
         public void Rotate(int direction)
         {
             _inventoryViewerLeft?.Rotate(direction);
@@ -96,8 +94,9 @@ namespace UI.Inventory
         }
 
         public void Open(InventoryViewerBuilder<InventoryGrid> inventoryViewerBuilderLeft,
-            InventoryViewerBuilder<InventoryGrid> inventoryViewerBuilderRight, TransferDirection direction, 
-            List<TransferAction> transferActions, TransferCondition transferCondition = null, Action<InventoryGrid, InventoryGrid> onTransfer = null)
+            InventoryViewerBuilder<InventoryGrid> inventoryViewerBuilderRight, TransferDirection direction,
+            List<TransferAction> transferActions, TransferCondition transferCondition = null,
+            Action<InventoryGrid, InventoryGrid> onTransfer = null)
         {
             inventoryViewerBuilderLeft.inventoryContainer = _inventoryContainerLeft;
             inventoryViewerBuilderRight.inventoryContainer = _inventoryContainerRight;
@@ -106,40 +105,40 @@ namespace UI.Inventory
 
             _inventory1Label.text = inventoryViewerBuilderLeft.inventory.GetInventoryName();
             _inventory2Label.text = inventoryViewerBuilderRight.inventory.GetInventoryName();
-            
+
             _directionArrow.style.backgroundImage = new StyleBackground(_transferDirectionArrows[direction]);
-            
+
             transferCondition ??= DefaultTransferCondition;
             transferActions.Add(
-                        new TransferAction(new List<string>() {"green-tint"}, checkmark, () =>
-                            {
-                                if (!transferCondition(inventoryViewerBuilderLeft.inventory,
-                                        inventoryViewerBuilderRight.inventory))
-                                {
-                                    // TODO: Show that the transfer was not possible
-                                    return;
-                                }
+                new TransferAction(new List<string> { "green-tint" }, checkmark, () =>
+                    {
+                        if (!transferCondition(inventoryViewerBuilderLeft.inventory,
+                                inventoryViewerBuilderRight.inventory))
+                        {
+                            // TODO: Show that the transfer was not possible
+                            return;
+                        }
 
-                                onTransfer?.Invoke(inventoryViewerBuilderLeft.inventory, inventoryViewerBuilderRight.inventory);
-                                Close();
-                            }
-                        )
-                    );
+                        onTransfer?.Invoke(inventoryViewerBuilderLeft.inventory, inventoryViewerBuilderRight.inventory);
+                        Close();
+                    }
+                )
+            );
 
             _topActions.Clear();
-            foreach (var transferAction in transferActions)
+            foreach (TransferAction transferAction in transferActions)
             {
-                VisualElement action = new VisualElement();
+                VisualElement action = new();
                 action.AddToClassList("icon-button");
 
-                foreach (var className in transferAction.classNames)
+                foreach (string className in transferAction.classNames)
                 {
                     action.AddToClassList(className);
                 }
-                
+
                 action.style.backgroundImage = new StyleBackground(transferAction.sprite);
                 action.RegisterCallback<MouseUpEvent>(_ => transferAction.action());
-                
+
                 _topActions.Add(action);
             }
 
@@ -150,11 +149,12 @@ namespace UI.Inventory
             {
                 inventoryViewerLeft.onDragStart = inventoryViewerRight.HandleDragStart;
             }
+
             if ((direction & TransferDirection.DestinationToSource) != 0)
             {
                 inventoryViewerRight.onDragStart = inventoryViewerLeft.HandleDragStart;
             }
-            
+
             inventoryViewerLeft.onDragEnd = inventoryViewerRight.HandleDragEnd;
             inventoryViewerRight.onDragEnd = inventoryViewerLeft.HandleDragEnd;
 
@@ -172,6 +172,13 @@ namespace UI.Inventory
             _isTransferOpen = false;
             _inventoryViewerLeft.Close();
             _inventoryViewerRight.Close();
+        }
+
+        [Serializable]
+        public class DirectionSprite
+        {
+            public TransferDirection direction;
+            public Sprite sprite;
         }
     }
 }

@@ -14,10 +14,10 @@ TagManager:
   - Terrain
   - Water
   - UI
-  - Wall
+  - Resource
+  - OpaqueResource
   - Player
-  - 
-  - 
+  - Vacuum
   - 
   - 
   - 

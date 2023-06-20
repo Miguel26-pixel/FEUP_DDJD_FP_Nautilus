@@ -372,7 +372,7 @@
 }
 
 .green-tint {
-    -unity-background-image-tint-color: rgba(99, 140, 122, 255);
+    -unity-background-image-tint-color: rgb(99, 140, 122);
 }
 
 .red-tint {
@@ -385,4 +385,65 @@
 
 .red-tint:hover {
     -unity-background-image-tint-color: rgb(112, 49, 49);
+}
+
+.popup {
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: 0.7s;
+    max-width: 200px;
+    min-width: 200px;
+    margin-top: 15px;
+}
+
+.open .popup {
+    opacity: 1;
+}
+
+.unity-progress-bar__background {
+    background-color: rgb(66, 89, 106);
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-color: rgba(0, 0, 0, 0);
+    border-top-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-left-width: 0;
+    border-right-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    overflow: hidden;
+}
+
+.unity-progress-bar__title {
+    display: none;
+}
+
+.unity-progress-bar__progress {
+    background-color: rgb(204, 178, 145);
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+#unity-progress-bar {
+    max-height: 9px;
+    min-height: 9px;
+    overflow: hidden;
+}
+
+.popup .text {
+    font-size: 16px;
+}
+
+.popup .icon {
+    width: 24px;
+    height: 24px;
 }
