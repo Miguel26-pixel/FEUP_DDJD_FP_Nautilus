@@ -479,6 +479,15 @@ namespace PlayerControls
         {
             _readyToThrow = true;
         }
+        
+        private float _lastLeftIK = 0f;
+        private float _lastRightIK = 0f;
+        private float _leftIK = 0f;
+        private float _rightIK = 0f;
+
+        private Vector3 _lastLeft;
+        private Vector3 _lastRight;
+        private bool leftMoving = false;
 
         private void OnAnimatorIK(int layerIndex)
         {
@@ -502,12 +511,43 @@ namespace PlayerControls
             
             SetFootTransform(AvatarIKGoal.LeftFoot, leftTransform.Item1, leftTransform.Item2);
             SetFootTransform(AvatarIKGoal.RightFoot, rightTransform.Item1, rightTransform.Item2);
+            
+            _leftIK = _animator.GetIKRotationWeight(AvatarIKGoal.LeftFoot);
+
+            if (Math.Abs(_leftIK - 1) < 0.01f && Math.Abs(_lastLeftIK - 1) > 0.01f && _ikWeight > 0.8f)
+            {
+                RuntimeManager.CreateInstance(stepReference).start();
+            }
+            _lastLeftIK = _leftIK;
+                    
+            _rightIK = _animator.GetIKRotationWeight(AvatarIKGoal.RightFoot);
+                    
+            if (Math.Abs(_rightIK - 1) < 0.01f && Math.Abs(_lastRightIK - 1) > 0.01f && _ikWeight > 0.8f)
+            {
+                RuntimeManager.CreateInstance(stepReference).start();
+            }
+            _lastRightIK = _rightIK;
+
+            var left = _animator.GetIKPosition(AvatarIKGoal.LeftFoot);
+            var right = _animator.GetIKPosition(AvatarIKGoal.RightFoot);
+            
+            var forward = transform.forward;
+            
+            var leftComponent = Vector3.Dot(left - _lastLeft, forward) / forward.magnitude;
+            var rightComponent = Vector3.Dot(right - _lastRight, forward) / forward.magnitude;
+
+            _swimEvent.getPlaybackState(out var state);
+            
+            if (transform.position.y <= 22f && ((leftComponent > rightComponent && !leftMoving) || (rightComponent > leftComponent && leftMoving)  ))
+            {
+                _swimEvent = RuntimeManager.CreateInstance(swimReference);
+                _swimEvent.start();
+                leftMoving = !leftMoving;
+            }
+            
+            _lastLeft = left;
+            _lastRight = right;
         }
-        
-        private float _lastLeftIK = 0f;
-        private float _lastRightIK = 0f;
-        private float _leftIK = 0f;
-        private float _rightIK = 0f;
 
         private Tuple<Vector3, Quaternion> GetFootTransform(float maxDistance, AvatarIKGoal goal)
         {
@@ -524,31 +564,6 @@ namespace PlayerControls
             
             _animator.SetIKPositionWeight(goal, _ikWeight);
             _animator.SetIKRotationWeight(goal, 1 - Mathf.Clamp01((footDistanceToAnimationPlane - (distanceToGround)) / (distanceToGround / 2.5f)));
-
-            switch (goal)
-            {
-                case AvatarIKGoal.LeftFoot:
-                    _leftIK = _animator.GetIKRotationWeight(goal);
-
-                    if (Math.Abs(_leftIK - 1) < 0.01f && Math.Abs(_lastLeftIK - 1) > 0.01f && _ikWeight > 0.8f)
-                    {
-                        RuntimeManager.CreateInstance(stepReference).start();
-                    }
-                    _lastLeftIK = _leftIK;
-                    
-                    break;
-                case AvatarIKGoal.RightFoot:
-                    _rightIK = _animator.GetIKRotationWeight(goal);
-                    
-                    if (Math.Abs(_rightIK - 1) < 0.01f && Math.Abs(_lastRightIK - 1) > 0.01f && _ikWeight > 0.8f)
-                    {
-                        RuntimeManager.CreateInstance(stepReference).start();
-                    }
-                    _lastRightIK = _rightIK;
-                    break;
-                default:
-                    break;
-            }
             
             Vector3 forward = Vector3.ProjectOnPlane(transform.forward, hit.normal);
             return new Tuple<Vector3, Quaternion>(footPosition, Quaternion.LookRotation(forward, hit.normal));
