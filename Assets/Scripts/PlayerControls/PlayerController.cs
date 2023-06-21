@@ -73,14 +73,13 @@ namespace PlayerControls
         private float _gravity = Physics.gravity.y;
         private const float GroundGravity = -.5f;
 
-        [Header("References")]
-        public Transform attackPoint;
-        public GameObject weapon;
-
         [Header("Attacking")]
         public float throwForce;
         public float throwUpwardForce;
         public float throwCooldown;
+        private Weapon currentWeapon = null;
+        public GameObject leftHand;
+        public GameObject rightHand;
 
         private bool _readyToThrow;
 
@@ -193,7 +192,6 @@ namespace PlayerControls
                 ? Mathf.Lerp(_speed, _targetSpeed, Time.deltaTime * 10.0f)
                 : _targetSpeed;
 
-            
 
             _cameraRelativeMovement = ConvertToCameraSpace(_currentMovement);
             HandleWater();
@@ -448,16 +446,16 @@ namespace PlayerControls
 
         private void Throw()
         {
-            if (_movementLocked)
+            if (_movementLocked || currentWeapon==null)
             {
                 return;
             }
+
+            _animator.SetTrigger("Throw");
             
             _readyToThrow = false;
 
-            GameObject spear = Instantiate(weapon, attackPoint.position, _cameraTransform.rotation);
-
-            Rigidbody projectileRb = spear.GetComponent<Rigidbody>();
+            Rigidbody projectileRb = currentWeapon.GetComponent<Rigidbody>();
 
             Vector3 forceToAdd = _cameraTransform.transform.forward * throwForce + transform.up * throwUpwardForce;
 
@@ -465,6 +463,41 @@ namespace PlayerControls
 
             Invoke(nameof(ResetThrow), throwCooldown);
 
+        }
+
+        private void OnCollisionEnter(Collision other)
+        {
+            Debug.Log("ola");
+            if (other.collider.CompareTag("Weapon"))
+            {
+                Weapon weapon = other.collider.GetComponent<Weapon>();
+                Rigidbody weaponRigidBody = weapon.GetComponent<Rigidbody>();
+                LaserGunWeapon laser = other.collider.GetComponent<LaserGunWeapon>();
+                SpearWeapon spear = other.collider.GetComponent<SpearWeapon>();
+                GameObject hand = null;
+
+                if(laser != null)
+                    hand = rightHand;
+                else if(spear != null)
+                    hand = leftHand;
+
+                Debug.Log(hand);
+
+                if (weapon != null)
+                {
+                    Debug.Log("ola2");
+                    if (currentWeapon != null)
+                        currentWeapon.GetComponent<Weapon>().DeactivateWeapon();
+
+                    //currentWeapon = weapon;
+                    weapon.gameObject.transform.parent = hand.transform;
+                    weapon.transform.localPosition = weapon.PickPosition;
+                    weaponRigidBody.isKinematic = true;
+                    weapon.transform.localEulerAngles  = weapon.PickRotation;
+                    _animator.SetFloat("CurrentWeapon", weapon.weaponId);
+                    weapon.ActivateWeapon();
+                }
+            }
         }
 
         private void ResetThrow()
