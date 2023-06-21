@@ -1,37 +1,53 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using PlayerControls;
+using UI.Inventory.Components;
 
 namespace Items
 {
     [Serializable]
     public abstract class EquipableComponentData : ItemComponentData
     {
-        protected EquipableComponentData(int slot, int durability)
+        protected EquipableComponentData(EquipmentSlotType slot, int durability)
         {
             Slot = slot;
             Durability = durability;
 
-            actions.Add(new ContextMenuAction("Equip", OnEquip));
-            actions.Add(new ContextMenuAction("Unequip", OnUnequip));
+            actions.Add(new ContextMenuAction("Equip", (player, i) =>
+            {
+                if (OnEquip(player, i, null))
+                {
+                    player.playerInventory.RemoveItem(i.IDHash);
+                    player.playerInventory.NotifySubscribersOnInventoryChanged();
+                }
+            }));
+            actions.Add(new ContextMenuAction("Unequip", (player, i) =>
+            {
+                if (OnUnequip(player, i))
+                {
+                    player.playerInventory.AddItem(i);
+                    player.playerInventory.NotifySubscribersOnInventoryChanged();
+                }
+            }));
 
             descriptors.Add(new KeyValuePair<string, string>("Slot", Slot.ToString()));
             descriptors.Add(new KeyValuePair<string, string>("Durability", Durability.ToString()));
         }
 
         // some examples, not yet sure what we need
-        [JsonProperty("slot")] public int Slot { get; }
+        [JsonProperty("slot")] public EquipmentSlotType Slot { get; }
 
         [JsonProperty("durability")] public int Durability { get; }
 
-        public abstract void OnEquip();
-        public abstract void OnUnequip();
+        public abstract bool OnEquip(Player player, Item i, EquipmentSlot? slot);
+        public abstract bool OnUnequip(Player player, Item i);
     }
 
     [Serializable]
     public abstract class EquipableComponent : ItemComponent
     {
-        [JsonIgnore] protected readonly EquipableComponentData equipableComponentData;
+        [JsonIgnore] public readonly EquipableComponentData equipableComponentData;
 
         [JsonProperty("currentDurability")] private int _currentDurability;
 

@@ -4,9 +4,7 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - WayPoints
-  - Terrain
-  - Enemy
+  - Weapon
   layers:
   - Default
   - TransparentFX
@@ -18,7 +16,7 @@ TagManager:
   - OpaqueResource
   - Player
   - Vacuum
-  - 
+  - WeaponLayer
   - 
   - 
   - 
