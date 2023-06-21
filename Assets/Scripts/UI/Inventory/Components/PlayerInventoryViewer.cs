@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Inventory;
 using Items;
+using JetBrains.Annotations;
 using PlayerControls;
 using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEditor;
@@ -48,9 +49,184 @@ namespace UI.Inventory.Components
                 evt => ProcessMouseUpEquipmentSlot(evt, EquipmentSlotType.Body, EquipmentSlot.Body2));
             (_head = root.Q<VisualElement>("Head")).RegisterCallback<MouseUpEvent>(
                 evt => ProcessMouseUpEquipmentSlot(evt, EquipmentSlotType.Head, EquipmentSlot.Head));
+
+            RegisterFeet();
+            RegisterBody1();
+            RegisterBody2();
+            RegisterHead();
+            
+            onDragEnd += OnDragEnd;
         }
 
-        private void ProcessMouseUpEquipmentSlot(EventBase evt, EquipmentSlotType equipmentSlotType,
+        private void RegisterFeet()
+        {
+            _feet.RegisterCallback<MouseDownEvent>(evt =>
+            {
+                if (evt.button == 0)
+                {
+                    ProcessMouseDownLeft(evt, _inventory.feetEquipment, EquipmentSlotType.Feet);
+                }
+            });
+
+            _feet.RegisterCallback<MouseUpEvent>(evt =>
+            {
+                if (evt.button == 1)
+                {
+                    ProcessContextActionViewer(evt, _inventory.feetEquipment);
+                }
+            });
+
+            _feet.RegisterCallback<MouseEnterEvent>(_ =>
+            {
+                if (_inventory.feetEquipment is not null) OpenItemInfo(_inventory.feetEquipment);
+            });
+            _feet.RegisterCallback<MouseLeaveEvent>(_ => CloseItemInfo());
+        }
+        
+        private void RegisterBody1()
+        {
+            _body1.RegisterCallback<MouseDownEvent>(evt =>
+            {
+                if (evt.button == 0)
+                {
+                    ProcessMouseDownLeft(evt, _inventory.bodyEquipment1, EquipmentSlotType.Feet);
+                }
+            });
+
+            _body1.RegisterCallback<MouseUpEvent>(evt =>
+            {
+                if (evt.button == 1)
+                {
+                    ProcessContextActionViewer(evt, _inventory.bodyEquipment1);
+                }
+            });
+
+            _body1.RegisterCallback<MouseEnterEvent>(_ =>
+            {
+                if (_inventory.bodyEquipment1 is not null) OpenItemInfo(_inventory.bodyEquipment1);
+            });
+            _body1.RegisterCallback<MouseLeaveEvent>(_ => CloseItemInfo());
+        }
+        private void RegisterBody2()
+        {
+            _body2.RegisterCallback<MouseDownEvent>(evt =>
+            {
+                if (evt.button == 0)
+                {
+                    ProcessMouseDownLeft(evt, _inventory.bodyEquipment2, EquipmentSlotType.Feet);
+                }
+            });
+
+            _body2.RegisterCallback<MouseUpEvent>(evt =>
+            {
+                if (evt.button == 1)
+                {
+                    ProcessContextActionViewer(evt, _inventory.bodyEquipment2);
+                }
+            });
+
+            _body2.RegisterCallback<MouseEnterEvent>(_ =>
+            {
+                if (_inventory.bodyEquipment2 is not null) OpenItemInfo(_inventory.bodyEquipment2);
+            });
+            _body2.RegisterCallback<MouseLeaveEvent>(_ => CloseItemInfo());
+        }
+        private void RegisterHead()
+        {
+            _head.RegisterCallback<MouseDownEvent>(evt =>
+            {
+                if (evt.button == 0)
+                {
+                    ProcessMouseDownLeft(evt, _inventory.headEquipment, EquipmentSlotType.Feet);
+                }
+            });
+
+            _head.RegisterCallback<MouseUpEvent>(evt =>
+            {
+                if (evt.button == 1)
+                {
+                    ProcessContextActionViewer(evt, _inventory.headEquipment);
+                }
+            });
+
+            _head.RegisterCallback<MouseEnterEvent>(_ =>
+            {
+                if (_inventory.headEquipment is not null) OpenItemInfo(_inventory.headEquipment);
+            });
+            _head.RegisterCallback<MouseLeaveEvent>(_ => CloseItemInfo());
+        }
+
+
+        
+        private void OnDragEnd(IDraggable draggable)
+        {
+            if (isDragging)
+            {
+                // item successfully dropped on another inventory
+                if (draggable is not ItemDraggable itemDraggable)
+                {
+                    return;
+                }
+                
+                var component = draggingProperties.draggedItem.GetComponent<EquipableComponent>().equipableComponentData;
+
+                if (!component.OnUnequip(player, draggingProperties.draggedItem))
+                {
+                    return;
+                }
+
+                isDragging = false;
+                draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
+                _inventory.NotifySubscribersOnInventoryChanged();
+            }
+            else
+            {
+                otherDraggable = null;
+            }
+        }
+
+        private void ProcessMouseDownLeft(MouseDownEvent evt, [CanBeNull] Item item, EquipmentSlotType slot)
+        {
+            if (item is null)
+            {
+                return;
+            }
+            
+            draggingProperties = new ItemDraggable(item, slot);
+
+            HandleDragStart(draggingProperties);
+            if (_contextMenuViewer.IsOpen)
+            {
+                return;
+            }
+
+
+            isDragging = true;
+            CloseItemInfo();
+            RenderItemDrag();
+        }
+        
+        private void ProcessContextActionViewer(EventBase evt, Item item)
+        {
+            if (isDragging)
+            {
+                return;
+            }
+
+            if (_contextMenuViewer.IsOpen)
+            {
+                CloseContext();
+                return;
+            }
+
+            evt.StopPropagation();
+
+            Vector2 position = currentMousePosition;
+            CloseItemInfo();
+            _contextMenuViewer.Open(item, 0, position, player);
+        }
+
+        private void ProcessMouseUpEquipmentSlot(MouseUpEvent evt, EquipmentSlotType equipmentSlotType,
             EquipmentSlot equipmentSlot)
         {
             if (!isDragging)
@@ -75,10 +251,9 @@ namespace UI.Inventory.Components
 
             DarkenItem(_inventory.GetRelativePositionAt(draggingProperties.dragStartPosition.position).itemID,
                 false);
-                
+
             if (_inventory.HasItem(draggingProperties.draggedItem.IDHash))
             {
-                Debug.Log("Delete has item");
                 _inventory.RemoveItem(draggingProperties.draggedItem.IDHash);
                 _inventory.NotifySubscribersOnInventoryChanged();
             }
@@ -90,6 +265,7 @@ namespace UI.Inventory.Components
 
             _feet.Q<VisualElement>("ItemIcon").style.backgroundImage =
                 new StyleBackground(_inventory.feetEquipment?.Icon);
+
             _body1.Q<VisualElement>("ItemIcon").style.backgroundImage =
                 new StyleBackground(_inventory.bodyEquipment1?.Icon);
             _body2.Q<VisualElement>("ItemIcon").style.backgroundImage =

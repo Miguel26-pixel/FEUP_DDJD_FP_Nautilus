@@ -22,7 +22,14 @@ namespace Items
                     player.playerInventory.NotifySubscribersOnInventoryChanged();
                 }
             }));
-            actions.Add(new ContextMenuAction("Unequip", (player, i) => OnUnequip(player, i)));
+            actions.Add(new ContextMenuAction("Unequip", (player, i) =>
+            {
+                if (OnUnequip(player, i))
+                {
+                    player.playerInventory.AddItem(i);
+                    player.playerInventory.NotifySubscribersOnInventoryChanged();
+                }
+            }));
 
             descriptors.Add(new KeyValuePair<string, string>("Slot", Slot.ToString()));
             descriptors.Add(new KeyValuePair<string, string>("Durability", Durability.ToString()));

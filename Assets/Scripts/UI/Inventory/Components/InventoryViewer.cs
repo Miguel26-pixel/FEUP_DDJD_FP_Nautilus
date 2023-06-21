@@ -2,6 +2,7 @@ using System;
 using Inventory;
 using Items;
 using PlayerControls;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace UI.Inventory.Components
@@ -9,6 +10,23 @@ namespace UI.Inventory.Components
     public interface IDraggable
     {
         Item Item { get; }
+    }
+    
+    public record ItemDraggable() : DraggingProperties
+    {
+        public ItemDraggable(Item item, EquipmentSlotType equipmentSlotType) : this()
+        {
+            dragStartPosition = new ItemPosition(Vector2Int.zero, 0);
+            dragRelativePosition = Vector2Int.zero;
+            draggedItem = item;
+            currentRotation = dragStartPosition.rotation;
+            itemID = 0;
+            Item = item;
+            EquipmentSlotType = equipmentSlotType;
+        }
+
+        public Item Item { get; }
+        public EquipmentSlotType EquipmentSlotType { get; }
     }
 
 

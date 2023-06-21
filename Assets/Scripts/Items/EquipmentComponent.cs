@@ -31,6 +31,8 @@ namespace Items
         };
 
         [JsonProperty("enhancements")] private List<Tuple<Enhancements, int>> _enhancements;
+        private bool _equipped = false;
+        private EquipmentSlot? _slot;
 
         public EquipmentComponentData(EquipmentSlotType slot, int durability, List<Tuple<Enhancements, int>> enhancements) : base(slot,
             durability)
@@ -86,6 +88,14 @@ namespace Items
 
         public override bool OnEquip(Player player, Item item, EquipmentSlot? slot)
         {
+            Debug.Log(_equipped);
+            if (_equipped)
+            {
+                return false;
+            }
+
+            slot ??= player.playerInventory.GetFreeSlot(Slot);
+
             if (!player.playerInventory.AddEquipment(item, slot))
             {
                 return false;
@@ -93,13 +103,35 @@ namespace Items
             EquipEnhancements(player);
             player.EquipEquipment(item);
 
+            _equipped = true;
+            _slot = slot;
+
             return true;
         }
 
         public override bool OnUnequip(Player player, Item item)
         {
+            if (!_equipped)
+            {
+                return false;
+            }
+
+            if (_slot is null)
+            {
+                return false;
+            }
+
+            if (!player.playerInventory.RemoveEquipment(item, (EquipmentSlot)_slot))
+            {
+                return false;
+            }
+            
             UnequipEnhancements(player);
             player.UnequipEquipment(item);
+
+            _equipped = false;
+            _slot = null;
+            
             return true;
         }
 

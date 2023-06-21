@@ -309,7 +309,7 @@ namespace Inventory
             NotifySubscribersOnInventoryChanged();
         }
 
-        private EquipmentSlot? GetFreeSlot(EquipmentSlotType slotType)
+        public EquipmentSlot? GetFreeSlot(EquipmentSlotType slotType)
         {
             return slotType switch
             {
@@ -332,8 +332,8 @@ namespace Inventory
                 EquipmentSlot.Head => headEquipment is null,
             };
         }
-        
-        public bool AddEquipment(Item item, EquipmentSlot? equipmentSlot = null)
+
+        public bool RemoveEquipment(Item item, EquipmentSlot slot)
         {
             if (item.Type != ItemType.Equipment)
             {
@@ -344,8 +344,37 @@ namespace Inventory
             {
                 return false;
             }
+            
+            switch (slot)
+            {
+                case EquipmentSlot.Body1:
+                    bodyEquipment1 = null;
+                    break;
+                case EquipmentSlot.Body2:
+                    bodyEquipment2 = null;
+                    break;
+                case EquipmentSlot.Head:
+                    headEquipment = null;
+                    break;
+                case EquipmentSlot.Feet:
+                    feetEquipment = null;
+                    break;
+            }
 
-            EquipmentSlot? slot = equipmentSlot ?? GetFreeSlot(component.equipableComponentData.Slot);
+            return true;
+        }
+        
+        public bool AddEquipment(Item item, EquipmentSlot? slot = null)
+        {
+            if (item.Type != ItemType.Equipment)
+            {
+                return false;
+            }
+
+            if (item.GetComponents().First() is not EquipableComponent component)
+            {
+                return false;
+            }
 
             if (slot is null)
             {

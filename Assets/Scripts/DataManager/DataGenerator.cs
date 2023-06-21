@@ -391,7 +391,7 @@ namespace DataManager
 
             ItemData oxygenTank = _itemRegistry.CreateItem("Oxygen Tank",
                 "This essential piece of diving equipment lets you stay submerged and explore for extended periods without worrying about running out of breath.",
-                ItemType.Equipment, "ItemIcons/test");
+                ItemType.Equipment, "ItemIcons/test", new bool[,] {{true},{true}});
             equipmentComponentData =
                 new EquipmentComponentData(EquipmentSlotType.Body, 30, new List<Tuple<Enhancements, int>>
                 {
@@ -410,7 +410,7 @@ namespace DataManager
 
             ItemData abyssalTank = _itemRegistry.CreateItem("Abyssal Tank",
                 "This tank will keep you alive in the darkest depths of the ocean, but at what cost? Who knows what horrors lurk down there…",
-                ItemType.Equipment, "ItemIcons/test");
+                ItemType.Equipment, "ItemIcons/test", new bool[,] {{true},{true}});
             equipmentComponentData =
                 new EquipmentComponentData(EquipmentSlotType.Body, 30, new List<Tuple<Enhancements, int>>
                 {

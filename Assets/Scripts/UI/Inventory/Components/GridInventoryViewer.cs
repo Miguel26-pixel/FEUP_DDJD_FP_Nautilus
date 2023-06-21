@@ -10,9 +10,9 @@ namespace UI.Inventory.Components
 {
     public record DraggingProperties() : IDraggable
     {
-        public readonly Item draggedItem;
-        public readonly ItemPosition dragStartPosition;
-        public readonly uint itemID;
+        public Item draggedItem;
+        public ItemPosition dragStartPosition;
+        public uint itemID;
         public int currentRotation;
         public Vector2Int dragRelativePosition;
 
@@ -31,7 +31,7 @@ namespace UI.Inventory.Components
 
     public class GridInventoryViewer : InventoryViewer<InventoryGrid>
     {
-        private readonly ContextMenuViewer _contextMenuViewer;
+        protected readonly ContextMenuViewer _contextMenuViewer;
 
         protected readonly VisualElement draggedItem;
 
@@ -45,11 +45,11 @@ namespace UI.Inventory.Components
 
         private float _cellHeight;
         private float _cellWidth;
-        private Vector2 _currentMousePosition;
+        protected Vector2 currentMousePosition;
         protected DraggingProperties draggingProperties;
         protected bool isDragging;
 
-        private IDraggable _otherDraggable;
+        protected IDraggable otherDraggable;
 
         private bool _registeredGeometryChange;
 
@@ -92,7 +92,7 @@ namespace UI.Inventory.Components
         {
             Vector2 mousePos = Mouse.current.position.ReadValue();
             mousePos = RuntimePanelUtils.ScreenToPanel(root.panel, mousePos);
-            _currentMousePosition = mousePos;
+            currentMousePosition = mousePos;
 
             if (isDragging)
             {
@@ -235,7 +235,7 @@ namespace UI.Inventory.Components
 
         public override void HandleDragStart(IDraggable draggable)
         {
-            _otherDraggable = draggable;
+            otherDraggable = draggable;
         }
 
         public override void HandleDragEnd(IDraggable draggable)
@@ -259,7 +259,7 @@ namespace UI.Inventory.Components
             }
             else
             {
-                _otherDraggable = null;
+                otherDraggable = null;
             }
         }
 
@@ -286,17 +286,17 @@ namespace UI.Inventory.Components
 
             evt.StopPropagation();
 
-            Vector2 position = _currentMousePosition;
+            Vector2 position = currentMousePosition;
             CloseItemInfo();
             _contextMenuViewer.Open(item, itemID, position, player);
         }
 
-        private void CloseContext()
+        protected void CloseContext()
         {
             _contextMenuViewer.Close();
         }
 
-        private void OpenItemInfo(Item item)
+        protected void OpenItemInfo(Item item)
         {
             if (isDragging || _contextMenuViewer.IsOpen)
             {
@@ -306,7 +306,7 @@ namespace UI.Inventory.Components
             _infoBoxViewer.Open(item);
         }
 
-        private void CloseItemInfo()
+        protected void CloseItemInfo()
         {
             _infoBoxViewer.Close();
         }
@@ -338,18 +338,18 @@ namespace UI.Inventory.Components
 
         private void ProcessMouseUpCell(EventBase evt, Vector2Int position)
         {
-            if (_otherDraggable != null)
+            if (otherDraggable != null)
             {
-                if (_otherDraggable is DraggingProperties draggingProperties)
+                if (otherDraggable is DraggingProperties draggingProperties)
                 {
                     ProcessOtherDraggable(evt, position, draggingProperties);
                 }
                 else
                 {
-                    ProcessOtherDraggableSimple(evt, position, _otherDraggable);
+                    ProcessOtherDraggableSimple(evt, position, otherDraggable);
                 }
 
-                _otherDraggable = null;
+                otherDraggable = null;
                 return;
             }
 
@@ -446,7 +446,7 @@ namespace UI.Inventory.Components
             }
         }
 
-        private void RenderItemDrag()
+        protected void RenderItemDrag()
         {
             draggedItem.Clear();
             draggedItem.pickingMode = PickingMode.Ignore;
