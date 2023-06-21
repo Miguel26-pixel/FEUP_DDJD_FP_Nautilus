@@ -579,5 +579,15 @@ namespace PlayerControls
             }
             // _playerInventory.AddItem(item);
         }
+
+        public void AddHunger(int hunger)
+        {
+            _hunger = Mathf.Clamp(_hunger + hunger, 0, _maxHunger);
+        }
+
+        public void AddHealth(int i)
+        {
+            health = Mathf.Clamp(health + i, 0, maxHealth);
+        }
     }
 }
