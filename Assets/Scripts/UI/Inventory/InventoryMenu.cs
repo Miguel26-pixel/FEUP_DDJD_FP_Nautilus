@@ -42,7 +42,7 @@ namespace UI.Inventory
         private void Open()
         {
             PlayerInventoryViewer inventoryViewer =
-                new(_root, _inventoryContainer, _player.GetInventory());
+                new(_root, _inventoryContainer, _player.GetInventory(), _player);
             inventoryViewer.Show();
             _root.style.display = DisplayStyle.Flex;
             _isInventoryMenuOpen = true;

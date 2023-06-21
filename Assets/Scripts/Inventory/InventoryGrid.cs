@@ -133,11 +133,18 @@ namespace Inventory
             return true;
         }
 
+        public virtual bool HasItem(int itemHash)
+        {
+            KeyValuePair<uint, Item> pair = _items.FirstOrDefault(pair => pair.Value.IDHash == itemHash);
+
+            return !pair.Equals(default(KeyValuePair<uint, Item>));
+        }
+        
         public virtual Item RemoveItem(int itemHash)
         {
             KeyValuePair<uint, Item> pair = _items.FirstOrDefault(pair => pair.Value.IDHash == itemHash);
 
-            if (pair.Equals(default(KeyValuePair<uint, Item>)))
+            if (!HasItem(itemHash))
             {
                 throw new ItemNotInInventoryException("Item not found.");
             }
