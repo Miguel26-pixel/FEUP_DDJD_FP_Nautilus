@@ -1,0 +1,42 @@
+{b0fd9735-2ba6-4bdb-9c48-a2cb05a1418c} bank:/Master
+{28e0b7e1-5add-0799-1a01-2835f4524714} bank:/Master.strings
+{863f83ec-65d6-472e-9639-919cdfd317f3} bus:/
+{fd4182d5-4243-4ee9-aa1c-52a6f707d05c} bus:/Reverb
+{1163e283-4b42-4ee0-96aa-db9e44f79b63} event:/Enemies/Deep alien fish sounds
+{aa957068-bfae-4e38-8639-0bab871b5ee3} event:/Enemies/Fighting Leviathan
+{4bc7139d-0c19-4c29-bd4b-4cd2fe9c992b} event:/Enemies/Leviathan sounds
+{4cab9b4a-158c-44f6-9b96-a39665e79825} event:/Enemies/Smaller fish sounds
+{c17495b8-403a-4729-845f-3f374cf9c726} event:/Environment/Beach shore sound
+{d4ee096e-6830-4948-842e-99fbca705af7} event:/Environment/Deep guttural sounds
+{10ee4816-2690-4ee8-a503-b323808572a1} event:/Environment/Deep sounding, heavy feeling atmosphere. Scary
+{9628553f-7bd3-46cd-8ac7-3a4696982f5b} event:/Environment/Scary atmosphere stings
+{fd60be1a-495c-460b-b02a-fa6e6e5c4f64} event:/Environment/Underwater bubbling and rumbling
+{94f09247-9b89-4c41-9105-b03471a0fdae} event:/Environment/Wave sounds
+{f2839405-aa27-4410-8cd1-3055e1fc5500} event:/Environment/Wind whooshing through leaves and grass
+{115e7a64-1656-4295-9b30-a988d9a53efb} event:/Player/Breathing Bubbles
+{0274661a-414c-4059-b669-b3aa55009604} event:/Player/Coming up for air
+{72aee9cd-6dd9-46f8-81e0-95c4deebe2a6} event:/Player/Diving
+{b859b7d9-12b5-4ae7-9585-e1f71d4d8a13} event:/Player/Eating and drinking
+{52d574bc-619e-482f-b7ca-2e7edbfcfbc7} event:/Player/Equip sound (rustling)
+{de50cee0-ff8d-412b-b9b9-02ec4a73ca11} event:/Player/Grass pick up sound
+{d6d32d71-ae66-4d27-9aec-4eb0fa59d022} event:/Player/Object falling to ground
+{edbce713-a207-4486-8ed7-a87bc26d1179} event:/Player/Place machine
+{f0e46345-a51c-4c37-b8dd-2c5f77d21ac8} event:/Player/Plasma gun
+{42077b45-1108-46f1-9371-a45c0b774036} event:/Player/Player jump
+{6fb04708-444a-41a2-bf2f-ad15ed99a44d} event:/Player/Player punch
+{c159cd7e-972f-4466-b3f4-90a26296b10f} event:/Player/Player take damage
+{821f6790-71eb-42ed-97f8-20edff0fe81f} event:/Player/Spear stab
+{4e9c0b08-a868-4a4f-bd7d-164b9b254da8} event:/Player/Spear throw
+{a329de83-a714-4ebb-9f93-7de0ea4d6b09} event:/Player/Sucking ground up (normal pitched rumble)
+{78c50307-ab6a-4803-916e-b38dca7cb038} event:/Player/Sucking items up
+{3b7b2fb5-9967-4dcb-9292-55074c837b84} event:/Player/Swimming
+{3d0d179f-f768-4303-96b5-b8a9b5ecda59} event:/Player/Walking on grass
+{5285c14d-0a1d-40c8-acc2-5c566e3cbbcc} event:/Player/Walking on sand
+{199e6bf5-011f-47c5-a4ad-bdfe6a3070d7} event:/UI/Crafting
+{f5e2defd-5d55-4b4e-a36c-705f406f6bfd} event:/UI/Inventory open
+{195df272-7c74-4a5a-ba0a-685a0e558c76} event:/UI/Inventory slots
+{3a14bf10-5624-41c2-a6c3-a5d5d4f2469e} parameter:/Depth
+{fa2f541b-6071-46c6-ac43-f79b675c242d} parameter:/Parameter 1
+{1fb87b5c-5687-40d5-9e95-b8404000d42f} parameter:/Parameter 2
+{8557c505-a6f3-410c-8788-d0fde4e69a24} parameter:/Parameter 3
+{92641f38-eac2-4509-b622-694b05675ac7} parameter:/Parameter 4

@@ -285,6 +285,7 @@ GameObject:
   - component: {fileID: 194822963}
   - component: {fileID: 194822962}
   - component: {fileID: 194822961}
+  - component: {fileID: 194822964}
   m_Layer: 0
   m_Name: Camera
   m_TagString: MainCamera
@@ -404,6 +405,19 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &194822964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 194822959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86c6556701af9e04380698b89f691b6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attenuationObject: {fileID: 0}
 --- !u!1 &201656317
 GameObject:
   m_ObjectHideFlags: 0
@@ -3916,6 +3930,77 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2135487346
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2135487349}
+  - component: {fileID: 2135487348}
+  m_Layer: 0
+  m_Name: Ambient Noise
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2135487348
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2135487346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 979e111418a8ec3feb0fbd9e7d037bf5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  windReference:
+    Guid:
+      Data1: -226257915
+      Data2: 1141942823
+      Data3: 1429262732
+      Data4: 5635297
+    Path: event:/Environment/Wind whooshing through leaves and grass
+  waveReference:
+    Guid:
+      Data1: -1796173241
+      Data2: 1279368073
+      Data3: 883950993
+      Data4: -1359110031
+    Path: event:/Environment/Wave sounds
+  shoreReference:
+    Guid:
+      Data1: -1049324104
+      Data2: 1193885754
+      Data3: 926900100
+      Data4: 650639692
+    Path: event:/Environment/Beach shore sound
+  shoreLine: 21
+  shoreRange: 24
+  floorDistanceRay: 30
+  floorLayerMask:
+    serializedVersion: 2
+    m_Bits: 8
+--- !u!4 &2135487349
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2135487346}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 26.542393, y: 91.33203, z: -235.80234}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2145484667
 GameObject:
