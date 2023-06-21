@@ -172,6 +172,11 @@ namespace PlayerControls
             oxygenBar.fillAmount = oxygenPercentage;
         }
 
+        public void AddOxygenBoost(float boost)
+        {
+            _maxOxygen += boost * 10;
+        }
+
 
         public void ResetHungerDecay()
         {
