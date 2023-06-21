@@ -238,12 +238,12 @@ namespace PlayerControls
             if (context.performed)
             { 
                 _isRunning = true;
-                gameObject.GetComponent<Player>().IncreaseHungerDecay();
+                _player.IncreaseHungerDecay();
             }
             else if(context.canceled)
             {
                 _isRunning = false;
-                gameObject.GetComponent<Player>().ResetHungerDecay();
+                _player.ResetHungerDecay();
             }
         }
 

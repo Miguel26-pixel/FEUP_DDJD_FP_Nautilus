@@ -9,12 +9,15 @@ using UI.Inventory;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using static UnityEditor.Experimental.GraphView.GraphView;
 
 namespace PlayerControls
 {
     public class Player : AbstractPlayer, PlayerActions.IHUDActions, PlayerActions.IToolActions
     {
+        public Image hungerBar;
+
         [Header("Stats")]
         public int health = 1000;
         public int maxHealth = 1000;
@@ -116,6 +119,7 @@ namespace PlayerControls
         public void RemoveHunger(float amount)
         {
             _hunger -= amount;
+            hungerBar.fillAmount = _hunger / _maxHunger;
 
             if (_hunger <= 0)
             {

@@ -1548,8 +1548,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e757ffce39bd48aa83baeeac993b5d69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hungerBar: {fileID: 224095414}
   health: 1000
   maxHealth: 1000
+  _hunger: 1000
+  _maxHunger: 1000
   machineType: -1
   transferDirection: 1
   onCraftEvent:
@@ -1655,6 +1658,8 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   terraformController: {fileID: 393193719}
+  _interactionDistance: 3
+  _defautHungerDecay: 1
 --- !u!114 &449703881
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1687,6 +1692,8 @@ MonoBehaviour:
   throwUpwardForce: 10
   throwCooldown: 0
   waterDistance: 1
+  underWater: 0
+  swimmSpeed: 0
 --- !u!143 &449703882
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1792,11 +1799,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18efd3431bff433bf8f095577f17fdb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  texture: {fileID: 0}
-  outputFolder: Assets/Resources/ItemIcons
-  outputName: test
-  sliceWidth: 128
-  sliceHeight: 128
 --- !u!4 &527794743
 Transform:
   m_ObjectHideFlags: 0
