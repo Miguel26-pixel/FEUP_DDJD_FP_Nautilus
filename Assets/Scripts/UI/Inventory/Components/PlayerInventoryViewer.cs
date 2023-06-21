@@ -87,6 +87,15 @@ namespace UI.Inventory.Components
         public void OnInventoryChanged()
         {
             Refresh();
+
+            _feet.Q<VisualElement>("ItemIcon").style.backgroundImage =
+                new StyleBackground(_inventory.feetEquipment?.Icon);
+            _body1.Q<VisualElement>("ItemIcon").style.backgroundImage =
+                new StyleBackground(_inventory.bodyEquipment1?.Icon);
+            _body2.Q<VisualElement>("ItemIcon").style.backgroundImage =
+                new StyleBackground(_inventory.bodyEquipment2?.Icon);
+            _head.Q<VisualElement>("ItemIcon").style.backgroundImage =
+                new StyleBackground(_inventory.headEquipment?.Icon);
         }
 
         public override void Close()

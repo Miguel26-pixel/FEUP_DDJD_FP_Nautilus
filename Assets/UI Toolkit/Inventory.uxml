@@ -36,12 +36,12 @@
                         <ui:VisualElement name="Middle" style="align-items: flex-end; flex-grow: 0; flex-shrink: 1; height: auto; flex-direction: row; justify-content: center;">
                             <ui:VisualElement style="flex-grow: 1; align-items: flex-end; width: 0;">
                                 <ui:VisualElement name="Body1" class="equipment-slot" style="width: 55px; height: 110px;">
-                                    <ui:VisualElement name="ItemIcon" class="icon" style="display: flex;" />
+                                    <ui:VisualElement name="ItemIcon" class="icon" style="display: flex; background-image: none; -unity-background-scale-mode: stretch-to-fill;" />
                                 </ui:VisualElement>
                             </ui:VisualElement>
                             <ui:VisualElement style="flex-grow: 1; align-items: center; width: 0;">
                                 <ui:VisualElement name="Body2" class="equipment-slot" style="width: 55px; height: 110px;">
-                                    <ui:VisualElement name="ItemIcon" class="icon" style="display: flex;" />
+                                    <ui:VisualElement name="ItemIcon" class="icon" style="display: flex; -unity-background-scale-mode: stretch-to-fill;" />
                                 </ui:VisualElement>
                             </ui:VisualElement>
                             <ui:VisualElement style="flex-grow: 1;" />

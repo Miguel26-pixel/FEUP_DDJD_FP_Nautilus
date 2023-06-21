@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Items;
+using JetBrains.Annotations;
 using UI.Inventory.Components;
 using UnityEngine;
 
@@ -94,10 +95,10 @@ namespace Inventory
         private SoilResource _soil = null;
         private readonly Stack<SoilResource> _previousSoil = new();
 
-        private Item _footEquipment;
-        private Item _bodyEquipment1;
-        private Item _bodyEquipment2;
-        private Item _headEquipment;
+        [CanBeNull] public Item feetEquipment;
+        [CanBeNull] public Item bodyEquipment1;
+        [CanBeNull] public Item bodyEquipment2;
+        [CanBeNull] public Item headEquipment;
         
         private readonly List<IInventorySubscriber> _subscribers = new();
 
@@ -312,11 +313,11 @@ namespace Inventory
         {
             return slotType switch
             {
-                EquipmentSlotType.Feet => _footEquipment is null ? EquipmentSlot.Feet : null,
-                EquipmentSlotType.Body => _bodyEquipment1 is null
+                EquipmentSlotType.Feet => feetEquipment is null ? EquipmentSlot.Feet : null,
+                EquipmentSlotType.Body => bodyEquipment1 is null
                     ? EquipmentSlot.Body1
-                    : (_bodyEquipment2 is null ? EquipmentSlot.Body2 : null),
-                EquipmentSlotType.Head => _headEquipment is null ? EquipmentSlot.Head : null,
+                    : (bodyEquipment2 is null ? EquipmentSlot.Body2 : null),
+                EquipmentSlotType.Head => headEquipment is null ? EquipmentSlot.Head : null,
                 _ => null
             };
         }
@@ -325,10 +326,10 @@ namespace Inventory
         {
             return slot switch
             {
-                EquipmentSlot.Feet => _footEquipment is null,
-                EquipmentSlot.Body1 => _bodyEquipment1 is null,
-                EquipmentSlot.Body2 => _bodyEquipment2 is null,
-                EquipmentSlot.Head => _headEquipment is null,
+                EquipmentSlot.Feet => feetEquipment is null,
+                EquipmentSlot.Body1 => bodyEquipment1 is null,
+                EquipmentSlot.Body2 => bodyEquipment2 is null,
+                EquipmentSlot.Head => headEquipment is null,
             };
         }
         
@@ -359,16 +360,16 @@ namespace Inventory
             switch (slot)
             {
                 case EquipmentSlot.Body1:
-                    _bodyEquipment1 = item;
+                    bodyEquipment1 = item;
                     break;
                 case EquipmentSlot.Body2:
-                    _bodyEquipment2 = item;
+                    bodyEquipment2 = item;
                     break;
                 case EquipmentSlot.Head:
-                    _headEquipment = item;
+                    headEquipment = item;
                     break;
                 case EquipmentSlot.Feet:
-                    _footEquipment = item;
+                    feetEquipment = item;
                     break;
             }
 
