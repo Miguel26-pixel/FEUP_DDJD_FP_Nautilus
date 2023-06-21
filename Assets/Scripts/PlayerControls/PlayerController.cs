@@ -101,14 +101,14 @@ namespace PlayerControls
         private float _gravity = Physics.gravity.y;
         private const float GroundGravity = -.5f;
 
-        [Header("References")]
-        public Transform attackPoint;
-        public GameObject weapon;
-
         [Header("Attacking")]
         public float throwForce;
         public float throwUpwardForce;
         public float throwCooldown;
+        private Weapon currentWeapon = null;
+        public GameObject leftHand;
+        public GameObject rightHand;
+        int i = 0;
 
         private bool _readyToThrow;
 
@@ -123,6 +123,13 @@ namespace PlayerControls
         private float _ikWeight = 1;
         private float _landTime;
         private static readonly int JumpTime = Animator.StringToHash("JumpTime");
+
+        LineRenderer lr;
+        Rigidbody rb;
+        Vector3 startPosition;
+        Vector3 startVelocity;
+        float InitialAngle = -20;
+        Quaternion rot;
 
         [Header("Swim Event")]
         public float waterDistance = 1;
@@ -176,6 +183,10 @@ namespace PlayerControls
 
             _cameraTransform = _mainCamera.transform;
             _cameraParentTransform = _cameraTransform.parent;
+        
+            lr=GetComponent<LineRenderer>();
+            rot = Quaternion.Euler(InitialAngle,0,0);
+
         }
 
         public void OnEnable()
@@ -226,6 +237,8 @@ namespace PlayerControls
                 ? Mathf.Lerp(_speed, _targetSpeed, Time.deltaTime * 10.0f)
                 : _targetSpeed;
 
+
+            HandleAttack();
             
             HandleWater();
             _cameraRelativeMovement = ConvertToCameraSpace(_currentMovement);
@@ -240,6 +253,61 @@ namespace PlayerControls
             HandleGravity();
             _characterController.Move(_cameraRelativeMovement * (Time.deltaTime * _speed) + _jumpVelocity * Time.deltaTime);
             HandleJump();
+        }
+
+        public void HandleAttack()
+        {
+
+            if (_movementLocked || currentWeapon==null)
+            {
+                return;
+            }
+
+            Rigidbody projectileRb = currentWeapon.GetComponent<Rigidbody>();
+
+
+            if(Input.GetMouseButtonDown(0) && _readyToThrow)
+            {
+                DrawLine(projectileRb);
+            }
+            if(Input.GetMouseButtonUp(0) && _readyToThrow)
+            {
+                _animator.SetTrigger("Attack");
+            }
+        }
+
+        public void HandleThrow()
+        {
+            Rigidbody projectileRb = currentWeapon.GetComponent<Rigidbody>();
+
+            currentWeapon.gameObject.transform.parent = null;
+            projectileRb.isKinematic = false;
+            projectileRb.useGravity = true;
+
+            projectileRb.velocity += rot*(throwUpwardForce*transform.forward);
+
+            lr.enabled=false;
+
+            currentWeapon = null;
+            Invoke(nameof(ResetThrow), throwCooldown);
+
+        }
+
+        private void DrawLine(Rigidbody projectileRb)
+        {
+            i = 0;
+            lr.positionCount = 2000;
+            lr.enabled = true;
+            startPosition=currentWeapon.transform.position;
+            startVelocity=rot*(throwUpwardForce*_player.transform.forward)/projectileRb.mass;
+            lr.SetPosition(i,startPosition);
+            for (float j=0; i<lr.positionCount-1;j+=0.5f)
+            {
+                i++;
+                Vector3 linePosition=startPosition+j*startVelocity;
+                linePosition.y=startPosition.y+startVelocity.y*j+ 0.5f * Physics.gravity.y * j * j;
+                lr.SetPosition(i,linePosition);
+            }
         }
 
 
@@ -268,10 +336,12 @@ namespace PlayerControls
             if (context.performed)
             { 
                 _isRunning = true;
+                _player.IncreaseHungerDecay();
             }
             else if(context.canceled)
             {
                 _isRunning = false;
+                _player.ResetHungerDecay();
             }
         }
 
@@ -285,20 +355,56 @@ namespace PlayerControls
             _isJumpPressed = context.ReadValueAsButton();
         }
 
-        public void OnAttack(InputAction.CallbackContext context)
+        public void OnPickup(InputAction.CallbackContext context)
         {
-            if (!context.performed)
+            Collider[] colliders = Physics.OverlapSphere(transform.position, 3.0f);
+
+            Weapon weapon = null;
+            Collider c = null;
+            float nearestDistance = float.MaxValue;
+
+            foreach (Collider collider in colliders)
             {
-                return;
+                Weapon w = collider.GetComponent<Weapon>();
+                if (w != null)
+                {
+                    float distance = Vector3.Distance(transform.position, w.transform.position);
+                    if (distance < nearestDistance)
+                    {
+                        nearestDistance = distance;
+                        weapon = w;
+                        c = collider;
+                    }
+                }
             }
 
-            if(!_readyToThrow)
+            if(weapon != null && c != null)
             {
-                return;
+                Rigidbody weaponRigidBody = weapon.GetComponent<Rigidbody>();
+                LaserGunWeapon laser = c.GetComponent<LaserGunWeapon>();
+                SpearWeapon spear = c.GetComponent<SpearWeapon>();
+                GameObject hand = null;
+
+                if(laser != null)
+                    hand = rightHand;
+                else if(spear != null)
+                    hand = leftHand;
+
+                if (weapon != null)
+                {
+                    if (currentWeapon != null)
+                        currentWeapon.GetComponent<Weapon>().DeactivateWeapon();
+
+                    currentWeapon = weapon;
+                    weapon.gameObject.transform.parent = hand.transform;
+                    weapon.transform.localPosition = weapon.PickPosition;
+                    weaponRigidBody.isKinematic = true;
+                    weapon.transform.localEulerAngles  = weapon.PickRotation;
+                    _animator.SetFloat("CurrentWeapon", weapon.weaponId);
+                    weapon.ActivateWeapon();
+                }
+
             }
-        
-            Throw();
-            _animator.SetTrigger(Attack);
         }
 
         private void HandleWater()
@@ -515,27 +621,6 @@ namespace PlayerControls
             Vector3 result = cameraForwardXProduct + cameraForwardZProduct;
 
             return new Vector3(result.x, 0, result.z);
-        }
-
-        private void Throw()
-        {
-            if (_movementLocked)
-            {
-                return;
-            }
-            
-            _readyToThrow = false;
-
-            GameObject spear = Instantiate(weapon, attackPoint.position, _cameraTransform.rotation);
-
-            Rigidbody projectileRb = spear.GetComponent<Rigidbody>();
-
-            Vector3 forceToAdd = _cameraTransform.transform.forward * throwForce + transform.up * throwUpwardForce;
-
-            projectileRb.AddForce(forceToAdd, ForceMode.Impulse);
-
-            Invoke(nameof(ResetThrow), throwCooldown);
-
         }
 
         private void ResetThrow()

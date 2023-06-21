@@ -94,15 +94,6 @@
             "id": "dc41f67c-7e7e-4f06-9326-7ffbf0d18910",
             "actions": [
                 {
-                    "name": "Attack",
-                    "type": "Button",
-                    "id": "ff847ff7-ee18-4e4d-aa74-8b791cafa8cd",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Run",
                     "type": "Button",
                     "id": "a66e85d2-cbc7-4c51-811b-062825762ee4",
@@ -128,6 +119,15 @@
                     "processors": "NormalizeVector2",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Pickup",
+                    "type": "Button",
+                    "id": "ae65eba6-befa-49a4-9dfb-134c23dfdf12",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -221,12 +221,12 @@
                 },
                 {
                     "name": "",
-                    "id": "bf997ece-9b18-4541-b0f9-fdcd086947b0",
-                    "path": "<Mouse>/leftButton",
+                    "id": "73936ac6-6d1a-48ac-bd3d-52c8f4a92c3c",
+                    "path": "<Keyboard>/p",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Attack",
+                    "action": "Pickup",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
