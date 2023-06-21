@@ -436,8 +436,14 @@ namespace UI.Inventory.Components
             {
                 isDragging = false;
                 draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
-                DarkenItem(_inventory.GetRelativePositionAt(draggingProperties.dragStartPosition.position).itemID,
-                    false);
+                
+                var relPosition = _inventory.GetRelativePositionAt(draggingProperties.dragStartPosition.position);
+
+                if (relPosition != null)
+                {
+                    DarkenItem(relPosition.itemID, false);    
+                }
+
                 onDragEnd?.Invoke(draggingProperties);
             }
             else if (_contextMenuViewer.IsOpen)

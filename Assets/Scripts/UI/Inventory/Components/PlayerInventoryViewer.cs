@@ -234,6 +234,11 @@ namespace UI.Inventory.Components
                 return;
             }
 
+            if (draggingProperties.draggedItem.Type != ItemType.Equipment)
+            {
+                return;
+            }
+            
             var component = draggingProperties.draggedItem.GetComponent<EquipableComponent>().equipableComponentData;
 
             if (component.Slot != equipmentSlotType)
