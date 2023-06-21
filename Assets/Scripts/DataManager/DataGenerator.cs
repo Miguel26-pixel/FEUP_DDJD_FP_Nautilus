@@ -5,6 +5,7 @@ using System.Linq;
 using Crafting;
 using Items;
 using Newtonsoft.Json;
+using UI.Inventory.Components;
 using UnityEngine;
 
 namespace DataManager
@@ -381,43 +382,57 @@ namespace DataManager
                 "When you want to swim like a fish, but still keep your human dignity.",
                 ItemType.Equipment, "ItemIcons/test");
             EquipmentComponentData equipmentComponentData =
-                new(0, 30, new List<Tuple<string, int>> { new("speed", 5) });
+                new(EquipmentSlotType.Feet, 30, new List<Tuple<Enhancements, int>>
+                {
+                    new(Enhancements.SwimmingSpeed, 6),
+                    new(Enhancements.Speed, -2),
+                });
             flippers.AddComponent(equipmentComponentData);
 
             ItemData oxygenTank = _itemRegistry.CreateItem("Oxygen Tank",
                 "This essential piece of diving equipment lets you stay submerged and explore for extended periods without worrying about running out of breath.",
-                ItemType.Equipment, "ItemIcons/test");
+                ItemType.Equipment, "ItemIcons/test", new bool[,] {{true},{true}});
             equipmentComponentData =
-                new EquipmentComponentData(0, 30, new List<Tuple<string, int>> { new("oxygenCapacity", 10) });
+                new EquipmentComponentData(EquipmentSlotType.Body, 30, new List<Tuple<Enhancements, int>>
+                {
+                    new(Enhancements.OxygenCapacity, 10),
+                    new(Enhancements.SwimmingSpeed, -1),
+                    new(Enhancements.Speed, -1),
+                });
             oxygenTank.AddComponent(equipmentComponentData);
 
-            ItemData suit = _itemRegistry.CreateItem("Pressure Suit",
-                "Now you can explore the deep sea without getting crushed by the pressure.", ItemType.Equipment,
-                "ItemIcons/test");
-            equipmentComponentData =
-                new EquipmentComponentData(0, 30, new List<Tuple<string, int>> { new("pressureCapacity", 10) });
-            suit.AddComponent(equipmentComponentData);
+            // ItemData suit = _itemRegistry.CreateItem("Pressure Suit",
+            //     "Now you can explore the deep sea without getting crushed by the pressure.", ItemType.Equipment,
+            //     "ItemIcons/test");
+            // equipmentComponentData =
+            //     new EquipmentComponentData(0, 30, new List<Tuple<Enhancements, int>> { new( "pressureCapacity", 10) });
+            // suit.AddComponent(equipmentComponentData);
 
             ItemData abyssalTank = _itemRegistry.CreateItem("Abyssal Tank",
                 "This tank will keep you alive in the darkest depths of the ocean, but at what cost? Who knows what horrors lurk down there…",
-                ItemType.Equipment, "ItemIcons/test");
+                ItemType.Equipment, "ItemIcons/test", new bool[,] {{true},{true}});
             equipmentComponentData =
-                new EquipmentComponentData(0, 30, new List<Tuple<string, int>> { new("oxygenCapacity", 30) });
+                new EquipmentComponentData(EquipmentSlotType.Body, 30, new List<Tuple<Enhancements, int>>
+                {
+                    new(Enhancements.OxygenCapacity, 30),
+                    new(Enhancements.SwimmingSpeed, -3),
+                    new(Enhancements.Speed, -3),
+                });
             abyssalTank.AddComponent(equipmentComponentData);
 
-            ItemData armoredSuit = _itemRegistry.CreateItem("Armored Pressure Suit",
-                "Upgraded pressure suit for cave diving with enhanced protection and pressure handling.",
-                ItemType.Equipment, "ItemIcons/test");
-            equipmentComponentData =
-                new EquipmentComponentData(0, 30,
-                    new List<Tuple<string, int>> { new("pressureCapacity", 30), new("armor", 20) });
-            armoredSuit.AddComponent(equipmentComponentData);
+            // ItemData armoredSuit = _itemRegistry.CreateItem("Armored Pressure Suit",
+            //     "Upgraded pressure suit for cave diving with enhanced protection and pressure handling.",
+            //     ItemType.Equipment, "ItemIcons/test");
+            // equipmentComponentData =
+            //     new EquipmentComponentData(0, 30,
+            //         new List<Tuple<Enhancements, int>> { new("pressureCapacity", 30), new("armor", 20) });
+            // armoredSuit.AddComponent(equipmentComponentData);
 
             ItemData drill = _itemRegistry.CreateItem("Suction Drill",
                 "Finally, a drill that sucks in a good way! Perfect for those who want to dig deep and collect precious materials without breaking a sweat.",
                 ItemType.Equipment, "ItemIcons/test");
             equipmentComponentData =
-                new EquipmentComponentData(0, 30, new List<Tuple<string, int>> { new("digSpeed", 10) });
+                new EquipmentComponentData(EquipmentSlotType.Head, 30, new List<Tuple<Enhancements, int>> { new(Enhancements.DiggingSpeed, 10) });
             drill.AddComponent(equipmentComponentData);
 
             // Weapons
@@ -451,10 +466,10 @@ namespace DataManager
 
             ItemData[] items = _itemRegistry.GetAll();
             string json = DataSerializer.SerializeItemData(items);
-            File.WriteAllText("ItemData.json", json);
+            File.WriteAllText("Assets/Resources/ItemData.json", json);
 
             string nameToHash = items.Aggregate("", (current, item) => current + item.Name + ": " + item.ID + "\n");
-            File.WriteAllText("ItemHashes.txt", nameToHash);
+            File.WriteAllText("Assets/Resources/ItemHashes.txt", nameToHash);
 
             // Create recipes
 
@@ -792,15 +807,15 @@ namespace DataManager
                 });
 
 
-            _recipeRegistry.CreateCraftingRecipe(suit.ID,
-                MachineType.Assembler,
-                new Dictionary<string, int>
-                {
-                    { cloth.ID, 2 },
-                    { plate.ID, 1 },
-                    { glass.ID, 1 },
-                    { silicon.ID, 1 }
-                });
+            // _recipeRegistry.CreateCraftingRecipe(suit.ID,
+            //     MachineType.Assembler,
+            //     new Dictionary<string, int>
+            //     {
+            //         { cloth.ID, 2 },
+            //         { plate.ID, 1 },
+            //         { glass.ID, 1 },
+            //         { silicon.ID, 1 }
+            //     });
 
             _recipeRegistry.CreateCraftingRecipe(abyssalTank.ID,
                 MachineType.Assembler,
@@ -811,14 +826,14 @@ namespace DataManager
                     { board.ID, 1 }
                 });
 
-            _recipeRegistry.CreateCraftingRecipe(armoredSuit.ID,
-                MachineType.Assembler,
-                new Dictionary<string, int>
-                {
-                    { deepPlate.ID, 2 },
-                    { suit.ID, 1 },
-                    { skin.ID, 1 }
-                });
+            // _recipeRegistry.CreateCraftingRecipe(armoredSuit.ID,
+            //     MachineType.Assembler,
+            //     new Dictionary<string, int>
+            //     {
+            //         { deepPlate.ID, 2 },
+            //         { suit.ID, 1 },
+            //         { skin.ID, 1 }
+            //     });
 
 
             _recipeRegistry.CreateCraftingRecipe(drill.ID,
@@ -833,7 +848,7 @@ namespace DataManager
 
             IEnumerable<CraftingRecipe> recipes = _recipeRegistry.GetAll();
             json = DataSerializer.SerializeRecipeData(recipes);
-            File.WriteAllText("RecipeData.json", json);
+            File.WriteAllText("Assets/Resources/RecipeData.json", json);
 
             _itemRegistry.SetInitialized();
             _recipeRegistry.SetInitialized();

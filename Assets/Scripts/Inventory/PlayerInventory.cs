@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Items;
+using JetBrains.Annotations;
+using UI.Inventory.Components;
 using UnityEngine;
 
 namespace Inventory
@@ -92,6 +95,11 @@ namespace Inventory
         private SoilResource _soil = null;
         private readonly Stack<SoilResource> _previousSoil = new();
 
+        [CanBeNull] public Item feetEquipment;
+        [CanBeNull] public Item bodyEquipment1;
+        [CanBeNull] public Item bodyEquipment2;
+        [CanBeNull] public Item headEquipment;
+        
         private readonly List<IInventorySubscriber> _subscribers = new();
 
         private bool _notify = true;
@@ -299,6 +307,102 @@ namespace Inventory
             base.MoveItem(source, destination);
             _notify = true;
             NotifySubscribersOnInventoryChanged();
+        }
+
+        public EquipmentSlot? GetFreeSlot(EquipmentSlotType slotType)
+        {
+            return slotType switch
+            {
+                EquipmentSlotType.Feet => feetEquipment is null ? EquipmentSlot.Feet : null,
+                EquipmentSlotType.Body => bodyEquipment1 is null
+                    ? EquipmentSlot.Body1
+                    : (bodyEquipment2 is null ? EquipmentSlot.Body2 : null),
+                EquipmentSlotType.Head => headEquipment is null ? EquipmentSlot.Head : null,
+                _ => null
+            };
+        }
+
+        private bool IsSlotFree(EquipmentSlot slot)
+        {
+            return slot switch
+            {
+                EquipmentSlot.Feet => feetEquipment is null,
+                EquipmentSlot.Body1 => bodyEquipment1 is null,
+                EquipmentSlot.Body2 => bodyEquipment2 is null,
+                EquipmentSlot.Head => headEquipment is null,
+            };
+        }
+
+        public bool RemoveEquipment(Item item, EquipmentSlot slot)
+        {
+            if (item.Type != ItemType.Equipment)
+            {
+                return false;
+            }
+
+            if (item.GetComponents().First() is not EquipableComponent component)
+            {
+                return false;
+            }
+            
+            switch (slot)
+            {
+                case EquipmentSlot.Body1:
+                    bodyEquipment1 = null;
+                    break;
+                case EquipmentSlot.Body2:
+                    bodyEquipment2 = null;
+                    break;
+                case EquipmentSlot.Head:
+                    headEquipment = null;
+                    break;
+                case EquipmentSlot.Feet:
+                    feetEquipment = null;
+                    break;
+            }
+
+            return true;
+        }
+        
+        public bool AddEquipment(Item item, EquipmentSlot? slot = null)
+        {
+            if (item.Type != ItemType.Equipment)
+            {
+                return false;
+            }
+
+            if (item.GetComponents().First() is not EquipableComponent component)
+            {
+                return false;
+            }
+
+            if (slot is null)
+            {
+                return false;
+            }
+
+            if (!IsSlotFree((EquipmentSlot)slot))
+            {
+                return false;
+            }
+
+            switch (slot)
+            {
+                case EquipmentSlot.Body1:
+                    bodyEquipment1 = item;
+                    break;
+                case EquipmentSlot.Body2:
+                    bodyEquipment2 = item;
+                    break;
+                case EquipmentSlot.Head:
+                    headEquipment = item;
+                    break;
+                case EquipmentSlot.Feet:
+                    feetEquipment = item;
+                    break;
+            }
+
+            return true;
         }
     }
 }

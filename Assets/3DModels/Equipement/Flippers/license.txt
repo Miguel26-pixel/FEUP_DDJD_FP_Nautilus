@@ -1,0 +1,11 @@
+Model Information:
+* title:	Flipper V2
+* source:	https://sketchfab.com/3d-models/flipper-v2-3c33b9d0714f49bdbf5c97623285343d
+* author:	Brandon_Harvey (https://sketchfab.com/Brandon_Harvey)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Flipper V2" (https://sketchfab.com/3d-models/flipper-v2-3c33b9d0714f49bdbf5c97623285343d) by Brandon_Harvey (https://sketchfab.com/Brandon_Harvey) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

@@ -15,14 +15,6 @@ public class Weapon : MonoBehaviour
         rigidbody = GetComponent<Rigidbody>();
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (rigidbody)
-        {
-            //Destroy(gameObject);
-        }
-    }
-
     public void ActivateWeapon()
     {
         gameObject.SetActive(true);

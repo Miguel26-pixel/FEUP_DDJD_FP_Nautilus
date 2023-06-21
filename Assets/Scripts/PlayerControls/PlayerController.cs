@@ -34,13 +34,25 @@ namespace PlayerControls
         [Header("Movement")]
         public float walkingSpeed = 6.0f;
         public float runningSpeed = 12.0f;
-        [Range(-1f, 2f)] 
+        public float swimmingSpeed = 3.0f;
+        public float swimmingFastSpeed = 6.0f;
+
+        public float minSpeed = 2.0f;
+        public float maxSpeed = 15.0f;
+
+        public float minSwimmingSpeed = 1.0f;
+        public float maxSwimmingSpeed = 10.0f;
+        
+        [Range(-1f, 2f)]
         public float distanceToGround = 0.1f;
         public float animationToGround = 0.1f;
 
         public float legDistance = 33.76f;
         [SerializeField] private LayerMask groundLayer;
         [SerializeField] private LayerMask waterLayer;
+
+        private float _runningBoost = 0;
+        private float _swimmingBoost = 0;
 
         private float _speed;
         private float _targetSpeed;
@@ -51,6 +63,22 @@ namespace PlayerControls
         private bool _isMovementPressed;
         private bool _movementLocked;
 
+        public void AddSpeedBoost(float boost)
+        {
+            _runningBoost += boost;
+        }
+
+        public void AddSwimmingBoost(float boost)
+        {
+            _swimmingBoost += boost;
+        }
+        
+        
+        public void RemoveRunningBoost(float boost)
+        {
+            _runningBoost -= boost;
+        }
+        
         // Jumping
         [Header("Jumping")]
         public float maxJumpHeight = 1.0f;
@@ -105,6 +133,9 @@ namespace PlayerControls
 
         [Header("Swim Event")]
         public float waterDistance = 1;
+        public bool underWater = false;
+        public float swimmSpeed = 0.0f;
+        private static readonly int SpeedDifference = Animator.StringToHash("SpeedDifference");
 
         private void Awake()
         {
@@ -193,7 +224,9 @@ namespace PlayerControls
             
             if (_isMovementPressed && !_movementLocked)
             {
-                _targetSpeed = _isRunning ? runningSpeed : walkingSpeed;
+                _targetSpeed = underWater
+                    ? Mathf.Clamp((_isRunning ? swimmingFastSpeed : swimmingSpeed) + _swimmingBoost, minSwimmingSpeed, maxSwimmingSpeed)
+                    : Mathf.Clamp((_isRunning ? runningSpeed : walkingSpeed) + _runningBoost, minSpeed, maxSpeed);
             }
             else
             {
@@ -206,12 +239,19 @@ namespace PlayerControls
 
 
             HandleAttack();
-            _cameraRelativeMovement = ConvertToCameraSpace(_currentMovement);
+            
             HandleWater();
+            _cameraRelativeMovement = ConvertToCameraSpace(_currentMovement);
+
+            if (underWater && 19.5f > transform.position.y)
+            {
+                _cameraRelativeMovement.y = -((0.3f + Mathf.Clamp(_cameraTransform.localRotation.x, -0.3f, 0.3f)) / 0.6f * 3f - 1.5f);
+            }
+
             HandleRotation();
             HandleAnimation();
-            _characterController.Move(_cameraRelativeMovement * (Time.deltaTime * _speed) + _jumpVelocity * Time.deltaTime);
             HandleGravity();
+            _characterController.Move(_cameraRelativeMovement * (Time.deltaTime * _speed) + _jumpVelocity * Time.deltaTime);
             HandleJump();
         }
 
@@ -238,8 +278,8 @@ namespace PlayerControls
 
         public void HandleThrow()
         {
-            Debug.Break();
             Rigidbody projectileRb = currentWeapon.GetComponent<Rigidbody>();
+
             currentWeapon.gameObject.transform.parent = null;
             projectileRb.isKinematic = false;
             projectileRb.useGravity = true;
@@ -323,11 +363,9 @@ namespace PlayerControls
 
             foreach (Collider collider in colliders)
             {
-                Debug.Log(collider);
                 Weapon w = collider.GetComponent<Weapon>();
                 if (w != null)
                 {
-                    Debug.Log(w);
                     float distance = Vector3.Distance(transform.position, w.transform.position);
                     if (distance < nearestDistance)
                     {
@@ -337,9 +375,6 @@ namespace PlayerControls
                     }
                 }
             }
-
-            Debug.Log(weapon);
-            Debug.Log(c);
 
             if(weapon != null && c != null)
             {
@@ -352,8 +387,6 @@ namespace PlayerControls
                     hand = rightHand;
                 else if(spear != null)
                     hand = leftHand;
-
-                Debug.Log(hand);
 
                 if (weapon != null)
                 {
@@ -374,29 +407,50 @@ namespace PlayerControls
 
         private void HandleWater()
         {
-            if (Physics.Raycast(transform.position, Vector3.up, out var hit, 10f, waterLayer))
+            if (Physics.Raycast(transform.position, Vector3.up, out var hit, 1000f, waterLayer))
             {
-                float distance = Mathf.Clamp01((transform.position.y - hit.point.y)/waterDistance);
-                 _animator.SetFloat("WaterDistance", distance);
-            }
-            else {
-                _animator.SetFloat("WaterDistance", 0);
+                float distance = Mathf.Clamp01((hit.point.y - transform.position.y) / waterDistance);
+                underWater = true;
 
+                _animator.SetFloat("WaterDistance", distance);
+            }
+            else
+            {
+                underWater = false;
+                _animator.SetFloat("WaterDistance", 0f);
             }
         }
 
         private void HandleAnimation()
         {
             float animSpeed;
-            if (_speed <= walkingSpeed)
+            float minSpeedMultiplier = 0.7f;
+            float maxSpeedMultiplier = 1.3f;
+            float normalSpeed = !underWater ? walkingSpeed : swimmingSpeed;
+            float fastSpeed = !underWater ? runningSpeed : swimmingFastSpeed;
+            float envMinSpeed = !underWater ? minSpeed : minSwimmingSpeed;
+            float envMaxSpeed = !underWater ? maxSpeed : maxSwimmingSpeed;
+            float minBoost = envMinSpeed - normalSpeed;
+            float maxBoost = envMaxSpeed - fastSpeed;
+            float boost = !underWater ? _runningBoost : _swimmingBoost;
+
+            float speedDifferenceMultiplier = (Mathf.Clamp(boost, minBoost, maxBoost) - minBoost) / (maxBoost - minBoost) * (maxSpeedMultiplier - minSpeedMultiplier) +
+                                              minSpeedMultiplier;
+
+            float modifiedNormalSpeed = Mathf.Clamp(normalSpeed + boost, envMinSpeed, envMaxSpeed);
+            float modifiedFastSpeed = Mathf.Clamp(fastSpeed + boost, envMaxSpeed, envMaxSpeed);
+
+            _animator.SetFloat(SpeedDifference, speedDifferenceMultiplier);
+
+            if (_speed <= modifiedNormalSpeed)
             {
-                animSpeed = _speed / walkingSpeed;
+                animSpeed = _speed / modifiedNormalSpeed;
             }
             else
             {
-                animSpeed = (_speed - walkingSpeed) / (runningSpeed - walkingSpeed) + 1;
+                animSpeed = (_speed - modifiedNormalSpeed) / (modifiedFastSpeed - modifiedNormalSpeed) + 1;
             }
-            
+
             _animator.SetFloat(Speed, animSpeed);
             _animator.SetBool(Grounded, _characterController.isGrounded);
         }
@@ -412,6 +466,11 @@ namespace PlayerControls
 
             positionToLookAt.x = _cameraRelativeMovement.x;
             positionToLookAt.y = 0.0f;
+            if (underWater)
+            {
+                positionToLookAt.y = -((0.3f + Mathf.Clamp(_cameraTransform.localRotation.x, -0.3f, 0.3f)) / 0.6f * 2f - 1f);
+            }
+
             positionToLookAt.z = _cameraRelativeMovement.z;
 
             Quaternion currentRotation = transform.rotation;
@@ -430,13 +489,20 @@ namespace PlayerControls
 
         private void HandleGravity()
         {
-            if (_characterController.isGrounded)
+            if (_characterController.isGrounded && !underWater)
             {
                 _jumpVelocity.y = GroundGravity;
                 return;
             }
-            
+
+            if(underWater)
+            {
+                _jumpVelocity.y = 0.0f;
+                _gravity = 0.0f;
+                return;
+            }
             _jumpVelocity.y += _gravity * Time.deltaTime;
+
         }
 
         private void HandleJump()
@@ -520,17 +586,16 @@ namespace PlayerControls
         private IEnumerator BlendJumpLayers(float endOverride, JumpState state)
         {
             float startOverride = _animator.GetLayerWeight(_jumpOverrideLayer);
-            
+
             float t = 0f;
-            
+
             while (t < 1f && _jumpState == state)
             {
                 t += Time.deltaTime * 9f;
                 float currentBlendOverride = Mathf.Lerp(startOverride, endOverride, t);
-                
+
                 _animator.SetLayerWeight(_jumpOverrideLayer, currentBlendOverride);
-                
-                
+
                 yield return null;
             }
         }
@@ -552,78 +617,9 @@ namespace PlayerControls
             Vector3 cameraForwardXProduct = vectorToRotate.x * cameraRight;
 
             Vector3 result = cameraForwardXProduct + cameraForwardZProduct;
+
             return new Vector3(result.x, 0, result.z);
         }
-
-        // private void Throw()
-        // {
-        //     if (_movementLocked || currentWeapon==null)
-        //     {
-        //         return;
-        //     }
-            
-        //     _readyToThrow = false;
-
-        //     Rigidbody projectileRb = currentWeapon.GetComponent<Rigidbody>();
-
-        //     Vector3 forceToAdd = _cameraTransform.transform.forward * throwForce + transform.up * throwUpwardForce;
-        
-        //     currentWeapon.gameObject.transform.parent = null;
-        //     projectileRb.isKinematic = false;
-        //     projectileRb.useGravity = true;
-
-        //     _animator.SetTrigger("Attack");
-
-        //     float Vi = Mathf.Sqrt(10 * -Physics.gravity.y / (Mathf.Sin(Mathf.Deg2Rad * 90 * 2)));
-        //     float Vy, Vz;   
-
-        //     Vz = Vi * Mathf.Cos(Mathf.Deg2Rad * 90);
-
-        //     Vector3 localVelocity = new Vector3(0f, 0f, Vz);
-            
-        //     Vector3 globalVelocity = transform.TransformVector(localVelocity);
-
-        //     projectileRb.velocity += _cameraTransform.transform.forward * Time.deltaTime;
-        //     projectileRb.velocity *= Mathf.Clamp01(1f - throwForce * Time.deltaTime);
-
-        //     currentWeapon = null;
-
-        //     Invoke(nameof(ResetThrow), throwCooldown);
-
-        // 
-
-        // private void OnCollisionEnter(Collision other)
-        // {
-        //     if (other.collider.CompareTag("Weapon"))
-        //     {
-        //         Weapon weapon = other.collider.GetComponent<Weapon>();
-        //         Rigidbody weaponRigidBody = weapon.GetComponent<Rigidbody>();
-        //         LaserGunWeapon laser = other.collider.GetComponent<LaserGunWeapon>();
-        //         SpearWeapon spear = other.collider.GetComponent<SpearWeapon>();
-        //         GameObject hand = null;
-
-        //         if(laser != null)
-        //             hand = rightHand;
-        //         else if(spear != null)
-        //             hand = leftHand;
-
-        //         Debug.Log(hand);
-
-        //         if (weapon != null)
-        //         {
-        //             if (currentWeapon != null)
-        //                 currentWeapon.GetComponent<Weapon>().DeactivateWeapon();
-
-        //             currentWeapon = weapon;
-        //             weapon.gameObject.transform.parent = hand.transform;
-        //             weapon.transform.localPosition = weapon.PickPosition;
-        //             weaponRigidBody.isKinematic = true;
-        //             weapon.transform.localEulerAngles  = weapon.PickRotation;
-        //             _animator.SetFloat("CurrentWeapon", weapon.weaponId);
-        //             weapon.ActivateWeapon();
-        //         }
-        //     }
-        // }
 
         private void ResetThrow()
         {
