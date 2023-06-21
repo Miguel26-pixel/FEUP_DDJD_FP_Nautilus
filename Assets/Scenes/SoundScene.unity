@@ -861,6 +861,13 @@ MonoBehaviour:
   terraformCursorPrefab: {fileID: 7922233391476220167, guid: 326cef111a0578c1ab6a3044eacd35a6, type: 3}
   vacuumArea: {fileID: 452267343}
   vacuumCollection: {fileID: 698090329}
+  terraformSound:
+    Guid:
+      Data1: -1557537149
+      Data2: 1320920852
+      Data3: -528641121
+      Data4: 158027242
+    Path: event:/Player/Sucking ground up (normal pitched rumble)
 --- !u!1 &404608392
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using FMOD.Studio;
+using FMODUnity;
 using Generation.Resource;
 using UnityEngine;
 
@@ -24,6 +26,12 @@ namespace PlayerControls
         private Player _player;
         private GameObject _terraformCursor;
         private TerraformType _terraformType = TerraformType.Raise;
+        
+        [Header("Sounds")]
+        public EventReference terraformSound;
+        
+        private EventInstance _terraformSoundInstance;
+        private bool soundStarted = false;
 
         private void Start()
         {
@@ -128,6 +136,24 @@ namespace PlayerControls
 
         private HashSet<Vector3Int> Terraform(Vector3 position)
         {
+            _terraformSoundInstance.getPlaybackState(out var state);
+
+            if (_terraformType is TerraformType.Lower or TerraformType.Raise)
+            {
+                if (state is PLAYBACK_STATE.STOPPED or PLAYBACK_STATE.STOPPING)
+                {
+                    _terraformSoundInstance = RuntimeManager.CreateInstance(terraformSound);
+                    _terraformSoundInstance.start();
+                    Debug.Log("Started sound");
+                    soundStarted = true;
+                }
+            }
+            else if (state == PLAYBACK_STATE.PLAYING) {
+                _terraformSoundInstance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+                Debug.Log("Stopped sound");
+                soundStarted = false;
+            }
+            
             switch (_terraformType)
             {
                 case TerraformType.Lower:
