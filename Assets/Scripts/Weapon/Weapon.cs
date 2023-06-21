@@ -4,18 +4,18 @@ using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
-    private Rigidbody rigidbody;
+    //private Rigidbody rigidbody;
 
     private void Start()
     {
-        rigidbody = GetComponent<Rigidbody>();
+        //rigidbody = GetComponent<Rigidbody>();
     }
 
     private void OnCollisionEnter3D(Collision2D collision)
     {
-        if (rigidbody)
+        /*if (rigidbody)
         {
             Destroy(gameObject);
-        }
+        }*/
     }
 }

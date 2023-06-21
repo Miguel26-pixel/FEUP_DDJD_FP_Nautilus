@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657832, g: 0.49641222, b: 0.57481664, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1639,6 +1639,21 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  onPlacingStateChanged:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1449632365}
+        m_TargetAssemblyTypeName: UI.Inventory.InventoryMenu, NautilusAssembly
+        m_MethodName: ToggleMenu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   terraformController: {fileID: 393193719}
 --- !u!114 &449703881
 MonoBehaviour:
@@ -1777,6 +1792,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18efd3431bff433bf8f095577f17fdb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  texture: {fileID: 0}
+  outputFolder: Assets/Resources/ItemIcons
+  outputName: test
+  sliceWidth: 128
+  sliceHeight: 128
 --- !u!4 &527794743
 Transform:
   m_ObjectHideFlags: 0
@@ -2813,12 +2833,12 @@ MonoBehaviour:
     maxHeight: 1000
     minSlope: 0.9
     maxSlope: 1
-    offset: -0.5
+    offset: 0
     alignToSurface: 1
     chanceOfGenerating: 1
     prefab: {fileID: 1063185408827613290, guid: a5001e01711faefc294811f687c1162e, type: 3}
     isClustered: 1
-    clusterMaxCount: 16
+    clusterMaxCount: 0
     clusterRadius: 10
     clusterChance: 1
   - radius: 30
@@ -2829,12 +2849,12 @@ MonoBehaviour:
     maxHeight: 1000
     minSlope: 0.9
     maxSlope: 1
-    offset: -2
+    offset: 0
     alignToSurface: 0
     chanceOfGenerating: 1
     prefab: {fileID: 3227079481712756029, guid: d69a6f04f5369c229944c123903ad7a8, type: 3}
     isClustered: 0
-    clusterMaxCount: 10
+    clusterMaxCount: 0
     clusterRadius: 10
     clusterChance: 1
   - radius: 22
@@ -2845,12 +2865,12 @@ MonoBehaviour:
     maxHeight: 1000
     minSlope: 0.9
     maxSlope: 1
-    offset: -0.5
+    offset: 0
     alignToSurface: 1
     chanceOfGenerating: 1
     prefab: {fileID: 3158366126859447154, guid: eb33a9af3b7006269be22b18b606adb6, type: 3}
     isClustered: 0
-    clusterMaxCount: 10
+    clusterMaxCount: 0
     clusterRadius: 10
     clusterChance: 1
   - radius: 29
@@ -2861,12 +2881,12 @@ MonoBehaviour:
     maxHeight: 23.7
     minSlope: 0.9
     maxSlope: 1
-    offset: -0.6
+    offset: 0
     alignToSurface: 1
     chanceOfGenerating: 1
     prefab: {fileID: 1641273471284524950, guid: b4eb658961a68fc7797d76d5b6abfd4c, type: 3}
     isClustered: 1
-    clusterMaxCount: 20
+    clusterMaxCount: 0
     clusterRadius: 10
     clusterChance: 1
   - radius: 45
@@ -2877,7 +2897,7 @@ MonoBehaviour:
     maxHeight: 23.7
     minSlope: 0.4
     maxSlope: 1
-    offset: -0.2
+    offset: 0
     alignToSurface: 0
     chanceOfGenerating: 1
     prefab: {fileID: 7148089789362757468, guid: 421b3641effff73f6bf07a97c65cb60c, type: 3}
@@ -2893,7 +2913,7 @@ MonoBehaviour:
   lastChunkPosition: {x: 2147483647, y: 2147483647, z: 2147483647}
   pointsGeneratorMono: {fileID: 1024297185}
   resourceGenerator: {fileID: 1024297184}
-  terraformShader: {fileID: 7200000, guid: dff5b01a328946b39a5680beb5ce39ba, type: 3}
+  terraformShader: {fileID: 0}
 --- !u!114 &1298936912
 MonoBehaviour:
   m_ObjectHideFlags: 0

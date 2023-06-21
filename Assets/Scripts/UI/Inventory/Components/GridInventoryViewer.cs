@@ -4,6 +4,7 @@ using Items;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
+using PlayerControls;
 
 namespace UI.Inventory.Components
 {
@@ -264,6 +265,14 @@ namespace UI.Inventory.Components
 
         private void ProcessMouseUpRightCell(EventBase evt, Item item, uint itemID)
         {
+
+            Player player = GameObject.FindWithTag("Player").GetComponent<Player>();
+
+            if (player == null)
+            {
+                return;
+            }
+
             if (_isDragging)
             {
                 return;
@@ -279,7 +288,7 @@ namespace UI.Inventory.Components
 
             Vector2 position = _currentMousePosition;
             CloseItemInfo();
-            _contextMenuViewer.Open(item, itemID, position);
+            _contextMenuViewer.Open(item, itemID, position, player);
         }
 
         private void CloseContext()

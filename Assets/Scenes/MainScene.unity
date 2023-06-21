@@ -168,7 +168,7 @@ GameObject:
   - component: {fileID: 69603292}
   m_Layer: 0
   m_Name: Camera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -232,7 +232,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 69603288}
   m_LocalRotation: {x: 0.275433, y: -0, z: -0, w: 0.9613203}
-  m_LocalPosition: {x: 99.5, y: 285.3, z: -240.9}
+  m_LocalPosition: {x: 3.2, y: 64.1, z: -107.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1049,11 +1049,6 @@ MonoBehaviour:
   boundsSize: 60
   seed: 1
   player: {fileID: 1678036745}
-<<<<<<< HEAD:Assets/Scenes/MainScene.unity
-  chunkPrefab: {fileID: 5382608540069460159, guid: c50d8f676bf4e53f3bee1fef7779aa00, type: 3}
-  generationConfigs: {fileID: 1060819886}
-  resourceGeneratorConfigs: []
-=======
   chunkPrefab: {fileID: 5382608540069460159, guid: 5ce4b8303c03e926dbe92f284d48c1d4, type: 3}
   generationConfigs: {fileID: 1298936910}
   resourceGeneratorConfigs:
@@ -1102,18 +1097,12 @@ MonoBehaviour:
     clusterPointRadius: 2
     clusterRadius: 10
     clusterChance: 1
->>>>>>> main:Assets/Scenes/SampleScene.unity
   chunksParent: {fileID: 175995}
   numChunksX: 16
   numChunksY: 3
   numChunksZ: 16
   lastPosition: {x: Infinity, y: Infinity, z: Infinity}
   lastChunkPosition: {x: 2147483647, y: 2147483647, z: 2147483647}
-<<<<<<< HEAD:Assets/Scenes/MainScene.unity
-  pointsGeneratorMono: {fileID: 0}
-  resourceGenerator: {fileID: 0}
---- !u!4 &1060819885
-=======
   pointsGeneratorMono: {fileID: 1024297185}
   resourceGenerator: {fileID: 1024297184}
 --- !u!1 &1449632362
@@ -1135,7 +1124,6 @@ GameObject:
   m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &1449632363
->>>>>>> main:Assets/Scenes/SampleScene.unity
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1275,7 +1263,7 @@ GameObject:
   - component: {fileID: 1565541022}
   - component: {fileID: 1565541021}
   - component: {fileID: 1565541020}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1378,7 +1366,7 @@ GameObject:
   - component: {fileID: 1678036748}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1544,6 +1532,21 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   onInventoryEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1449632365}
+        m_TargetAssemblyTypeName: UI.Inventory.InventoryMenu, NautilusAssembly
+        m_MethodName: ToggleMenu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onPlacingStateChanged:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1449632365}
