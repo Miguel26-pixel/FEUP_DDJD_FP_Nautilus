@@ -21,6 +21,7 @@ public class AmbientNoise : MonoBehaviour
     public EventReference submergeReference;
     public EventReference deepAtmosphere;
     public EventReference deepAmbiance;
+    public EventReference deepGuttural;
     
     private EventInstance _shoreEvent;
     private EventInstance _waveEvent;
@@ -28,6 +29,7 @@ public class AmbientNoise : MonoBehaviour
     private EventInstance _bubblingEvent;
     private EventInstance _deepAtmosphereEvent;
     private EventInstance _deepAmbianceEvent;
+    private EventInstance _deepGutturalEvent;
 
     private bool _above = true;
 
@@ -39,7 +41,8 @@ public class AmbientNoise : MonoBehaviour
     public float waveRange = 5f;
     public float floorDistanceRay = 30f;
     
-    public float ambianceChancePerSecond = 0.01f;
+    public float ambianceChancePerSecond = 0.05f;
+    public float gutturalsChancePerSecond = 0.05f;
     public float updateInterval = 0.1f;
     
     public LayerMask floorLayerMask;
@@ -157,6 +160,17 @@ public class AmbientNoise : MonoBehaviour
             {
                 _deepAmbianceEvent = RuntimeManager.CreateInstance(deepAmbiance);
                 _deepAmbianceEvent.start();
+            }
+        }
+        
+        _deepGutturalEvent.getPlaybackState(out var deepGutturalState);
+        if (deepGutturalState == PLAYBACK_STATE.STOPPED)
+        {
+            float rand = UnityEngine.Random.value;
+            if (rand < gutturalsChancePerSecond * updateInterval)
+            {
+                _deepGutturalEvent = RuntimeManager.CreateInstance(deepGuttural);
+                _deepGutturalEvent.start();
             }
         }
 

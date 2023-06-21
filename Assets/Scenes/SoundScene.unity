@@ -4016,6 +4016,13 @@ MonoBehaviour:
       Data3: 598934437
       Data4: -1586330240
     Path: event:/Environment/Deep sounding, heavy feeling atmosphere. Scary
+  deepGuttural:
+    Guid:
+      Data1: -722597522
+      Data2: 1229482032
+      Data3: -73847164
+      Data4: -145067830
+    Path: event:/Environment/Deep guttural sounds
   shoreLine: 21
   deepLine: -14
   lowestDeepLine: -45
@@ -4024,6 +4031,7 @@ MonoBehaviour:
   waveRange: 5
   floorDistanceRay: 30
   ambianceChancePerSecond: 0.05
+  gutturalsChancePerSecond: 0.05
   updateInterval: 0.1
   floorLayerMask:
     serializedVersion: 2
