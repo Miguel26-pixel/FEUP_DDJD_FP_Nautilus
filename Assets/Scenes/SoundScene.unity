@@ -3981,12 +3981,39 @@ MonoBehaviour:
       Data3: 926900100
       Data4: 650639692
     Path: event:/Environment/Beach shore sound
+  bubblingReference:
+    Guid:
+      Data1: -43991526
+      Data2: 1175144796
+      Data3: 1861888688
+      Data4: 1682922606
+    Path: event:/Environment/Underwater bubbling and rumbling
+  emergeReference:
+    Guid:
+      Data1: -1988533072
+      Data2: 1203856720
+      Data3: -1775293256
+      Data4: 1899500708
+    Path: event:/Player/emerge
+  submergeReference:
+    Guid:
+      Data1: -1611666797
+      Data2: 1312939544
+      Data3: 414500481
+      Data4: 1906335029
+    Path: event:/Player/Submerge
   shoreLine: 21
+  deepLine: -14
   shoreRange: 24
+  windRange: 10
+  waveRange: 5
   floorDistanceRay: 30
   floorLayerMask:
     serializedVersion: 2
     m_Bits: 8
+  waterLayerMask:
+    serializedVersion: 2
+    m_Bits: 16
 --- !u!4 &2135487349
 Transform:
   m_ObjectHideFlags: 0

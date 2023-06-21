@@ -109,7 +109,7 @@
 	</object>
 	<object class="SingleSound" id="{b9cc6eb3-3014-4431-9bca-0200d4f652bb}">
 		<property name="length">
-			<value>576.07201814058953</value>
+			<value>560</value>
 		</property>
 		<relationship name="audioFile">
 			<destination>{457f22a9-a474-44da-b681-25509ddcb28c}</destination>
@@ -137,7 +137,7 @@
 			<value>0</value>
 		</property>
 		<property name="length">
-			<value>576.07201814058953</value>
+			<value>560</value>
 		</property>
 		<relationship name="timeline">
 			<destination>{3b41dd27-66a1-4f43-bcd2-875522bc22c4}</destination>
