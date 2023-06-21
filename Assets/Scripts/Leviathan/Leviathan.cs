@@ -25,10 +25,11 @@ public class Leviathan : MonoBehaviour
             // FindObjectOfType<AudioManager>().Play("LeviathanDeath");
             animator.SetTrigger("die");
         }
-        else
-        {
-            //Play get hit animation
-            //animator.SetTrigger("damage");
+    }
+
+    private void OnCollisionEnter(Collision other) {
+        if (other.gameObject.CompareTag("Weapon")) {
+            TakeDamage(20);
         }
     }
 }
