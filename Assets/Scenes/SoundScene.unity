@@ -1686,6 +1686,20 @@ MonoBehaviour:
   throwUpwardForce: 10
   throwCooldown: 0
   waterDistance: 1
+  stepReference:
+    Guid:
+      Data1: 1384497485
+      Data2: 1086851613
+      Data3: 1448919724
+      Data4: -860144530
+    Path: event:/Player/Walking on sand
+  swimReference:
+    Guid:
+      Data1: 997928885
+      Data2: 1305188711
+      Data3: 123048594
+      Data4: -2072280244
+    Path: event:/Player/Swimming
 --- !u!143 &449703882
 CharacterController:
   m_ObjectHideFlags: 0
@@ -4030,7 +4044,7 @@ MonoBehaviour:
   windRange: 10
   waveRange: 5
   floorDistanceRay: 30
-  ambianceChancePerSecond: 0.05
+  ambianceChancePerSecond: 0.04
   gutturalsChancePerSecond: 0.05
   updateInterval: 0.1
   floorLayerMask:

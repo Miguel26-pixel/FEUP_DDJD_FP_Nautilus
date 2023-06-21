@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using Crafting;
 using DataManager;
+using FMOD.Studio;
+using FMODUnity;
 using Inventory;
 using UnityEngine;
 using UnityEngine.Events;
@@ -98,6 +100,12 @@ namespace PlayerControls
 
         [Header("Swim Event")]
         public float waterDistance = 1;
+        
+        [Header("Sounds")]
+        public EventReference stepReference;
+        public EventReference swimReference;
+        
+        private EventInstance _swimEvent;
 
         private void Awake()
         {
@@ -495,6 +503,11 @@ namespace PlayerControls
             SetFootTransform(AvatarIKGoal.LeftFoot, leftTransform.Item1, leftTransform.Item2);
             SetFootTransform(AvatarIKGoal.RightFoot, rightTransform.Item1, rightTransform.Item2);
         }
+        
+        private float _lastLeftIK = 0f;
+        private float _lastRightIK = 0f;
+        private float _leftIK = 0f;
+        private float _rightIK = 0f;
 
         private Tuple<Vector3, Quaternion> GetFootTransform(float maxDistance, AvatarIKGoal goal)
         {
@@ -511,7 +524,32 @@ namespace PlayerControls
             
             _animator.SetIKPositionWeight(goal, _ikWeight);
             _animator.SetIKRotationWeight(goal, 1 - Mathf.Clamp01((footDistanceToAnimationPlane - (distanceToGround)) / (distanceToGround / 2.5f)));
-                
+
+            switch (goal)
+            {
+                case AvatarIKGoal.LeftFoot:
+                    _leftIK = _animator.GetIKRotationWeight(goal);
+
+                    if (Math.Abs(_leftIK - 1) < 0.01f && Math.Abs(_lastLeftIK - 1) > 0.01f && _ikWeight > 0.8f)
+                    {
+                        RuntimeManager.CreateInstance(stepReference).start();
+                    }
+                    _lastLeftIK = _leftIK;
+                    
+                    break;
+                case AvatarIKGoal.RightFoot:
+                    _rightIK = _animator.GetIKRotationWeight(goal);
+                    
+                    if (Math.Abs(_rightIK - 1) < 0.01f && Math.Abs(_lastRightIK - 1) > 0.01f && _ikWeight > 0.8f)
+                    {
+                        RuntimeManager.CreateInstance(stepReference).start();
+                    }
+                    _lastRightIK = _rightIK;
+                    break;
+                default:
+                    break;
+            }
+            
             Vector3 forward = Vector3.ProjectOnPlane(transform.forward, hit.normal);
             return new Tuple<Vector3, Quaternion>(footPosition, Quaternion.LookRotation(forward, hit.normal));
         }
