@@ -25,7 +25,8 @@ namespace Items
 
         private void Consume(Player player, Item i)
         {
-            throw new NotImplementedException();
+            player.AddHunger(Hunger);
+            player.AddHealth(Health);
         }
 
         public override ItemComponent CreateInstance()

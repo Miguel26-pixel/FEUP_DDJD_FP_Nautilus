@@ -213,7 +213,7 @@ namespace DataManager
                 "Prickly fruits for a poke-filled harvest. Watch out for juicy surprises!", ItemType.Fruit,
                 "ItemIcons/test");
             
-            ConsumableComponentData consumableComponentData = new(5, 10);
+            ConsumableComponentData consumableComponentData = new(5, 100);
             orange.AddComponent(consumableComponentData);
             ResourceComponentData orangeComponentData = new(2);
             orange.AddComponent(orangeComponentData);

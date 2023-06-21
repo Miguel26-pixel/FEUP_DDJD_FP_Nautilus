@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657832, g: 0.49641222, b: 0.57481664, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1226,6 +1226,9 @@ MonoBehaviour:
   terraformController: {fileID: 393193719}
   _interactionDistance: 3
   _defautHungerDecay: 5
+  _runningDecayMultiplier: 1.5
+  _oxygenDecay: 10
+  _healthDecay: 50
 --- !u!114 &449703881
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2718,6 +2721,22 @@ MonoBehaviour:
     isClustered: 0
     clusterMaxCount: 10
     clusterRadius: 10
+    clusterChance: 1
+  - radius: 30
+    numSamplesBeforeRejection: 10
+    minBiomeValue: 0.85
+    maxBiomeValue: 1
+    minHeight: 23.7
+    maxHeight: 1000
+    minSlope: 0.9
+    maxSlope: 1
+    offset: 0
+    alignToSurface: 0
+    chanceOfGenerating: 1
+    prefab: {fileID: 6272377852241448305, guid: d27a9b6c4dd66b13c99f01dec254fa51, type: 3}
+    isClustered: 0
+    clusterMaxCount: 3
+    clusterRadius: 15
     clusterChance: 1
   - radius: 22
     numSamplesBeforeRejection: 10
