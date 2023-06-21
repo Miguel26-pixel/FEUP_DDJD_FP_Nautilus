@@ -33,10 +33,10 @@ Hook: EDC91F30
 Metal Rod: 150E05A2
 Deep Sea Infused Plate: 477976FD
 Torpedo: 9D17AD2B
-Thornmelons: E9D12876
+Orange: BA3EC0EB
 Quarkberries: 40781A5E
 Sea Meat: 7E133A88
-Thornmelon Jam: CD341561
+Orange Jam: B0F21825
 Fish Stew: ADB2AF84
 Questionable Seafood: AB655EDC
 Leviathan Schnitzel: CB676F3C

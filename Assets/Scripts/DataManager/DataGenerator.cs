@@ -209,11 +209,14 @@ namespace DataManager
 
             // Consumables
 
-            ItemData thornmelon = _itemRegistry.CreateItem("Thornmelons",
-                "Prickly fruits for a poke-filled harvest. Watch out for thorny surprises!", ItemType.Fruit,
+            ItemData orange = _itemRegistry.CreateItem("Orange",
+                "Prickly fruits for a poke-filled harvest. Watch out for juicy surprises!", ItemType.Fruit,
                 "ItemIcons/test");
+            
             ConsumableComponentData consumableComponentData = new(5, 10);
-            thornmelon.AddComponent(consumableComponentData);
+            orange.AddComponent(consumableComponentData);
+            ResourceComponentData orangeComponentData = new(2);
+            orange.AddComponent(orangeComponentData);
 
             ItemData quarkberry = _itemRegistry.CreateItem("Quarkberries", "Sweet and peculiar, just like this place.",
                 ItemType.Fruit,
@@ -227,8 +230,8 @@ namespace DataManager
             consumableComponentData = new ConsumableComponentData(10, 10);
             meat.AddComponent(consumableComponentData);
 
-            ItemData jam = _itemRegistry.CreateItem("Thornmelon Jam",
-                "For when you want a meal that's both prickly and slimy. Yum!", ItemType.Consumable, "ItemIcons/test");
+            ItemData jam = _itemRegistry.CreateItem("Orange Jam",
+                "For when you want a meal that's both juicy and slimy. Yum!", ItemType.Consumable, "ItemIcons/test");
             consumableComponentData = new ConsumableComponentData(15, 20);
             jam.AddComponent(consumableComponentData);
 
@@ -479,7 +482,7 @@ namespace DataManager
                 MachineType.CookingPot,
                 new Dictionary<string, int>
                 {
-                    { thornmelon.ID, 1 },
+                    { orange.ID, 1 },
                     { seaweed.ID, 1 }
                 });
 
