@@ -1,3 +1,4 @@
+using FMODUnity;
 using PlayerControls;
 using UI.Inventory.Components;
 using UnityEngine;
@@ -61,6 +62,7 @@ namespace UI.Inventory
                 _isInventoryMenuOpen = false;
                 _inventoryViewer.Close();
             }
+            RuntimeManager.PlayOneShot("event:/UI/Inventory open");
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using FMODUnity;
 using Items;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -101,6 +102,7 @@ namespace UI.Inventory.Components
 
             try
             {
+                RuntimeManager.PlayOneShot("event:/UI/Inventory slots");
                 action.Action();
             }
             catch (NotImplementedException)
