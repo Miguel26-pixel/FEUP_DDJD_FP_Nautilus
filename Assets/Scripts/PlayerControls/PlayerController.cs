@@ -488,6 +488,11 @@ namespace PlayerControls
             _jumpState = JumpState.Apex;
         }
 
+        public void SwimEvent()
+        {
+            RuntimeManager.PlayOneShot(_swimReference);
+        }
+
         private IEnumerator BlendJumpLayers(float endOverride, JumpState state)
         {
             float startOverride = _animator.GetLayerWeight(_jumpOverrideLayer);
@@ -609,7 +614,7 @@ namespace PlayerControls
             var rightComponent = Vector3.Dot(right - _lastRight, forward) / forward.magnitude;
 
             
-            if (transform.position.y <= 22f && ((leftComponent > rightComponent + 0.1f && !leftMoving) || (rightComponent > leftComponent + 0.1f && leftMoving)  ))
+            if (!underWater && transform.position.y <= 22f && ((leftComponent > rightComponent + 0.1f && !leftMoving) || (rightComponent > leftComponent + 0.1f && leftMoving)  ))
             {
                 RuntimeManager.PlayOneShot(_swimReference);
                 leftMoving = !leftMoving;

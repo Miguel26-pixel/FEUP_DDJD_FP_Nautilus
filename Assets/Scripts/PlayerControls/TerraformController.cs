@@ -52,8 +52,9 @@ namespace PlayerControls
         {
             var rotation = _camera.rotation;
             var playerRotation = _player.transform.rotation;
-            vacuumArea.transform.localRotation = Quaternion.Euler(rotation.eulerAngles.x, rotation.eulerAngles.y - playerRotation.eulerAngles.y, 0);
-            vacuumCollection.transform.localRotation = Quaternion.Euler(rotation.eulerAngles.x, rotation.eulerAngles.y - playerRotation.eulerAngles.y, 0);
+            vacuumArea.transform.rotation = Quaternion.Euler(rotation.eulerAngles.x, rotation.eulerAngles.y,
+                playerRotation.eulerAngles.z);
+            vacuumCollection.transform.rotation = Quaternion.Euler(rotation.eulerAngles.x, rotation.eulerAngles.y, playerRotation.eulerAngles.z);
         }
 
         private void Update()
