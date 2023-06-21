@@ -390,6 +390,8 @@ namespace PlayerControls
             playerInventory.AddItem(_itemRegistry.Get(0xBCFDBC37).CreateInstance());
             playerInventory.AddItem(_itemRegistry.Get(0x09B53F18).CreateInstance());
             playerInventory.AddItem(_itemRegistry.Get(0x5BFE8AE3).CreateInstance());
+            playerInventory.AddItem(_itemRegistry.Get(0xE2042BBB).CreateInstance());
+            playerInventory.AddItem(_itemRegistry.Get(0xFA0A52EE).CreateInstance());
 
             Debug.Log("Gave items");
         }
