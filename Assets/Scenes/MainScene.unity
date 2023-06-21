@@ -1393,13 +1393,8 @@ GameObject:
   - component: {fileID: 1565541022}
   - component: {fileID: 1565541021}
   - component: {fileID: 1565541020}
-<<<<<<< HEAD
   m_Layer: 0
-  m_Name: Water
-=======
-  m_Layer: 4
-  m_Name: Plane
->>>>>>> main
+  m_Name: Waters
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
