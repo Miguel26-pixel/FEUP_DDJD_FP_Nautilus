@@ -1696,7 +1696,7 @@ MonoBehaviour:
   maxJumpHeight: 1.9
   maxJumpTime: 0.5
   throwForce: 10
-  throwUpwardForce: 10
+  throwUpwardForce: 100
   throwCooldown: 0
   leftHand: {fileID: 780649443}
   rightHand: {fileID: 1533727354}
@@ -3928,15 +3928,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7a4d3e38a39902e4c858ca1a42dcbdca, type: 3}
       propertyPath: m_LocalScale.x
-      value: 10
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7a4d3e38a39902e4c858ca1a42dcbdca, type: 3}
       propertyPath: m_LocalScale.y
-      value: 10
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7a4d3e38a39902e4c858ca1a42dcbdca, type: 3}
       propertyPath: m_LocalScale.z
-      value: 10
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7a4d3e38a39902e4c858ca1a42dcbdca, type: 3}
       propertyPath: m_LocalPosition.x
