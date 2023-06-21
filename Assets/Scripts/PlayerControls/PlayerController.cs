@@ -303,7 +303,6 @@ namespace PlayerControls
 
         private void HandleWater()
         {
-            Debug.Log(Physics.Raycast(transform.position, Vector3.up, out var a, 1000f, waterLayer));
             if (Physics.Raycast(transform.position, Vector3.up, out var hit, 1000f, waterLayer))
             {
                 float distance = Mathf.Clamp01((hit.point.y - transform.position.y) / waterDistance);
@@ -323,24 +322,29 @@ namespace PlayerControls
             float animSpeed;
             float minSpeedMultiplier = 0.7f;
             float maxSpeedMultiplier = 1.3f;
-            float minBoost = minSpeed - walkingSpeed;
-            float maxBoost = maxSpeed - runningSpeed;
+            float normalSpeed = !underWater ? walkingSpeed : swimmingSpeed;
+            float fastSpeed = !underWater ? runningSpeed : swimmingFastSpeed;
+            float envMinSpeed = !underWater ? minSpeed : minSwimmingSpeed;
+            float envMaxSpeed = !underWater ? maxSpeed : maxSwimmingSpeed;
+            float minBoost = envMinSpeed - normalSpeed;
+            float maxBoost = envMaxSpeed - fastSpeed;
+            float boost = !underWater ? _runningBoost : _swimmingBoost;
 
-            float speedDifferenceMultiplier = (Mathf.Clamp(_runningBoost, minBoost, maxBoost) - minBoost) / (maxBoost - minBoost) * (maxSpeedMultiplier - minSpeedMultiplier) +
+            float speedDifferenceMultiplier = (Mathf.Clamp(boost, minBoost, maxBoost) - minBoost) / (maxBoost - minBoost) * (maxSpeedMultiplier - minSpeedMultiplier) +
                                               minSpeedMultiplier;
-            
-            float modifiedWalkingSpeed = Mathf.Clamp(walkingSpeed + _runningBoost, minSpeed, maxSpeed);
-            float modifiedRunningSpeed = Mathf.Clamp(runningSpeed + _runningBoost, minSpeed, maxSpeed);
-            
+
+            float modifiedNormalSpeed = Mathf.Clamp(normalSpeed + boost, envMinSpeed, envMaxSpeed);
+            float modifiedFastSpeed = Mathf.Clamp(fastSpeed + boost, envMaxSpeed, envMaxSpeed);
+
             _animator.SetFloat(SpeedDifference, speedDifferenceMultiplier);
 
-            if (_speed <= modifiedWalkingSpeed)
+            if (_speed <= modifiedNormalSpeed)
             {
-                animSpeed = _speed / modifiedWalkingSpeed;
+                animSpeed = _speed / modifiedNormalSpeed;
             }
             else
             {
-                animSpeed = (_speed - modifiedWalkingSpeed) / (modifiedRunningSpeed - modifiedWalkingSpeed) + 1;
+                animSpeed = (_speed - modifiedNormalSpeed) / (modifiedFastSpeed - modifiedNormalSpeed) + 1;
             }
 
             _animator.SetFloat(Speed, animSpeed);
