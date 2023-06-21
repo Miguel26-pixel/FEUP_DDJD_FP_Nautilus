@@ -12,17 +12,25 @@ using UI.Inventory;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using static UnityEditor.Experimental.GraphView.GraphView;
 
 namespace PlayerControls
 {
     public class Player : AbstractPlayer, PlayerActions.IHUDActions, PlayerActions.IToolActions
     {
+        public Image hungerBar;
+        public Image oxygenBar;
+
         public PlayerController playerController;
-        
+
         [Header("Stats")]
         public int health = 1000;
         public int maxHealth = 1000;
+        public float _hunger = 1000;
+        public float _maxHunger = 1000;
+        public float _oxygen = 1000;
+        public float _maxOxygen = 1000;
 
         [Header("HUD Events")]
         public MachineType machineType;
@@ -37,11 +45,11 @@ namespace PlayerControls
         [Header("Equipment")]
         public GameObject leftFlipperObject;
         public GameObject rightFlipperObject;
-        
+
         public GameObject oxygenTankObject;
         public GameObject abismalOxygenTankObject;
         public GameObject oxygenMaskObject;
-        
+
         [Header("References")]
         public TerraformController terraformController;
         private ItemData _soilData;
@@ -61,6 +69,17 @@ namespace PlayerControls
         [SerializeField]
         private float _interactionDistance = 3f;
         private float _placementDistance = 10f;
+
+        [Header("Stats decay")]
+        [SerializeField]
+        private float _defautHungerDecay = 3f;
+        private float _currentHungerDecay;
+        [SerializeField]
+        private float _runningDecayMultiplier = 1.5f;
+        [SerializeField]
+        private float _oxygenDecay = 10f;
+        [SerializeField]
+        private float _healthDecay = 50f;
 
         public PlayerInventory playerInventory = new("Inventory", new[,]
         {
@@ -83,6 +102,7 @@ namespace PlayerControls
             Debug.Log(SystemInfo.supportsAsyncGPUReadback);
             Debug.Log(SystemInfo.supportsComputeShaders);
             Cursor.lockState = CursorLockMode.Locked;
+            _currentHungerDecay = _defautHungerDecay;
 
             StartCoroutine(GiveItems());
         }
@@ -120,6 +140,55 @@ namespace PlayerControls
             }
         }
 
+        private void RemoveHunger(float amount)
+        {
+            float hungerPercentage = _hunger / _maxHunger;
+            _hunger -= amount;
+            if (_hunger < 0)
+            {
+                _hunger = 0;
+            }
+            hungerBar.fillAmount = hungerPercentage;
+        }
+
+        private void RemoveOxygen(float amount)
+        {
+            float oxygenPercentage = _oxygen / _maxOxygen;
+            _oxygen -= amount;
+            if (_oxygen < 0)
+            {
+                _oxygen = 0;
+            }
+            oxygenBar.fillAmount = oxygenPercentage;
+        }
+
+        private void RefillOxygen(float amount)
+        {
+            float oxygenPercentage = _oxygen / _maxOxygen;
+            _oxygen += amount;
+            if (_oxygen > _maxOxygen)
+            {
+                _oxygen = _maxOxygen;
+            }
+            oxygenBar.fillAmount = oxygenPercentage;
+        }
+
+        public void AddOxygenBoost(float boost)
+        {
+            _maxOxygen += boost * 10;
+        }
+
+
+        public void ResetHungerDecay()
+        {
+            _currentHungerDecay = _defautHungerDecay;
+        }
+
+        public void IncreaseHungerDecay()
+        {
+            _currentHungerDecay *= _runningDecayMultiplier;
+        }
+
         public override PlayerInventory GetInventory()
         {
             return playerInventory;
@@ -148,33 +217,18 @@ namespace PlayerControls
 
         private void Update()
         {
+            HandleStats();
 
             Vector3 mousePosition = Mouse.current.position.ReadValue();
             bool raycast = Physics.Raycast(Camera.main.ScreenPointToRay(mousePosition), out RaycastHit hit);
 
             if (_isPlacing)
             {
-                if (Mouse.current.leftButton.wasPressedThisFrame && raycast && _canPlaceObject)
-                {
-                    playerInventory.RemoveItem(_itemIDHash);
-                    _isPlacing = false;
-                    RuntimeManager.PlayOneShot("event:/Player/Place machine");
-                    OnPlacingStateChanged();
-                }
-                else if (raycast)
-                {
-                    Vector3 closestPointOnFloor = FindPlacingPoint(hit);
-                    if (closestPointOnFloor != Vector3.zero)
-                    {
-                        _placingObject.transform.position = closestPointOnFloor;
-                    }
-                }
+                HandlePlacement(raycast, hit);
             }
             else
             {
-                MachineComponent nearestMachine = FindClosestInteractibleMachine();
-                machineType = nearestMachine != null ? nearestMachine.GetMachineType() : MachineType.PocketFabricator;
-
+                HandleInteraction();
             }
         }
 
@@ -236,6 +290,50 @@ namespace PlayerControls
             return nearestMachine;
         }
 
+        private void HandleStats()
+        {
+            RemoveHunger(_currentHungerDecay * Time.deltaTime);
+
+            if (_hunger / _maxHunger < 0.05 || _oxygen / _maxOxygen < 0.05)
+            {
+                playerController.TakeDamage((int)(_healthDecay * Time.deltaTime));
+            }
+
+            if (playerController.underWater)
+            {
+                RemoveOxygen(_oxygenDecay * Time.deltaTime);
+            }
+            else if (_oxygen < _maxOxygen)
+            {
+                RefillOxygen(_oxygenDecay * 2 * Time.deltaTime);
+            }
+        }
+
+        private void HandlePlacement(bool raycast, RaycastHit hit)
+        {
+            if (Mouse.current.leftButton.wasPressedThisFrame && raycast && _canPlaceObject)
+            {
+                playerInventory.RemoveItem(_itemIDHash);
+                RuntimeManager.PlayOneShot("event:/Player/Place machine");
+                _isPlacing = false;
+                OnPlacingStateChanged();
+            }
+            else if (raycast)
+            {
+                Vector3 closestPointOnFloor = FindPlacingPoint(hit);
+                if (closestPointOnFloor != Vector3.zero)
+                {
+                    _placingObject.transform.position = closestPointOnFloor;
+                }
+            }
+        }
+
+        private void HandleInteraction()
+        {
+            MachineComponent nearestMachine = FindClosestInteractibleMachine();
+            machineType = nearestMachine != null ? nearestMachine.GetMachineType() : MachineType.PocketFabricator;
+        }
+
         public void OnCraft(InputAction.CallbackContext context)
         {
             if (!context.performed)
@@ -251,7 +349,6 @@ namespace PlayerControls
             {
                 return;
             }
-            // Time.timeScale = 1f;
 
             onInventoryEvent.Invoke();
         }
@@ -416,7 +513,7 @@ namespace PlayerControls
             leftFlipperObject.SetActive(false);
             rightFlipperObject.SetActive(false);
         }
-        
+
         private void EquipOxygenTank()
         {
             oxygenTankObject.SetActive(true);
@@ -440,7 +537,7 @@ namespace PlayerControls
             abismalOxygenTankObject.SetActive(false);
             oxygenMaskObject.SetActive(oxygenTankObject.activeSelf);
         }
-        
+
         public void EquipEquipment(Item item)
         {
             RuntimeManager.PlayOneShot("event:/Player/Equip sound (rustling)");

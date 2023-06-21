@@ -345,10 +345,12 @@ namespace PlayerControls
             if (context.performed)
             { 
                 _isRunning = true;
+                _player.IncreaseHungerDecay();
             }
             else if(context.canceled)
             {
                 _isRunning = false;
+                _player.ResetHungerDecay();
             }
         }
 

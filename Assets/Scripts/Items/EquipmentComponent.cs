@@ -59,6 +59,9 @@ namespace Items
                     case Items.Enhancements.SwimmingSpeed:
                         player.playerController.AddSwimmingBoost(value);
                         break;
+                    case Items.Enhancements.OxygenCapacity:
+                        player.AddOxygenBoost(value);
+                        break;
                     default: 
                         Debug.Log("Not Implemented");
                         break;
@@ -78,6 +81,9 @@ namespace Items
                         break;
                     case Items.Enhancements.SwimmingSpeed:
                         player.playerController.AddSwimmingBoost(- value);
+                        break;
+                    case Items.Enhancements.OxygenCapacity:
+                        player.AddOxygenBoost(- value);
                         break;
                     default: 
                         Debug.Log("Not Implemented");
