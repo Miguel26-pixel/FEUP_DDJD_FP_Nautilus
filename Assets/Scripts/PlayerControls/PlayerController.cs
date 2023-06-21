@@ -232,22 +232,25 @@ namespace PlayerControls
             }
             if(Input.GetMouseButtonUp(0) && _readyToThrow)
             {
-
-                currentWeapon.gameObject.transform.parent = null;
                 _animator.SetTrigger("Attack");
-
-                projectileRb.isKinematic = false;
-                projectileRb.useGravity = true;
-
-                projectileRb.velocity += rot*(throwUpwardForce*transform.forward);
-
-                lr.enabled=false;
-
-                currentWeapon = null;
-
-                Invoke(nameof(ResetThrow), throwCooldown);
-
             }
+        }
+
+        public void HandleThrow()
+        {
+            Debug.Break();
+            Rigidbody projectileRb = currentWeapon.GetComponent<Rigidbody>();
+            currentWeapon.gameObject.transform.parent = null;
+            projectileRb.isKinematic = false;
+            projectileRb.useGravity = true;
+
+            projectileRb.velocity += rot*(throwUpwardForce*transform.forward);
+
+            lr.enabled=false;
+
+            currentWeapon = null;
+            Invoke(nameof(ResetThrow), throwCooldown);
+
         }
 
         private void drawline(Rigidbody projectileRb)
