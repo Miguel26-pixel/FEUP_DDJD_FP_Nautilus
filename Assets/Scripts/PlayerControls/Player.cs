@@ -18,6 +18,8 @@ namespace PlayerControls
         [Header("Stats")]
         public int health = 1000;
         public int maxHealth = 1000;
+        public float _hunger = 1000;
+        public float _maxHunger = 1000;
 
         [Header("HUD Events")]
         public MachineType machineType;
@@ -48,6 +50,10 @@ namespace PlayerControls
         [SerializeField]
         private float _interactionDistance = 3f;
         private float _placementDistance = 10f;
+
+        [SerializeField]
+        private float _defautHungerDecay = 1;
+        private float _currentHungerDecay = 1;
 
         private PlayerInventory _playerInventory = new("Inventory", new[,]
         {
@@ -107,6 +113,27 @@ namespace PlayerControls
             }
         }
 
+        public void RemoveHunger(float amount)
+        {
+            _hunger -= amount;
+
+            if (_hunger <= 0)
+            {
+                _hunger = 0;
+                RemoveHealth((int)amount);
+            }
+        }
+
+        public void ResetHungerDecay()
+        {
+            _currentHungerDecay = _defautHungerDecay;
+        }
+
+        public void IncreaseHungerDecay()
+        {
+            _currentHungerDecay *= 1.5f;
+        }
+
         public override PlayerInventory GetInventory()
         {
             return _playerInventory;
@@ -135,6 +162,7 @@ namespace PlayerControls
 
         private void Update()
         {
+            RemoveHunger(_currentHungerDecay * Time.deltaTime);
 
             Vector3 mousePosition = Mouse.current.position.ReadValue();
             bool raycast = Physics.Raycast(Camera.main.ScreenPointToRay(mousePosition), out RaycastHit hit);
@@ -237,7 +265,6 @@ namespace PlayerControls
             {
                 return;
             }
-            // Time.timeScale = 1f;
 
             onInventoryEvent.Invoke();
         }
