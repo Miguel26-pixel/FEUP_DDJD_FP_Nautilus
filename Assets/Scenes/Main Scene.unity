@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657832, g: 0.49641222, b: 0.57481664, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1105,9 +1105,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e757ffce39bd48aa83baeeac993b5d69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hungerBar: {fileID: 224095414}
+  oxygenBar: {fileID: 1278273021}
   playerController: {fileID: 449703881}
   health: 1000
   maxHealth: 1000
+  _hunger: 1000
+  _maxHunger: 1000
+  _oxygen: 1000
+  _maxOxygen: 1000
   machineType: -1
   transferDirection: 1
   onCraftEvent:
@@ -1219,6 +1225,7 @@ MonoBehaviour:
   oxygenMaskObject: {fileID: 1276266824}
   terraformController: {fileID: 393193719}
   _interactionDistance: 3
+  _defautHungerDecay: 5
 --- !u!114 &449703881
 MonoBehaviour:
   m_ObjectHideFlags: 0
