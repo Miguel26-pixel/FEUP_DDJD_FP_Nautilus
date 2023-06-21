@@ -1659,7 +1659,7 @@ MonoBehaviour:
         m_CallState: 2
   terraformController: {fileID: 393193719}
   _interactionDistance: 3
-  _defautHungerDecay: 1
+  _defautHungerDecay: 10
 --- !u!114 &449703881
 MonoBehaviour:
   m_ObjectHideFlags: 0

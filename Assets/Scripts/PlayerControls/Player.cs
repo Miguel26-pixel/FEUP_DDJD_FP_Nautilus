@@ -55,8 +55,8 @@ namespace PlayerControls
         private float _placementDistance = 10f;
 
         [SerializeField]
-        private float _defautHungerDecay = 1;
-        private float _currentHungerDecay = 1;
+        private float _defautHungerDecay = 10;
+        private float _currentHungerDecay;
 
         private PlayerInventory _playerInventory = new("Inventory", new[,]
         {
@@ -79,6 +79,7 @@ namespace PlayerControls
             Debug.Log(SystemInfo.supportsAsyncGPUReadback);
             Debug.Log(SystemInfo.supportsComputeShaders);
             Cursor.lockState = CursorLockMode.Locked;
+            _currentHungerDecay = _defautHungerDecay;
 
             StartCoroutine(GiveItems());
         }
@@ -118,14 +119,13 @@ namespace PlayerControls
 
         public void RemoveHunger(float amount)
         {
+            float hungerPercentage = _hunger / _maxHunger;
             _hunger -= amount;
-            hungerBar.fillAmount = _hunger / _maxHunger;
-
-            if (_hunger <= 0)
+            if (_hunger < 0)
             {
                 _hunger = 0;
-                RemoveHealth((int)amount);
             }
+            hungerBar.fillAmount = hungerPercentage;
         }
 
         public void ResetHungerDecay()
@@ -135,7 +135,7 @@ namespace PlayerControls
 
         public void IncreaseHungerDecay()
         {
-            _currentHungerDecay *= 1.5f;
+            _currentHungerDecay *= 2f;
         }
 
         public override PlayerInventory GetInventory()
@@ -167,6 +167,11 @@ namespace PlayerControls
         private void Update()
         {
             RemoveHunger(_currentHungerDecay * Time.deltaTime);
+
+            if (_hunger / _maxHunger < 0.05)
+            {
+                GetComponent<PlayerController>().TakeDamage((int) (_currentHungerDecay * Time.deltaTime));
+            }
 
             Vector3 mousePosition = Mouse.current.position.ReadValue();
             bool raycast = Physics.Raycast(Camera.main.ScreenPointToRay(mousePosition), out RaycastHit hit);
