@@ -80,6 +80,7 @@ namespace PlayerControls
         private Weapon currentWeapon = null;
         public GameObject leftHand;
         public GameObject rightHand;
+        int i = 0;
 
         private bool _readyToThrow;
 
@@ -94,6 +95,13 @@ namespace PlayerControls
         private float _ikWeight = 1;
         private float _landTime;
         private static readonly int JumpTime = Animator.StringToHash("JumpTime");
+
+        LineRenderer lr;
+        Rigidbody rb;
+        Vector3 startPosition;
+        Vector3 startVelocity;
+        float InitialAngle = -20;
+        Quaternion rot;
 
         [Header("Swim Event")]
         public float waterDistance = 1;
@@ -144,6 +152,10 @@ namespace PlayerControls
 
             _cameraTransform = _mainCamera.transform;
             _cameraParentTransform = _cameraTransform.parent;
+        
+            lr=GetComponent<LineRenderer>();
+            rot = Quaternion.Euler(InitialAngle,0,0);
+
         }
 
         public void OnEnable()
@@ -192,12 +204,8 @@ namespace PlayerControls
                 ? Mathf.Lerp(_speed, _targetSpeed, Time.deltaTime * 10.0f)
                 : _targetSpeed;
 
-            
-            if (Input.GetMouseButton(0) && _readyToThrow)
-            {
-                Throw();
-            }
 
+            HandleAttack();
             _cameraRelativeMovement = ConvertToCameraSpace(_currentMovement);
             HandleWater();
             HandleRotation();
@@ -205,6 +213,58 @@ namespace PlayerControls
             _characterController.Move(_cameraRelativeMovement * (Time.deltaTime * _speed) + _jumpVelocity * Time.deltaTime);
             HandleGravity();
             HandleJump();
+        }
+
+        public void HandleAttack()
+        {
+
+            if (_movementLocked || currentWeapon==null)
+            {
+                return;
+            }
+
+            Rigidbody projectileRb = currentWeapon.GetComponent<Rigidbody>();
+
+
+            if(Input.GetMouseButtonDown(0) && _readyToThrow)
+            {
+                drawline(projectileRb);
+            }
+            if(Input.GetMouseButtonUp(0) && _readyToThrow)
+            {
+
+                currentWeapon.gameObject.transform.parent = null;
+                _animator.SetTrigger("Attack");
+
+                projectileRb.isKinematic = false;
+                projectileRb.useGravity = true;
+
+                projectileRb.velocity += rot*(throwUpwardForce*transform.forward);
+
+                lr.enabled=false;
+
+                currentWeapon = null;
+
+                Invoke(nameof(ResetThrow), throwCooldown);
+
+            }
+        }
+
+        private void drawline(Rigidbody projectileRb)
+        {
+            i = 0;
+            lr.positionCount = 2000;
+            lr.enabled = true;
+            startPosition=currentWeapon.transform.position;
+            startVelocity=rot*(throwUpwardForce*currentWeapon.transform.forward)/projectileRb.mass;
+            lr.SetPosition(i,startPosition);
+            for (float j=0; i<lr.positionCount-1;j+=0.5f)
+            {
+                i++;
+                Vector3 linePosition=startPosition+j*startVelocity;
+                linePosition.y=startPosition.y+startVelocity.y*j+ 0.5f * Physics.gravity.y * j * j;
+                lr.SetPosition(i,linePosition);
+            }
         }
 
 
@@ -492,36 +552,42 @@ namespace PlayerControls
             return new Vector3(result.x, 0, result.z);
         }
 
-        private void Throw()
-        {
-            if (_movementLocked || currentWeapon==null)
-            {
-                return;
-            }
+        // private void Throw()
+        // {
+        //     if (_movementLocked || currentWeapon==null)
+        //     {
+        //         return;
+        //     }
             
-            _readyToThrow = false;
+        //     _readyToThrow = false;
 
-            Rigidbody projectileRb = currentWeapon.GetComponent<Rigidbody>();
+        //     Rigidbody projectileRb = currentWeapon.GetComponent<Rigidbody>();
 
-            Vector3 forceToAdd = _cameraTransform.transform.forward * throwForce + transform.up * throwUpwardForce * Time.deltaTime;
-
-            Debug.Log(forceToAdd);
-            Debug.Log(projectileRb.isKinematic);
-            Debug.Log(currentWeapon.gameObject.transform.parent);
+        //     Vector3 forceToAdd = _cameraTransform.transform.forward * throwForce + transform.up * throwUpwardForce;
         
-            projectileRb.isKinematic = false;
-            projectileRb.useGravity = true;
-            currentWeapon.gameObject.transform.parent = null;
+        //     currentWeapon.gameObject.transform.parent = null;
+        //     projectileRb.isKinematic = false;
+        //     projectileRb.useGravity = true;
 
-            _animator.SetTrigger("Attack");
+        //     _animator.SetTrigger("Attack");
 
-            projectileRb.velocity = forceToAdd;
+        //     float Vi = Mathf.Sqrt(10 * -Physics.gravity.y / (Mathf.Sin(Mathf.Deg2Rad * 90 * 2)));
+        //     float Vy, Vz;   
 
-            currentWeapon = null;
+        //     Vz = Vi * Mathf.Cos(Mathf.Deg2Rad * 90);
 
-            Invoke(nameof(ResetThrow), throwCooldown);
+        //     Vector3 localVelocity = new Vector3(0f, 0f, Vz);
+            
+        //     Vector3 globalVelocity = transform.TransformVector(localVelocity);
 
-        }
+        //     projectileRb.velocity += _cameraTransform.transform.forward * Time.deltaTime;
+        //     projectileRb.velocity *= Mathf.Clamp01(1f - throwForce * Time.deltaTime);
+
+        //     currentWeapon = null;
+
+        //     Invoke(nameof(ResetThrow), throwCooldown);
+
+        // 
 
         // private void OnCollisionEnter(Collision other)
         // {
