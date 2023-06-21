@@ -5,6 +5,7 @@ using DataManager;
 using Items;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using UI.Inventory.Components;
 using UnityEngine;
 
 namespace Tests
@@ -56,12 +57,11 @@ namespace Tests
         {
             ItemData item = new("123", "Test Item", "This is a test", ItemType.Equipment, "ItemIcons/test");
             item.AddComponent(new EquipmentComponentData(
-                0, 10, new List<Tuple<string, int>>
+                0, 10, new List<Tuple<Enhancements, int>>
                 {
-                    new("test", 1),
-                    new("test2", 3)
-                })
-            );
+                    new(Enhancements.Speed, 1),
+                    new(Enhancements.Speed, 3),
+                }));
 
             string ID = item.ID;
             string json = DataSerializer.SerializeItemData(new List<ItemData> { item });
@@ -264,7 +264,7 @@ namespace Tests
         {
             ItemData item = new("123", "Test Item", "This is a test", ItemType.Weapon, "ItemIcons/test");
             item.AddComponent(new WeaponComponentData(
-                    1,
+                    EquipmentSlotType.Body,
                     12,
                     "Weapon/test"
                 )

@@ -1,13 +1,14 @@
 using System;
 using Newtonsoft.Json;
 using PlayerControls;
+using UI.Inventory.Components;
 
 namespace Items
 {
     [Serializable]
     public class WeaponComponentData : EquipableComponentData
     {
-        public WeaponComponentData(int slot, int durability, string weapon) : base(slot,
+        public WeaponComponentData(EquipmentSlotType slot, int durability, string weapon) : base(slot,
             durability)
         {
             Weapon = weapon;
@@ -15,12 +16,12 @@ namespace Items
 
         [JsonProperty("weapon")] public string Weapon { get; }
 
-        public override void OnEquip(Player player, Item item)
+        public override bool OnEquip(Player player, Item item, EquipmentSlot? slot)
         {
             throw new NotImplementedException();
         }
 
-        public override void OnUnequip(Player player, Item item)
+        public override bool OnUnequip(Player player, Item item)
         {
             throw new NotImplementedException();
         }

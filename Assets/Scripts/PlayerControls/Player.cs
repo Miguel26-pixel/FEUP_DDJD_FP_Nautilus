@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using Crafting;
 using DataManager;
 using Generation.Resource;
@@ -15,6 +17,8 @@ namespace PlayerControls
 {
     public class Player : AbstractPlayer, PlayerActions.IHUDActions, PlayerActions.IToolActions
     {
+        public PlayerController playerController;
+        
         [Header("Stats")]
         public int health = 1000;
         public int maxHealth = 1000;
@@ -29,6 +33,14 @@ namespace PlayerControls
         public UnityEvent<ProgressData> onProgress = new();
         public UnityEvent onPlacingStateChanged = new();
 
+        [Header("Equipment")]
+        public GameObject leftFlipperObject;
+        public GameObject rightFlipperObject;
+        
+        public GameObject oxygenTankObject;
+        public GameObject abismalOxygenTankObject;
+        public GameObject oxygenMaskObject;
+        
         [Header("References")]
         public TerraformController terraformController;
         private ItemData _soilData;
@@ -49,7 +61,7 @@ namespace PlayerControls
         private float _interactionDistance = 3f;
         private float _placementDistance = 10f;
 
-        private PlayerInventory _playerInventory = new("Inventory", new[,]
+        public PlayerInventory playerInventory = new("Inventory", new[,]
         {
             { false, false, false, false, false, false },
             { false, false, false, false, false, false },
@@ -109,17 +121,17 @@ namespace PlayerControls
 
         public override PlayerInventory GetInventory()
         {
-            return _playerInventory;
+            return playerInventory;
         }
 
         public override void SetInventory(PlayerInventory inventory)
         {
-            _playerInventory = inventory;
+            playerInventory = inventory;
         }
 
         public override IInventoryNotifier GetInventoryNotifier()
         {
-            return _playerInventory;
+            return playerInventory;
         }
 
         public void LockTool()
@@ -143,7 +155,7 @@ namespace PlayerControls
             {
                 if (Mouse.current.leftButton.wasPressedThisFrame && raycast && _canPlaceObject)
                 {
-                    _playerInventory.RemoveItem(_itemIDHash);
+                    playerInventory.RemoveItem(_itemIDHash);
                     _isPlacing = false;
                     OnPlacingStateChanged();
                 }
@@ -308,7 +320,7 @@ namespace PlayerControls
         {
             _soilData ??= _itemRegistry.Get(0x6F9576E5);
 
-            bool removed = _playerInventory.RemoveSoil(_soilData, amount);
+            bool removed = playerInventory.RemoveSoil(_soilData, amount);
 
             if (!removed)
             {
@@ -316,7 +328,7 @@ namespace PlayerControls
                 return false;
             }
 
-            SoilResource soilResource = _playerInventory.GetSoilResource();
+            SoilResource soilResource = playerInventory.GetSoilResource();
 
             // This should never be null, but just in case
             if (soilResource != null)
@@ -332,7 +344,7 @@ namespace PlayerControls
         {
             _soilData ??= _itemRegistry.Get(0x6F9576E5);
 
-            SoilResource soilResource = _playerInventory.AddSoil(_soilData, amount);
+            SoilResource soilResource = playerInventory.AddSoil(_soilData, amount);
 
             if (soilResource == null)
             {
@@ -351,7 +363,7 @@ namespace PlayerControls
             }
 
             ItemData item = _itemRegistry.Get(resource.itemID);
-            IntermediateResource intermediateResource = _playerInventory.AddResource(item);
+            IntermediateResource intermediateResource = playerInventory.AddResource(item);
 
             if (intermediateResource != null)
             {
@@ -375,18 +387,11 @@ namespace PlayerControls
                 yield return new WaitUntil(() => _itemRegistry.Initialized);
             }
 
-            _playerInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0x238E2A2D).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0x2E79821C).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0x755CFE42).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0xE3847C27).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0xDEC31753).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0x5BFE8AE3).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0xFE3EC9B0).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0x5C5C52AF).CreateInstance());
-
+            playerInventory.AddItem(_itemRegistry.Get(0xBCFDBC37).CreateInstance());
+            playerInventory.AddItem(_itemRegistry.Get(0x09B53F18).CreateInstance());
+            playerInventory.AddItem(_itemRegistry.Get(0x5BFE8AE3).CreateInstance());
+            playerInventory.AddItem(_itemRegistry.Get(0xE2042BBB).CreateInstance());
+            playerInventory.AddItem(_itemRegistry.Get(0xFA0A52EE).CreateInstance());
 
             Debug.Log("Gave items");
         }
@@ -396,6 +401,80 @@ namespace PlayerControls
             _placingObject = instance;
             _isPlacing = true;
             _itemIDHash = item.IDHash;
+        }
+
+        private void EquipFlippers()
+        {
+            leftFlipperObject.SetActive(true);
+            rightFlipperObject.SetActive(true);
+        }
+
+        private void UnequipFlippers()
+        {
+            leftFlipperObject.SetActive(false);
+            rightFlipperObject.SetActive(false);
+        }
+        
+        private void EquipOxygenTank()
+        {
+            oxygenTankObject.SetActive(true);
+            oxygenMaskObject.SetActive(true);
+        }
+
+        private void UnequipOxygenTank()
+        {
+            oxygenTankObject.SetActive(false);
+            oxygenMaskObject.SetActive(abismalOxygenTankObject.activeSelf);
+        }
+
+        private void EquipAbismalOxygenTank()
+        {
+            abismalOxygenTankObject.SetActive(true);
+            oxygenMaskObject.SetActive(true);
+        }
+
+        private void UnequipAbismalOxygenTank()
+        {
+            abismalOxygenTankObject.SetActive(false);
+            oxygenMaskObject.SetActive(oxygenTankObject.activeSelf);
+        }
+        
+        public void EquipEquipment(Item item)
+        {
+            switch (item.Name)
+            {
+                case "Flippers":
+                    EquipFlippers();
+                    break;
+                case "Oxygen Tank":
+                    EquipOxygenTank();
+                    break;
+                case "Abyssal Tank":
+                    EquipAbismalOxygenTank();
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+            // _playerInventory.RemoveItem(item.IDHash);
+        }
+
+        public void UnequipEquipment(Item item)
+        {
+            switch (item.Name)
+            {
+                case "Flippers":
+                    UnequipFlippers();
+                    break;
+                case "Oxygen Tank":
+                    UnequipOxygenTank();
+                    break;
+                case "Abyssal Tank":
+                    UnequipAbismalOxygenTank();
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+            // _playerInventory.AddItem(item);
         }
     }
 }
