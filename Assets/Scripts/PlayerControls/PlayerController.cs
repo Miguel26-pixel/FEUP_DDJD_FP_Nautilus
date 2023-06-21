@@ -268,7 +268,7 @@ namespace PlayerControls
 
             if(Input.GetMouseButtonDown(0) && _readyToThrow)
             {
-                drawline(projectileRb);
+                DrawLine(projectileRb);
             }
             if(Input.GetMouseButtonUp(0) && _readyToThrow)
             {
@@ -293,13 +293,13 @@ namespace PlayerControls
 
         }
 
-        private void drawline(Rigidbody projectileRb)
+        private void DrawLine(Rigidbody projectileRb)
         {
             i = 0;
             lr.positionCount = 2000;
             lr.enabled = true;
             startPosition=currentWeapon.transform.position;
-            startVelocity=rot*(throwUpwardForce*currentWeapon.transform.forward)/projectileRb.mass;
+            startVelocity=rot*(throwUpwardForce*_player.transform.forward)/projectileRb.mass;
             lr.SetPosition(i,startPosition);
             for (float j=0; i<lr.positionCount-1;j+=0.5f)
             {
