@@ -128,6 +128,7 @@ namespace PlayerControls
         public float waterDistance = 1;
         public bool underWater = false;
         public float swimmSpeed = 0.0f;
+        private static readonly int SpeedDifference = Animator.StringToHash("SpeedDifference");
 
         private void Awake()
         {
@@ -320,17 +321,26 @@ namespace PlayerControls
         private void HandleAnimation()
         {
             float animSpeed;
+            float minSpeedMultiplier = 0.7f;
+            float maxSpeedMultiplier = 1.3f;
+            float minBoost = minSpeed - walkingSpeed;
+            float maxBoost = maxSpeed - runningSpeed;
 
+            float speedDifferenceMultiplier = (Mathf.Clamp(_runningBoost, minBoost, maxBoost) - minBoost) / (maxBoost - minBoost) * (maxSpeedMultiplier - minSpeedMultiplier) +
+                                              minSpeedMultiplier;
+            
             float modifiedWalkingSpeed = Mathf.Clamp(walkingSpeed + _runningBoost, minSpeed, maxSpeed);
             float modifiedRunningSpeed = Mathf.Clamp(runningSpeed + _runningBoost, minSpeed, maxSpeed);
             
-            if (_speed <= walkingSpeed)
+            _animator.SetFloat(SpeedDifference, speedDifferenceMultiplier);
+
+            if (_speed <= modifiedWalkingSpeed)
             {
-                animSpeed = _speed / walkingSpeed;
+                animSpeed = _speed / modifiedWalkingSpeed;
             }
             else
             {
-                animSpeed = (_speed - walkingSpeed) / (runningSpeed - walkingSpeed) + 1;
+                animSpeed = (_speed - modifiedWalkingSpeed) / (modifiedRunningSpeed - modifiedWalkingSpeed) + 1;
             }
 
             _animator.SetFloat(Speed, animSpeed);
