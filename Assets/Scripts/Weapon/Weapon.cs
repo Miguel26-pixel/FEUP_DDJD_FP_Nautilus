@@ -5,17 +5,23 @@ using UnityEngine;
 public class Weapon : MonoBehaviour
 {
     private Rigidbody rigidbody;
+    public Vector3 PickPosition;
+    public Vector3 PickRotation;
+    public GameObject gameObject;
+    public int weaponId;
 
     private void Start()
     {
         rigidbody = GetComponent<Rigidbody>();
     }
 
-    private void OnCollisionEnter3D(Collision2D collision)
+    public void ActivateWeapon()
     {
-        if (rigidbody)
-        {
-            Destroy(gameObject);
-        }
+        gameObject.SetActive(true);
+    }
+
+    public void DeactivateWeapon()
+    {
+        gameObject.SetActive(false);
     }
 }
