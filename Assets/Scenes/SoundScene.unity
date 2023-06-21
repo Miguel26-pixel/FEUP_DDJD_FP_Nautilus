@@ -4002,18 +4002,32 @@ MonoBehaviour:
       Data3: 414500481
       Data4: 1906335029
     Path: event:/Player/Submerge
+  deepAtmosphere:
+    Guid:
+      Data1: -1775741633
+      Data2: 1187871699
+      Data3: 1178257290
+      Data4: 1529845910
+    Path: event:/Environment/Scary atmosphere stings
+  deepAmbiance:
+    Guid:
+      Data1: 284051478
+      Data2: 1323837072
+      Data3: 598934437
+      Data4: -1586330240
+    Path: event:/Environment/Deep sounding, heavy feeling atmosphere. Scary
   shoreLine: 21
   deepLine: -14
+  lowestDeepLine: -45
   shoreRange: 24
   windRange: 10
   waveRange: 5
   floorDistanceRay: 30
+  ambianceChancePerSecond: 0.05
+  updateInterval: 0.1
   floorLayerMask:
     serializedVersion: 2
     m_Bits: 8
-  waterLayerMask:
-    serializedVersion: 2
-    m_Bits: 16
 --- !u!4 &2135487349
 Transform:
   m_ObjectHideFlags: 0

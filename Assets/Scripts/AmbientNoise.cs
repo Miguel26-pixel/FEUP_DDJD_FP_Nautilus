@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using FMOD.Studio;
@@ -18,23 +19,30 @@ public class AmbientNoise : MonoBehaviour
     public EventReference bubblingReference;
     public EventReference emergeReference;
     public EventReference submergeReference;
+    public EventReference deepAtmosphere;
+    public EventReference deepAmbiance;
     
     private EventInstance _shoreEvent;
     private EventInstance _waveEvent;
     private EventInstance _windEvent;
     private EventInstance _bubblingEvent;
+    private EventInstance _deepAtmosphereEvent;
+    private EventInstance _deepAmbianceEvent;
 
     private bool _above = true;
 
     public float shoreLine = 21f;
     public float deepLine = -14f;
-    public float shoreRange = 5f;
+    public float lowestDeepLine = -45f;
+    public float shoreRange = 24f;
     public float windRange = 10f;
     public float waveRange = 5f;
     public float floorDistanceRay = 30f;
     
+    public float ambianceChancePerSecond = 0.01f;
+    public float updateInterval = 0.1f;
+    
     public LayerMask floorLayerMask;
-    public LayerMask waterLayerMask;
     private void Start()
     {
         _player = GameObject.FindWithTag("Player").GetComponent<Player>();
@@ -44,7 +52,7 @@ public class AmbientNoise : MonoBehaviour
             _cameraTransform = Camera.main.transform;
         }
         
-        InvokeRepeating(nameof(UpdateSounds), 0, 0.1f);
+        InvokeRepeating(nameof(UpdateSounds), 0, updateInterval);
     }
     
     private void UpdateSounds()
@@ -101,6 +109,12 @@ public class AmbientNoise : MonoBehaviour
         {
             _bubblingEvent.stop(STOP_MODE.ALLOWFADEOUT);
         }
+        _deepAmbianceEvent.getPlaybackState(out var deepAmbianceState);
+        if (deepAmbianceState == PLAYBACK_STATE.PLAYING)
+        {
+            _deepAmbianceEvent.stop(STOP_MODE.ALLOWFADEOUT);
+        }
+        
 
         float distanceToShore = floorY - shoreLine;
         float absDistanceToShore = Mathf.Abs(distanceToShore);
@@ -108,8 +122,6 @@ public class AmbientNoise : MonoBehaviour
         float shoreFactor = Mathf.Clamp01(1 - absDistanceToShore / shoreRange);
         float waveFactor = Mathf.Clamp01(1 - distanceToShore / waveRange);
         float windFactor = Mathf.Clamp01(distanceToShore / windRange);
-        
-        Debug.Log("Above");
 
         _shoreEvent.setParameterByName("Volume", shoreFactor);
         _windEvent.setParameterByName("Volume", windFactor);
@@ -137,7 +149,39 @@ public class AmbientNoise : MonoBehaviour
             _bubblingEvent.start();
         }
         
+        _deepAmbianceEvent.getPlaybackState(out var deepAmbianceState);
+        if (deepAmbianceState == PLAYBACK_STATE.STOPPED)
+        {
+            float rand = UnityEngine.Random.value;
+            if (rand < ambianceChancePerSecond * updateInterval)
+            {
+                _deepAmbianceEvent = RuntimeManager.CreateInstance(deepAmbiance);
+                _deepAmbianceEvent.start();
+            }
+        }
+
+        var position = _cameraTransform.position;
+        float distanceToLowestDeep = position.y - lowestDeepLine;
+        float lowestDeepFactor = Mathf.Clamp01(1 - distanceToLowestDeep / (shoreLine - lowestDeepLine));
         
-        float distanceToDeep = _cameraTransform.position.y - deepLine;
+        _deepAmbianceEvent.setParameterByName("Depth", lowestDeepFactor);
+        
+        float distanceToDeep = position.y - deepLine;
+        float deepFactor = Mathf.Clamp01(1 - distanceToDeep / waveRange);
+        
+        _deepAtmosphereEvent.getPlaybackState(out var deepState);
+        
+        switch (deepState)
+        {
+            case PLAYBACK_STATE.STOPPED when deepFactor > 0.5f:
+                _deepAtmosphereEvent = RuntimeManager.CreateInstance(deepAtmosphere);
+                _deepAtmosphereEvent.start();
+                break;
+            case PLAYBACK_STATE.PLAYING when deepFactor < 0.5f:
+                _deepAtmosphereEvent.stop(STOP_MODE.ALLOWFADEOUT);
+                break;
+            default:
+                break;
+        }
     }
 }
