@@ -6,24 +6,45 @@ using UnityEngine.AI;
 public class LeviathanChase : StateMachineBehaviour
 {
     Transform player;
-    const float chasingSpeed = 5f;
+    const float chasingSpeed = 10f;
     const float escapeRange = 25f;
     const float attackRange = 5f;
+    public LayerMask waterLayer;
+    private GameObject playerComplete;
+
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
+        playerComplete = GameObject.FindGameObjectWithTag("Player");
+        waterLayer = LayerMask.GetMask("Water");
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        MoveTowardsTargetPosition(animator);
-        float distance = Vector3.Distance(player.position, animator.transform.position);
-        if (distance > escapeRange)
+        if (IsPlayerInChaseRange(animator))
+        {
+            MoveTowardsTargetPosition(animator);
+            float distance = Vector3.Distance(player.position, animator.transform.position);
+            if (distance > escapeRange)
+                animator.SetBool("isChasing", false);
+            else if (distance <= attackRange)
+                animator.SetBool("isAttacking", true);
+        }
+        else
+        {
             animator.SetBool("isChasing", false);
-        else if (distance <= attackRange)
-            animator.SetBool("isAttacking", true);
+            Debug.Log("Leviathan not in range anymore");
+        }
+    }
+
+    private bool IsPlayerInChaseRange(Animator animator)
+    {
+        if (playerComplete.transform.position.y <= 21f)
+            return true;
+        else
+            return false;
     }
 
     private void MoveTowardsTargetPosition(Animator animator)

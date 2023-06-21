@@ -7,8 +7,9 @@ public class LeviathanPatrol : StateMachineBehaviour
 {
     float timer;
     const int patrolTime = 10;
-    const float chaseRange = 20f;
+    const float chaseRange = 200f;
     Transform player;
+    GameObject playerComplete;
 
     public Vector3 patrolCenter;        // Center position of the patrol range
     public float patrolRadiusY = 3f;    // Radius of the patrol range
@@ -24,12 +25,12 @@ public class LeviathanPatrol : StateMachineBehaviour
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
+        playerComplete = GameObject.FindGameObjectWithTag("Player");
         timer = 0;
         patrolCenter = animator.transform.position;
         raycastOrigin = animator.transform.position;
         
         GenerateRandomTargetPosition();
-
     }
 
     private void GenerateRandomTargetPosition()
@@ -88,6 +89,14 @@ public class LeviathanPatrol : StateMachineBehaviour
         animator.transform.Translate(movement, Space.World);
     }
 
+    private bool IsPlayerInChaseRange(Animator animator)
+    {
+        if (playerComplete.transform.position.y <= 21f)
+            return true;
+        else
+            return false;
+    }
+
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -107,7 +116,7 @@ public class LeviathanPatrol : StateMachineBehaviour
 
         // Calculate distance to the player, in case its close, change to Chase State
         float distance = Vector3.Distance(player.position, animator.transform.position);
-        if (distance <= chaseRange)
+        if (distance <= chaseRange && IsPlayerInChaseRange(animator))
         {
             animator.SetBool("isChasing", true);
             Debug.Log("Leviathan is chasing");
