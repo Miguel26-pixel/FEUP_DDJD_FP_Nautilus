@@ -56,12 +56,11 @@ namespace Tests
         {
             ItemData item = new("123", "Test Item", "This is a test", ItemType.Equipment, "ItemIcons/test");
             item.AddComponent(new EquipmentComponentData(
-                0, 10, new List<Tuple<string, int>>
+                0, 10, new List<Tuple<Enhancements, int>>
                 {
-                    new("test", 1),
-                    new("test2", 3)
-                })
-            );
+                    new(Enhancements.Speed, 1),
+                    new(Enhancements.Speed, 3),
+                }));
 
             string ID = item.ID;
             string json = DataSerializer.SerializeItemData(new List<ItemData> { item });

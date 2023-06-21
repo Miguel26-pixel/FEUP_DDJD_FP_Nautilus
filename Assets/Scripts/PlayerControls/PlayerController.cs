@@ -34,6 +34,15 @@ namespace PlayerControls
         [Header("Movement")]
         public float walkingSpeed = 6.0f;
         public float runningSpeed = 12.0f;
+        public float swimmingSpeed = 3.0f;
+        public float swimmingFastSpeed = 6.0f;
+
+        public float minSpeed = 2.0f;
+        public float maxSpeed = 15.0f;
+
+        public float minSwimmingSpeed = 1.0f;
+        public float maxSwimmingSpeed = 10.0f;
+        
         [Range(-1f, 2f)]
         public float distanceToGround = 0.1f;
         public float animationToGround = 0.1f;
@@ -42,7 +51,7 @@ namespace PlayerControls
         [SerializeField] private LayerMask groundLayer;
         [SerializeField] private LayerMask waterLayer;
 
-        private float _walkingBoost = 0;
+        private float _runningBoost = 0;
         private float _swimmingBoost = 0;
 
         private float _speed;
@@ -54,6 +63,22 @@ namespace PlayerControls
         private bool _isMovementPressed;
         private bool _movementLocked;
 
+        public void AddSpeedBoost(float boost)
+        {
+            _runningBoost += boost;
+        }
+
+        public void AddSwimmingBoost(float boost)
+        {
+            _swimmingBoost += boost;
+        }
+        
+        
+        public void RemoveRunningBoost(float boost)
+        {
+            _runningBoost -= boost;
+        }
+        
         // Jumping
         [Header("Jumping")]
         public float maxJumpHeight = 1.0f;
@@ -180,7 +205,6 @@ namespace PlayerControls
         
         private void Update()
         {
-            Debug.Log(underWater);
             if (_player.IsDead)
             {
                 return;
@@ -188,7 +212,9 @@ namespace PlayerControls
             
             if (_isMovementPressed && !_movementLocked)
             {
-                _targetSpeed = _isRunning ? runningSpeed : walkingSpeed;
+                _targetSpeed = underWater
+                    ? Mathf.Clamp((_isRunning ? swimmingFastSpeed : swimmingSpeed) + _swimmingBoost, minSwimmingSpeed, maxSwimmingSpeed)
+                    : Mathf.Clamp((_isRunning ? runningSpeed : walkingSpeed) + _runningBoost, minSpeed, maxSpeed);
             }
             else
             {
@@ -276,6 +302,7 @@ namespace PlayerControls
 
         private void HandleWater()
         {
+            Debug.Log(Physics.Raycast(transform.position, Vector3.up, out var a, 1000f, waterLayer));
             if (Physics.Raycast(transform.position, Vector3.up, out var hit, 1000f, waterLayer))
             {
                 float distance = Mathf.Clamp01((hit.point.y - transform.position.y) / waterDistance);
@@ -293,6 +320,10 @@ namespace PlayerControls
         private void HandleAnimation()
         {
             float animSpeed;
+
+            float modifiedWalkingSpeed = Mathf.Clamp(walkingSpeed + _runningBoost, minSpeed, maxSpeed);
+            float modifiedRunningSpeed = Mathf.Clamp(runningSpeed + _runningBoost, minSpeed, maxSpeed);
+            
             if (_speed <= walkingSpeed)
             {
                 animSpeed = _speed / walkingSpeed;

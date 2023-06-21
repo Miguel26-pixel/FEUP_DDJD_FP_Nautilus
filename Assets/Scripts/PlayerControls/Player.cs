@@ -17,6 +17,8 @@ namespace PlayerControls
 {
     public class Player : AbstractPlayer, PlayerActions.IHUDActions, PlayerActions.IToolActions
     {
+        public PlayerController playerController;
+        
         [Header("Stats")]
         public int health = 1000;
         public int maxHealth = 1000;
@@ -377,29 +379,9 @@ namespace PlayerControls
                 yield return new WaitUntil(() => _itemRegistry.Initialized);
             }
 
-            _playerInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0x238E2A2D).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0x2E79821C).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0x755CFE42).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0xE3847C27).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0xDEC31753).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0x5BFE8AE3).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0xFE3EC9B0).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0x5C5C52AF).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0x5BFE8AE3).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0x9B53F18).CreateInstance());
             _playerInventory.AddItem(_itemRegistry.Get(0xBCFDBC37).CreateInstance());
-
-            // _playerInventory.AddItem(_itemRegistry.Get(0x2E79821C).CreateInstance());
-            // _playerInventory.AddItem(_itemRegistry.Get(0x755CFE42).CreateInstance());
-            // _playerInventory.AddItem(_itemRegistry.Get(0xE3847C27).CreateInstance());
-            // _playerInventory.AddItem(_itemRegistry.Get(0xDEC31753).CreateInstance());
-            // _playerInventory.AddItem(_itemRegistry.Get(0x5BFE8AE3).CreateInstance());
-            // _playerInventory.AddItem(_itemRegistry.Get(0xFE3EC9B0).CreateInstance());
-            // _playerInventory.AddItem(_itemRegistry.Get(0x5C5C52AF).CreateInstance());
-
+            _playerInventory.AddItem(_itemRegistry.Get(0x09B53F18).CreateInstance());
+            _playerInventory.AddItem(_itemRegistry.Get(0x5BFE8AE3).CreateInstance());
 
             Debug.Log("Gave items");
         }

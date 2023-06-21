@@ -3,35 +3,94 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using PlayerControls;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Items
 {
     [Serializable]
+    public enum Enhancements
+    {
+        Speed = 0,
+        SwimmingSpeed,
+        OxygenCapacity,
+        DiggingSpeed,
+    }
+
+    [Serializable]
     public class EquipmentComponentData : EquipableComponentData
     {
-        [JsonProperty("enhancements")] private List<Tuple<string, int>> _enhancements;
+        [JsonIgnore]
+        public Dictionary<Enhancements, string> enhancementNames = new()
+        {
+            { Items.Enhancements.Speed, "Speed" },
+            { Items.Enhancements.SwimmingSpeed, "Swimming Speed" },
+            { Items.Enhancements.DiggingSpeed, "Digging Speed" },
+            { Items.Enhancements.OxygenCapacity, "Oxygen Capacity" },
+        };
 
-        // TODO: add enhancements, it is a placeholder for now, string should be replaced with an enum or something representing a player stat
-        public EquipmentComponentData(int slot, int durability, List<Tuple<string, int>> enhancements) : base(slot,
+        [JsonProperty("enhancements")] private List<Tuple<Enhancements, int>> _enhancements;
+
+        public EquipmentComponentData(int slot, int durability, List<Tuple<Enhancements, int>> enhancements) : base(slot,
             durability)
         {
             _enhancements = enhancements;
 
-            foreach (Tuple<string, int> enhancement in enhancements)
+            foreach (Tuple<Enhancements, int> enhancement in enhancements)
             {
-                descriptors.Add(new KeyValuePair<string, string>(enhancement.Item1, enhancement.Item2.ToString()));
+                descriptors.Add(new KeyValuePair<string, string>(enhancementNames[enhancement.Item1], enhancement.Item2.ToString()));
             }
         }
 
-        [JsonIgnore] public List<Tuple<string, int>> Enhancements => new(_enhancements);
+        [JsonIgnore] public List<Tuple<Enhancements, int>> Enhancements => new(_enhancements);
 
+        private void EquipEnhancements(Player player)
+        {
+            foreach (var (enhancement, value) in _enhancements)
+            {
+                switch (enhancement)
+                {
+                    case Items.Enhancements.Speed:
+                        player.playerController.AddSpeedBoost(value);
+                        break;
+                    case Items.Enhancements.SwimmingSpeed:
+                        player.playerController.AddSwimmingBoost(value);
+                        break;
+                    default: 
+                        Debug.Log("Not Implemented");
+                        break;
+                    // throw new NotImplementedException();
+                }
+            }
+        }
+
+        private void UnequipEnhancements(Player player)
+        {
+            foreach (var (enhancement, value) in _enhancements)
+            {
+                switch (enhancement)
+                {
+                    case Items.Enhancements.Speed:
+                        player.playerController.AddSpeedBoost(-value);
+                        break;
+                    case Items.Enhancements.SwimmingSpeed:
+                        player.playerController.AddSwimmingBoost(- value);
+                        break;
+                    default: 
+                        Debug.Log("Not Implemented");
+                        break;
+                }
+            }
+        }
+        
         public override void OnEquip(Player player, Item item)
         {
+            EquipEnhancements(player);
             player.EquipEquipment(item);
         }
 
         public override void OnUnequip(Player player, Item item)
         {
+            UnequipEnhancements(player);
             player.UnequipEquipment(item);
         }
 
