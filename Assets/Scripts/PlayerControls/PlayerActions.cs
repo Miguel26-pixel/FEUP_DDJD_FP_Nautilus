@@ -116,15 +116,6 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
             ""id"": ""dc41f67c-7e7e-4f06-9326-7ffbf0d18910"",
             ""actions"": [
                 {
-                    ""name"": ""Attack"",
-                    ""type"": ""Button"",
-                    ""id"": ""ff847ff7-ee18-4e4d-aa74-8b791cafa8cd"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Run"",
                     ""type"": ""Button"",
                     ""id"": ""a66e85d2-cbc7-4c51-811b-062825762ee4"",
@@ -150,6 +141,15 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
                     ""processors"": ""NormalizeVector2"",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Pickup"",
+                    ""type"": ""Button"",
+                    ""id"": ""ae65eba6-befa-49a4-9dfb-134c23dfdf12"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -243,12 +243,12 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""bf997ece-9b18-4541-b0f9-fdcd086947b0"",
-                    ""path"": ""<Mouse>/leftButton"",
+                    ""id"": ""73936ac6-6d1a-48ac-bd3d-52c8f4a92c3c"",
+                    ""path"": ""<Keyboard>/p"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Attack"",
+                    ""action"": ""Pickup"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -339,10 +339,10 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
         m_HUD_RotateAntiClockwise = m_HUD.FindAction("Rotate Anti Clockwise", throwIfNotFound: true);
         // Movement
         m_Movement = asset.FindActionMap("Movement", throwIfNotFound: true);
-        m_Movement_Attack = m_Movement.FindAction("Attack", throwIfNotFound: true);
         m_Movement_Run = m_Movement.FindAction("Run", throwIfNotFound: true);
         m_Movement_Jump = m_Movement.FindAction("Jump", throwIfNotFound: true);
         m_Movement_Move = m_Movement.FindAction("Move", throwIfNotFound: true);
+        m_Movement_Pickup = m_Movement.FindAction("Pickup", throwIfNotFound: true);
         // Tool
         m_Tool = asset.FindActionMap("Tool", throwIfNotFound: true);
         m_Tool_EquipTool = m_Tool.FindAction("Equip Tool", throwIfNotFound: true);
@@ -464,18 +464,18 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
     // Movement
     private readonly InputActionMap m_Movement;
     private IMovementActions m_MovementActionsCallbackInterface;
-    private readonly InputAction m_Movement_Attack;
     private readonly InputAction m_Movement_Run;
     private readonly InputAction m_Movement_Jump;
     private readonly InputAction m_Movement_Move;
+    private readonly InputAction m_Movement_Pickup;
     public struct MovementActions
     {
         private @PlayerActions m_Wrapper;
         public MovementActions(@PlayerActions wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Attack => m_Wrapper.m_Movement_Attack;
         public InputAction @Run => m_Wrapper.m_Movement_Run;
         public InputAction @Jump => m_Wrapper.m_Movement_Jump;
         public InputAction @Move => m_Wrapper.m_Movement_Move;
+        public InputAction @Pickup => m_Wrapper.m_Movement_Pickup;
         public InputActionMap Get() { return m_Wrapper.m_Movement; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -485,9 +485,6 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
         {
             if (m_Wrapper.m_MovementActionsCallbackInterface != null)
             {
-                @Attack.started -= m_Wrapper.m_MovementActionsCallbackInterface.OnAttack;
-                @Attack.performed -= m_Wrapper.m_MovementActionsCallbackInterface.OnAttack;
-                @Attack.canceled -= m_Wrapper.m_MovementActionsCallbackInterface.OnAttack;
                 @Run.started -= m_Wrapper.m_MovementActionsCallbackInterface.OnRun;
                 @Run.performed -= m_Wrapper.m_MovementActionsCallbackInterface.OnRun;
                 @Run.canceled -= m_Wrapper.m_MovementActionsCallbackInterface.OnRun;
@@ -497,13 +494,13 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
                 @Move.started -= m_Wrapper.m_MovementActionsCallbackInterface.OnMove;
                 @Move.performed -= m_Wrapper.m_MovementActionsCallbackInterface.OnMove;
                 @Move.canceled -= m_Wrapper.m_MovementActionsCallbackInterface.OnMove;
+                @Pickup.started -= m_Wrapper.m_MovementActionsCallbackInterface.OnPickup;
+                @Pickup.performed -= m_Wrapper.m_MovementActionsCallbackInterface.OnPickup;
+                @Pickup.canceled -= m_Wrapper.m_MovementActionsCallbackInterface.OnPickup;
             }
             m_Wrapper.m_MovementActionsCallbackInterface = instance;
             if (instance != null)
             {
-                @Attack.started += instance.OnAttack;
-                @Attack.performed += instance.OnAttack;
-                @Attack.canceled += instance.OnAttack;
                 @Run.started += instance.OnRun;
                 @Run.performed += instance.OnRun;
                 @Run.canceled += instance.OnRun;
@@ -513,6 +510,9 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
                 @Move.started += instance.OnMove;
                 @Move.performed += instance.OnMove;
                 @Move.canceled += instance.OnMove;
+                @Pickup.started += instance.OnPickup;
+                @Pickup.performed += instance.OnPickup;
+                @Pickup.canceled += instance.OnPickup;
             }
         }
     }
@@ -584,10 +584,10 @@ public partial class @PlayerActions : IInputActionCollection2, IDisposable
     }
     public interface IMovementActions
     {
-        void OnAttack(InputAction.CallbackContext context);
         void OnRun(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnMove(InputAction.CallbackContext context);
+        void OnPickup(InputAction.CallbackContext context);
     }
     public interface IToolActions
     {
