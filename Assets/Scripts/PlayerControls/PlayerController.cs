@@ -104,8 +104,6 @@ namespace PlayerControls
         [Header("Sounds")]
         public EventReference stepReference;
         public EventReference swimReference;
-        
-        private EventInstance _swimEvent;
 
         private void Awake()
         {
@@ -516,7 +514,7 @@ namespace PlayerControls
 
             if (Math.Abs(_leftIK - 1) < 0.01f && Math.Abs(_lastLeftIK - 1) > 0.01f && _ikWeight > 0.8f)
             {
-                RuntimeManager.CreateInstance(stepReference).start();
+                RuntimeManager.PlayOneShot(stepReference);
             }
             _lastLeftIK = _leftIK;
                     
@@ -524,7 +522,7 @@ namespace PlayerControls
                     
             if (Math.Abs(_rightIK - 1) < 0.01f && Math.Abs(_lastRightIK - 1) > 0.01f && _ikWeight > 0.8f)
             {
-                RuntimeManager.CreateInstance(stepReference).start();
+                RuntimeManager.PlayOneShot(stepReference);
             }
             _lastRightIK = _rightIK;
 
@@ -536,12 +534,10 @@ namespace PlayerControls
             var leftComponent = Vector3.Dot(left - _lastLeft, forward) / forward.magnitude;
             var rightComponent = Vector3.Dot(right - _lastRight, forward) / forward.magnitude;
 
-            _swimEvent.getPlaybackState(out var state);
             
-            if (transform.position.y <= 22f && ((leftComponent > rightComponent && !leftMoving) || (rightComponent > leftComponent && leftMoving)  ))
+            if (transform.position.y <= 22f && ((leftComponent > rightComponent + 0.1f && !leftMoving) || (rightComponent > leftComponent + 0.1f && leftMoving)  ))
             {
-                _swimEvent = RuntimeManager.CreateInstance(swimReference);
-                _swimEvent.start();
+                RuntimeManager.PlayOneShot(swimReference);
                 leftMoving = !leftMoving;
             }
             

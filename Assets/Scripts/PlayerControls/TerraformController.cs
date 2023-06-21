@@ -29,6 +29,8 @@ namespace PlayerControls
         
         [Header("Sounds")]
         public EventReference terraformSound;
+
+        public EventReference pickupSound;
         
         private EventInstance _terraformSoundInstance;
         private bool soundStarted = false;
@@ -221,6 +223,7 @@ namespace PlayerControls
 
                     if (added)
                     {
+                        RuntimeManager.PlayOneShot(pickupSound);
                         _resourcesInRange.Remove(other);
                     }
                     else

@@ -868,6 +868,13 @@ MonoBehaviour:
       Data3: -528641121
       Data4: 158027242
     Path: event:/Player/Sucking ground up (normal pitched rumble)
+  pickupSound:
+    Guid:
+      Data1: 2026177287
+      Data2: 1208200042
+      Data3: -1917620591
+      Data4: 951090378
+    Path: event:/Player/Sucking items up
 --- !u!1 &404608392
 GameObject:
   m_ObjectHideFlags: 0
