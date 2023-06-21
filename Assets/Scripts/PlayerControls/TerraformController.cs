@@ -26,13 +26,11 @@ namespace PlayerControls
         private Player _player;
         private GameObject _terraformCursor;
         private TerraformType _terraformType = TerraformType.Raise;
-        
-        [Header("Sounds")]
-        public EventReference terraformSound = EventReference.Find("event:/Player/Sucking ground up (normal pitched rumble)");
-        public EventReference pickupSound = EventReference.Find("event:/Player/Sucking items up");
+
+        private string _terraformSound;
+        private string _pickupSound;
         
         private EventInstance _terraformSoundInstance;
-        private bool soundStarted = false;
 
         private void Start()
         {
@@ -45,6 +43,9 @@ namespace PlayerControls
             _terraformCursor = Instantiate(terraformCursorPrefab, Vector3.zero, Quaternion.identity);
             _terraformCursor.SetActive(false);
             _player = transform.parent.GetComponent<Player>();
+        
+            _terraformSound = "event:/Player/Sucking ground up (normal pitched rumble)";
+            _pickupSound = "event:/Player/Sucking items up";
         }
 
         private void LateUpdate()
@@ -96,6 +97,12 @@ namespace PlayerControls
                     _resourcesInRange.Remove(destroyedResource);
                 }
             }
+            
+            _terraformSoundInstance.getPlaybackState(out var state);
+
+            if (state == PLAYBACK_STATE.PLAYING && _terraformType == TerraformType.None) {
+                _terraformSoundInstance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+            }
 
 
             for (int i = 0; i < numIterations; i++)
@@ -114,7 +121,6 @@ namespace PlayerControls
 
                     if (distance > maxDistance)
                     {
-                        // TODO: Add a way to show that the player can't terraform here
                         continue;
                     }
 
@@ -143,16 +149,9 @@ namespace PlayerControls
             {
                 if (state is PLAYBACK_STATE.STOPPED or PLAYBACK_STATE.STOPPING)
                 {
-                    _terraformSoundInstance = RuntimeManager.CreateInstance(terraformSound);
+                    _terraformSoundInstance = RuntimeManager.CreateInstance(_terraformSound);
                     _terraformSoundInstance.start();
-                    Debug.Log("Started sound");
-                    soundStarted = true;
                 }
-            }
-            else if (state == PLAYBACK_STATE.PLAYING) {
-                _terraformSoundInstance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
-                Debug.Log("Stopped sound");
-                soundStarted = false;
             }
             
             switch (_terraformType)
@@ -222,7 +221,7 @@ namespace PlayerControls
 
                     if (added)
                     {
-                        RuntimeManager.PlayOneShot(pickupSound);
+                        RuntimeManager.PlayOneShot(_pickupSound);
                         _resourcesInRange.Remove(other);
                     }
                     else

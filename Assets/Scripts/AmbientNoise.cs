@@ -13,15 +13,15 @@ public class AmbientNoise : MonoBehaviour
     private Transform _playerTransform;
     private Transform _cameraTransform;
     
-    public EventReference windReference = EventReference.Find("event:/Environment/Wind whooshing through leaves and grass");
-    public EventReference waveReference = EventReference.Find("event:/Environment/Wave sound");
-    public EventReference shoreReference = EventReference.Find("event:/Environment/Beach shore sound");
-    public EventReference bubblingReference = EventReference.Find("event:/Environment/Underwater bubbling and rumbling");
-    public EventReference emergeReference = EventReference.Find("event:/Player/emerge");
-    public EventReference submergeReference = EventReference.Find("event:/Player/Submerge");
-    public EventReference deepAtmosphere = EventReference.Find("event:/Environment/Scary atmosphere stings");
-    public EventReference deepAmbiance = EventReference.Find("event:/Environment/Deep sounding, heavy feeling atmosphere. Scary");
-    public EventReference deepGuttural = EventReference.Find("event:/Environment/Deep guttural sounds");
+    private string _windReference;
+    private string _waveReference;
+    private string _shoreReference;
+    private string _bubblingReference;
+    private string _emergeReference;
+    private string _submergeReference;
+    private string _deepAtmosphere;
+    private string _deepAmbiance;
+    private string _deepGuttural;
     
     private EventInstance _shoreEvent;
     private EventInstance _waveEvent;
@@ -55,6 +55,16 @@ public class AmbientNoise : MonoBehaviour
             _cameraTransform = Camera.main.transform;
         }
         
+        _windReference = "event:/Environment/Wind whooshing through leaves and grass";
+        _waveReference = "event:/Environment/Wave sounds";
+        _shoreReference = "event:/Environment/Beach shore sound";
+        _bubblingReference = "event:/Environment/Underwater bubbling and rumbling";
+        _emergeReference = "event:/Player/emerge";
+        _submergeReference = "event:/Player/Submerge";
+        _deepAtmosphere = "event:/Environment/Scary atmosphere stings";
+        _deepAmbiance = "event:/Environment/Deep sounding, heavy feeling atmosphere. Scary";
+        _deepGuttural = "event:/Environment/Deep guttural sounds";
+        
         InvokeRepeating(nameof(UpdateSounds), 0, updateInterval);
     }
     
@@ -66,19 +76,19 @@ public class AmbientNoise : MonoBehaviour
 
         if (state == PLAYBACK_STATE.STOPPED)
         {
-            _shoreEvent = RuntimeManager.CreateInstance(shoreReference);
+            _shoreEvent = RuntimeManager.CreateInstance(_shoreReference);
             _shoreEvent.start();
         }
         
         if (windState == PLAYBACK_STATE.STOPPED)
         {
-            _windEvent = RuntimeManager.CreateInstance(windReference);
+            _windEvent = RuntimeManager.CreateInstance(_windReference);
             _windEvent.start();
         }
         
         if (waveState == PLAYBACK_STATE.STOPPED)
         {
-            _waveEvent = RuntimeManager.CreateInstance(waveReference);
+            _waveEvent = RuntimeManager.CreateInstance(_waveReference);
             _waveEvent.start();
         }
 
@@ -96,7 +106,7 @@ public class AmbientNoise : MonoBehaviour
     {
         if (!_above)
         {
-            RuntimeManager.CreateInstance(emergeReference).start();
+            RuntimeManager.CreateInstance(_emergeReference).start();
             _above = true;
         }
         
@@ -136,7 +146,7 @@ public class AmbientNoise : MonoBehaviour
     {
         if (_above)
         {
-            RuntimeManager.CreateInstance(submergeReference).start();
+            RuntimeManager.CreateInstance(_submergeReference).start();
             _above = false;
         }
         
@@ -148,7 +158,7 @@ public class AmbientNoise : MonoBehaviour
         _bubblingEvent.getPlaybackState(out var bubblingState);
         if (bubblingState == PLAYBACK_STATE.STOPPED)
         {
-            _bubblingEvent = RuntimeManager.CreateInstance(bubblingReference);
+            _bubblingEvent = RuntimeManager.CreateInstance(_bubblingReference);
             _bubblingEvent.start();
         }
         
@@ -158,7 +168,7 @@ public class AmbientNoise : MonoBehaviour
             float rand = UnityEngine.Random.value;
             if (rand < ambianceChancePerSecond * updateInterval)
             {
-                _deepAmbianceEvent = RuntimeManager.CreateInstance(deepAmbiance);
+                _deepAmbianceEvent = RuntimeManager.CreateInstance(_deepAmbiance);
                 _deepAmbianceEvent.start();
             }
         }
@@ -169,7 +179,7 @@ public class AmbientNoise : MonoBehaviour
             float rand = UnityEngine.Random.value;
             if (rand < gutturalsChancePerSecond * updateInterval)
             {
-                _deepGutturalEvent = RuntimeManager.CreateInstance(deepGuttural);
+                _deepGutturalEvent = RuntimeManager.CreateInstance(_deepGuttural);
                 _deepGutturalEvent.start();
             }
         }
@@ -188,7 +198,7 @@ public class AmbientNoise : MonoBehaviour
         switch (deepState)
         {
             case PLAYBACK_STATE.STOPPED when deepFactor > 0.5f:
-                _deepAtmosphereEvent = RuntimeManager.CreateInstance(deepAtmosphere);
+                _deepAtmosphereEvent = RuntimeManager.CreateInstance(_deepAtmosphere);
                 _deepAtmosphereEvent.start();
                 break;
             case PLAYBACK_STATE.PLAYING when deepFactor < 0.5f:

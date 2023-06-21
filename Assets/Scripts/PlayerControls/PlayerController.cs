@@ -100,10 +100,9 @@ namespace PlayerControls
 
         [Header("Swim Event")]
         public float waterDistance = 1;
-
-        [Header("Sounds")] 
-        public EventReference stepReference = EventReference.Find("event:/Player/Walking on sand");
-        public EventReference swimReference = EventReference.Find("event:/Player/Swimming");
+        
+        private string _stepReference;
+        private string _swimReference;
 
         private void Awake()
         {
@@ -151,6 +150,9 @@ namespace PlayerControls
 
             _cameraTransform = _mainCamera.transform;
             _cameraParentTransform = _cameraTransform.parent;
+            
+            _stepReference = "event:/Player/Walking on sand";
+            _swimReference = "event:/Player/Swimming";
         }
 
         public void OnEnable()
@@ -514,7 +516,7 @@ namespace PlayerControls
 
             if (Math.Abs(_leftIK - 1) < 0.01f && Math.Abs(_lastLeftIK - 1) > 0.01f && _ikWeight > 0.8f)
             {
-                RuntimeManager.PlayOneShot(stepReference);
+                RuntimeManager.PlayOneShot(_stepReference);
             }
             _lastLeftIK = _leftIK;
                     
@@ -522,7 +524,7 @@ namespace PlayerControls
                     
             if (Math.Abs(_rightIK - 1) < 0.01f && Math.Abs(_lastRightIK - 1) > 0.01f && _ikWeight > 0.8f)
             {
-                RuntimeManager.PlayOneShot(stepReference);
+                RuntimeManager.PlayOneShot(_stepReference);
             }
             _lastRightIK = _rightIK;
 
@@ -537,7 +539,7 @@ namespace PlayerControls
             
             if (transform.position.y <= 22f && ((leftComponent > rightComponent + 0.1f && !leftMoving) || (rightComponent > leftComponent + 0.1f && leftMoving)  ))
             {
-                RuntimeManager.PlayOneShot(swimReference);
+                RuntimeManager.PlayOneShot(_swimReference);
                 leftMoving = !leftMoving;
             }
             
