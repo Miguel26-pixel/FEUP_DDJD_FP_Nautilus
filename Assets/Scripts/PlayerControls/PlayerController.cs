@@ -100,10 +100,10 @@ namespace PlayerControls
 
         [Header("Swim Event")]
         public float waterDistance = 1;
-        
-        [Header("Sounds")]
-        public EventReference stepReference;
-        public EventReference swimReference;
+
+        [Header("Sounds")] 
+        public EventReference stepReference = EventReference.Find("event:/Player/Walking on sand");
+        public EventReference swimReference = EventReference.Find("event:/Player/Swimming");
 
         private void Awake()
         {

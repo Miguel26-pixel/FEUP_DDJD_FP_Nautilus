@@ -28,9 +28,8 @@ namespace PlayerControls
         private TerraformType _terraformType = TerraformType.Raise;
         
         [Header("Sounds")]
-        public EventReference terraformSound;
-
-        public EventReference pickupSound;
+        public EventReference terraformSound = EventReference.Find("event:/Player/Sucking ground up (normal pitched rumble)");
+        public EventReference pickupSound = EventReference.Find("event:/Player/Sucking items up");
         
         private EventInstance _terraformSoundInstance;
         private bool soundStarted = false;

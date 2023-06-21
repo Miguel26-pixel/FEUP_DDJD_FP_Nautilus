@@ -13,15 +13,15 @@ public class AmbientNoise : MonoBehaviour
     private Transform _playerTransform;
     private Transform _cameraTransform;
     
-    public EventReference windReference;
-    public EventReference waveReference;
-    public EventReference shoreReference;
-    public EventReference bubblingReference;
-    public EventReference emergeReference;
-    public EventReference submergeReference;
-    public EventReference deepAtmosphere;
-    public EventReference deepAmbiance;
-    public EventReference deepGuttural;
+    public EventReference windReference = EventReference.Find("event:/Environment/Wind whooshing through leaves and grass");
+    public EventReference waveReference = EventReference.Find("event:/Environment/Wave sound");
+    public EventReference shoreReference = EventReference.Find("event:/Environment/Beach shore sound");
+    public EventReference bubblingReference = EventReference.Find("event:/Environment/Underwater bubbling and rumbling");
+    public EventReference emergeReference = EventReference.Find("event:/Player/emerge");
+    public EventReference submergeReference = EventReference.Find("event:/Player/Submerge");
+    public EventReference deepAtmosphere = EventReference.Find("event:/Environment/Scary atmosphere stings");
+    public EventReference deepAmbiance = EventReference.Find("event:/Environment/Deep sounding, heavy feeling atmosphere. Scary");
+    public EventReference deepGuttural = EventReference.Find("event:/Environment/Deep guttural sounds");
     
     private EventInstance _shoreEvent;
     private EventInstance _waveEvent;
