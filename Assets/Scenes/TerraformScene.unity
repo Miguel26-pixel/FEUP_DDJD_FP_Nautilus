@@ -1549,10 +1549,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hungerBar: {fileID: 224095414}
+  oxygenBar: {fileID: 1278273021}
   health: 1000
   maxHealth: 1000
   _hunger: 1000
   _maxHunger: 1000
+  _oxygen: 1000
+  _maxOxygen: 1000
   machineType: -1
   transferDirection: 1
   onCraftEvent:

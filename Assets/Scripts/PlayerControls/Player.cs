@@ -17,12 +17,15 @@ namespace PlayerControls
     public class Player : AbstractPlayer, PlayerActions.IHUDActions, PlayerActions.IToolActions
     {
         public Image hungerBar;
+        public Image oxygenBar;
 
         [Header("Stats")]
         public int health = 1000;
         public int maxHealth = 1000;
         public float _hunger = 1000;
         public float _maxHunger = 1000;
+        public float _oxygen = 1000;
+        public float _maxOxygen = 1000;
 
         [Header("HUD Events")]
         public MachineType machineType;
@@ -55,8 +58,9 @@ namespace PlayerControls
         private float _placementDistance = 10f;
 
         [SerializeField]
-        private float _defautHungerDecay = 10;
+        private float _defautHungerDecay = 10f;
         private float _currentHungerDecay;
+        private float _oxygenDecay = 20f;
 
         private PlayerInventory _playerInventory = new("Inventory", new[,]
         {
@@ -117,7 +121,7 @@ namespace PlayerControls
             }
         }
 
-        public void RemoveHunger(float amount)
+        private void RemoveHunger(float amount)
         {
             float hungerPercentage = _hunger / _maxHunger;
             _hunger -= amount;
@@ -127,6 +131,31 @@ namespace PlayerControls
             }
             hungerBar.fillAmount = hungerPercentage;
         }
+
+        private void RemoveOxygen(float amount)
+        {
+            float oxygenPercentage = _oxygen / _maxOxygen;
+            _oxygen -= amount;
+            Debug.Log("REMOVING" + _oxygen);
+            if (_oxygen < 0)
+            {
+                _oxygen = 0;
+            }
+            oxygenBar.fillAmount = oxygenPercentage;
+        }
+
+        private void RefillOxygen(float amount)
+        {
+            float oxygenPercentage = _oxygen / _maxOxygen;
+            _oxygen += amount;
+            Debug.Log("REFILLING" + _oxygen);
+            if (_oxygen > _maxOxygen)
+            {
+                _oxygen = _maxOxygen;
+            }
+            oxygenBar.fillAmount = oxygenPercentage;
+        }
+
 
         public void ResetHungerDecay()
         {
@@ -168,9 +197,18 @@ namespace PlayerControls
         {
             RemoveHunger(_currentHungerDecay * Time.deltaTime);
 
-            if (_hunger / _maxHunger < 0.05)
+            if (_hunger / _maxHunger < 0.05 || _oxygen / _maxOxygen < 0.05)
             {
-                GetComponent<PlayerController>().TakeDamage((int) (_currentHungerDecay * Time.deltaTime));
+                GetComponent<PlayerController>().TakeDamage((int) (20 * Time.deltaTime));
+            }
+
+            if (GetComponent<PlayerController>().underWater)
+            {
+                Debug.Log("Player underwater");
+                RemoveOxygen(_oxygenDecay * Time.deltaTime);
+            } else if (_oxygen < _maxOxygen)
+            {
+                RefillOxygen(_oxygenDecay * 2 * Time.deltaTime);
             }
 
             Vector3 mousePosition = Mouse.current.position.ReadValue();
