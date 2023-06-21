@@ -205,6 +205,9 @@ namespace PlayerControls
 
         public void OnPartTriggerEnter(GameObject child, GameObject other)
         {
+            if(other.CompareTag("Weapon"))
+                return;
+
             if (child == vacuumArea)
             {
                 if (other.transform.parent.TryGetComponent(out Resource resource) && resource.dropped)
