@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Crafting;
 using DataManager;
+using FMODUnity;
 using Inventory;
 using Items;
 using UI.Inventory;
@@ -97,6 +98,7 @@ namespace UI.Crafting
                 }
 
                 _craftingMenu.isCrafting = false;
+                RuntimeManager.PlayOneShot(_craftingMenu.craftSound);
 
                 _craftingMenu.Inventory.AddItem(resultItem);
             }
@@ -130,6 +132,7 @@ namespace UI.Crafting
                     (grid, _) =>
                     {
                         _craftingMenu.player.SetInventory(new PlayerInventory(grid));
+                        RuntimeManager.PlayOneShot(_craftingMenu.craftSound);
                         _craftingMenu.UpdateInventory();
                     });
             }

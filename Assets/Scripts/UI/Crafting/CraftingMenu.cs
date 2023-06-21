@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Crafting;
 using DataManager;
+using FMODUnity;
 using Inventory;
 using Items;
 using PlayerControls;
@@ -49,6 +50,12 @@ namespace UI.Crafting
 
         [NonSerialized] public VisualElement recipeView;
         public PlayerInventory Inventory => player.GetInventory();
+        
+        [Header("Sounds")]
+        public EventReference openSound;
+        public EventReference craftSound;
+        public EventReference menuSound;
+        
 
         private void Start()
         {
@@ -119,6 +126,7 @@ namespace UI.Crafting
             _interfaces.Add(categoryTabsInterface);
 
             categoryTabsInterface.Open();
+            RuntimeManager.PlayOneShot(openSound);
         }
 
         private void Close()
@@ -129,6 +137,7 @@ namespace UI.Crafting
             }
 
             _interfaces.Clear();
+            RuntimeManager.PlayOneShot(openSound);
         }
 
         public void Toggle(MachineType type)

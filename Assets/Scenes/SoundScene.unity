@@ -3346,6 +3346,27 @@ MonoBehaviour:
   ingredientRecipe: {fileID: 9197481963319205126, guid: e3d9e9f9337d42b568930967aba13a0d, type: 3}
   recipeRegistryObject: {fileID: 116697459}
   itemRegistryObject: {fileID: 116697458}
+  openSound:
+    Guid:
+      Data1: -169681155
+      Data2: 1263426901
+      Data3: 1601203363
+      Data4: -43290816
+    Path: event:/UI/Inventory open
+  craftSound:
+    Guid:
+      Data1: 429812725
+      Data2: 1204093215
+      Data3: -21123676
+      Data4: -680513430
+    Path: event:/UI/Crafting
+  menuSound:
+    Guid:
+      Data1: 425587314
+      Data2: 1247444084
+      Data3: 1516767930
+      Data4: 1988908302
+    Path: event:/UI/Inventory slots
 --- !u!114 &1540722612
 MonoBehaviour:
   m_ObjectHideFlags: 0

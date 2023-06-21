@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Crafting;
 using DataManager;
+using FMODUnity;
 using Items;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -55,6 +56,7 @@ namespace UI.Crafting
                 button.RegisterCallback<MouseUpEvent>(_ =>
                 {
                     int idx = recipe.userData as int? ?? -1;
+                    RuntimeManager.PlayOneShot(_craftingMenu.menuSound);
                     OpenRecipeView(recipes[idx], idx);
                 });
 
