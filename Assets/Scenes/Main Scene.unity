@@ -1967,6 +1967,63 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &920926612
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 920926614}
+  - component: {fileID: 920926613}
+  m_Layer: 0
+  m_Name: Ambient Noise
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &920926613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 920926612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 979e111418a8ec3feb0fbd9e7d037bf5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shoreLine: 21
+  deepLine: -14
+  lowestDeepLine: -45
+  shoreRange: 24
+  windRange: 10
+  waveRange: 5
+  floorDistanceRay: 30
+  ambianceChancePerSecond: 0.04
+  gutturalsChancePerSecond: 0.05
+  updateInterval: 0.1
+  floorLayerMask:
+    serializedVersion: 2
+    m_Bits: 8
+--- !u!4 &920926614
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 920926612}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 26.542393, y: 91.33203, z: -235.80234}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 16
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &972469987
 GameObject:
   m_ObjectHideFlags: 0
@@ -2666,7 +2723,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chunkDistanceRadius: 4
-  resourceDistanceRadius: 2
+  resourceDistanceRadius: 3
   sqrCheckDistanceInterval: 10
 --- !u!114 &1298936911
 MonoBehaviour:
@@ -2735,7 +2792,7 @@ MonoBehaviour:
     clusterMaxCount: 10
     clusterRadius: 10
     clusterChance: 1
-  - radius: 29
+  - radius: 34
     numSamplesBeforeRejection: 10
     minBiomeValue: 0.2
     maxBiomeValue: 0.86
@@ -2748,10 +2805,10 @@ MonoBehaviour:
     chanceOfGenerating: 1
     prefab: {fileID: 1641273471284524950, guid: b4eb658961a68fc7797d76d5b6abfd4c, type: 3}
     isClustered: 1
-    clusterMaxCount: 20
+    clusterMaxCount: 12
     clusterRadius: 10
     clusterChance: 1
-  - radius: 30
+  - radius: 40
     numSamplesBeforeRejection: 10
     minBiomeValue: 0.2
     maxBiomeValue: 0.8
@@ -2764,7 +2821,7 @@ MonoBehaviour:
     chanceOfGenerating: 1
     prefab: {fileID: 7148089789362757468, guid: 421b3641effff73f6bf07a97c65cb60c, type: 3}
     isClustered: 1
-    clusterMaxCount: 20
+    clusterMaxCount: 12
     clusterRadius: 10
     clusterChance: 1
   chunksParent: {fileID: 175995}

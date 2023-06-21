@@ -20,11 +20,7 @@ namespace Items
         {
             GameObject placingInstance = UnityEngine.Object.Instantiate(PlacedGameObject.LoadedObject);
             player.Place(placingInstance, item);
-            Player playerComponent = player.GetComponent<Player>();
-            if (playerComponent != null)
-            {
-                playerComponent.OnPlacingStateChanged();
-            }
+            player.OnPlacingStateChanged();
         }
 
         public override ItemComponent CreateInstance()

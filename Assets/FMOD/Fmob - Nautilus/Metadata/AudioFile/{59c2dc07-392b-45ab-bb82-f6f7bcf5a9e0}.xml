@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{59c2dc07-392b-45ab-bb82-f6f7bcf5a9e0}">
+		<property name="assetPath">
+			<value>pick6.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>0.098027210884353747</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{348b6d43-b931-424f-9afb-c0ab23eb81a0}</destination>
+		</relationship>
+	</object>
+</objects>

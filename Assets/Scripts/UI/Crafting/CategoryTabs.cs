@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Crafting;
 using DataManager;
+using FMODUnity;
 using Items;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -50,7 +51,11 @@ namespace UI.Crafting
                 icon.style.backgroundImage = new StyleBackground(_itemTypeIcons[category]);
 
                 int categoryIndex = idx;
-                tab.RegisterCallback<MouseUpEvent>(_ => OpenRecipeListing(categoryIndex, _type));
+                tab.RegisterCallback<MouseUpEvent>(_ =>
+                {
+                    RuntimeManager.PlayOneShot(_craftingMenu.menuSound);
+                    OpenRecipeListing(categoryIndex, _type);
+                });
                 _categoryTabs.Add(tab);
                 idx++;
             }
