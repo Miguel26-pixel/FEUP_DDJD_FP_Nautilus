@@ -5,6 +5,7 @@ using System.Linq;
 using Crafting;
 using Items;
 using Newtonsoft.Json;
+using UI.Inventory.Components;
 using UnityEngine;
 
 namespace DataManager
@@ -381,7 +382,7 @@ namespace DataManager
                 "When you want to swim like a fish, but still keep your human dignity.",
                 ItemType.Equipment, "ItemIcons/test");
             EquipmentComponentData equipmentComponentData =
-                new(0, 30, new List<Tuple<Enhancements, int>>
+                new(EquipmentSlotType.Feet, 30, new List<Tuple<Enhancements, int>>
                 {
                     new(Enhancements.SwimmingSpeed, 6),
                     new(Enhancements.Speed, -2),
@@ -392,7 +393,7 @@ namespace DataManager
                 "This essential piece of diving equipment lets you stay submerged and explore for extended periods without worrying about running out of breath.",
                 ItemType.Equipment, "ItemIcons/test");
             equipmentComponentData =
-                new EquipmentComponentData(0, 30, new List<Tuple<Enhancements, int>>
+                new EquipmentComponentData(EquipmentSlotType.Body, 30, new List<Tuple<Enhancements, int>>
                 {
                     new(Enhancements.OxygenCapacity, 10),
                     new(Enhancements.SwimmingSpeed, -1),
@@ -411,7 +412,7 @@ namespace DataManager
                 "This tank will keep you alive in the darkest depths of the ocean, but at what cost? Who knows what horrors lurk down there…",
                 ItemType.Equipment, "ItemIcons/test");
             equipmentComponentData =
-                new EquipmentComponentData(0, 30, new List<Tuple<Enhancements, int>>
+                new EquipmentComponentData(EquipmentSlotType.Body, 30, new List<Tuple<Enhancements, int>>
                 {
                     new(Enhancements.OxygenCapacity, 30),
                     new(Enhancements.SwimmingSpeed, -3),
@@ -431,7 +432,7 @@ namespace DataManager
                 "Finally, a drill that sucks in a good way! Perfect for those who want to dig deep and collect precious materials without breaking a sweat.",
                 ItemType.Equipment, "ItemIcons/test");
             equipmentComponentData =
-                new EquipmentComponentData(0, 30, new List<Tuple<Enhancements, int>> { new(Enhancements.DiggingSpeed, 10) });
+                new EquipmentComponentData(EquipmentSlotType.Head, 30, new List<Tuple<Enhancements, int>> { new(Enhancements.DiggingSpeed, 10) });
             drill.AddComponent(equipmentComponentData);
 
             // Weapons

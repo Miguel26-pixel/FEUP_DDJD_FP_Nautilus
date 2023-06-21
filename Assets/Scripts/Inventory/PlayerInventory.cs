@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Items;
+using UI.Inventory.Components;
 using UnityEngine;
 
 namespace Inventory
@@ -92,6 +94,11 @@ namespace Inventory
         private SoilResource _soil = null;
         private readonly Stack<SoilResource> _previousSoil = new();
 
+        private Item _footEquipment;
+        private Item _bodyEquipment1;
+        private Item _bodyEquipment2;
+        private Item _headEquipment;
+        
         private readonly List<IInventorySubscriber> _subscribers = new();
 
         private bool _notify = true;
@@ -299,6 +306,73 @@ namespace Inventory
             base.MoveItem(source, destination);
             _notify = true;
             NotifySubscribersOnInventoryChanged();
+        }
+
+        private EquipmentSlot? GetFreeSlot(EquipmentSlotType slotType)
+        {
+            return slotType switch
+            {
+                EquipmentSlotType.Feet => _footEquipment is null ? EquipmentSlot.Feet : null,
+                EquipmentSlotType.Body => _bodyEquipment1 is null
+                    ? EquipmentSlot.Body1
+                    : (_bodyEquipment2 is null ? EquipmentSlot.Body2 : null),
+                EquipmentSlotType.Head => _headEquipment is null ? EquipmentSlot.Head : null,
+                _ => null
+            };
+        }
+
+        private bool IsSlotFree(EquipmentSlot slot)
+        {
+            return slot switch
+            {
+                EquipmentSlot.Feet => _footEquipment is null,
+                EquipmentSlot.Body1 => _bodyEquipment1 is null,
+                EquipmentSlot.Body2 => _bodyEquipment2 is null,
+                EquipmentSlot.Head => _headEquipment is null,
+            };
+        }
+        
+        public bool AddEquipment(Item item, EquipmentSlot? equipmentSlot = null)
+        {
+            if (item.Type != ItemType.Equipment)
+            {
+                return false;
+            }
+
+            if (item.GetComponents().First() is not EquipableComponent component)
+            {
+                return false;
+            }
+
+            EquipmentSlot? slot = equipmentSlot ?? GetFreeSlot(component.equipableComponentData.Slot);
+
+            if (slot is null)
+            {
+                return false;
+            }
+
+            if (!IsSlotFree((EquipmentSlot)slot))
+            {
+                return false;
+            }
+
+            switch (slot)
+            {
+                case EquipmentSlot.Body1:
+                    _bodyEquipment1 = item;
+                    break;
+                case EquipmentSlot.Body2:
+                    _bodyEquipment2 = item;
+                    break;
+                case EquipmentSlot.Head:
+                    _headEquipment = item;
+                    break;
+                case EquipmentSlot.Feet:
+                    _footEquipment = item;
+                    break;
+            }
+
+            return true;
         }
     }
 }

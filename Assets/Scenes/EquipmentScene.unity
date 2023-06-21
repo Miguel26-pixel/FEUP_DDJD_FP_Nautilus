@@ -1063,6 +1063,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e757ffce39bd48aa83baeeac993b5d69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerController: {fileID: 449703881}
   health: 1000
   maxHealth: 1000
   machineType: -1
@@ -1157,6 +1158,11 @@ MonoBehaviour:
   onPlacingStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  leftFlipperObject: {fileID: 1770483959}
+  rightFlipperObject: {fileID: 246409680}
+  oxygenTankObject: {fileID: 1505933923}
+  abismalOxygenTankObject: {fileID: 1596046645}
+  oxygenMaskObject: {fileID: 1276266824}
   terraformController: {fileID: 393193719}
   _interactionDistance: 3
 --- !u!114 &449703881
@@ -1174,6 +1180,12 @@ MonoBehaviour:
   healthBar: {fileID: 2145484669}
   walkingSpeed: 6
   runningSpeed: 12
+  swimmingSpeed: 3
+  swimmingFastSpeed: 6
+  minSpeed: 2
+  maxSpeed: 15
+  minSwimmingSpeed: 1
+  maxSwimmingSpeed: 10
   distanceToGround: 0.5
   animationToGround: 0.1
   legDistance: 2.5
@@ -3093,6 +3105,11 @@ Transform:
   m_Father: {fileID: 262313814}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1505933923 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4864473839450803288, guid: f9527de08db1782ecbefd31f7612b408, type: 3}
+  m_PrefabInstance: {fileID: 1223440685}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1505933924 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6967144244545788019, guid: f9527de08db1782ecbefd31f7612b408, type: 3}
@@ -3401,6 +3418,11 @@ Transform:
   m_Father: {fileID: 1074693121}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1596046645 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4864473839450803288, guid: f9527de08db1782ecbefd31f7612b408, type: 3}
+  m_PrefabInstance: {fileID: 1427309008}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1596046646 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6967144244545788019, guid: f9527de08db1782ecbefd31f7612b408, type: 3}

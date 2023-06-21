@@ -5,6 +5,7 @@ using DataManager;
 using Items;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using UI.Inventory.Components;
 using UnityEngine;
 
 namespace Tests
@@ -263,7 +264,7 @@ namespace Tests
         {
             ItemData item = new("123", "Test Item", "This is a test", ItemType.Weapon, "ItemIcons/test");
             item.AddComponent(new WeaponComponentData(
-                    1,
+                    EquipmentSlotType.Body,
                     12,
                     "Weapon/test"
                 )

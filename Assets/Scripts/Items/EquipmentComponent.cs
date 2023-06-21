@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using PlayerControls;
+using UI.Inventory.Components;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -30,7 +32,7 @@ namespace Items
 
         [JsonProperty("enhancements")] private List<Tuple<Enhancements, int>> _enhancements;
 
-        public EquipmentComponentData(int slot, int durability, List<Tuple<Enhancements, int>> enhancements) : base(slot,
+        public EquipmentComponentData(EquipmentSlotType slot, int durability, List<Tuple<Enhancements, int>> enhancements) : base(slot,
             durability)
         {
             _enhancements = enhancements;
@@ -81,17 +83,24 @@ namespace Items
                 }
             }
         }
-        
-        public override void OnEquip(Player player, Item item)
+
+        public override bool OnEquip(Player player, Item item, EquipmentSlot? slot)
         {
+            if (!player.playerInventory.AddEquipment(item, slot))
+            {
+                return false;
+            }
             EquipEnhancements(player);
             player.EquipEquipment(item);
+
+            return true;
         }
 
-        public override void OnUnequip(Player player, Item item)
+        public override bool OnUnequip(Player player, Item item)
         {
             UnequipEnhancements(player);
             player.UnequipEquipment(item);
+            return true;
         }
 
         public override ItemComponent CreateInstance()

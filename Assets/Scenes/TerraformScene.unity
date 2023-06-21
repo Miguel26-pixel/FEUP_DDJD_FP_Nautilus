@@ -1063,6 +1063,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e757ffce39bd48aa83baeeac993b5d69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerController: {fileID: 449703881}
   health: 1000
   maxHealth: 1000
   machineType: -1
@@ -1157,8 +1158,11 @@ MonoBehaviour:
   onPlacingStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  leftFlipperObject: {fileID: 1770483959}
+  leftFlipperObject: {fileID: 0}
   rightFlipperObject: {fileID: 0}
+  oxygenTankObject: {fileID: 0}
+  abismalOxygenTankObject: {fileID: 0}
+  oxygenMaskObject: {fileID: 0}
   terraformController: {fileID: 393193719}
   _interactionDistance: 3
 --- !u!114 &449703881
@@ -1176,6 +1180,12 @@ MonoBehaviour:
   healthBar: {fileID: 2145484669}
   walkingSpeed: 6
   runningSpeed: 12
+  swimmingSpeed: 3
+  swimmingFastSpeed: 6
+  minSpeed: 2
+  maxSpeed: 15
+  minSwimmingSpeed: 1
+  maxSwimmingSpeed: 10
   distanceToGround: 0.5
   animationToGround: 0.1
   legDistance: 2.5
@@ -1193,6 +1203,8 @@ MonoBehaviour:
   throwUpwardForce: 10
   throwCooldown: 0
   waterDistance: 1
+  underWater: 0
+  swimmSpeed: 0
 --- !u!143 &449703882
 CharacterController:
   m_ObjectHideFlags: 0

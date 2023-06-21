@@ -1,6 +1,7 @@
 using System;
 using Inventory;
 using Items;
+using PlayerControls;
 using UnityEngine.UIElements;
 
 namespace UI.Inventory.Components
@@ -16,6 +17,7 @@ namespace UI.Inventory.Components
         protected readonly bool canMove;
         protected readonly bool canOpenContextMenu;
         protected readonly T inventory;
+        protected readonly Player player;
         protected readonly VisualElement inventoryContainer;
         protected readonly bool refreshAfterMove;
         protected readonly VisualElement root;
@@ -24,7 +26,7 @@ namespace UI.Inventory.Components
         public Action<IDraggable> onDragStart;
 
         protected InventoryViewer(VisualElement root, VisualElement inventoryContainer,
-            T inventory, Action<IDraggable> onDragStart = null, Action<IDraggable> onDragEnd = null,
+            T inventory, Player player, Action<IDraggable> onDragStart = null, Action<IDraggable> onDragEnd = null,
             bool canMove = true, bool canOpenContextMenu = true, bool refreshAfterMove = true)
         {
             this.root = root;
@@ -35,6 +37,7 @@ namespace UI.Inventory.Components
             this.refreshAfterMove = refreshAfterMove;
             this.onDragStart = onDragStart;
             this.onDragEnd = onDragEnd;
+            this.player = player;
         }
 
         public abstract void Show();

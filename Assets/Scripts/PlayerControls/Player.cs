@@ -61,7 +61,7 @@ namespace PlayerControls
         private float _interactionDistance = 3f;
         private float _placementDistance = 10f;
 
-        private PlayerInventory _playerInventory = new("Inventory", new[,]
+        public PlayerInventory playerInventory = new("Inventory", new[,]
         {
             { false, false, false, false, false, false },
             { false, false, false, false, false, false },
@@ -121,17 +121,17 @@ namespace PlayerControls
 
         public override PlayerInventory GetInventory()
         {
-            return _playerInventory;
+            return playerInventory;
         }
 
         public override void SetInventory(PlayerInventory inventory)
         {
-            _playerInventory = inventory;
+            playerInventory = inventory;
         }
 
         public override IInventoryNotifier GetInventoryNotifier()
         {
-            return _playerInventory;
+            return playerInventory;
         }
 
         public void LockTool()
@@ -155,7 +155,7 @@ namespace PlayerControls
             {
                 if (Mouse.current.leftButton.wasPressedThisFrame && raycast && _canPlaceObject)
                 {
-                    _playerInventory.RemoveItem(_itemIDHash);
+                    playerInventory.RemoveItem(_itemIDHash);
                     _isPlacing = false;
                     OnPlacingStateChanged();
                 }
@@ -312,7 +312,7 @@ namespace PlayerControls
         {
             _soilData ??= _itemRegistry.Get(0x6F9576E5);
 
-            bool removed = _playerInventory.RemoveSoil(_soilData, amount);
+            bool removed = playerInventory.RemoveSoil(_soilData, amount);
 
             if (!removed)
             {
@@ -320,7 +320,7 @@ namespace PlayerControls
                 return false;
             }
 
-            SoilResource soilResource = _playerInventory.GetSoilResource();
+            SoilResource soilResource = playerInventory.GetSoilResource();
 
             // This should never be null, but just in case
             if (soilResource != null)
@@ -336,7 +336,7 @@ namespace PlayerControls
         {
             _soilData ??= _itemRegistry.Get(0x6F9576E5);
 
-            SoilResource soilResource = _playerInventory.AddSoil(_soilData, amount);
+            SoilResource soilResource = playerInventory.AddSoil(_soilData, amount);
 
             if (soilResource == null)
             {
@@ -355,7 +355,7 @@ namespace PlayerControls
             }
 
             ItemData item = _itemRegistry.Get(resource.itemID);
-            IntermediateResource intermediateResource = _playerInventory.AddResource(item);
+            IntermediateResource intermediateResource = playerInventory.AddResource(item);
 
             if (intermediateResource != null)
             {
@@ -379,9 +379,9 @@ namespace PlayerControls
                 yield return new WaitUntil(() => _itemRegistry.Initialized);
             }
 
-            _playerInventory.AddItem(_itemRegistry.Get(0xBCFDBC37).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0x09B53F18).CreateInstance());
-            _playerInventory.AddItem(_itemRegistry.Get(0x5BFE8AE3).CreateInstance());
+            playerInventory.AddItem(_itemRegistry.Get(0xBCFDBC37).CreateInstance());
+            playerInventory.AddItem(_itemRegistry.Get(0x09B53F18).CreateInstance());
+            playerInventory.AddItem(_itemRegistry.Get(0x5BFE8AE3).CreateInstance());
 
             Debug.Log("Gave items");
         }

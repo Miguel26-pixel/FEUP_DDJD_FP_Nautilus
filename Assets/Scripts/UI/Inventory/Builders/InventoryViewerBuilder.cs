@@ -1,4 +1,5 @@
 using Inventory;
+using PlayerControls;
 using UI.Inventory.Components;
 using UnityEngine.UIElements;
 
@@ -12,11 +13,13 @@ namespace UI.Inventory.Builders
         protected readonly bool refreshAfterMove;
         public VisualElement inventoryContainer;
         public VisualElement root;
+        protected readonly Player player;
 
-        protected InventoryViewerBuilder(T inventory, bool canMove = true, bool canOpenContextMenu = true,
+        protected InventoryViewerBuilder(T inventory, Player player, bool canMove = true, bool canOpenContextMenu = true,
             bool refreshAfterMove = true)
         {
             this.inventory = inventory;
+            this.player = player;
             this.canMove = canMove;
             this.canOpenContextMenu = canOpenContextMenu;
             this.refreshAfterMove = refreshAfterMove;
