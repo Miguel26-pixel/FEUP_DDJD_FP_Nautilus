@@ -18,8 +18,9 @@ namespace Inventory
     public interface IInventory
     {
         public List<Item> GetItems();
-        public void AddItem(Item item);
+        public bool AddItem(Item item);
         public Item RemoveItem(int itemID);
+        public int ItemCount(int itemID);
         public string GetInventoryName();
     }
 

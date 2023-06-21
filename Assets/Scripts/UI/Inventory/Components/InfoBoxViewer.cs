@@ -24,7 +24,7 @@ namespace UI.Inventory.Components
                 Resources.Load<VisualTreeAsset>("UI/ItemInfo").CloneTree(root);
                 itemInfo = root.Q<VisualElement>("ItemInfo");
             }
-            
+
             _itemInfo = itemInfo;
             _itemInfo.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
 

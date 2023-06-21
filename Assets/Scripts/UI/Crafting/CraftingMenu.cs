@@ -21,7 +21,7 @@ namespace UI.Crafting
         [SerializeField] public VisualTreeAsset ingredientRecipe;
         [SerializeField] private CraftingRecipeRegistryObject recipeRegistryObject;
         [SerializeField] private ItemRegistryObject itemRegistryObject;
-        [SerializeField] public Player player;
+        [NonSerialized] public Player player;
         private readonly List<CraftingInterface> _interfaces = new();
         public readonly Dictionary<ItemType, Sprite> _itemTypeIcons = new();
 
@@ -32,7 +32,8 @@ namespace UI.Crafting
         private VisualElement _root;
 
         [NonSerialized] public VisualElement categoryTabs;
-        public PlayerInventory Inventory => player.GetInventory();
+
+        [NonSerialized] public bool isCrafting;
 
         [NonSerialized] public ItemRegistry itemRegistry;
         [NonSerialized] public VisualElement recipeCreateButton;
@@ -47,8 +48,7 @@ namespace UI.Crafting
         [NonSerialized] public CraftingRecipeRegistry recipeRegistry;
 
         [NonSerialized] public VisualElement recipeView;
-
-        [NonSerialized] public bool isCrafting;
+        public PlayerInventory Inventory => player.GetInventory();
 
         private void Start()
         {
@@ -56,7 +56,7 @@ namespace UI.Crafting
             {
                 _itemTypeIcons.Add(typeSprite.type, typeSprite.sprite);
             }
-
+            player = GameObject.FindWithTag("Player").GetComponent<Player>();
             player.GetInventoryNotifier().AddSubscriber(this);
 
             recipeRegistry = recipeRegistryObject.craftingRecipeRegistry;
@@ -92,24 +92,24 @@ namespace UI.Crafting
             recipeCreateButton = recipeView.Q<VisualElement>("CreateButton");
         }
 
-        public void UpdateInventory()
-        {
-            player.GetInventoryNotifier().AddSubscriber(this);
-            
-            OnInventoryChanged();
-        }
-
         public void OnInventoryChanged()
         {
             if (isCrafting)
             {
                 return;
             }
-            
+
             foreach (CraftingInterface @interface in _interfaces)
             {
                 @interface.Refresh();
             }
+        }
+
+        public void UpdateInventory()
+        {
+            player.GetInventoryNotifier().AddSubscriber(this);
+
+            OnInventoryChanged();
         }
 
         private void Open(MachineType type)
@@ -145,6 +145,11 @@ namespace UI.Crafting
             }
 
             _isCraftingMenuOpen = !_isCraftingMenuOpen;
+        }
+
+        public bool IsOpen()
+        {
+            return _isCraftingMenuOpen;
         }
 
         [Serializable]

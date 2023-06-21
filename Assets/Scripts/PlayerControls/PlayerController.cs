@@ -22,7 +22,7 @@ namespace PlayerControls
     [RequireComponent(typeof(Animator))]
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(Player))]
-    public class PlayerController : MonoBehaviour, PlayerActions.IHUDActions, PlayerActions.IMovementActions
+    public class PlayerController : MonoBehaviour, PlayerActions.IMovementActions
     {
         public Image healthBar;
 
@@ -49,6 +49,7 @@ namespace PlayerControls
         private Vector2 _currentMovementInput;
         private Vector3 _currentMovement;
         private bool _isMovementPressed;
+        private bool _movementLocked;
 
         // Jumping
         [Header("Jumping")]
@@ -82,14 +83,7 @@ namespace PlayerControls
         public float throwCooldown;
 
         private bool _readyToThrow;
-    
-        [Header("HUD Events")]
-        public MachineType machineType;
-        public UnityEvent<MachineType> onCraftEvent = new();
-        public UnityEvent onInventoryEvent = new();
-        public UnityEvent<int> onRotate = new();
-    
-        private ItemRegistry _itemRegistry;
+
         private PlayerActions _playerActions;
 
         private static readonly int Attack = Animator.StringToHash("Attack");
@@ -104,6 +98,8 @@ namespace PlayerControls
 
         [Header("Swim Event")]
         public float waterDistance = 1;
+        public bool underWater = false;
+        public float swimmSpeed = 0.0f;
 
         private void Awake()
         {
@@ -143,19 +139,14 @@ namespace PlayerControls
 
         public void Start()
         {
-            ItemRegistryObject itemRegistryObject = GameObject.Find("DataManager").GetComponent<ItemRegistryObject>();
-            _itemRegistry = itemRegistryObject.itemRegistry;
-            
             _mainCamera = Camera.main;
-            if (_mainCamera != null)
+            if (_mainCamera == null)
             {
-                _cameraTransform = _mainCamera.transform;
-                _cameraParentTransform = _cameraTransform.parent;
+                return;
             }
 
-            StartCoroutine(GiveItems());
-            // TODO: Remove this
-            Cursor.lockState = CursorLockMode.Locked;
+            _cameraTransform = _mainCamera.transform;
+            _cameraParentTransform = _cameraTransform.parent;
         }
 
         public void OnEnable()
@@ -163,20 +154,27 @@ namespace PlayerControls
             if (_playerActions == null)
             {
                 _playerActions = new PlayerActions();
-                _playerActions.HUD.SetCallbacks(this);
                 _playerActions.Movement.SetCallbacks(this);
             }
 
-            _playerActions.HUD.Enable();
             _playerActions.Movement.Enable();
         }
     
         private void OnDisable()
         {
-            _playerActions.HUD.Disable();
             _playerActions.Movement.Disable();
         }
 
+        public void LockMovement()
+        {
+            _movementLocked = true;
+        }
+
+        public void UnlockMovement()
+        {
+            _movementLocked = false;
+        }
+        
         private void Update()
         {
             if (_player.IsDead)
@@ -184,7 +182,7 @@ namespace PlayerControls
                 return;
             }
             
-            if (_isMovementPressed)
+            if (_isMovementPressed && !_movementLocked)
             {
                 _targetSpeed = _isRunning ? runningSpeed : walkingSpeed;
             }
@@ -198,13 +196,19 @@ namespace PlayerControls
                 : _targetSpeed;
 
             
-
-            _cameraRelativeMovement = ConvertToCameraSpace(_currentMovement);
             HandleWater();
+            _cameraRelativeMovement = ConvertToCameraSpace(_currentMovement);
+            if(underWater && (_cameraTransform.rotation.x < 0) && 19.5f > transform.position.y)
+            {
+                _cameraRelativeMovement.y = 1f;
+            }else if (underWater && (_cameraTransform.rotation.x > 0))
+            {
+                _cameraRelativeMovement.y = -1f;
+            }
             HandleRotation();
             HandleAnimation();
-            _characterController.Move(_cameraRelativeMovement * (Time.deltaTime * _speed) + _jumpVelocity * Time.deltaTime);
             HandleGravity();
+            _characterController.Move(_cameraRelativeMovement * (Time.deltaTime * _speed) + _jumpVelocity * Time.deltaTime);
             HandleJump();
         }
 
@@ -269,14 +273,18 @@ namespace PlayerControls
 
         private void HandleWater()
         {
-            if (Physics.Raycast(transform.position, Vector3.up, out var hit, 10f, waterLayer))
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, Vector3.down, out hit, 10f, waterLayer))
             {
-                float distance = Mathf.Clamp01((transform.position.y - hit.point.y)/waterDistance);
-                 _animator.SetFloat("WaterDistance", distance);
+                float distance = Mathf.Clamp01((transform.position.y - hit.point.y) / waterDistance);
+                if(distance <= 0.6f){
+                    underWater = !underWater;
+                }
+                _animator.SetFloat("WaterDistance", distance);
             }
-            else {
-                _animator.SetFloat("WaterDistance", 0);
-
+            else
+            {
+                _animator.SetFloat("WaterDistance", 0f);
             }
         }
 
@@ -298,10 +306,21 @@ namespace PlayerControls
 
         private void HandleRotation()
         {
+            if (_movementLocked)
+            {
+                return;
+            }
+            
             Vector3 positionToLookAt;
 
             positionToLookAt.x = _cameraRelativeMovement.x;
             positionToLookAt.y = 0.0f;
+            if(underWater && (_cameraTransform.rotation.x < 0)){
+                positionToLookAt.y = 0.5f;
+            }else if(underWater && (_cameraTransform.rotation.x > 0))
+            {
+                positionToLookAt.y = -0.5f;
+            }
             positionToLookAt.z = _cameraRelativeMovement.z;
 
             Quaternion currentRotation = transform.rotation;
@@ -320,13 +339,20 @@ namespace PlayerControls
 
         private void HandleGravity()
         {
-            if (_characterController.isGrounded)
+            if (_characterController.isGrounded && !underWater)
             {
                 _jumpVelocity.y = GroundGravity;
                 return;
             }
-            
+
+            if(underWater)
+            {
+                _jumpVelocity.y = 0.0f;
+                _gravity = 0.0f;
+                return;
+            }
             _jumpVelocity.y += _gravity * Time.deltaTime;
+
         }
 
         private void HandleJump()
@@ -334,7 +360,7 @@ namespace PlayerControls
             switch (_jumpState)
             {
                 case JumpState.End:
-                    if (_characterController.isGrounded && _isJumpPressed)
+                    if (_characterController.isGrounded && _isJumpPressed && !_movementLocked)
                     {
                         _animator.SetTrigger(Jump);
                         _animator.SetLayerWeight(_jumpOverrideLayer, 0.35f);
@@ -427,6 +453,11 @@ namespace PlayerControls
     
         private Vector3 ConvertToCameraSpace(Vector3 vectorToRotate)
         {
+            if (_movementLocked)
+            {
+                return Vector3.zero;
+            }
+            
             Vector3 cameraForward = _cameraParentTransform.forward.normalized;
             Vector3 cameraRight = _cameraParentTransform.right.normalized;
 
@@ -437,11 +468,17 @@ namespace PlayerControls
             Vector3 cameraForwardXProduct = vectorToRotate.x * cameraRight;
 
             Vector3 result = cameraForwardXProduct + cameraForwardZProduct;
+
             return new Vector3(result.x, 0, result.z);
         }
 
         private void Throw()
         {
+            if (_movementLocked)
+            {
+                return;
+            }
+            
             _readyToThrow = false;
 
             GameObject spear = Instantiate(weapon, attackPoint.position, _cameraTransform.rotation);
@@ -459,73 +496,6 @@ namespace PlayerControls
         private void ResetThrow()
         {
             _readyToThrow = true;
-        }
-
-        public void OnCraft(InputAction.CallbackContext context)
-        {
-            if (!context.performed)
-            {
-                return;
-            }
-            Time.timeScale = 0.05f;
-
-            // onCraftEvent.Invoke(machineType);
-        }
-
-        public void OnInventory(InputAction.CallbackContext context)
-        {
-            if (!context.performed)
-            {
-                return;
-            }
-            Time.timeScale = 1f;
-
-            // onInventoryEvent.Invoke();
-        }
-
-        public void OnRotateClockwise(InputAction.CallbackContext context)
-        {
-            if (!context.performed)
-            {
-                return;
-            }
-
-            onRotate.Invoke(-1);
-        }
-
-        public void OnRotateAntiClockwise(InputAction.CallbackContext context)
-        {
-            if (!context.performed)
-            {
-                return;
-            }
-
-            onRotate.Invoke(1);
-        }
-    
-        private IEnumerator GiveItems()
-        {
-            if (!_itemRegistry.Initialized)
-            {
-                yield return new WaitUntil(() => _itemRegistry.Initialized);
-            }
-
-            PlayerInventory playerInventory = _player.GetInventory();
-
-            playerInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
-            playerInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
-            playerInventory.AddItem(_itemRegistry.Get(0x55518A64).CreateInstance());
-            playerInventory.AddItem(_itemRegistry.Get(0x238E2A2D).CreateInstance());
-            playerInventory.AddItem(_itemRegistry.Get(0x2E79821C).CreateInstance());
-            playerInventory.AddItem(_itemRegistry.Get(0x755CFE42).CreateInstance());
-            playerInventory.AddItem(_itemRegistry.Get(0xE3847C27).CreateInstance());
-            playerInventory.AddItem(_itemRegistry.Get(0xDEC31753).CreateInstance());
-            playerInventory.AddItem(_itemRegistry.Get(0x5BFE8AE3).CreateInstance());
-            playerInventory.AddItem(_itemRegistry.Get(0xFE3EC9B0).CreateInstance());
-            playerInventory.AddItem(_itemRegistry.Get(0x5C5C52AF).CreateInstance());
-
-
-            Debug.Log("Gave items");
         }
 
         private void OnAnimatorIK(int layerIndex)

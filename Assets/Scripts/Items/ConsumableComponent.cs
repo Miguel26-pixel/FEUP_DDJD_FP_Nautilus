@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using PlayerControls;
 
 namespace Items
 {
@@ -22,7 +23,7 @@ namespace Items
 
         [JsonProperty("hunger")] public int Hunger { get; }
 
-        private void Consume()
+        private void Consume(Player player, Item i)
         {
             throw new NotImplementedException();
         }

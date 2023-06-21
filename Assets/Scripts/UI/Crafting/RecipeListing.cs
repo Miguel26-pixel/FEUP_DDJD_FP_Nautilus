@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Crafting;
 using DataManager;
-using Inventory;
 using Items;
 using UnityEngine;
 using UnityEngine.UIElements;
