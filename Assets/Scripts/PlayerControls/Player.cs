@@ -171,7 +171,7 @@ namespace PlayerControls
             else
             {
                 MachineComponent nearestMachine = FindClosestInteractibleMachine();
-                machineType = nearestMachine != null ? nearestMachine.GetMachineType() : (MachineType)(-1);
+                machineType = nearestMachine != null ? nearestMachine.GetMachineType() : MachineType.PocketFabricator;
 
             }
         }
@@ -179,28 +179,38 @@ namespace PlayerControls
         private Vector3 FindPlacingPoint(RaycastHit hit)
         {
             Collider collider = hit.collider;
-            if (collider != null && collider != _placingObject.GetComponent<Collider>())
+
+            if (collider == null)
             {
-                _canPlaceObject = collider.gameObject.layer != LayerMask.NameToLayer("Water");
-                Vector3 contactPoint = hit.point;
-                Vector3 placementPosition = contactPoint + Vector3.up * (_placingObject.transform.localScale.y * 0.5f + 0.05f);
-
-                float currentDistance = Vector3.Distance(transform.position, placementPosition);
-
-                if (currentDistance <= _placementDistance)
-                {
-                    return placementPosition;
-                }
-                else
-                {
-                    Vector3 playerToPlacement = (placementPosition - transform.position).normalized;
-                    Vector3 closestPosition = transform.position + playerToPlacement * _placementDistance;
-                    return closestPosition;
-                }
+                return Vector3.zero;
             }
 
-            return Vector3.zero;
+            if (collider.gameObject.layer == LayerMask.NameToLayer("Vacuum") || collider == _placingObject.GetComponent<Collider>())
+            {
+                return Vector3.zero;
+            }
+
+            _canPlaceObject = collider.gameObject.layer != LayerMask.NameToLayer("Water");
+            Vector3 contactPoint = hit.point;
+
+            Quaternion rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
+            _placingObject.transform.rotation = rotation;
+
+            float currentDistance = Vector3.Distance(transform.position, contactPoint);
+
+            if (currentDistance <= _placementDistance)
+            {
+                return contactPoint;
+            }
+            else
+            {
+                Vector3 playerToPlacement = (contactPoint - transform.position).normalized;
+                Vector3 closestPosition = transform.position + playerToPlacement * _placementDistance;
+                return closestPosition;
+            }
+
         }
+
         private MachineComponent FindClosestInteractibleMachine()
         {
             Collider[] colliders = Physics.OverlapSphere(transform.position, _interactionDistance);
@@ -230,8 +240,6 @@ namespace PlayerControls
             {
                 return;
             }
-            // Time.timeScale = 0.05f;
-
             onCraftEvent.Invoke(machineType);
         }
 
