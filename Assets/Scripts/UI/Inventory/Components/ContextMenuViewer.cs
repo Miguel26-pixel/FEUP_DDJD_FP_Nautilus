@@ -4,6 +4,7 @@ using FMODUnity;
 using Items;
 using UnityEngine;
 using UnityEngine.UIElements;
+using PlayerControls;
 
 namespace UI.Inventory.Components
 {
@@ -17,6 +18,7 @@ namespace UI.Inventory.Components
         private readonly VisualElement _root;
 
         private readonly VisualTreeAsset _textButtonTemplate;
+        private Item _item;
 
         public ContextMenuViewer(VisualElement root)
         {
@@ -45,10 +47,11 @@ namespace UI.Inventory.Components
         public bool IsOpen { get; private set; }
         public uint ItemInfoID { get; private set; }
 
-        public void Open(Item item, uint itemID, Vector2 position)
+        public void Open(Item item, uint itemID, Vector2 position, Player player)
         {
             IsOpen = true;
             ItemInfoID = itemID;
+            _item = item;
 
             _contextTitle.text = item.Name;
 
@@ -95,6 +98,12 @@ namespace UI.Inventory.Components
 
         private void ProcessMouseUpAction(IMouseEvent evt, ContextMenuAction action)
         {
+            Player player = GameObject.FindWithTag("Player").GetComponent<Player>();
+
+            if (player == null) {
+                return;
+            }
+
             if (evt.button != 0)
             {
                 return;
@@ -103,7 +112,7 @@ namespace UI.Inventory.Components
             try
             {
                 RuntimeManager.PlayOneShot("event:/UI/Inventory slots");
-                action.Action();
+                action.Action(player, _item);
             }
             catch (NotImplementedException)
             {
