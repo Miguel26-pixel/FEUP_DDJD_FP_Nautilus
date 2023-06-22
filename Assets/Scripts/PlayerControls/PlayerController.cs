@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using Crafting;
 using DataManager;
+using FMOD.Studio;
+using FMODUnity;
 using Inventory;
 using UnityEngine;
 using UnityEngine.Events;
@@ -133,9 +135,14 @@ namespace PlayerControls
 
         [Header("Swim Event")]
         public float waterDistance = 1;
+        
         public bool underWater = false;
         public float swimmSpeed = 0.0f;
         private static readonly int SpeedDifference = Animator.StringToHash("SpeedDifference");
+        
+        private string _stepReference;
+        private string _swimReference;
+        private string _throwReference;
 
         private void Awake()
         {
@@ -183,10 +190,11 @@ namespace PlayerControls
 
             _cameraTransform = _mainCamera.transform;
             _cameraParentTransform = _cameraTransform.parent;
-        
+            _stepReference = "event:/Player/Walking on sand";
+            _swimReference = "event:/Player/Swimming";
+            _throwReference = "event:/Player/Spear throw";
             lr=GetComponent<LineRenderer>();
             rot = Quaternion.Euler(InitialAngle,0,0);
-
         }
 
         public void OnEnable()
@@ -283,7 +291,8 @@ namespace PlayerControls
             currentWeapon.gameObject.transform.parent = null;
             projectileRb.isKinematic = false;
             projectileRb.useGravity = true;
-
+            
+            RuntimeManager.PlayOneShot(_throwReference, projectileRb.position);
             projectileRb.velocity += rot*(throwUpwardForce*transform.forward);
 
             lr.enabled=false;
@@ -585,6 +594,11 @@ namespace PlayerControls
             _jumpState = JumpState.Apex;
         }
 
+        public void SwimEvent()
+        {
+            RuntimeManager.PlayOneShot(_swimReference);
+        }
+
         private IEnumerator BlendJumpLayers(float endOverride, JumpState state)
         {
             float startOverride = _animator.GetLayerWeight(_jumpOverrideLayer);
@@ -627,6 +641,15 @@ namespace PlayerControls
         {
             _readyToThrow = true;
         }
+        
+        private float _lastLeftIK = 0f;
+        private float _lastRightIK = 0f;
+        private float _leftIK = 0f;
+        private float _rightIK = 0f;
+
+        private Vector3 _lastLeft;
+        private Vector3 _lastRight;
+        private bool leftMoving = false;
 
         private void OnAnimatorIK(int layerIndex)
         {
@@ -650,6 +673,40 @@ namespace PlayerControls
             
             SetFootTransform(AvatarIKGoal.LeftFoot, leftTransform.Item1, leftTransform.Item2);
             SetFootTransform(AvatarIKGoal.RightFoot, rightTransform.Item1, rightTransform.Item2);
+            
+            _leftIK = _animator.GetIKRotationWeight(AvatarIKGoal.LeftFoot);
+
+            if (Math.Abs(_leftIK - 1) < 0.01f && Math.Abs(_lastLeftIK - 1) > 0.01f && _ikWeight > 0.8f)
+            {
+                RuntimeManager.PlayOneShot(_stepReference);
+            }
+            _lastLeftIK = _leftIK;
+                    
+            _rightIK = _animator.GetIKRotationWeight(AvatarIKGoal.RightFoot);
+                    
+            if (Math.Abs(_rightIK - 1) < 0.01f && Math.Abs(_lastRightIK - 1) > 0.01f && _ikWeight > 0.8f)
+            {
+                RuntimeManager.PlayOneShot(_stepReference);
+            }
+            _lastRightIK = _rightIK;
+
+            var left = _animator.GetIKPosition(AvatarIKGoal.LeftFoot);
+            var right = _animator.GetIKPosition(AvatarIKGoal.RightFoot);
+            
+            var forward = transform.forward;
+            
+            var leftComponent = Vector3.Dot(left - _lastLeft, forward) / forward.magnitude;
+            var rightComponent = Vector3.Dot(right - _lastRight, forward) / forward.magnitude;
+
+            
+            if (!underWater && transform.position.y <= 22f && ((leftComponent > rightComponent + 0.1f && !leftMoving) || (rightComponent > leftComponent + 0.1f && leftMoving)  ))
+            {
+                RuntimeManager.PlayOneShot(_swimReference);
+                leftMoving = !leftMoving;
+            }
+            
+            _lastLeft = left;
+            _lastRight = right;
         }
 
         private Tuple<Vector3, Quaternion> GetFootTransform(float maxDistance, AvatarIKGoal goal)
@@ -667,7 +724,7 @@ namespace PlayerControls
             
             _animator.SetIKPositionWeight(goal, _ikWeight);
             _animator.SetIKRotationWeight(goal, 1 - Mathf.Clamp01((footDistanceToAnimationPlane - (distanceToGround)) / (distanceToGround / 2.5f)));
-                
+            
             Vector3 forward = Vector3.ProjectOnPlane(transform.forward, hit.normal);
             return new Tuple<Vector3, Quaternion>(footPosition, Quaternion.LookRotation(forward, hit.normal));
         }

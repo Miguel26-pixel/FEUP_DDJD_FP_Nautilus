@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Crafting;
 using DataManager;
+using FMODUnity;
 using Generation.Resource;
 using Inventory;
 using Items;
@@ -313,6 +314,7 @@ namespace PlayerControls
             if (Mouse.current.leftButton.wasPressedThisFrame && raycast && _canPlaceObject)
             {
                 playerInventory.RemoveItem(_itemIDHash);
+                RuntimeManager.PlayOneShot("event:/Player/Place machine");
                 _isPlacing = false;
                 OnPlacingStateChanged();
             }
@@ -538,6 +540,8 @@ namespace PlayerControls
 
         public void EquipEquipment(Item item)
         {
+            RuntimeManager.PlayOneShot("event:/Player/Equip sound (rustling)");
+
             switch (item.Name)
             {
                 case "Flippers":
@@ -557,6 +561,8 @@ namespace PlayerControls
 
         public void UnequipEquipment(Item item)
         {
+            RuntimeManager.PlayOneShot("event:/Player/Equip sound (rustling)");
+
             switch (item.Name)
             {
                 case "Flippers":
@@ -572,6 +578,16 @@ namespace PlayerControls
                     throw new NotImplementedException();
             }
             // _playerInventory.AddItem(item);
+        }
+
+        public void AddHunger(int hunger)
+        {
+            _hunger = Mathf.Clamp(_hunger + hunger, 0, _maxHunger);
+        }
+
+        public void AddHealth(int i)
+        {
+            health = Mathf.Clamp(health + i, 0, maxHealth);
         }
     }
 }

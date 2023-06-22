@@ -1,3 +1,4 @@
+using FMODUnity;
 using PlayerControls;
 using UI.Inventory.Components;
 using UnityEngine;
@@ -66,6 +67,7 @@ namespace UI.Inventory
             {
                 Close();
             }
+            RuntimeManager.PlayOneShot("event:/UI/Inventory open");
         }
     }
 }

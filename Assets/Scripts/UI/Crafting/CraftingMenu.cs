@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Crafting;
 using DataManager;
+using FMODUnity;
 using Inventory;
 using Items;
 using PlayerControls;
@@ -49,9 +50,20 @@ namespace UI.Crafting
 
         [NonSerialized] public VisualElement recipeView;
         public PlayerInventory Inventory => player.GetInventory();
+        
+        private string _openSound;
+        [NonSerialized] 
+        public string craftSound;
+        [NonSerialized] 
+        public string menuSound;
+        
 
         private void Start()
         {
+            _openSound = "event:/UI/Inventory open";
+            craftSound = "event:/UI/Crafting";
+            menuSound = "event:/UI/Inventory slots";
+            
             foreach (TypeSprite typeSprite in itemTypeIcons)
             {
                 _itemTypeIcons.Add(typeSprite.type, typeSprite.sprite);
@@ -119,6 +131,7 @@ namespace UI.Crafting
             _interfaces.Add(categoryTabsInterface);
 
             categoryTabsInterface.Open();
+            RuntimeManager.PlayOneShot(_openSound);
         }
 
         private void Close()
@@ -129,6 +142,7 @@ namespace UI.Crafting
             }
 
             _interfaces.Clear();
+            RuntimeManager.PlayOneShot(_openSound);
         }
 
         public void Toggle(MachineType type)

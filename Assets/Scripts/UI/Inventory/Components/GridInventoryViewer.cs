@@ -1,4 +1,5 @@
 using System;
+using FMODUnity;
 using Inventory;
 using Items;
 using UnityEngine;
@@ -333,6 +334,7 @@ namespace UI.Inventory.Components
 
             DarkenItem(itemID);
             RenderItemDrag();
+            RuntimeManager.PlayOneShot("event:/UI/Inventory slots");
             onDragStart?.Invoke(draggingProperties);
         }
 
@@ -348,6 +350,7 @@ namespace UI.Inventory.Components
                 {
                     ProcessOtherDraggableSimple(evt, position, otherDraggable);
                 }
+                RuntimeManager.PlayOneShot("event:/UI/Inventory slots");
 
                 otherDraggable = null;
                 return;
@@ -372,11 +375,12 @@ namespace UI.Inventory.Components
             }
 
             evt.StopPropagation();
-
+            
             _inventory.MoveItem(draggingProperties.dragStartPosition,
                 new ItemPosition(initialPosition, draggingProperties.currentRotation));
             isDragging = false;
             draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
+            RuntimeManager.PlayOneShot("event:/UI/Inventory slots");
 
             onDragEnd?.Invoke(draggingProperties);
             if (refreshAfterMove)

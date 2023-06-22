@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using FMOD.Studio;
+using FMODUnity;
 using Generation.Resource;
 using UnityEngine;
 
@@ -25,6 +27,11 @@ namespace PlayerControls
         private GameObject _terraformCursor;
         private TerraformType _terraformType = TerraformType.Raise;
 
+        private string _terraformSound;
+        private string _pickupSound;
+        
+        private EventInstance _terraformSoundInstance;
+
         private void Start()
         {
             if (Camera.main != null)
@@ -36,14 +43,18 @@ namespace PlayerControls
             _terraformCursor = Instantiate(terraformCursorPrefab, Vector3.zero, Quaternion.identity);
             _terraformCursor.SetActive(false);
             _player = transform.parent.GetComponent<Player>();
+        
+            _terraformSound = "event:/Player/Sucking ground up (normal pitched rumble)";
+            _pickupSound = "event:/Player/Sucking items up";
         }
 
         private void LateUpdate()
         {
             var rotation = _camera.rotation;
             var playerRotation = _player.transform.rotation;
-            vacuumArea.transform.localRotation = Quaternion.Euler(rotation.eulerAngles.x, rotation.eulerAngles.y - playerRotation.eulerAngles.y, 0);
-            vacuumCollection.transform.localRotation = Quaternion.Euler(rotation.eulerAngles.x, rotation.eulerAngles.y - playerRotation.eulerAngles.y, 0);
+            vacuumArea.transform.rotation = Quaternion.Euler(rotation.eulerAngles.x, rotation.eulerAngles.y,
+                playerRotation.eulerAngles.z);
+            vacuumCollection.transform.rotation = Quaternion.Euler(rotation.eulerAngles.x, rotation.eulerAngles.y, playerRotation.eulerAngles.z);
         }
 
         private void Update()
@@ -87,6 +98,12 @@ namespace PlayerControls
                     _resourcesInRange.Remove(destroyedResource);
                 }
             }
+            
+            _terraformSoundInstance.getPlaybackState(out var state);
+
+            if (state == PLAYBACK_STATE.PLAYING && _terraformType == TerraformType.None) {
+                _terraformSoundInstance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+            }
 
 
             for (int i = 0; i < numIterations; i++)
@@ -105,7 +122,6 @@ namespace PlayerControls
 
                     if (distance > maxDistance)
                     {
-                        // TODO: Add a way to show that the player can't terraform here
                         continue;
                     }
 
@@ -128,6 +144,17 @@ namespace PlayerControls
 
         private HashSet<Vector3Int> Terraform(Vector3 position)
         {
+            _terraformSoundInstance.getPlaybackState(out var state);
+
+            if (_terraformType is TerraformType.Lower or TerraformType.Raise)
+            {
+                if (state is PLAYBACK_STATE.STOPPED or PLAYBACK_STATE.STOPPING)
+                {
+                    _terraformSoundInstance = RuntimeManager.CreateInstance(_terraformSound);
+                    _terraformSoundInstance.start();
+                }
+            }
+            
             switch (_terraformType)
             {
                 case TerraformType.Lower:
@@ -198,6 +225,7 @@ namespace PlayerControls
 
                     if (added)
                     {
+                        RuntimeManager.PlayOneShot(_pickupSound);
                         _resourcesInRange.Remove(other);
                     }
                     else

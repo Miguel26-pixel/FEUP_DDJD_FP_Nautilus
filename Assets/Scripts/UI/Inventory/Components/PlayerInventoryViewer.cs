@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using FMODUnity;
 using Inventory;
 using Items;
 using JetBrains.Annotations;
@@ -174,7 +175,6 @@ namespace UI.Inventory.Components
                 {
                     return;
                 }
-
                 isDragging = false;
                 draggedItem.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
                 _inventory.NotifySubscribersOnInventoryChanged();
