@@ -13,7 +13,6 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 namespace PlayerControls
 {
@@ -104,7 +103,7 @@ namespace PlayerControls
             Cursor.lockState = CursorLockMode.Locked;
             _currentHungerDecay = _defautHungerDecay;
 
-            StartCoroutine(GiveItems());
+            // StartCoroutine(GiveItems());
         }
 
 

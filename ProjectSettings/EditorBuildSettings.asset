@@ -5,7 +5,10 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/TerraformScene.unity
     guid: 8f364656d7c45ca219e650cc5346d992
+  - enabled: 1
+    path: Assets/Scenes/Main Scene.unity
+    guid: fe20fdc5ea59538afa5130063ea4a6ff
   m_configObjects: {}

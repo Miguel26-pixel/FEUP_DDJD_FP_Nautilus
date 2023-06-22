@@ -206,7 +206,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 116697457}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 747dc66895b7120fd94d0065282b14be, type: 3}
   m_Name: 
@@ -220,7 +220,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 116697457}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f1b5b3835cf1194a9a0abf993d57aa2, type: 3}
   m_Name: 
@@ -1457,6 +1457,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18efd3431bff433bf8f095577f17fdb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  texture: {fileID: 0}
+  outputFolder: Assets/Resources/ItemIcons
+  outputName: test
+  sliceWidth: 128
+  sliceHeight: 128
 --- !u!4 &527794743
 Transform:
   m_ObjectHideFlags: 0

@@ -27,6 +27,7 @@ namespace Items
         {
             player.AddHunger(Hunger);
             player.AddHealth(Health);
+            player.playerInventory.RemoveItem(i.IDHash);
         }
 
         public override ItemComponent CreateInstance()
