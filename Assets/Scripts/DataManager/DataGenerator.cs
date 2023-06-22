@@ -599,7 +599,7 @@ namespace DataManager
                 MachineType.Smelter,
                 new Dictionary<string, int>
                 {
-                    { calcium.ID, 1 }
+                    { soil.ID, 1 }
                 });
 
             _recipeRegistry.CreateCraftingRecipe(mermaidMetal.ID,
@@ -613,7 +613,7 @@ namespace DataManager
                 MachineType.Smelter,
                 new Dictionary<string, int>
                 {
-                    { coralium.ID, 1 },
+                    { soil.ID, 1 },
                     { kelp.ID, 1 }
                 });
 
@@ -621,7 +621,7 @@ namespace DataManager
                 MachineType.Smelter,
                 new Dictionary<string, int>
                 {
-                    { calcium.ID, 1 },
+                    { soil.ID, 1 },
                     { abyssallite.ID, 1 }
                 });
 
@@ -641,7 +641,7 @@ namespace DataManager
                 MachineType.Fabricator | MachineType.PocketFabricator,
                 new Dictionary<string, int>
                 {
-                    { calcium.ID, 1 },
+                    { soil.ID, 1 },
                     { coralium.ID, 2 }
                 });
 
@@ -650,7 +650,7 @@ namespace DataManager
                 new Dictionary<string, int>
                 {
                     { coralium.ID, 2 },
-                    { scales.ID, 1 }
+                    { soil.ID, 1 }
                 });
 
 
@@ -659,8 +659,7 @@ namespace DataManager
                 new Dictionary<string, int>
                 {
                     { coralium.ID, 2 },
-                    { calcium.ID, 1 },
-                    { scales.ID, 1 }
+                    { soil.ID, 1 },
                 });
 
             _recipeRegistry.CreateCraftingRecipe(assembler.ID,
@@ -796,7 +795,7 @@ namespace DataManager
                 new Dictionary<string, int>
                 {
                     { cloth.ID, 2 },
-                    { scales.ID, 2 }
+                    { soil.ID, 2 }
                 });
 
 

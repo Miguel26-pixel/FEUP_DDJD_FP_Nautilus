@@ -71,7 +71,7 @@ namespace PlayerControls
 
         [Header("Stats decay")]
         [SerializeField]
-        private float _defautHungerDecay = 3f;
+        private float _defautHungerDecay = 1f;
         private float _currentHungerDecay;
         [SerializeField]
         private float _runningDecayMultiplier = 1.5f;
@@ -293,6 +293,11 @@ namespace PlayerControls
         {
             RemoveHunger(_currentHungerDecay * Time.deltaTime);
 
+            if (IsDead)
+            {
+                return;
+            }
+            
             if (_hunger / _maxHunger < 0.05 || _oxygen / _maxOxygen < 0.05)
             {
                 playerController.TakeDamage((int)(_healthDecay * Time.deltaTime));

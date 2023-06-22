@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using CameraControls;
 using Crafting;
 using DataManager;
 using FMOD.Studio;

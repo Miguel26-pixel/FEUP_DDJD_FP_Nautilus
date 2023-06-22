@@ -59,6 +59,10 @@ namespace PlayerControls
 
         private void Update()
         {
+            if (_player.IsDead)
+            {
+                return;
+            }
             if (!canTerraform)
             {
                 return;
