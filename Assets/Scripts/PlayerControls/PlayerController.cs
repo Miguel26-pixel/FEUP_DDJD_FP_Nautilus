@@ -31,7 +31,7 @@ namespace PlayerControls
 
         private CharacterController _characterController;
         private Animator _animator;
-        private Player _player;
+        public Player _player;
 
         // Movement
         [Header("Movement")]
