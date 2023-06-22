@@ -2792,7 +2792,7 @@ MonoBehaviour:
     maxHeight: 1000
     minSlope: 0.9
     maxSlope: 1
-    offset: 0
+    offset: -0.5
     alignToSurface: 0
     chanceOfGenerating: 1
     prefab: {fileID: 6272377852241448305, guid: d27a9b6c4dd66b13c99f01dec254fa51, type: 3}
