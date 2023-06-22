@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using CameraControls;
 using Crafting;
 using DataManager;
 using FMOD.Studio;
@@ -30,7 +31,7 @@ namespace PlayerControls
 
         private CharacterController _characterController;
         private Animator _animator;
-        private Player _player;
+        public Player _player;
 
         // Movement
         [Header("Movement")]

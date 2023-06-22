@@ -24,11 +24,15 @@ public class LeviathanAttack : StateMachineBehaviour
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
-    override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        if (playerController._player.IsDead)
+        {
+            return;
+        }
+        
         animator.transform.LookAt(player.transform);
         float distance = Vector3.Distance(player.transform.position, animator.transform.position);
-        Debug.Log("Distance to player: " + distance.ToString());
         if (distance <= 6f && nextAttackTime < Time.time)
         {
             playerController.TakeDamage(damage);
