@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using FMODUnity;
 using Newtonsoft.Json;
 using PlayerControls;
 
@@ -27,6 +28,8 @@ namespace Items
         {
             player.AddHunger(Hunger);
             player.AddHealth(Health);
+            RuntimeManager.PlayOneShot("event:/Player/Eating and drinking");
+            player.playerInventory.RemoveItem(i.IDHash);
         }
 
         public override ItemComponent CreateInstance()
