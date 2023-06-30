@@ -1605,7 +1605,7 @@ MonoBehaviour:
   oxygenMaskObject: {fileID: 1276266824}
   terraformController: {fileID: 393193719}
   _interactionDistance: 3
-  _defautHungerDecay: 0.8
+  _defautHungerDecay: 0.7
   _runningDecayMultiplier: 1.5
   _oxygenDecay: 10
   _healthDecay: 50
@@ -1622,6 +1622,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthBar: {fileID: 2145484669}
+  _player: {fileID: 0}
   walkingSpeed: 6
   runningSpeed: 12
   swimmingSpeed: 3
@@ -1837,11 +1838,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18efd3431bff433bf8f095577f17fdb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  texture: {fileID: 0}
-  outputFolder: Assets/Resources/ItemIcons
-  outputName: test
-  sliceWidth: 128
-  sliceHeight: 128
 --- !u!4 &527794743
 Transform:
   m_ObjectHideFlags: 0
