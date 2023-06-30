@@ -215,7 +215,7 @@ namespace DataManager
             
             ConsumableComponentData consumableComponentData = new(5, 100);
             orange.AddComponent(consumableComponentData);
-            ResourceComponentData orangeComponentData = new(2);
+            ResourceComponentData orangeComponentData = new(1);
             orange.AddComponent(orangeComponentData);
 
             ItemData quarkberry = _itemRegistry.CreateItem("Quarkberries", "Sweet and peculiar, just like this place.",
