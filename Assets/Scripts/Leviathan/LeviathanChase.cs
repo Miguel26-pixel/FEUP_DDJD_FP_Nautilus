@@ -6,7 +6,7 @@ using UnityEngine.AI;
 public class LeviathanChase : StateMachineBehaviour
 {
     Transform player;
-    const float chasingSpeed = 10f;
+    const float chasingSpeed = 2f;
     const float escapeRange = 25f;
     const float attackRange = 5f;
     public LayerMask waterLayer;
